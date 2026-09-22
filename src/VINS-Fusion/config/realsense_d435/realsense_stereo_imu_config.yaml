@@ -1,0 +1,83 @@
+%YAML:1.0
+
+#common parameters
+imu: 1
+num_of_cam: 2
+
+imu_topic: "/mavros/imu/data_raw"
+image0_topic: "/camera/infra1/image_rect_raw"
+image1_topic: "/camera/infra2/image_rect_raw"
+output_path: "/home/uav/vins_output/"
+
+cam0_calib: "left.yaml"
+cam1_calib: "right.yaml"
+image_width: 640
+image_height: 480
+
+# Extrinsic parameter between IMU and Camera (这里 body 就是 cam0).
+
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 4.0978141102807619e-02, 1.1507759543819618e-01,
+       9.9251092637810356e-01, 8.6197925315976670e-02,
+       -9.9896185370719315e-01, -1.5065414950228284e-02,
+       4.2991256207119577e-02, 3.4019199848351993e-02,
+       1.9899919337704020e-02, -9.9324225660235621e-01,
+       1.1434077535950382e-01, 7.9083627988226032e-02, 0., 0., 0., 1. ]
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 4.1208757428147780e-02, 1.1482330506138427e-01,
+       9.9253082920683555e-01, 8.9134329657740222e-02,
+       -9.9894984341621007e-01, -1.5175633995607729e-02,
+       4.3230897186631201e-02, -1.5173824451023474e-02,
+       2.0026199089137720e-02, -9.9327000797749443e-01,
+       1.1407735359145810e-01, 8.0058000078520583e-02, 0., 0., 0., 1. ]
+
+#Multiple thread support
+multiple_thread: 1
+
+#feature tracker parameters
+max_cnt: 150
+min_dist: 30
+freq: 10
+F_threshold: 1.0
+show_track: 1
+flow_back: 1
+
+#optimization parameters
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+
+#imu parameters 
+acc_n: 0.1
+gyr_n: 0.01
+acc_w: 0.001
+gyr_w: 0.0001
+g_norm: 9.805
+
+#unsynchronization parameters
+estimate_extrinsic: 1
+estimate_td: 1
+td: -0.05
+
+
+# 求解器参数
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+min_parallax: 10.0
+
+# 可视化
+#visualize_imu_forward: 0
+#visualize_camera_size: 0.4
+
+#loop closure parameters
+load_previous_pose_graph: 0
+pose_graph_save_path: "/home/uav/vins_output/pose_graph/"
+save_image: 1

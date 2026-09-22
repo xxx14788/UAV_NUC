@@ -1,0 +1,11 @@
+ <launch>
+    <!-- 启动 mavros -->
+    <include file="$(find mavros)/launch/px4.launch">
+      <arg name="fcu_url" value="/dev/pixhawk:921600"/>
+    </include>
+
+    <!-- 5 秒后设 HIGHRES_IMU 为 200Hz -->
+    <node pkg="mavros" type="mavcmd" name="set_imu_rate" output="screen"
+          args="long 511 105 5000 0 0 0 0 0"
+          launch-prefix="bash -c 'sleep 5; $0 $@'"/>
+  </launch>

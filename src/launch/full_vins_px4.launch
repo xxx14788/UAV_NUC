@@ -1,0 +1,27 @@
+ <launch>
+      <!-- 1. MAVROS -->
+      <include file="$(find mavros)/launch/px4.launch">
+          <arg name="fcu_url" value="/dev/pixhawk:921600"/>
+      </include>
+
+      <!-- 1.5a. 设 HIGHRES_IMU 200Hz（mavros 启动 5 秒后） -->
+      <node pkg="mavros" type="mavcmd" name="set_highres_imu_rate" output="screen"
+            args="long 511 105 5000 0 0 0 0 0"
+            launch-prefix="bash -c 'sleep 5; $0 $@'"/>
+
+      <!-- 1.5b. 设 ATTITUDE_QUATERNION 200Hz（错开到 8 秒，避免 511 冲突） -->
+      <node pkg="mavros" type="mavcmd" name="set_att_quat_rate" output="screen"
+            args="long 511 31 5000 0 0 0 0 0"
+            launch-prefix="bash -c 'sleep 8; $0 $@'"/>
+
+      <!-- 2. RealSense -->
+      <include file="$(env HOME)/catkin_ws/src/VINS-Fusion/config/realsense_d435/rs_camera_vins.launch"/>
+
+      <!-- 3. VINS-Fusion（取消 launch-prefix，让它直接起；topic 没数据时它会自己等）
+  -->
+      <node name="vins_estimator" pkg="vins" type="vins_node" output="screen"
+            args="$(env HOME)/catkin_ws/src/VINS-Fusion/config/realsense_d435/realsense_stereo_imu_config.yaml"/>
+
+      <!-- 4. 位姿转发（同样取消 launch-prefix） -->
+      <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen"/>
+  </launch>

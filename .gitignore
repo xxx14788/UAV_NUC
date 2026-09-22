@@ -1,0 +1,46 @@
+# ============================================================
+#  UAV 工程 .gitignore
+#  仓库根目录 = catkin 工作空间根目录（本文件所在层，内含 src/）
+#  约定与上游 Fast-Drone-250 一致：clone 后直接 catkin_make
+# ============================================================
+
+# ---------- 1. catkin 构建产物 ----------
+# build/ 805 MB、devel/ 379 MB，绝对不能提交
+build/
+devel/
+install/
+logs/
+.catkin_workspace
+*.catkin_workspace
+
+# ---------- 2. 编译中间件 ----------
+*.o
+*.so
+*.a
+*.lo
+*.la
+CMakeCache.txt
+CMakeFiles/
+
+# ---------- 3. 编辑器 / IDE / 操作系统 ----------
+# 注意：.vscode/browse.vc.db 单文件接近 1 GB
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- 4. Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ---------- 5. VINS-Fusion 运行产物 ----------
+# 对应 config 里的 output_path / pose_graph_save_path
+vins_output/
+pose_graph/
+*.bag
+*.pcd

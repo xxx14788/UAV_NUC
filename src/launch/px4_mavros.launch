@@ -1,0 +1,16 @@
+<launch>
+  <!-- MAVROS 节点 -->
+  <node pkg="mavros" type="mavros_node" name="mavros" output="screen">
+    <!-- USB 连接 -->
+    <param name="fcu_url" value="/dev/pixhawk:921600"/>
+    <!-- 如果用WiFi/UDP连接，改为: udp://:14540@127.0.0.1:14557 -->
+
+    <param name="gcs_url" value=""/>
+    <param name="target_system_id" value="1"/>
+    <param name="target_component_id" value="1"/>
+
+    <!-- 坐标系设置 -->
+    <rosparam command="load" file="$(find mavros)/launch/apm_pluginlists.yaml"/>
+    <rosparam command="load" file="$(find mavros)/launch/apm_config.yaml"/>
+  </node>
+</launch>
