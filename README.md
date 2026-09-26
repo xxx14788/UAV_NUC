@@ -62,6 +62,7 @@
 | `05_record_bag.sh` | rosbag record（起飞前启动，降落后 Ctrl-C；bag 落在 `~/sitl_sim/bags/`，脚本内为绝对路径） |
 | `06_land.sh` | cmd=2 降落，等 disarm（90s 超时，附手动兜底命令） |
 | `start_sitl_depth.sh`（新增） | 深度相机模型 SITL 启动（iris_depth_camera + ROS 话题）。前置 roscore 与 Xvfb :99；自动处理 DISPLAY/gazebo 库路径/gzserver ROS 插件注入/pxh stdin 四个坑（详见脚本头注释） |
+| `worlds/sitl_world_obstacles.world`（新增） | 避障测试 world：3 个静态箱（odom 系坐标表见文件头注释）；安装=复制到 PX4 sitl_gazebo-classic/worlds/，启动=SITL_WORLD=sitl_world_obstacles 配合 start_sitl_depth.sh；physics 必须 0.004s/250Hz（PX4 lockstep 硬约束） |
 | `gzserver_wrapper.sh`（新增） | gzserver 包装脚本，附加 libgazebo_ros_api_plugin.so（noetic 传感器插件依赖全局 ros::init）；由 start_sitl_depth.sh 经 PATH 前置生效，不改 PX4 上游 |
 
 **仿真已验证**：2026-09-23 三次完整"起飞→悬停→降落"（SITL，非实飞；`~/sitl_sim/bags/` 下 3 个 bag，最长 106s；px4ctrl 100Hz 姿态控制 + mavros EKF2 里程计）。
