@@ -58,7 +58,7 @@
 | `05_record_bag.sh` | rosbag record（起飞前启动，降落后 Ctrl-C；bag 落在 `~/sitl_sim/bags/`，脚本内为绝对路径） |
 | `06_land.sh` | cmd=2 降落，等 disarm（90s 超时，附手动兜底命令） |
 
-**已验证**：2026-09-23 三次完整"起飞→悬停→降落"（`~/sitl_sim/bags/` 下 3 个 bag，最长 106s；px4ctrl 100Hz 姿态控制 + mavros EKF2 里程计）。
+**仿真已验证**：2026-09-23 三次完整"起飞→悬停→降落"（SITL，非实飞；`~/sitl_sim/bags/` 下 3 个 bag，最长 106s；px4ctrl 100Hz 姿态控制 + mavros EKF2 里程计）。
 **当前缺口**：planner（EGO-Planner）尚未接入 SITL 回路——需要深度相机模型（PX4 自带 `iris_depth_camera`）+ 深度/odom 话题接线 + goal 触发 + `traj_server` `/position_cmd` → px4ctrl。
 
 ## 5. 已知注意事项
