@@ -1,0 +1,67 @@
+<launch>
+    <!-- EGO-Planner SITL 入口（single_run_in_exp.launch 的仿真版，实机版不动）。
+         链路：Gazebo iris_depth_camera 深度 + mavros EKF2 odom -> ego_planner -> traj_server
+               -> /position_cmd -> px4ctrl(run_ctrl_sitl.launch 已对接)。
+         goal 触发：flight_type=1，rviz 2D Nav Goal 发布 /move_base_simple/goal。 -->
+    <!-- number of moving objects -->
+    <arg name="obj_num" value="10" />
+    <arg name="drone_id" value="0"/>
+
+    <!-- 任务书 A3：30x30 起步；上界留 A5 避障余量 -->
+    <arg name="map_size_x" value="30"/>
+    <arg name="map_size_y" value="30"/>
+    <arg name="map_size_z" value="3.0"/>
+    <!-- SITL 里程计源：mavros EKF2（P2 换仿真 VINS 后此处改参即可） -->
+    <arg name="odom_topic" value="/mavros/local_position/odom"/>
+
+    <!-- main algorithm params -->
+    <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
+        <arg name="drone_id" value="$(arg drone_id)"/>
+        <arg name="map_size_x_" value="$(arg map_size_x)"/>
+        <arg name="map_size_y_" value="$(arg map_size_y)"/>
+        <arg name="map_size_z_" value="$(arg map_size_z)"/>
+        <arg name="odometry_topic" value="$(arg odom_topic)"/>
+        <arg name="obj_num_set" value="$(arg obj_num)" />
+        <arg name="camera_pose_topic" value="nouse1"/>
+        <!-- Gazebo openni 插件深度图：32FC1 米制，grid_map 自动 x1000 转 16UC1 -->
+        <arg name="depth_topic" value="/iris_depth_camera/camera/depth/image_raw"/>
+        <arg name="cloud_topic" value="nouse2"/>
+        <!-- 内参来源：SDF hfov=1.5009831567(848x480) 推算，A1.5 实测话题 10Hz 稳定 -->
+        <arg name="cx" value="424.0"/>
+        <arg name="cy" value="240.0"/>
+        <arg name="fx" value="454.68"/>
+        <arg name="fy" value="454.68"/>
+        <!-- 保守起步（任务书 A3）；catkin_make/SITL 冒烟后再提 -->
+        <arg name="max_vel" value="0.5" />
+        <arg name="max_acc" value="6.0" />
+        <!--always set to 1.5 times grater than sensing horizen-->
+        <arg name="planning_horizon" value="6" />
+        <arg name="use_distinctive_trajs" value="false" />
+        <!-- 1: use 2D Nav Goal to select goal  -->
+        <!-- 2: use global waypoints below  -->
+        <arg name="flight_type" value="1" />
+        <!-- global waypoints -->
+        <!-- It generates a piecewise min-snap traj passing all waypoints -->
+        <arg name="point_num" value="1" />
+        <arg name="point0_x" value="15" />
+        <arg name="point0_y" value="0" />
+        <arg name="point0_z" value="1" />
+        <arg name="point1_x" value="0.0" />
+        <arg name="point1_y" value="0.0" />
+        <arg name="point1_z" value="1.0" />
+        <arg name="point2_x" value="15.0" />
+        <arg name="point2_y" value="0.0" />
+        <arg name="point2_z" value="1.0" />
+        <arg name="point3_x" value="0.0" />
+        <arg name="point3_y" value="0.0" />
+        <arg name="point3_z" value="1.0" />
+        <arg name="point4_x" value="15.0" />
+        <arg name="point4_y" value="0.0" />
+        <arg name="point4_z" value="1.0" />
+    </include>
+    <!-- trajectory server：源码发布绝对话题 /position_cmd，与 px4ctrl ~cmd 对接 -->
+    <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
+        <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
+        <param name="traj_server/time_forward" value="1.0" type="double"/>
+    </node>
+</launch>
