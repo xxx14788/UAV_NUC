@@ -44,3 +44,10 @@ vins_output/
 pose_graph/
 *.bag
 *.pcd
+
+# ---------- 2. IDE / 本地杂项 ----------
+.idea/
+
+# ---------- 3. 永不入库的大产物 ----------
+bags/
+nohup.out

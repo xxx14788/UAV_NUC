@@ -1,0 +1,398 @@
+00_env_check.sh  ——  2026-09-22 21:13:49 CST
+主机 uav4   用户 uav   内核 5.15.0-139-generic
+
+================ 1. 系统与资源 ================
+
+--- 1.1 架构 / 发行版 ---
+
+$ uname -m
+x86_64
+
+$ dpkg --print-architecture
+amd64
+
+$ lsb_release -a
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 20.04.6 LTS
+Release:	20.04
+Codename:	focal
+
+$ cat /etc/os-release
+NAME="Ubuntu"
+VERSION="20.04.6 LTS (Focal Fossa)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 20.04.6 LTS"
+VERSION_ID="20.04"
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+VERSION_CODENAME=focal
+UBUNTU_CODENAME=focal
+
+--- 1.2 CPU / 内存 ---
+
+$ nproc
+8
+Architecture:                         x86_64
+CPU(s):                               8
+Thread(s) per core:                   2
+Core(s) per socket:                   4
+Vendor ID:                            GenuineIntel
+Model name:                           11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
+BogoMIPS:                             4838.40
+
+$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:           15Gi       3.4Gi       3.1Gi       692Mi       8.8Gi        10Gi
+Swap:         2.0Gi          0B       2.0Gi
+
+$ grep -E MemTotal|MemAvailable|SwapTotal|SwapFree /proc/meminfo
+MemTotal:       16020736 kB
+MemAvailable:   11408304 kB
+SwapTotal:       2097148 kB
+SwapFree:        2097148 kB
+
+--- 1.3 磁盘（$HOME 所在分区） ---
+
+$ df -h /home/uav
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2  234G   23G  200G  11% /
+
+$ df -BG --output=source,fstype,size,avail,pcent /home/uav
+Filesystem     Type 1G-blocks Avail Use%
+/dev/nvme0n1p2 ext4      234G  200G  11%
+
+================ 2. ROS ================
+
+--- 2.1 已安装的 ROS 发行版 ---
+
+$ ls -1 /opt/ros
+noetic
+
+--- 2.2 当前 shell 环境变量 ---
+ROS_DISTRO = noetic
+ROS_ROOT   = /opt/ros/noetic/share/ros
+
+--- 2.3 source Noetic 后的探针 ---
+source 后 ROS_DISTRO = noetic
+
+$ rosversion -d
+noetic
+
+$ rospack find mavros
+/opt/ros/noetic/share/mavros
+
+$ rospack find mavros_msgs
+/opt/ros/noetic/share/mavros_msgs
+
+================ 3. Gazebo ================
+
+--- 3.1 二进制版本 ---
+
+$ gazebo --version
+Gazebo multi-robot simulator, version 11.15.1
+Copyright (C) 2012 Open Source Robotics Foundation.
+Released under the Apache 2 License.
+http://gazebosim.org
+
+
+  [退出码 255；124=超时]
+  gzserver   -> /usr/bin/gzserver
+  gzclient   -> /usr/bin/gzclient
+  gz         -> /usr/bin/gz
+
+--- 3.2 dpkg 记录 ---
+ii  gazebo11                                    11.15.1-1~focal                      amd64        Open Source Robotics Simulator
+ii  gazebo11-common                             11.15.1-1~focal                      all          Open Source Robotics Simulator - Shared files
+ii  gazebo11-plugin-base                        11.15.1-1~focal                      amd64        Open Source Robotics Simulator - base plug-ins
+ii  ignition-tools:amd64                        1.5.0-1~focal                        amd64        Entry point for using all the suite of Gazebo tools - app
+ii  libgazebo11:amd64                           11.15.1-1~focal                      amd64        Open Source Robotics Simulator - shared library
+ii  libgazebo11-dev:amd64                       11.15.1-1~focal                      amd64        Open Source Robotics Simulator - Development Files
+ii  libignition-cmake2-dev:amd64                2.17.2-1~focal                       amd64        Gazebo CMake Library - Development files
+ii  libignition-common3:amd64                   3.17.0-1~focal                       amd64        Gazebo Common classes and functions for robot apps - Shared library
+ii  libignition-common3-av:amd64                3.17.0-1~focal                       amd64        Gazebo Common classes and functions (AV) - Shared library
+ii  libignition-common3-av-dev:amd64            3.17.0-1~focal                       amd64        Gazebo Common classes and functions (AV) - Development files
+ii  libignition-common3-core-dev:amd64          3.17.0-1~focal                       amd64        Gazebo Common classes and functions (core) - Development files
+ii  libignition-common3-dev:amd64               3.17.0-1~focal                       amd64        Gazebo Common classes and functions for robot apps - Metapackage
+ii  libignition-common3-events:amd64            3.17.0-1~focal                       amd64        Gazebo Common classes and functions (Events) - Shared library
+ii  libignition-common3-events-dev:amd64        3.17.0-1~focal                       amd64        Gazebo Common classes and functions (Events) - Development files
+ii  libignition-common3-graphics:amd64          3.17.0-1~focal                       amd64        Gazebo Common classes and functions (Graphics) - Shared library
+ii  libignition-common3-graphics-dev:amd64      3.17.0-1~focal                       amd64        Gazebo Common classes and functions (Graphics) - Development files
+ii  libignition-common3-profiler:amd64          3.17.0-1~focal                       amd64        Gazebo Common classes and functions (Profiler) - Shared library
+ii  libignition-common3-profiler-dev:amd64      3.17.0-1~focal                       amd64        Gazebo Common classes and functions (profiler) - Development files
+ii  libignition-fuel-tools4:amd64               4.9.1-1~focal                        amd64        Gazebo fuel-tools classes and functions for robot apps - Shared library
+ii  libignition-fuel-tools4-dev:amd64           4.9.1-1~focal                        amd64        Gazebo fuel-tools classes and functions for robot apps - Development files
+ii  libignition-math6:amd64                     6.15.1-1~focal                       amd64        Gazebo Math Library - Shared library
+ii  libignition-math6-dev:amd64                 6.15.1-1~focal                       amd64        Gazebo Math Library - Development files
+ii  libignition-msgs5:amd64                     5.11.0-1~focal                       amd64        Protobuf messages for Gazebo applications - Shared library
+ii  libignition-msgs5-dev:amd64                 5.11.0-1~focal                       amd64        Protobuf messages for Gazebo applications - Development files
+ii  libignition-tools-dev:amd64                 1.5.0-1~focal                        amd64        Entry point for using all the suite of Gazebo tools - cmake support
+ii  libignition-transport8:amd64                8.5.0-1~focal                        amd64        Gazebo Transport Library - Shared library
+ii  libignition-transport8-core-dev:amd64       8.5.0-1~focal                        amd64        Gazebo transport Library - Core Dev files
+ii  libignition-transport8-dev:amd64            8.5.0-1~focal                        amd64        Gazebo transport Library - Metapackage
+ii  libignition-transport8-log:amd64            8.5.0-1~focal                        amd64        Gazebo Transport Library - Log Shared library
+ii  libignition-transport8-log-dev:amd64        8.5.0-1~focal                        amd64        Gazebo transport Library - Core Dev
+ii  libsdformat9:amd64                          9.10.1-1~focal                       amd64        Simulation Description Format (SDF) parser - Shared library
+ii  libsdformat9-dev:amd64                      9.10.1-1~focal                       amd64        Simulation Description Format (SDF) parser - Development files
+ii  ros-noetic-gazebo-dev                       2.9.3-1focal.20250426.005053         amd64        Provides a cmake config for the default version of Gazebo for the ROS distribution.
+ii  ros-noetic-gazebo-msgs                      2.9.3-1focal.20250520.004928         amd64        Message and service data structures for interacting with Gazebo from ROS.
+ii  ros-noetic-gazebo-plugins                   2.9.3-1focal.20250521.004734         amd64        Robot-independent Gazebo plugins for sensors, motors and dynamic reconfigurable components.
+ii  ros-noetic-gazebo-ros                       2.9.3-1focal.20250521.003802         amd64        Provides ROS plugins that offer message and service publishers for interfacing with Gazebo through ROS.
+ii  ros-noetic-gazebo-ros-control               2.9.3-1focal.20250521.005335         amd64        gazebo_ros_control
+ii  ros-noetic-gazebo-ros-pkgs                  2.9.3-1focal.20250521.011748         amd64        Interface for using ROS with the Gazebo simulator.
+ii  sdformat9-sdf                               9.10.1-1~focal                       all          Simulation Description Format (SDF) parser - SDF files
+
+--- 3.3 包来源 —— 决定 M1.2 走哪条路（关键） ---
+== apt-cache policy gazebo11 ==
+gazebo11:
+  Installed: 11.15.1-1~focal
+  Candidate: 11.15.1-1~focal
+  Version table:
+ *** 11.15.1-1~focal 500
+        500 https://mirrors.ustc.edu.cn/ros/ubuntu focal/main amd64 Packages
+        100 /var/lib/dpkg/status
+     11.11.0-1~focal 500
+        500 https://mirrors.ustc.edu.cn/ros2/ubuntu focal/main amd64 Packages
+
+== apt-cache policy libgazebo11-dev ==
+libgazebo11-dev:
+  Installed: 11.15.1-1~focal
+  Candidate: 11.15.1-1~focal
+  Version table:
+ *** 11.15.1-1~focal 500
+        500 https://mirrors.ustc.edu.cn/ros/ubuntu focal/main amd64 Packages
+        100 /var/lib/dpkg/status
+     11.11.0-1~focal 500
+        500 https://mirrors.ustc.edu.cn/ros2/ubuntu focal/main amd64 Packages
+
+--- 3.4 apt 源文件（看有没有 OSRF 源） ---
+
+$ ls -l /etc/apt/sources.list.d/
+total 16
+-rw-r--r-- 1 root root 119 9月  20 17:50 librealsense.list
+-rw-r--r-- 1 root root 137 9月  20 17:38 ros-fish.list
+-rw-r--r-- 1 root root 139 9月  20 17:38 ros-fish.list.save
+-rw-r--r-- 1 root root 278 9月  22 19:26 vscode.sources
+(sources 里没有 osrf/ros/gazebo 相关行)
+
+================ 4. MAVROS 配置 ================
+
+$ grep -n -E fcu_url|gcs_url|tgt_system /opt/ros/noetic/share/mavros/launch/px4.launch
+5:	<arg name="fcu_url" default="/dev/ttyACM0:57600" />
+6:	<arg name="gcs_url" default="" />
+7:	<arg name="tgt_system" default="1" />
+17:		<arg name="fcu_url" value="$(arg fcu_url)" />
+18:		<arg name="gcs_url" value="$(arg gcs_url)" />
+19:		<arg name="tgt_system" value="$(arg tgt_system)" />
+ii  ros-noetic-mavlink                          2025.5.5-1focal.20250505.181801      amd64        MAVLink message marshaling library.
+ii  ros-noetic-mavros                           1.20.1-1focal.20250520.005419        amd64        MAVROS -- MAVLink extendable communication node for ROS with proxy for Ground Control Station.
+ii  ros-noetic-mavros-extras                    1.20.1-1focal.20250520.011525        amd64        Extra nodes and plugins for MAVROS.
+ii  ros-noetic-mavros-msgs                      1.20.1-1focal.20250520.005026        amd64        mavros_msgs defines messages for MAVROS.
+
+================ 5. PX4 源码现状（期望：不存在 = 干净起点） ================
+(没有发现已有的 PX4 源码目录 —— 符合预期)
+
+--- 5.1 已有的 sitl_sim 目录 ---
+
+$ ls -la /home/uav/sitl_sim
+total 32
+drwxrwxr-x  2 uav uav  4096 9月  22 21:13 .
+drwxr-xr-x 32 uav uav  4096 9月  22 21:13 ..
+-rw-rw-r--  1 uav uav 10280 9月  22 20:44 00_env_check.sh
+-rw-rw-r--  1 uav uav 11162 9月  22 21:13 sitl_env_check.txt
+
+================ 6. Python 环境 ================
+
+$ python3 --version
+Python 3.8.10
+
+$ which python3 pip3
+/usr/bin/python3
+/usr/bin/pip3
+
+$ pip3 --version
+pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.8)
+
+$ python3 -c import sys; print('executable:', sys.executable); [print('  path:', p) for p in sys.path]
+executable: /usr/bin/python3
+  path: 
+  path: /opt/ros/noetic/lib/python3/dist-packages
+  path: /usr/lib/python38.zip
+  path: /usr/lib/python3.8
+  path: /usr/lib/python3.8/lib-dynload
+  path: /usr/local/lib/python3.8/dist-packages
+  path: /usr/lib/python3/dist-packages
+
+--- 6.1 empy —— PX4 依赖，必须 >=3.3,<4 且带 RAW_OPT ---
+empy 3.3.2 | RAW_OPT = True
+位于 /usr/lib/python3/dist-packages/em.py
+
+--- 6.2 已有的 --user 安装（会遮蔽 apt 包的关键区，见方案 R4） ---
+
+$ ls -1 /home/uav/.local/lib/
+ls: cannot access '/home/uav/.local/lib/': No such file or directory
+  [退出码 2；124=超时]
+(空)
+
+--- 6.3 PX4 关键 Python 依赖现状 ---
+  jinja2       缺失
+  yaml         OK  5.3.1
+  numpy        OK  1.17.4
+  packaging    缺失
+  six          OK  1.14.0
+  toml         缺失
+  lark         缺失
+  kconfiglib   缺失
+  pymavlink    缺失
+
+================ 7. 工具链 ================
+  [有] git          /usr/bin/git
+  [有] cmake        /usr/bin/cmake
+  [缺] ninja       
+  [缺] ccache      
+  [有] gcc          /usr/bin/gcc
+  [有] g++          /usr/bin/g++
+  [有] make         /usr/bin/make
+  [有] python3      /usr/bin/python3
+  [有] pip3         /usr/bin/pip3
+  [缺] astyle      
+  [缺] cppcheck    
+  [有] rsync        /usr/bin/rsync
+  [有] unzip        /usr/bin/unzip
+  [有] zip          /usr/bin/zip
+  [有] protoc       /usr/bin/protoc
+  [有] pkg-config   /usr/bin/pkg-config
+  [缺] shellcheck  
+
+$ gcc --version
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+Copyright (C) 2019 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+$ cmake --version
+cmake version 3.16.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
+$ git --version
+git version 2.25.1
+
+================ 8. 网络 / GitHub 可达性（风险 R3） ================
+
+--- 8.1 代理环境变量 ---
+(未设置代理变量)
+
+--- 8.2 能否拉到 v1.17.0 的 tag ---
+
+$ timeout 25 git ls-remote https://github.com/PX4/PX4-Autopilot.git refs/tags/v1.17.0
+  [退出码 124；124=超时]
+
+--- 8.3 TCP 443 直连 ---
+TCP 443 通
+
+================ 9. 现有仿真环境 / 端口占用（风险 R9） ================
+
+--- 9.1 相关进程 ---
+(无相关进程 —— 干净)
+
+--- 9.2 监听端口（14540/14557/11311 等被占会冲突） ---
+
+$ ss -lunp
+State     Recv-Q    Send-Q       Local Address:Port        Peer Address:Port    Process                                                                         
+UNCONN    0         0                  0.0.0.0:4000             0.0.0.0:*                                                                                       
+UNCONN    0         0                  0.0.0.0:4011             0.0.0.0:*        users:(("nxnode.bin",pid=51279,fd=36),("nxnode.bin",pid=1697,fd=61))           
+UNCONN    8448      0              192.168.0.5:5353             0.0.0.0:*                                                                                       
+UNCONN    0         0                  0.0.0.0:5353             0.0.0.0:*                                                                                       
+UNCONN    0         0                  0.0.0.0:5353             0.0.0.0:*                                                                                       
+UNCONN    0         0                  0.0.0.0:46408            0.0.0.0:*                                                                                       
+UNCONN    0         0            127.0.0.53%lo:53               0.0.0.0:*                                                                                       
+UNCONN    0         0                     [::]:42733               [::]:*                                                                                       
+UNCONN    0         0                     [::]:4000                [::]:*                                                                                       
+UNCONN    0         0                     [::]:5353                [::]:*                                                                                       
+
+$ ss -ltnp
+State     Recv-Q    Send-Q       Local Address:Port        Peer Address:Port    Process                                                                         
+LISTEN    0         100              127.0.0.1:22923            0.0.0.0:*                                                                                       
+LISTEN    0         128              127.0.0.1:7001             0.0.0.0:*        users:(("nxnode.bin",pid=1697,fd=26))                                          
+LISTEN    0         128                0.0.0.0:22               0.0.0.0:*                                                                                       
+LISTEN    0         100              127.0.0.1:25001            0.0.0.0:*        users:(("nxrunner.bin",pid=1718,fd=14))                                        
+LISTEN    0         5                127.0.0.1:631              0.0.0.0:*                                                                                       
+LISTEN    0         64               127.0.0.1:25419            0.0.0.0:*                                                                                       
+LISTEN    0         128              127.0.0.1:41987            0.0.0.0:*        users:(("code-645f29cc31",pid=45879,fd=9))                                     
+LISTEN    0         100              127.0.0.1:26002            0.0.0.0:*        users:(("nxnode.bin",pid=51279,fd=28))                                         
+LISTEN    0         511              127.0.0.1:34415            0.0.0.0:*        users:(("MainThread",pid=46125,fd=33))                                         
+LISTEN    0         128              127.0.0.1:43477            0.0.0.0:*        users:(("code-645f29cc31",pid=2378,fd=11))                                     
+LISTEN    0         4096         127.0.0.53%lo:53               0.0.0.0:*                                                                                       
+LISTEN    0         100              127.0.0.1:20000            0.0.0.0:*                                                                                       
+LISTEN    0         100              127.0.0.1:12002            0.0.0.0:*        users:(("nxnode.bin",pid=51279,fd=22))                                         
+LISTEN    0         100              127.0.0.1:12001            0.0.0.0:*        users:(("nxnode.bin",pid=1697,fd=20))                                          
+LISTEN    0         100                0.0.0.0:4000             0.0.0.0:*                                                                                       
+LISTEN    0         128                  [::1]:7001                [::]:*        users:(("nxnode.bin",pid=1697,fd=25))                                          
+LISTEN    0         128                   [::]:22                  [::]:*                                                                                       
+LISTEN    0         5                    [::1]:631                 [::]:*                                                                                       
+LISTEN    0         100                   [::]:4000                [::]:*                                                                                       
+
+--- 9.3 sim_ws ---
+
+$ ls -la /home/uav/sim_ws
+total 24
+drwxrwxr-x  5 uav uav 4096 9月  21 21:54 .
+drwxr-xr-x 32 uav uav 4096 9月  22 21:13 ..
+drwxrwxr-x 12 uav uav 4096 9月  21 21:54 build
+-rw-rw-r--  1 uav uav   98 9月  21 21:54 .catkin_workspace
+drwxrwxr-x  5 uav uav 4096 9月  21 21:54 devel
+drwxrwxr-x  5 uav uav 4096 9月  21 21:54 src
+
+--- 9.4 build2.log（之前编译过什么） ---
+大小: 12K
+修改时间: 2026-09-20 15:32:05
+末尾 15 行:
+[ 93%] Built target rviz_plugins
+[ 95%] Built target decomp_rviz_plugins
+[ 97%] Built target px4ctrl_node
+[100%] Built target ego_planner_node
+Base path: /home/uav/catkin_ws
+Source space: /home/uav/catkin_ws/src
+Build space: /home/uav/catkin_ws/build
+Devel space: /home/uav/catkin_ws/devel
+Install space: /home/uav/catkin_ws/install
+####
+#### Running command: "make cmake_check_build_system" in "/home/uav/catkin_ws/build"
+####
+####
+#### Running command: "make -j6" in "/home/uav/catkin_ws/build"
+####
+
+================ 10. 快照（用于日后 diff / 回滚） ================
+
+--- 10.1 dpkg 全量 ---
+已写 /home/uav/sitl_sim/pre_dpkg.txt（2656 行）
+
+--- 10.2 pip 包列表 ---
+已写 /home/uav/sitl_sim/pre_pip.txt（219 行）
+
+--- 10.3 catkin_ws/src 全量 md5（排除 .git/build/devel） ---
+已写 /home/uav/sitl_sim/pre_catkin_md5.txt（603 个文件）
+
+================ 11. 自动判读（仅供参考，最终以方案 §M1.0 的人工判读表为准） ================
+  [注意] 架构               x86_64（预期 aarch64，需确认）
+  [ OK ] Ubuntu 版本        20.04，符合约束链（§3.1）
+  [ OK ] 可用磁盘         200 GB（需 ≥20）
+  [ OK ] 总内存            15 GB（需 ≥4）
+  [ OK ] CPU 核数           8 核
+  [ OK ] ROS Noetic           /opt/ros/noetic 存在
+  [ OK ] mavros px4.launch    存在
+  [ OK ] gazebo 命令        Gazebo multi-robot simulator, version 11.15.1
+  [ OK ] PX4 源码           不存在，干净起点
+  [ OK ] empy                 3.3.2
+  [ OK ] 占用冲突         无 gazebo/roscore 在跑
+
+================ 报告结束 ================
+报告：/home/uav/sitl_sim/sitl_env_check.txt
+快照：/home/uav/sitl_sim/pre_dpkg.txt  pre_pip.txt  pre_catkin_md5.txt
+把这一整份输出贴回来即可。
