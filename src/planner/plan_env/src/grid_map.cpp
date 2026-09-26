@@ -191,6 +191,8 @@ int GridMap::setCacheOccupancy(Eigen::Vector3d pos, int occ)
 
   Eigen::Vector3i id;
   posToIndex(pos, id);
+  boundIndex(id);  // 边界防御：raycast 端点经 closetPointInMap 夹到边界表面时，
+                   // 浮点误差可使 id==map_voxel_num 越界（SITL 远距离深度可复现 segfault）
   int idx_ctns = toAddress(id);
 
   md_.count_hit_and_miss_[idx_ctns] += 1;

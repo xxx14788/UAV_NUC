@@ -197,7 +197,9 @@ void cmdCallback(const ros::TimerEvent &e)
     yaw_yawdot.second = 0;
 
     pos_f = pos;
-    return;
+    /* 原版在此 return 跳过发布：轨迹完成后 /position_cmd 停发，px4ctrl 0.5s 超时
+       退回 AUTO_HOVER、40s 后自动降落（SITL 单目标场景 2026-09-26 复现）。
+       去掉 return 使到达后持续发布终点悬停目标，CMD_TRACK 保持稳定悬停。 */
   }
   else
   {

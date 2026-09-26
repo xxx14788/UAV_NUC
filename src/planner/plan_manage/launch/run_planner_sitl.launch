@@ -27,8 +27,8 @@
         <arg name="depth_topic" value="/iris_depth_camera/camera/depth/image_raw"/>
         <arg name="cloud_topic" value="nouse2"/>
         <!-- 内参来源：SDF hfov=1.5009831567(848x480) 推算，A1.5 实测话题 10Hz 稳定 -->
-        <arg name="cx" value="424.0"/>
-        <arg name="cy" value="240.0"/>
+        <arg name="cx" value="424.5"/>
+        <arg name="cy" value="240.5"/>
         <arg name="fx" value="454.68"/>
         <arg name="fy" value="454.68"/>
         <!-- 保守起步（任务书 A3）；catkin_make/SITL 冒烟后再提 -->

@@ -46,6 +46,8 @@
 | `px4ctrl/launch/run_ctrl_sitl.launch`（新增） | SITL 版控制：`~odom` → `/mavros/local_position/odom`（EKF2），`~cmd` ← `/position_cmd`；node 名必须保持 `px4ctrl` |
 | `px4ctrl/config/ctrl_param_sitl.yaml`（新增） | SITL 控制参数，不影响真机 `ctrl_param.yaml` |
 | `planner/plan_manage/launch/run_planner_sitl.launch`（新增） | EGO-Planner SITL 入口：odom←`/mavros/local_position/odom`、深度←`/iris_depth_camera/camera/depth/image_raw`、内参 848x480 fx454.68（SDF hfov 推算）、map 30x30、max_vel 0.5；traj_server 输出 `/position_cmd` 对接 px4ctrl |
+| `planner/plan_env/src/grid_map.cpp` | `setCacheOccupancy` 加 `boundIndex(id)` 防御：raycast 端点被 `closetPointInMap` 夹到地图边界表面时浮点误差可使 index 越界（SITL 远距离深度可复现 segfault，2026-09-26 addr2line 定位） |
+| `planner/plan_manage/src/traj_server.cpp` | 删除轨迹完成分支的 `return`：原版到点后停发 /position_cmd，px4ctrl 0.5s 超时退回悬停、40s 后自动降落；现到达后持续发布终点悬停目标（对实机同样为改进） |
 | `planner/plan_manage/launch/advanced_param_sitl.xml`（新增） | `_exp` 版的仿真参数：obstacles_inflation 0.337→0.299；外参走 grid_map 默认 optical→body 矩阵（SITL 相机 RPY=0 时旋转正确，平移差 0.1m 在膨胀半径内） |
 
 ## 4. SITL 全流程仿真（脚本在本仓库 `sitl_sim/`，每脚本一个终端，按编号执行）

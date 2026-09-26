@@ -14,6 +14,8 @@ echo "起飞前启动，降落完成后按 Ctrl-C 停止。"
 
 exec rosbag record -O "$BAG" \
      /debugPx4ctrl \
+     /position_cmd \
+     /move_base_simple/goal \
      /px4ctrl/takeoff_land \
      /mavros/state \
      /mavros/extended_state \

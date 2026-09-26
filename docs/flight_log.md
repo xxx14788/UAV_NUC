@@ -9,3 +9,4 @@
 | 2026-09-23 | flight_2026-09-23_214433.bag | — | 仿真（SITL）控制回路 | 成功 | 同上 |
 | 2026-09-23 | flight_2026-09-23_221002.bag | 106s | 仿真（SITL）控制回路 | 成功 | px4ctrl 100Hz 姿态控制，mavros EKF2 里程计；无 planner |
 | 2026-09-26 | flight_2026-09-26_175942.bag | 231s | 仿真（SITL）控制回路（A1 复验） | 成功 | 起飞→悬停55s（xy漂移<2.2cm，z±2cm）→自动降落disarm；9-26文档提交后环境无退化 |
+| 2026-09-26 | flight_2026-09-26_195352.bag | ~10min | 仿真（SITL）全链路 A4（planner 首次闭环） | 成功 | EGO-Planner→traj_server→px4ctrl 首通；goal(5,-3,1)到位误差0.10m；/position_cmd 100.6Hz；到位后悬停60s+不超时；修复grid_map边界segfault与traj_server到点停发两处上游bug |
