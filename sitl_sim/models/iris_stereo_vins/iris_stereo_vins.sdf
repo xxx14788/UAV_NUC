@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <!-- A7 仿真 VINS 传感器模型（sitl 专用，结构完全照抄 iris_depth_camera 模式）。
+       = iris 机体 + depth_camera（避障保留）+ stereo_vins_rig（双目子模型）。
+       左目光学中心（机体系 x前 y左 z上）：(0.1+0.02, +0.05, 0.035) = (0.12, 0.05, 0.035)
+       右目：(0.12, -0.05, 0.035)；基线 10cm。
+       IMU 用 mavros /mavros/imu/data_raw（同实机架构，mavcmd 511 提频）。
+       话题：/iris_stereo_vins/vins_cam_{left,right}/image_raw 等（gazebo_ros 插件）。
+       内参：fx=fy=467.7427 cx=320.5 cy=240.5（hfov=1.2，B1 规律 w/2+0.5）。
+       教训（2026-09-26）：直属 link+joint 方案物理不稳（机体翻转+IMU 数值爆炸），
+       必须用 include 子模型 + revolute(0,0) joint 连 iris::base_link。 -->
+  <model name="iris_stereo_vins">
+    <include>
+      <uri>model://iris</uri>
+    </include>
+
+    <include>
+      <uri>model://depth_camera</uri>
+      <pose>0.1 0 0 0 0 0</pose>
+    </include>
+    <joint name="depth_camera_joint" type="revolute">
+      <child>depth_camera::link</child>
+      <parent>iris::base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>0</lower>
+        </limit>
+      </axis>
+    </joint>
+
+    <include>
+      <uri>model://stereo_vins_rig</uri>
+      <pose>0.1 0 0 0 0 0</pose>
+    </include>
+    <joint name="stereo_vins_rig_joint" type="revolute">
+      <child>stereo_vins_rig::link</child>
+      <parent>iris::base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>0</lower>
+        </limit>
+      </axis>
+    </joint>
+  </model>
+</sdf>

@@ -1,0 +1,13 @@
+<launch>
+    <!-- A7 仿真 VINS 入口：VINS-Fusion 双目+IMU 里程计 + vins_to_mavros 转发。
+         前置：iris_stereo_vins 模型 SITL 已启动（start_sitl_vins.sh），
+               mavros 已启动，且已执行 mavcmd long 511 105 5000（IMU 提频，
+               实测约 125Hz，满足 VINS 要求）。
+         输出：/vins_estimator/imu_propagate（高频里程计，供 planner/px4ctrl）
+               /vins_estimator/odometry（供 vins_to_mavros）
+               /mavros/vision_pose/pose（喂 PX4 EKF2，照实机链路）
+         消费：run_planner_sitl_vins.launch / run_ctrl_sitl_vins.launch -->
+    <node pkg="vins" type="vins_node" name="vins_estimator" output="screen"
+          args="$(env HOME)/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml"/>
+    <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen"/>
+</launch>

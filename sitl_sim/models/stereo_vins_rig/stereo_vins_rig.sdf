@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <!-- A7 双目 rig 子模型（include 模式 + 双 camera sensor）。
+       v3：multicamera 在 headless gzserver 不激活（2026-09-26），回退双
+       camera sensor；VINS 侧用 estimate_extrinsic:2 在线标定外参兜底。
+       左右目 640x480@30Hz 基线 10cm；光学中心机体系 (0.12,±0.05,0.035)。 -->
+  <model name="stereo_vins_rig">
+    <pose>0 0 0.035 0 0 0</pose>
+    <link name="link">
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>4.15e-6</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.15e-6</iyy>
+          <iyz>0</iyz>
+          <izz>4.15e-6</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <pose>0.02 0 0 0 0 0</pose>
+        <geometry>
+          <box><size>0.02 0.14 0.04</size></box>
+        </geometry>
+      </visual>
+
+      <sensor name="vins_left_cam" type="camera">
+        <always_on>true</always_on>
+        <update_rate>30</update_rate>
+        <visualize>false</visualize>
+        <pose>0.02 0.05 0 0 0 0</pose>
+        <camera>
+          <horizontal_fov>1.2</horizontal_fov>
+          <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>60</far>
+          </clip>
+        </camera>
+        <plugin filename="libgazebo_ros_camera.so" name="left_cam_controller">
+          <cameraName>vins_cam_left</cameraName>
+          <robotNamespace></robotNamespace>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30</updateRate>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>left_cam_optical</frameName>
+        </plugin>
+      </sensor>
+
+      <sensor name="vins_right_cam" type="camera">
+        <always_on>true</always_on>
+        <update_rate>30</update_rate>
+        <visualize>false</visualize>
+        <pose>0.02 -0.05 0 0 0 0</pose>
+        <camera>
+          <horizontal_fov>1.2</horizontal_fov>
+          <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>60</far>
+          </clip>
+        </camera>
+        <plugin filename="libgazebo_ros_camera.so" name="right_cam_controller">
+          <cameraName>vins_cam_right</cameraName>
+          <robotNamespace></robotNamespace>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30</updateRate>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>right_cam_optical</frameName>
+        </plugin>
+      </sensor>
+    </link>
+  </model>
+</sdf>

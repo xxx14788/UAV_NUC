@@ -1,0 +1,17 @@
+<launch>
+	<!-- SITL + 仿真 VINS 版控制（A7）。与 run_ctrl_sitl.launch 的唯一差异：
+	     ~odom 指向仿真 VINS 输出（/vins_estimator/imu_propagate），
+	     与实机 run_ctrl.launch 的里程计源一致（架构注解见 plans/2026-09-26）。
+	     PX4 EKF2 不动：vins_to_mavros 照实机把 VINS 位姿喂 /mavros/vision_pose/pose。
+
+	     node name 必须保持 "px4ctrl"（源码 nh("~") 私有话题依赖）。 -->
+	<node pkg="px4ctrl" type="px4ctrl_node" name="px4ctrl" output="screen">
+
+		<!-- 仿真 VINS：高频低延迟里程计（body=IMU 系，与机体系近似对齐） -->
+		<remap from="~odom" to="/vins_estimator/imu_propagate" />
+
+		<remap from="~cmd" to="/position_cmd" />
+
+		<rosparam command="load" file="$(find px4ctrl)/config/ctrl_param_sitl.yaml" />
+	</node>
+</launch>

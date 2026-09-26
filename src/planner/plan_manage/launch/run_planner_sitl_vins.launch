@@ -1,0 +1,55 @@
+<launch>
+    <!-- EGO-Planner SITL + 仿真 VINS 版（A7）。
+         与 run_planner_sitl.launch 的唯一差异：odom 源换成 /vins_estimator/imu_propagate
+         （仿真 VINS，与实机 single_run_in_exp.launch 的里程计源一致）。
+         深度仍来自 iris_stereo_vins 模型的深度相机（避障不变）。 -->
+    <arg name="obj_num" value="10" />
+    <arg name="drone_id" value="0"/>
+
+    <arg name="map_size_x" value="30"/>
+    <arg name="map_size_y" value="30"/>
+    <arg name="map_size_z" value="3.0"/>
+    <!-- 里程计源：仿真 VINS（P2 目标态；EKF2 版见 run_planner_sitl.launch） -->
+    <arg name="odom_topic" value="/vins_estimator/imu_propagate"/>
+
+    <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
+        <arg name="drone_id" value="$(arg drone_id)"/>
+        <arg name="map_size_x_" value="$(arg map_size_x)"/>
+        <arg name="map_size_y_" value="$(arg map_size_y)"/>
+        <arg name="map_size_z_" value="$(arg map_size_z)"/>
+        <arg name="odometry_topic" value="$(arg odom_topic)"/>
+        <arg name="obj_num_set" value="$(arg obj_num)" />
+        <arg name="camera_pose_topic" value="nouse1"/>
+        <arg name="depth_topic" value="/iris_stereo_vins/camera/depth/image_raw"/>
+        <arg name="cloud_topic" value="nouse2"/>
+        <arg name="cx" value="424.5"/>
+        <arg name="cy" value="240.5"/>
+        <arg name="fx" value="454.6858"/>
+        <arg name="fy" value="454.6858"/>
+        <arg name="max_vel" value="0.5" />
+        <arg name="max_acc" value="6.0" />
+        <arg name="planning_horizon" value="6" />
+        <arg name="use_distinctive_trajs" value="false" />
+        <arg name="flight_type" value="1" />
+        <arg name="point_num" value="1" />
+        <arg name="point0_x" value="15" />
+        <arg name="point0_y" value="0" />
+        <arg name="point0_z" value="1" />
+        <arg name="point1_x" value="0.0" />
+        <arg name="point1_y" value="0.0" />
+        <arg name="point1_z" value="1.0" />
+        <arg name="point2_x" value="15.0" />
+        <arg name="point2_y" value="0.0" />
+        <arg name="point2_z" value="1.0" />
+        <arg name="point3_x" value="0.0" />
+        <arg name="point3_y" value="0.0" />
+        <arg name="point3_z" value="1.0" />
+        <arg name="point4_x" value="15.0" />
+        <arg name="point4_y" value="0.0" />
+        <arg name="point4_z" value="1.0" />
+    </include>
+    <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
+        <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
+        <param name="traj_server/time_forward" value="1.0" type="double"/>
+    </node>
+</launch>

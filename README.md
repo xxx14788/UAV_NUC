@@ -62,6 +62,12 @@
 | `05_record_bag.sh` | rosbag record（起飞前启动，降落后 Ctrl-C；bag 落在 `~/sitl_sim/bags/`，脚本内为绝对路径） |
 | `06_land.sh` | cmd=2 降落，等 disarm（90s 超时，附手动兜底命令） |
 | `start_sitl_depth.sh`（新增） | 深度相机模型 SITL 启动（iris_depth_camera + ROS 话题）。前置 roscore 与 Xvfb :99；自动处理 DISPLAY/gazebo 库路径/gzserver ROS 插件注入/pxh stdin 四个坑（详见脚本头注释） |
+| `VINS-Fusion/config/sim_stereo/`（新增） | A7 仿真 VINS 配置：双目来自 iris_stereo_vins 模型、IMU 用 /mavros/imu/data_raw（mavcmd 511 提频 125Hz）、外参从 SDF 换算、estimate_extrinsic:2 在线标定（调试中） |
+| `px4ctrl/launch/run_ctrl_sitl_vins.launch`（新增） | SITL+仿真 VINS 版控制：odom←/vins_estimator/imu_propagate；EKF2 版 run_ctrl_sitl.launch 永远可用 |
+| `planner/plan_manage/launch/run_planner_sitl_vins.launch`（新增） | EGO-Planner SITL+VINS 版：odom←imu_propagate、深度←iris_stereo_vins 模型话题 |
+| `launch/sim_vins.launch`（新增） | 仿真 VINS 入口：vins_node + vins_to_mavros（喂 /mavros/vision_pose/pose，照实机链路） |
+| `sitl_sim/models/{iris_stereo_vins,stereo_vins_rig}/`（新增） | A7 模型副本（安装到 PX4 models 目录 + sitl_targets_gazebo-classic.cmake 注册 + airframes 1090 + build rootfs 拷贝，见 README §6） |
+| `sitl_sim/start_sitl_vins.sh`（新增） | iris_stereo_vins 模型启动（同 start_sitl_depth 五坑处理） |
 | `worlds/sitl_world_obstacles.world`（新增） | 避障测试 world：3 个静态箱（odom 系坐标表见文件头注释）；安装=复制到 PX4 sitl_gazebo-classic/worlds/，启动=SITL_WORLD=sitl_world_obstacles 配合 start_sitl_depth.sh；physics 必须 0.004s/250Hz（PX4 lockstep 硬约束） |
 | `gzserver_wrapper.sh`（新增） | gzserver 包装脚本，附加 libgazebo_ros_api_plugin.so（noetic 传感器插件依赖全局 ros::init）；由 start_sitl_depth.sh 经 PATH 前置生效，不改 PX4 上游 |
 
