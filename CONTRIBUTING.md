@@ -20,9 +20,10 @@
 ## 3. 同步纪律（及时更新）
 
 - **开始工作时**：`git fetch && git pull --rebase`，基于最新 main 干活。
-- **结束会话时**：当次改动必须 commit 并 push；当天没推的工作视为未完成。
+- **完成一个工作单元就推送**：每完成一个提交（一个功能/修复/文档单元）立即 `git push`，禁止积压多个提交攒一次推。
+- **结束会话时**：不允许存在未提交/未推送的改动。
 - 长时间工作中每 1 小时至少 `git fetch` 一次，避免与他人冲突积累。
-- push 后用 `git ls-remote origin refs/heads/main`（或 GitHub API）确认远端 SHA 与本地一致，才算完成。
+- push 后用 `git ls-remote UAV_NUC refs/heads/main`（或 GitHub API）确认远端 SHA 与本地一致，才算完成。
 
 ## 4. 实机与仿真边界（安全底线）
 
