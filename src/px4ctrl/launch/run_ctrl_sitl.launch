@@ -1,0 +1,16 @@
+<launch>
+	<!-- PX4 SITL 专用。与 run_ctrl.launch 的唯一差异：~odom 指向 EKF2 的本地位置，
+	     而不是 /vins_estimator/imu_propagate（SITL 里没有 VINS）。
+
+	     node name 必须保持 "px4ctrl"，否则源码里 nh("~") 解析出的私有话题名会变，
+	     /px4ctrl/takeoff_land 就对不上了。 -->
+	<node pkg="px4ctrl" type="px4ctrl_node" name="px4ctrl" output="screen">
+
+		<!-- SITL：odom 用 mavros 的本地位置（EKF2 输出，ENU，frame_id=map） -->
+		<remap from="~odom" to="/mavros/local_position/odom" />
+
+		<remap from="~cmd" to="/position_cmd" />
+
+		<rosparam command="load" file="$(find px4ctrl)/config/ctrl_param_sitl.yaml" />
+	</node>
+</launch>
