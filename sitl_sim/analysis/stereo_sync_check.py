@@ -470,9 +470,16 @@ def report(res, frames, dy_series, w_norm, static, res_l, res_r, votes,
     c4 = res["checks"]["4_xcorr"]
 
     def ratio(m_s, m_m):
-        if not np.isfinite(m_s) or m_s <= 1e-6 or not np.isfinite(m_m):
-            return float("inf") if (np.isfinite(m_m) and m_m > 1e-6) else float("nan")
+        # 静止基线缺失(nan)时不可比 → 返回 nan（不能当 ∞ 判异常，
+        # bag-C 无静止段时曾把 nan 基线误判成比值无穷大）
+        if not np.isfinite(m_s) or not np.isfinite(m_m):
+            return float("nan")
+        if m_s <= 1e-6:
+            return float("inf") if m_m > 1e-6 else float("nan")
         return m_m / m_s
+
+    def flagged(r):
+        return np.isfinite(r) and r > HA_RATIO
 
     r1 = ratio(c1["dy_rms_static"]["mean"], c1["dy_rms_motion"]["mean"])
     r2 = ratio(c2["median_step_static"]["mean"], c2["median_step_motion"]["mean"])
@@ -481,11 +488,17 @@ def report(res, frames, dy_series, w_norm, static, res_l, res_r, votes,
     r3r = ratio(c3["residual_rms_right_static"]["mean"],
                 c3["residual_rms_right_motion"]["mean"])
     verdicts = {
-        "1_epipolar": r1 > HA_RATIO and abs(c1["corr_dy_vs_gyro"] or 0) > 0.5,
-        "2_disparity": r2 > HA_RATIO,
-        "3_flow_imu": max(r3l, r3r) > HA_RATIO or (c3["lr_residual_corr"] or 1) < -0.3,
-        "4_xcorr": (c4["lag_vote_rate_motion"] or 0) > max(
-            0.10, 3 * (c4["lag_vote_rate_static"] or 0)),
+        "1_epipolar": flagged(r1) and abs(c1["corr_dy_vs_gyro"] or 0) > 0.5,
+        "2_disparity": flagged(r2),
+        # 检验3 裁决按任务书签名：单目滞后 → 左右残差谱反相（corr<0）。
+        # 运动段比值大但同相(+corr)=平移流主导（陀螺预测只含旋转分量），
+        # 属正常非错拍（bag-A 实测 19 倍但 corr=+0.98，曾致规则误报）
+        "3_flow_imu": (c3["lr_residual_corr"] or 1) < -0.3,
+        # 检验4: 静止段图像近恒同 → NCC 平票（~0.5 噪声底），只看运动段
+        # 显著错拍且高于静止 2 倍
+        "4_xcorr": (c4["lag_vote_rate_motion"] or 0) > 0.10 and
+        (c4["lag_vote_rate_motion"] or 0) >
+        2 * max(c4["lag_vote_rate_static"] or 0, 0.01),
     }
     n_pos = sum(verdicts.values())
     ha = "证实" if n_pos >= 1 else "排除"

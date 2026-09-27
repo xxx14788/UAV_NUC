@@ -54,18 +54,17 @@ def load_traj(bag, topic):
 
 
 def load_gt_model_states(bag, name_substr="iris"):
-    """/gazebo/model_states → iris 模型轨迹。"""
+    """/gazebo/model_states → iris 模型轨迹（无 header，时间用 bag 到达时间）。
+    2026-09-27 实测 SITL EKF2 odom 与真值差 1.3~1.5m，VINS 的 ATE 评估
+    必须以 model_states 为真值（EKF2 仅在无 model_states 时兜底）。"""
     import rosbag
-    from gazebo_msgs.msg import ModelStates  # noqa: F401 消息类型确认
     t, p, q = [], [], []
     with rosbag.Bag(bag, "r") as b:
-        for _, msg, _st in b.read_messages(
+        for _, msg, t_arr in b.read_messages(
                 topics=["/gazebo/model_states"]):
             for i, nm in enumerate(msg.name):
                 if name_substr in nm:
-                    t.append(msg.header.stamp.to_sec()
-                             if hasattr(msg, "header") and msg.header.stamp.to_sec() > 0
-                             else None)
+                    t.append(t_arr.to_sec())
                     p.append([msg.pose[i].position.x, msg.pose[i].position.y,
                               msg.pose[i].position.z])
                     o = msg.pose[i].orientation
@@ -73,13 +72,10 @@ def load_gt_model_states(bag, name_substr="iris"):
                     break
     if not t:
         return None
-    # model_states 无 header 时用 bag 时间；这里改用消息到达序不可靠，
-    # gz 插件通常带 stamp，为空则由调用方回退
-    t = np.array([x if x is not None else np.nan for x in t], dtype=float)
-    if np.isnan(t).any():
-        return None
-    out = {"t": t, "p": np.array(p), "q": np.array(q)}
-    return out
+    t = np.array(t)
+    if np.any(np.diff(t) <= 0):
+        t = np.maximum.accumulate(t)  # 防御: 到达时间理论单调
+    return {"t": t, "p": np.array(p), "q": np.array(q)}
 
 
 def bag_has(bag, topic):
