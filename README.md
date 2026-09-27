@@ -76,6 +76,9 @@
 | `launch/sim_vins.launch`（新增） | 仿真 VINS 入口：vins_node + vins_to_mavros（喂 /mavros/vision_pose/pose，照实机链路） |
 | `sitl_sim/models/{iris_stereo_vins,stereo_vins_rig}/`（新增） | A7 模型副本（安装到 PX4 models 目录 + sitl_targets_gazebo-classic.cmake 注册 + airframes 1090 + build rootfs 拷贝，见 README §6） |
 | `sitl_sim/start_sitl_vins.sh`（新增） | iris_stereo_vins 模型启动（同 start_sitl_depth 五坑处理） |
+| `VINS-Fusion/vins_estimator/src/estimator/estimator.cpp/.h` | T2-W4 修复：①stereo+IMU 初始化质量门（原版窗口满即无条件完成，PnP 失败帧静默沿用废姿态→首帧 odometry 天文数字），前置查 bias/状态+后置查状态，不合格经 reinit_request 完全重启 ②failureDetection 启用（原版首行 return false 整个检测为死代码）+状态幅值判据 ③all_image_frame 拷贝循环加边界（越界写） |
+| `VINS-Fusion/vins_estimator/src/estimator/feature_manager.cpp` | T2-W4：solvePoseByPnP 启用 RANSAC 版（上游注释掉的原选），抗退化三角化点 |
+| `VINS-Fusion/vins_estimator/src/featureTracker/feature_tracker.cpp` | T2-W4：立体视差下限 1px 过滤（零视差错配→深度 e17→PnP e33 链路掐断） |
 | `vins_to_mavros/src/vins_to_mavros_node.cpp` | T2-W4 健康门控：相邻帧跳变>1m 或速度>5m/s 停止转发 /mavros/vision_pose/pose 并 ROS_ERROR，连续 20 帧平稳自动恢复；阈值 rosparam（~gate_pos_jump/gate_vel/gate_stable_frames/gate_enabled）。2026-09-26 翻机事故防线，sitl_sim/analysis/vins_gate_test.py 集成单测通过 |
 | `worlds/sitl_world_obstacles.world`（新增） | 避障测试 world：3 个静态箱（odom 系坐标表见文件头注释）；安装=复制到 PX4 sitl_gazebo-classic/worlds/，启动=SITL_WORLD=sitl_world_obstacles 配合 start_sitl_depth.sh；physics 必须 0.004s/250Hz（PX4 lockstep 硬约束） |
 | `gzserver_wrapper.sh`（新增） | gzserver 包装脚本，附加 libgazebo_ros_api_plugin.so（noetic 传感器插件依赖全局 ros::init）；由 start_sitl_depth.sh 经 PATH 前置生效，不改 PX4 上游 |
