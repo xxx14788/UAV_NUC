@@ -56,6 +56,7 @@ class Estimator
 
     // internal
     void clearState();
+    bool reinit_request{false};  // T2-W4: 初始化质量门请求的完全重启标志
     bool initialStructure();
     bool visualInitialAlign();
     bool relativePose(Matrix3d &relative_R, Vector3d &relative_T, int &l);

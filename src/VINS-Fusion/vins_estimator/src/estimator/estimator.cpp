@@ -271,6 +271,15 @@ void Estimator::processMeasurements()
 {
     while (1)
     {
+        // T2-W4: 初始化质量门请求的完全重启（本处不持 mProcess 锁，
+        // clearState 安全；部分内联重置实测会留毒状态槽）
+        if (reinit_request)
+        {
+            reinit_request = false;
+            clearState();
+            setParameter();
+            continue;
+        }
         //printf("process measurments\n");
         pair<double, map<int, vector<pair<int, Eigen::Matrix<double, 7, 1> > > > > feature;
         vector<pair<double, Eigen::Vector3d>> accVector, gyrVector;
@@ -486,22 +495,107 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
             {
                 map<double, ImageFrame>::iterator frame_it;
                 int i = 0;
-                for (frame_it = all_image_frame.begin(); frame_it != all_image_frame.end(); frame_it++)
+                for (frame_it = all_image_frame.begin(); frame_it != all_image_frame.end() && i <= WINDOW_SIZE; frame_it++)
                 {
                     frame_it->second.R = Rs[i];
                     frame_it->second.T = Ps[i];
                     i++;
                 }
                 solveGyroscopeBias(all_image_frame, Bgs);
+                // T2-W4 init quality gate (2026-09-27): stereo+IMU 原版窗口满即
+                // 无条件宣布初始化完成；PnP 失败帧静默沿用废姿态时优化从垃圾
+                // 初值出发，首帧 odometry 即天文数字（2026-09-26 A7 崩溃，
+                // E20×bag-B 重放首帧 5.9e17 实测复现）。前置门控：bias/状态
+                // 不合理直接重置，不让垃圾进求解器（实测偏置 -114511 进
+                // optimization 后线程挂死）。
+                bool init_sane = Bgs[WINDOW_SIZE].allFinite() &&
+                                 Bgs[WINDOW_SIZE].norm() < 0.5 &&
+                                 Bas[WINDOW_SIZE].norm() < 1.0;
+                for (int i = 0; init_sane && i <= WINDOW_SIZE; i++)
+                {
+                    if (!Ps[i].allFinite() || !Vs[i].allFinite() ||
+                        !Rs[i].allFinite() ||
+                        Ps[i].norm() > 1e3 || Vs[i].norm() > 50.0)
+                    {
+                        init_sane = false;
+                        break;
+                    }
+                }
+                if (!init_sane)
+                {
+                    double max_p = 0, max_v = 0;
+                    for (int i = 0; i <= WINDOW_SIZE; i++)
+                    {
+                        max_p = max(max_p, Ps[i].norm());
+                        max_v = max(max_v, Vs[i].norm());
+                    }
+                    double mx_p = 0, mx_v = 0; int bad_i = -1;
+                    for (int i = 0; i <= WINDOW_SIZE; i++)
+                        if (Ps[i].norm() > mx_p) { mx_p = Ps[i].norm(); bad_i = i; }
+                    for (int i = 0; i <= WINDOW_SIZE; i++)
+                        mx_v = max(mx_v, Vs[i].norm());
+                    ROS_WARN("gate reject: |Bgs|=%.3g mxP=%.3g(mxV=%.3g,i=%d) bias_ok=%d",
+                             Bgs[WINDOW_SIZE].norm(), mx_p, mx_v, bad_i,
+                             (int)(Bgs[WINDOW_SIZE].allFinite() && Bgs[WINDOW_SIZE].norm() < 0.5));
+                    reinit_request = true;
+                    return;
+                }
                 for (int i = 0; i <= WINDOW_SIZE; i++)
                 {
                     pre_integrations[i]->repropagate(Vector3d::Zero(), Bgs[i]);
                 }
                 optimization();
-                updateLatestStates();
-                solver_flag = NON_LINEAR;
-                slideWindow();
-                ROS_INFO("Initialization finish!");
+                bool init_sane_post = true;
+                for (int i = 0; i <= WINDOW_SIZE; i++)
+                {
+                    if (!Ps[i].allFinite() || !Vs[i].allFinite() ||
+                        !Rs[i].allFinite() ||
+                        Ps[i].norm() > 1e3 || Vs[i].norm() > 50.0)
+                    {
+                        init_sane_post = false;
+                        break;
+                    }
+                }
+                if (init_sane_post)
+                {
+                    updateLatestStates();
+                    solver_flag = NON_LINEAR;
+                    slideWindow();
+                    ROS_INFO("Initialization finish!");
+                }
+                else
+                {
+                    ROS_WARN("stereo init post-optimization states insane, re-init");
+                    reinit_request = true;
+                    return;
+                    // 不能调 clearState（内部抢 mProcess 锁）也不能 return
+                    // （会把 processMeasurements 的 while(1) 线程整个退掉，
+                    // 首次实测复现：拒绝后 45s 零输出）。内联重置初始化上下文，
+                    // 保留 tic/ric 外参与 IMU 连续性，重攒窗口后自然重试。
+                    all_image_frame.clear();
+                    frame_count = 0;
+                    initFirstPoseFlag = false;
+                    inputImageCnt = 0;
+                    sum_of_back = 0;
+                    sum_of_front = 0;
+                    for (int i = 0; i <= WINDOW_SIZE; i++)
+                    {
+                        Rs[i].setIdentity();
+                        Ps[i].setZero();
+                        Vs[i].setZero();
+                        Bas[i].setZero();
+                        Bgs[i].setZero();
+                        dt_buf[i].clear();
+                        linear_acceleration_buf[i].clear();
+                        angular_velocity_buf[i].clear();
+                        if (pre_integrations[i] != nullptr)
+                        {
+                            delete pre_integrations[i];
+                        }
+                        pre_integrations[i] = nullptr;
+                    }
+                    f_manager.clearState();
+                }
             }
         }
 
@@ -954,7 +1048,17 @@ void Estimator::double2vector()
 
 bool Estimator::failureDetection()
 {
-    return false;
+    // T2-W4 (2026-09-27): 原版首行 return false 使整个失败检测成为死代码，
+    // e17 级状态一路外送（E20×bag-B/C/E 重放实测）。启用原有判据并补充
+    // 状态幅值检查（与初始化质量门同判据，防 init 后首帧优化即发散）。
+    if (!Ps[WINDOW_SIZE].allFinite() || !Vs[WINDOW_SIZE].allFinite() ||
+        !Rs[WINDOW_SIZE].allFinite() ||
+        Ps[WINDOW_SIZE].norm() > 1e3 || Vs[WINDOW_SIZE].norm() > 50.0)
+    {
+        ROS_WARN("insane states: |P|=%.3g |V|=%.3g, reboot",
+                 Ps[WINDOW_SIZE].norm(), Vs[WINDOW_SIZE].norm());
+        return true;
+    }
     if (f_manager.last_track_num < 2)
     {
         ROS_INFO(" little feature %d", f_manager.last_track_num);

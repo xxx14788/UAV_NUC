@@ -228,6 +228,15 @@ map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> FeatureTracker::trackIm
                 }
             }
 
+            // T2-W4 (2026-09-27): 立体视差下限过滤。LK 在远景/弱纹理上会把
+            // 右目匹配锁到同坐标（视差≈0），三角化深度→1e17，PnP 帧姿态
+            // 直接爆到 e33（bag-B 初始化窗口实测），RANSAC 也救不了全坏点。
+            // 视差 < 1px 的右匹配按失配处理（特征退化为单目跟踪）。
+            for(size_t i = 0; i < status.size(); i++)
+            {
+                if(status[i] && fabs(cur_pts[i].x - cur_right_pts[i].x) < 1.0)
+                    status[i] = 0;
+            }
             ids_right = ids;
             reduceVector(cur_right_pts, status);
             reduceVector(ids_right, status);

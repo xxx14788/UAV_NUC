@@ -234,8 +234,12 @@ bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P,
     cv::eigen2cv(P_initial, t);
     cv::Mat K = (cv::Mat_<double>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);  
     bool pnp_succ;
-    pnp_succ = cv::solvePnP(pts3D, pts2D, K, D, rvec, t, 1);
-    //pnp_succ = solvePnPRansac(pts3D, pts2D, K, D, rvec, t, true, 100, 8.0 / focalLength, 0.99, inliers);
+    // T2-W4 (2026-09-27): 改用 RANSAC 版 PnP。裸 solvePnP 会被退化立体
+    // 三角化点（零视差→深度 1e17）带偏，帧姿态直接天文数字（bag-B 初始化
+    // 窗口 |P|=8e17 实测），下游全灭。RANSAC 外点剔除是上游注释掉的原选。
+    cv::Mat pnp_inliers;
+    pnp_succ = cv::solvePnPRansac(pts3D, pts2D, K, D, rvec, t, 1,
+                                  100, 8.0 / 460.0, 0.99, pnp_inliers);
 
     if(!pnp_succ)
     {
