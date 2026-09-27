@@ -205,6 +205,7 @@ State_Data_t::State_Data_t()
 
 void State_Data_t::feed(mavros_msgs::StateConstPtr pMsg)
 {
+    rcv_stamp = ros::Time::now(); // T1-W1: FCU 链路活性
 
     current_state = *pMsg;
 }

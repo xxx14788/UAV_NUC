@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include "PX4CtrlFSM.h"
 #include <signal.h>
+#include <std_msgs/String.h>
 
 void mySigintHandler(int sig)
 {
@@ -81,6 +82,7 @@ int main(int argc, char *argv[])
     fsm.traj_start_trigger_pub = nh.advertise<geometry_msgs::PoseStamped>("/traj_start_trigger", 10);
 
     fsm.debug_pub = nh.advertise<quadrotor_msgs::Px4ctrlDebug>("/debugPx4ctrl", 10); // debug
+    fsm.fsm_state_pub = nh.advertise<std_msgs::String>("/debugPx4ctrl/fsm_state", 10); // T1-W1: FSM 状态自监视
 
     // Read control mode: true = send PositionTarget (PX4 runs pos/vel PID), false = send AttitudeTarget (px4ctrl runs pos/vel PID)
     nh.param("use_px4_position_ctrl", fsm.use_px4_position_ctrl, true);
@@ -119,7 +121,9 @@ int main(int argc, char *argv[])
             ROS_ERROR("Unable to connnect to PX4!!!");
     }
 
-    ros::Rate r(param.ctrl_freq_max);
+    // T1-W1 F5: WallRate 而非 Rate —— 免疫 SITL 重启的 /clock 归零倒跳
+    // (sim-time Rate 会把周期终点锚定在旧会话高值,主循环冻结 = 旧会话 sim 时长)
+    ros::WallRate r(param.ctrl_freq_max);
     while (ros::ok())
     {
         r.sleep();

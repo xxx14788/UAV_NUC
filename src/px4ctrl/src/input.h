@@ -85,6 +85,7 @@ class State_Data_t
 public:
   mavros_msgs::State current_state;
   mavros_msgs::State state_before_offboard;
+  ros::Time rcv_stamp; // T1-W1: /mavros/state 到达时刻,FCU 链路活性判据
 
   State_Data_t();
   void feed(mavros_msgs::StateConstPtr pMsg);

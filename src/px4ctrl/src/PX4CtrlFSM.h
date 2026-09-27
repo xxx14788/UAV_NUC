@@ -24,6 +24,7 @@ struct AutoTakeoffLand_t
 	
 	static constexpr double MOTORS_SPEEDUP_TIME = 3.0; // motors idle running for 3 seconds before takeoff
 	static constexpr double DELAY_TRIGGER_TIME = 2.0;  // Time to be delayed when reach at target height
+	static constexpr double TAKEOFF_ABORT_TIMEOUT = 10.0; // T1-W1: 电机加速后仍 disarmed 且未离地这么久则放弃起飞
 };
 
 class PX4CtrlFSM
@@ -46,6 +47,7 @@ public:
 	ros::Publisher ctrl_FCU_pub;
 	ros::Publisher ctrl_FCU_pos_pub; // PositionTarget publisher for PX4 internal control
 	ros::Publisher debug_pub; //debug
+	ros::Publisher fsm_state_pub; // T1-W1: 1Hz FSM 状态自监视
 
 	bool use_px4_position_ctrl{true}; // true: send PositionTarget (PX4 runs pos/vel PID), false: send AttitudeTarget (px4ctrl runs pos/vel PID)
 	ros::ServiceClient set_FCU_mode_srv;
@@ -76,6 +78,7 @@ public:
 	bool recv_new_odom();
 	State_t get_state() { return state; }
 	bool get_landed() { return takeoff_land.landed; }
+	static std::string state2str(State_t s); // T1-W1: 状态名输出,自监视用
 
 private:
 	State_t state; // Should only be changed in PX4CtrlFSM::process() function!

@@ -1,5 +1,6 @@
 #include "PX4CtrlFSM.h"
 #include <uav_utils/converters.h>
+#include <std_msgs/String.h>
 
 using namespace std;
 using namespace uav_utils;
@@ -42,6 +43,25 @@ void PX4CtrlFSM::process()
 	Controller_Output_t u;
 	Desired_State_t des(odom_data);
 	bool rotor_low_speed_during_land = false;
+
+	// STEP0: FCU 链路活性自愈(T1-W1 F3)。
+	// 上游 FSM 在 FCU 重启(state/odom 流冻结)时,AUTO_TAKEOFF/AUTO_HOVER/AUTO_LAND 无出口,
+	// 对 /px4ctrl/takeoff_land 完全静默。仅当 /mavros/state 流断开 >3s 且 disarmed 时,
+	// 重置到干净的 MANUAL_CTRL(armed 态一个字节不改,安全红线)。
+	if (!state_data.current_state.armed &&
+	    state_data.rcv_stamp != ros::Time(0) &&
+	    state != MANUAL_CTRL &&
+	    (now_time - state_data.rcv_stamp).toSec() > 3.0)
+	{
+		state = MANUAL_CTRL;
+		takeoff_land_data.triggered = false;
+		cmd_data.rcv_stamp = ros::Time(0); // 强制 cmd 过期,重进 AUTO_HOVER 前置检查干净
+		controller.resetThrustMapping();
+		set_hov_with_odom();
+		// 不调 toggle_offboard_mode(false):链路已断,服务调用只会阻塞后失败
+		ROS_WARN("[px4ctrl] FCU state stream lost for %.1fs while disarmed, FSM reset to MANUAL_CTRL.",
+		         (now_time - state_data.rcv_stamp).toSec());
+	}
 
 	// STEP1: state machine runs
 	switch (state)
@@ -117,7 +137,13 @@ void PX4CtrlFSM::process()
 			state = AUTO_TAKEOFF;
 			controller.resetThrustMapping();
 			set_start_pose_for_takeoff_land(odom_data);
-			toggle_offboard_mode(true);				  // toggle on offboard before arm
+			if (!toggle_offboard_mode(true)) // toggle on offboard before arm (T1-W1 F1: 失败必须回退,否则封死在无出口的 AUTO_TAKEOFF)
+			{
+				state = MANUAL_CTRL;
+				takeoff_land_data.triggered = false;
+				ROS_ERROR("[px4ctrl] AUTO_TAKEOFF aborted: OFFBOARD rejected (FCU link busy/rebooting), back to MANUAL_CTRL. Retry takeoff.");
+				break;
+			}
 			for (int i = 0; i < 10 && ros::ok(); ++i) // wait for 0.1 seconds to allow mode change by FMU // mark
 			{
 				ros::Duration(0.01).sleep();
@@ -222,6 +248,18 @@ void PX4CtrlFSM::process()
 
 	case AUTO_TAKEOFF:
 	{
+		// T1-W1 F2: 起飞看门狗 — 电机加速结束后这么久仍 disarmed 且未离地,说明起飞从未推进
+		// (ARM 被拒 / FCU 重启)。回退 MANUAL_CTRL。armed 态不受影响。
+		if ((now_time - takeoff_land.toggle_takeoff_land_time).toSec() >
+			    AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME + AutoTakeoffLand_t::TAKEOFF_ABORT_TIMEOUT &&
+		    !state_data.current_state.armed &&
+		    odom_data.p(2) < takeoff_land.start_pose(2) + 0.3)
+		{
+			state = MANUAL_CTRL;
+			toggle_offboard_mode(false);
+			ROS_ERROR("[px4ctrl] AUTO_TAKEOFF timeout (disarmed & not airborne), back to MANUAL_CTRL. Retry takeoff.");
+			break;
+		}
 		if ((now_time - takeoff_land.toggle_takeoff_land_time).toSec() < AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME) // Wait for several seconds to warn prople.
 		{
 			des = get_rotor_speed_up_des(now_time);
@@ -348,6 +386,22 @@ void PX4CtrlFSM::process()
 	rc_data.enter_command_mode = false;
 	rc_data.toggle_reboot = false;
 	takeoff_land_data.triggered = false;
+
+	// STEP7: 1Hz FSM 自监视(T1-W1 F4)
+	static ros::Time last_fsm_state_pub_time(0);
+	if ((now_time - last_fsm_state_pub_time).toSec() > 1.0 && fsm_state_pub)
+	{
+		std_msgs::String fsm_msg;
+		fsm_msg.data = state2str(state) +
+		               " triggered=" + (takeoff_land_data.triggered ? "1" : "0") +
+		               " state_recv=" + ((now_time - state_data.rcv_stamp).toSec() < 3.0 ? "1" : "0") +
+		               " odom_recv=" + (odom_is_received(now_time) ? "1" : "0") +
+		               " cmd_recv=" + (cmd_is_received(now_time) ? "1" : "0") +
+		               " landed=" + (get_landed() ? "1" : "0") +
+		               " armed=" + (state_data.current_state.armed ? "1" : "0");
+		fsm_state_pub.publish(fsm_msg);
+		last_fsm_state_pub_time = now_time;
+	}
 }
 
 void PX4CtrlFSM::motors_idling(const Imu_Data_t &imu, Controller_Output_t &u)
@@ -544,6 +598,19 @@ bool PX4CtrlFSM::recv_new_odom()
 	}
 
 	return false;
+}
+
+std::string PX4CtrlFSM::state2str(State_t s)
+{
+	switch (s)
+	{
+	case MANUAL_CTRL: return "MANUAL_CTRL";
+	case AUTO_HOVER: return "AUTO_HOVER";
+	case CMD_CTRL: return "CMD_CTRL";
+	case AUTO_TAKEOFF: return "AUTO_TAKEOFF";
+	case AUTO_LAND: return "AUTO_LAND";
+	default: return "UNKNOWN";
+	}
 }
 
 void PX4CtrlFSM::publish_bodyrate_ctrl(const Controller_Output_t &u, const ros::Time &stamp)
