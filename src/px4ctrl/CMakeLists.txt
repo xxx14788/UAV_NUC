@@ -47,3 +47,11 @@ target_link_libraries(px4ctrl_node
 catkin_install_python(PROGRAMS thrust_calibrate_scrips/thrust_calibrate.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+# T3-W9: 姿态合成纯函数 gtest 单测（attitude_utils.h，无 ROS 依赖）
+if(CATKIN_ENABLE_TESTING)
+  include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
+  catkin_add_gtest(test_controller_attitude
+    test/test_controller_attitude.cpp)
+  target_link_libraries(test_controller_attitude ${catkin_LIBRARIES})
+endif()

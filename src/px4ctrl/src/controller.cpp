@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "attitude_utils.h"
 
 using namespace std;
 
@@ -43,20 +44,10 @@ LinearControl::calculateControl(const Desired_State_t &des,
          参与，无 ±180deg 绕环奇异。
          zb.z 下限护栏（0.1g）：des_acc.z<0（向下加速需求超重力，如强过冲）时
          老式小角度公式退化为近水平姿态，本式若不钳制会构造倒扣姿态。 */
-      Eigen::Vector3d zb = des_acc;
-      if (zb(2) < 0.1 * param_.gra)
-        zb(2) = 0.1 * param_.gra;
-      zb.normalize();
-      Eigen::Vector3d xc(std::cos(des.yaw), std::sin(des.yaw), 0.0);
-      Eigen::Vector3d yb = zb.cross(xc);
-      if (yb.norm() < 1e-3) // 倾角近 90deg 且朝向航向的退化情形，兜底防 NaN
-        yb = zb.cross(Eigen::Vector3d::UnitX());
-      yb.normalize();
-      Eigen::Matrix3d R_des;
-      R_des.col(0) = yb.cross(zb);
-      R_des.col(1) = yb;
-      R_des.col(2) = zb;
-      Eigen::Quaterniond q(R_des);
+      // W9: 公式本体抽取到 attitude_utils.h（gtest 单测覆盖 + NaN 防护加固），
+      // 行为与 0de090e 内联版一致（护栏/退化兜底/构造次序均不变）。
+      Eigen::Quaterniond q =
+          px4ctrl_att::attitudeFromAccel(des_acc, des.yaw, param_.gra);
       u.q = imu.q * odom.q.inverse() * q;
 
 
