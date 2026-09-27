@@ -1,0 +1,43 @@
+total MAVLink2 frames=6000 duration=21.2s
+  14580->14540 msgid=30(ATTITUDE) n=1391 rate=65.7/s payload_lens={28: 1391}
+  14580->14540 msgid=105(HIGHRES_IMU) n=750 rate=35.4/s payload_lens={61: 392, 62: 358}
+  14580->14540 msgid=31(ATTITUDE_QUATERNION) n=695 rate=32.8/s payload_lens={32: 695}
+  14580->14540 msgid=33(?) n=646 rate=30.5/s payload_lens={28: 646}
+  14580->14540 msgid=32(LOCAL_POSITION_NED) n=433 rate=20.4/s payload_lens={28: 433}
+  14580->14540 msgid=331(ODOMETRY) n=433 rate=20.4/s payload_lens={232: 433}
+  14580->14540 msgid=111(TIMESYNC) n=174 rate=8.2/s payload_lens={13: 160, 18: 24, 12: 37}
+  14580->14540 msgid=141(ALTITUDE) n=150 rate=7.1/s payload_lens={32: 150}
+  14580->14540 msgid=290(ESC_INFO) n=150 rate=7.1/s payload_lens={46: 150}
+  14580->14540 msgid=291(ESC_STATUS) n=149 rate=7.0/s payload_lens={40: 146, 3: 3}
+  14580->14540 msgid=36(SERVO_OUTPUT_RAW) n=149 rate=7.0/s payload_lens={37: 149}
+  14580->14540 msgid=83(ATTITUDE_TARGET) n=145 rate=6.8/s payload_lens={36: 145}
+  14580->14540 msgid=85(POSITION_TARGET_LOCAL_NED) n=145 rate=6.8/s payload_lens={51: 145}
+  14580->14540 msgid=74(VFR_HUD) n=145 rate=6.8/s payload_lens={17: 129, 12: 5, 18: 9, 16: 2}
+  14580->14540 msgid=245(EXTENDED_SYS_STATE) n=74 rate=3.5/s payload_lens={2: 74}
+  14580->14540 msgid=1(SYS_STATUS) n=74 rate=3.5/s payload_lens={40: 74}
+  14540->14580 msgid=111(TIMESYNC) n=47 rate=2.2/s payload_lens={13: 160, 18: 24, 12: 37}
+  14580->14540 msgid=24(GPS_RAW_INT) n=40 rate=1.9/s payload_lens={43: 40}
+  14580->14540 msgid=42(MISSION_CURRENT) n=15 rate=0.7/s payload_lens={6: 15}
+  14580->14540 msgid=410(EVENT) n=15 rate=0.7/s payload_lens={20: 1, 30: 2, 18: 12}
+  14580->14540 msgid=0(?) n=14 rate=0.7/s payload_lens={9: 16}
+  14580->14540 msgid=230(ESTIMATOR_STATUS) n=14 rate=0.7/s payload_lens={42: 13, 41: 1}
+  14580->14540 msgid=441(?) n=14 rate=0.7/s payload_lens={17: 14}
+  14580->14540 msgid=12901(OPEN_DRONE_ID_LOCATION) n=14 rate=0.7/s payload_lens={59: 14}
+  14580->14540 msgid=12904(OPEN_DRONE_ID_SYSTEM) n=14 rate=0.7/s payload_lens={25: 14}
+  14580->14540 msgid=4(PING) n=14 rate=0.7/s payload_lens={9: 13, 3: 1}
+  14580->14540 msgid=29(SCALED_PRESSURE) n=14 rate=0.7/s payload_lens={14: 14}
+  14580->14540 msgid=2(SYSTEM_TIME) n=14 rate=0.7/s payload_lens={10: 14, 3: 2}
+  14580->14540 msgid=8(LINK_NODE_STATUS) n=14 rate=0.7/s payload_lens={18: 11, 21: 2, 17: 1}
+  14580->14540 msgid=22(PARAM_VALUE) n=9 rate=0.4/s payload_lens={25: 9}
+  14580->14540 msgid=380(TIME_ESTIMATE_TO_TARGET) n=7 rate=0.3/s payload_lens={20: 7}
+  14580->14540 msgid=411(CURRENT_EVENT_SEQUENCE) n=6 rate=0.3/s payload_lens={1: 4, 3: 1, 2: 1}
+  14580->14540 msgid=147(BATTERY_STATUS) n=6 rate=0.3/s payload_lens={41: 6}
+  14580->14540 msgid=436(CURRENT_MODE) n=6 rate=0.3/s payload_lens={8: 6}
+  14580->14540 msgid=242(HOME_POSITION) n=6 rate=0.3/s payload_lens={55: 6}
+  14580->14540 msgid=241(VIBRATION) n=6 rate=0.3/s payload_lens={20: 6}
+  14540->14580 msgid=0(?) n=2 rate=0.1/s payload_lens={9: 16}
+  14540->14580 msgid=2(SYSTEM_TIME) n=2 rate=0.1/s payload_lens={10: 14, 3: 2}
+  14540->14580 msgid=76(COMMAND_LONG) n=1 rate=0.0/s payload_lens={30: 1}
+  14580->14540 msgid=148(AUTOPILOT_VERSION) n=1 rate=0.0/s payload_lens={60: 1}
+  14580->14540 msgid=77(COMMAND_ACK) n=1 rate=0.0/s payload_lens={10: 1}
+  14580->14540 msgid=49(GPS_GLOBAL_ORIGIN) n=1 rate=0.0/s payload_lens={15: 1}

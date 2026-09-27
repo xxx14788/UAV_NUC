@@ -28,7 +28,7 @@ pgrep -f "Xvfb :99" >/dev/null || nohup Xvfb :99 -screen 0 1600x1200x24 > "$EV/x
 SITL_WORLD="${SITL_WORLD:-}" nohup bash "$SIM/start_sitl_depth.sh" > "$EV/sitl.log" 2>&1 &
 for i in $(seq 1 60); do pgrep -f "bin/px4" >/dev/null && break; sleep 2; done
 pgrep -f "bin/px4" >/dev/null || { log "px4 未起来"; exit 1; }
-nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14557 > "$EV/mavros.log" 2>&1 &
+nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14580 > "$EV/mavros.log" 2>&1 &
 for i in $(seq 1 60); do timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' && break; sleep 2; done
 nohup roslaunch px4ctrl run_ctrl_sitl.launch > "$EV/px4ctrl.log" 2>&1 &
 for i in $(seq 1 30); do rosnode info px4ctrl >/dev/null 2>&1 && break; sleep 1; done

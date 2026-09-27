@@ -70,7 +70,7 @@ SITL_WORLD=sitl_world_obstacles nohup bash "$SIM/start_sitl_depth.sh" > "$RUN/si
 for i in $(seq 1 60); do pgrep -f "bin/px4" >/dev/null && break; sleep 2; done
 pgrep -f "bin/px4" >/dev/null || fail "px4 120s 未出现"
 
-nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14557 > "$RUN/mavros.log" 2>&1 &
+nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14580 > "$RUN/mavros.log" 2>&1 &
 for i in $(seq 1 60); do
     timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' && break
     sleep 2

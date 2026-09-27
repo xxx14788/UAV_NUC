@@ -179,7 +179,7 @@ sub "9.1 相关进程"
 pgrep -a -f 'gazebo|gzserver|gzclient|px4|mavros|rosmaster|roscore|sim_ws' 2>/dev/null \
   || echo "(无相关进程 —— 干净)"
 
-sub "9.2 监听端口（14540/14557/11311 等被占会冲突）"
+sub "9.2 监听端口（14540/14580/11311 等被占会冲突）"
 run ss -lunp
 run ss -ltnp
 

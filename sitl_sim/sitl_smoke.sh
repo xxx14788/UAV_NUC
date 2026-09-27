@@ -78,7 +78,7 @@ fi
 
 # ---- 2. mavros ----
 if [ "$SKIP_SITL" -eq 0 ]; then
-    nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14557 > "$RUN/mavros.log" 2>&1 &
+    nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14580 > "$RUN/mavros.log" 2>&1 &
 fi
 # 300s 窗:清洁环境 ~30s 连上;退化环境(当日多次重启后)实测 3-8 分钟才连上
 for i in $(seq 1 150); do

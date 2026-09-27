@@ -22,7 +22,7 @@ for round in $(seq 1 "$N"); do
     roscore_up || { nohup roscore >/dev/null 2>&1 & sleep 3; }
     pgrep -f "Xvfb :99" >/dev/null || nohup Xvfb :99 -screen 0 1600x1200x24 >/dev/null 2>&1 &
     nohup bash "$SIM/start_sitl_depth.sh" > "$SIM/t1_evidence/w3_sitl_r${round}.log" 2>&1 &
-    nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14557 > "$SIM/t1_evidence/w3_mavros_r${round}.log" 2>&1 &
+    nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14580 > "$SIM/t1_evidence/w3_mavros_r${round}.log" 2>&1 &
     ok=0
     for i in $(seq 1 60); do
         timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' && { ok=1; break; }; sleep 2
