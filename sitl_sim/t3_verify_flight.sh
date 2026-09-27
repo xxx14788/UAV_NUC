@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
 done
 
 # 传送目标(odom) → gazebo 真值 = odom + (1.01, 0.98)
-SPAWN_OX=6.9; SPAWN_OY=-4.0; SPAWN_YAW_DEG=145.0  # T3 末轮:面向goal方位(原-40背对障碍致盲图穿箱,V2f/V2i实证)
+SPAWN_OX=6.9; SPAWN_OY=-4.0; SPAWN_YAW_DEG=${SPAWN_YAW:-145.0}  # T3 末轮:面向goal方位(原-40背对障碍致盲图穿箱,V2f/V2i实证)
 GX=$(python3 -c "print(f'{$SPAWN_OX+1.01:.3f}')")
 GY=$(python3 -c "print(f'{$SPAWN_OY+0.98:.3f}')")
 GZ=0.08

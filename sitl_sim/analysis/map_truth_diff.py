@@ -80,11 +80,16 @@ def voxelize_points(pts, res=RES):
 
 
 def read_pc2(msg):
-    """PointCloud2 → N×3 xyz（跳过 rgb 字段）。"""
-    fields = {f.name: f for f in msg.fields}
-    if 'x' not in fields:
+    """PointCloud2 → N×3 xyz（按 fields 的 offset/point_step 动态解析）。"""
+    fmap = {f.name: f for f in msg.fields}
+    if 'x' not in fmap or 'y' not in fmap or 'z' not in fmap:
         return np.zeros((0, 3))
-    dt = np.dtype([('x', '<f4'), ('y', '<f4'), ('z', '<f4')])
+    step = msg.point_step
+    dt = np.dtype({'names': ['x', 'y', 'z'],
+                   'formats': ['<f4', '<f4', '<f4'],
+                   'offsets': [fmap['x'].offset, fmap['y'].offset,
+                               fmap['z'].offset],
+                   'itemsize': step})
     arr = np.frombuffer(msg.data, dtype=dt)
     return np.stack([arr['x'], arr['y'], arr['z']], axis=1)
 
@@ -156,7 +161,8 @@ def mode_rebuild(args):
                                                fill=False, ec='red', lw=1.5))
                 ax.set_title('%s t=%.1fs n=%d' % (title, ts - occs[0][0],
                                                   len(data)))
-                ax.set.xlabel('x [m]'); ax.set_ylabel('y [m]')
+                ax.set_xlabel('x [m]')
+                ax.set_ylabel('y [m]')
                 ax.axis('equal')
             fig.tight_layout()
             png = os.path.join(args.out, 'diff_%s_t%.0f.png' %
