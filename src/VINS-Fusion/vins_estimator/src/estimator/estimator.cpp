@@ -508,19 +508,12 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 // E20×bag-B 重放首帧 5.9e17 实测复现）。前置门控：bias/状态
                 // 不合理直接重置，不让垃圾进求解器（实测偏置 -114511 进
                 // optimization 后线程挂死）。
+                // 前置门只查 bias（实测恒 sane；状态检查会拦截到上游
+                // INITIAL 路径遗留的毒槽位 Vs[i]=e25，导致永久重试无法
+                // 初始化——窗口状态交给 optimization 重写后由后置门判定）
                 bool init_sane = Bgs[WINDOW_SIZE].allFinite() &&
                                  Bgs[WINDOW_SIZE].norm() < 0.5 &&
                                  Bas[WINDOW_SIZE].norm() < 1.0;
-                for (int i = 0; init_sane && i <= WINDOW_SIZE; i++)
-                {
-                    if (!Ps[i].allFinite() || !Vs[i].allFinite() ||
-                        !Rs[i].allFinite() ||
-                        Ps[i].norm() > 1e3 || Vs[i].norm() > 50.0)
-                    {
-                        init_sane = false;
-                        break;
-                    }
-                }
                 if (!init_sane)
                 {
                     double max_p = 0, max_v = 0;
