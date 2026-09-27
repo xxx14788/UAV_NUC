@@ -95,11 +95,16 @@ if [ "$SKIP_SITL" -eq 0 ]; then
 fi
 rosnode info px4ctrl >/dev/null 2>&1 || fail "px4ctrl 未起来,见 $RUN/px4ctrl.log"
 sleep 3
-FSM_NOW=$(timeout 3 rostopic echo -n1 /debugPx4ctrl/fsm_state 2>/dev/null | head -1)
+FSM_NOW=""
+for i in 1 2 3; do   # fsm 1Hz,3s 探窗有竞态,重试 3 次(U6.4)
+    FSM_NOW=$(timeout 3 rostopic echo -n1 /debugPx4ctrl/fsm_state 2>/dev/null | head -1)
+    [ -n "$FSM_NOW" ] && break
+    sleep 1
+done
 log "px4ctrl up (fsm: ${FSM_NOW:-<无 fsm_state 话题,旧版二进制?>})"
 
 # ---- 4. 冷 planner ----
-nohup roslaunch ego_planner run_planner_sitl.launch > "$RUN/planner.log" 2>&1 &
+nohup roslaunch ego_planner run_planner_sitl.launch relay_on:=${RELAY_ON:-false} > "$RUN/planner.log" 2>&1 &
 for i in $(seq 1 30); do rosnode list 2>/dev/null | grep -q traj_server && break; sleep 1; done
 rosnode list 2>/dev/null | grep -q traj_server || fail "planner/traj_server 未起来,见 $RUN/planner.log"
 log "planner up (cold)"

@@ -73,11 +73,14 @@
         <param name="depth_image" value="/iris_depth_camera/camera/depth/image_raw" />
         <param name="fx" value="454.6857718666893" />
         <param name="fy" value="454.6857718666893" />
-        <param name="out" value="/iris_depth_camera/camera/depth/camera_info" />
+        <param name="out" value="/iris_depth_camera/camera/depth/camera_info_relay" />
     </node>
     <!-- trajectory server：源码发布绝对话题 /position_cmd，与 px4ctrl ~cmd 对接 -->
     <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
         <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
         <param name="traj_server/time_forward" value="1.0" type="double"/>
+        <!-- T3-W7-Y2: traj_server 起点 yaw 基准用机体实际朝向(经 odom)，
+             仅 SITL launch 传入；实机版 run_planner.launch 不动 -->
+        <param name="traj_server/odom_topic" value="/mavros/local_position/odom"/>
     </node>
 </launch>

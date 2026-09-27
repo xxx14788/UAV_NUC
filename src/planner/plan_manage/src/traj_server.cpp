@@ -24,6 +24,22 @@ int traj_id_;
 double last_yaw_, last_yaw_dot_;
 double time_forward_;
 
+// T3-W7-Y2: 机体当前 yaw 缓存（odom_topic 参数非空时启用），新轨迹起点
+// 的 last_yaw_ 用它重置，替代上一轨迹残留值——消除起点 yaw 硬甩的第二
+// 个来源（残留值与真实机头角的偏差叠加 180deg/s 追赶速率）。实机
+// launch 不传该参数则完全不订阅，行为与上游一致。
+double odom_yaw_ = 0.0;
+bool odom_yaw_valid_ = false;
+std::string odom_topic_;
+
+void odomCallback(const nav_msgs::OdometryConstPtr &msg)
+{
+  const auto &q = msg->pose.pose.orientation;
+  odom_yaw_ = atan2(2 * (q.x * q.y + q.z * q.w),
+                    1 - 2 * (q.y * q.y + q.z * q.z));
+  odom_yaw_valid_ = true;
+}
+
 void bsplineCallback(traj_utils::BsplineConstPtr msg)
 {
   // parse pos traj
@@ -65,13 +81,26 @@ void bsplineCallback(traj_utils::BsplineConstPtr msg)
 
   traj_duration_ = traj_[0].getTimeSum();
 
+  // T3-W7-Y2: 新轨迹到达瞬间把 yaw 目标基准重置为机体当前真实朝向，
+  // 避免从上一轨迹末端残留值追赶路径方向造成的起点偏航瞬态
+  //（W7 实测:V1 轮 58 次 >150deg/s 追赶事件,21.6% replan 伴随,证据
+  //  sitl_sim/analysis/yaw_closure_analysis.py + 台账 W7 节）。
+  if (odom_yaw_valid_)
+  {
+    last_yaw_ = odom_yaw_;
+    last_yaw_dot_ = 0.0;
+  }
+
   receive_traj_ = true;
 }
 
 std::pair<double, double> calculate_yaw(double t_cur, Eigen::Vector3d &pos, ros::Time &time_now, ros::Time &time_last)
 {
   constexpr double PI = 3.1415926;
-  constexpr double YAW_DOT_MAX_PER_SEC = PI;
+  // T3-W7: 180deg/s 上游值允许轨迹起点偏航硬甩（第一层根因,2026-09-26
+  // 两轮+V1 实证 240deg/s 瞬时）；45deg/s 已证致掠射建图侵蚀(run_193052)
+  // 弃用。定版 90deg/s（145deg 掉头 2.8s）。
+  constexpr double YAW_DOT_MAX_PER_SEC = PI / 2;
   // constexpr double YAW_DOT_DOT_MAX_PER_SEC = PI;
   std::pair<double, double> yaw_yawdot(0, 0);
   double yaw = 0;
@@ -254,6 +283,10 @@ int main(int argc, char **argv)
   cmd.kv[2] = vel_gain[2];
 
   nh.param("traj_server/time_forward", time_forward_, -1.0);
+  nh.param<std::string>("traj_server/odom_topic", odom_topic_, "");
+  ros::Subscriber odom_sub;
+  if (!odom_topic_.empty())
+    odom_sub = nh.subscribe(odom_topic_, 10, odomCallback);
   last_yaw_ = 0.0;
   last_yaw_dot_ = 0.0;
 
