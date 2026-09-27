@@ -16,6 +16,8 @@ export DISPLAY=:99
 export VERBOSE_SIM=1                # gzserver --verbose，保留渲染错误可见性
 export PATH="$HOME/sitl_sim:$PATH"  # 前置 gzserver wrapper
 cd "$HOME/PX4-Autopilot" || exit 1
-# SITL_WORLD：可选避障 world（如 sitl_world_obstacles），空则用 empty
+# SITL_WORLD：可选避障 world（如 sitl_world_obstacles），空则用默认 empty。
+# world 选择走 PX4_SITL_WORLD 环境变量(sitl_run.sh 支持;make target 后缀形式
+# v1.17 ninja 报 unknown target,不可用)。★必须显式 export,nohup 管道链才传导★
 export PX4_SITL_WORLD="${SITL_WORLD:-}"
 sleep infinity | HEADLESS=1 exec make px4_sitl gazebo-classic_iris_depth_camera
