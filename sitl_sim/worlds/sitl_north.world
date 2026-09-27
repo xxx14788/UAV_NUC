@@ -1,4 +1,9 @@
 <?xml version="1.0" ?>
+<!-- U4(2026-09-28)磁卫生警告:混用不同 magnetic_field 的 world 会话会让 EKF2 在线学习
+     的地磁偏角在 disarm 时写回 EKF2_MAG_DECL 参数(DECL_TYPE bit1 默认开),污染后续所有会话。
+     已根治:parameters.bson 设 EKF2_DECL_TYPE=1(只用 WMM,禁写回)+EKF2_MAG_DECL=0。
+     若在 PX4 启动后用 param set 改磁参数,必须 param save,否则只写 RAM 不持久(09-27 夜教训)。 -->
+<?xml version="1.0" ?>
 <sdf version="1.5">
   <world name="default">
     <magnetic_field>6.0e-5 0 0</magnetic_field> <!-- T1-W3: 磁北水平分量对齐世界 +X(spawn RPY=0 → yaw=0)。默认值是 gazebo 内建北加州地磁(5.49145e-6 1.33514e-5 -6.05885e-6),水平指向 +Y 侧 67.7°,经 ENU→NED 映射后 spawn yaw≈-90°(2026-09-27 实测 quat z≈-0.703)。若 w3_yaw_check 实测为 ±90/180°,按结果翻转到对应轴。 -->

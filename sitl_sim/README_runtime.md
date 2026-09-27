@@ -65,3 +65,16 @@ rostopic echo /debugPx4ctrl/fsm_state    # 1Hz: 状态名 + triggered/state_recv
   2.7-3.0s(u2loop 曲线),NUC 重启后未复现。**fresh-master 清场(smoke 内置)保留为
   保险不退役**;若白天再现分钟级慢连:先 `ls-remote` 对照当天 boot 数,判定是否回到
   累积态,处置=重启 NUC(有人时段)+ STATUS 记录,不要只做进程级清理(09-27 已证不愈)。
+
+## 8. 磁参数卫生(2026-09-28 U4 定案)
+
+- **写回机制**:EKF2_DECL_TYPE bit1(默认开)在每次 disarm 把 EKF 在线估计的地磁偏角
+  写进 EKF2_MAG_DECL 参数(源码 EKF2.cpp:2751)。混磁 world 会话(SITL 切 world)即污染。
+- **复发实锤**:09-27 夜 23:35 的复位只写 RAM 未 save,当晚 boot 从 bson 恢复 195°+CAL_MAG ID。
+- **根治(已落地)**:bson 设 EKF2_DECL_TYPE=1 + EKF2_MAG_DECL=0(bson 直改;CAL_MAGx_ID
+  保留无害——校准 XOFF 从未写入)。GPS 有效时 WMM 短路 saved DECL,即便污染也不伤飞行;
+  危害仅在 GPS 失效场景。
+- **第二磁力计**:CAL_MAG1_ID=197644=PX4 sensor_mag_sim 第二实例(SIM bus,addr 03;
+  197388=addr 02),gazebo 模型里没有任何 magnetometer(sdf 无该传感器)。
+- **复位姿势**:改磁参数必须 `param save`(或停 SITL 后直改 bson+核验);
+  核验用 `python3 /tmp/bson_read.py` 或 boot 后 param show。

@@ -20,15 +20,24 @@ import rosbag
 cv2.setNumThreads(2)
 
 
-def load_all(bag_path):
+def load_all(bag_path, vins_bag=None):
     vins_t, vins_p, vins_q = [], [], []
     imu_t, imu_a, imu_w = [], [], []
     gt_t, gt_p = [], []
     img_l = []  # (bag_arrival_t, stamp, cvimage)
-    with rosbag.Bag(bag_path, "r") as b:
+    vins_src = vins_bag or bag_path
+    with rosbag.Bag(bag_path, "r") as b, rosbag.Bag(vins_src, "r") as bv:
+        # VINS odometry 单独从 vins_src 读(重放模式)
+        for topic, msg, t in bv.read_messages(topics=["/vins_estimator/odometry"]):
+            vins_t.append(msg.header.stamp.to_sec())
+            pp = msg.pose.pose.position
+            vins_p.append([pp.x, pp.y, pp.z])
+            q = msg.pose.pose.orientation
+            vins_q.append([q.x, q.y, q.z, q.w])
         for topic, msg, t in b.read_messages():
             ta = t.to_sec()
             if topic == "/vins_estimator/odometry":
+                continue
                 vins_t.append(msg.header.stamp.to_sec())
                 p = msg.pose.pose.position
                 vins_p.append([p.x, p.y, p.z])
@@ -68,9 +77,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("bag")
     ap.add_argument("--win", type=float, default=5.0)
+    ap.add_argument("--vins-bag", default=None,
+                    help="VINS 输出所在 bag(重放试验: odom 在私有 master 录制 bag)")
     args = ap.parse_args()
 
-    vt, vp, vq, it, ia, iw, gtt, gtp, imgs = load_all(args.bag)
+    vt, vp, vq, it, ia, iw, gtt, gtp, imgs = load_all(args.bag, args.vins_bag)
     print("VINS odom %d 帧 [%.2f, %.2f]; IMU %d; GT %d; 左目 %d" %
           (len(vt), vt[0], vt[-1], len(it), len(gtt), len(imgs)))
     assert len(vt) > 50, "VINS odometry 样本不足"

@@ -1,0 +1,24 @@
+--- 02:02:14 n1 boot (pre-flight) ---
+CAL_MAG0_ID = value: 
+CAL_MAG0_XOFF = value: 
+CAL_MAG1_ID = value: 
+EKF2_MAG_DECL = value: 
+EKF2_DECL_TYPE = value: 
+--- 02:02:34 n1 flying/hover ---
+CAL_MAG0_ID = value: 
+CAL_MAG0_XOFF = value: 
+CAL_MAG1_ID = value: 
+EKF2_MAG_DECL = value: 
+EKF2_DECL_TYPE = value: 
+--- 02:02:54 n1 post-land (disarm writeback window) ---
+CAL_MAG0_ID = value: 
+CAL_MAG0_XOFF = value: 
+CAL_MAG1_ID = value: 
+EKF2_MAG_DECL = value: 
+EKF2_DECL_TYPE = value: 
+--- 02:03:29 d1 default world boot ---
+CAL_MAG0_ID = value: 
+CAL_MAG0_XOFF = value: 
+CAL_MAG1_ID = value: 
+EKF2_MAG_DECL = value: 
+EKF2_DECL_TYPE = value: 

@@ -2,20 +2,19 @@
 # -*- coding: utf-8 -*-
 """W13-1: 停顿机制分解（T3 续篇任务书 W13 离线件）。
 
-把飞行段的停顿（|v|<0.1m/s 持续>0.5s）与 replan 事件
-（/position_cmd.trajectory_id 变化；/drone_0_planning/bspline 未录制时的
-代理，新录制清单的 bag 可直接换用 bspline 时间轴）对齐统计：
-  - 停顿占比（基线 12.6-24.5%）
-  - 每停顿区间内/近旁的 replan 个数
-  - 停顿起点落在 replan 后多少 ms（正=紧跟 replan，重规划等待型；
-    负且区间内无 replan=轨迹段中停顿，速度规划保守型）
-  - 分类占比：replan-adjacent（区间起点距 replan <0.3s 或区间内含
-    replan）vs mid-trajectory
+用 /gazebo/model_states 真值（与 analyze_flight.py 到位口径一致，
+odom 系 = gazebo − (1.01,0.98)）划分巡航段（goal 发布 → 首次到位
+<0.5m），统计停顿（|v|<0.1m/s 持续>0.5s）与 replan 事件
+（/position_cmd.trajectory_id 变化代理）的对齐：
+  - 停顿占比（P3 基线 12.6-24.5%）
+  - adjacent（停顿邻接 replan <0.3s 或区间内含 replan）= 重规划等待型
+  - mid_traj = 速度规划保守型
 
 用法: python3 stoppage_analysis.py BAG [BAG...] [--t0 S] [--t1 S] [--vth 0.1]
 """
 
 import argparse
+import math
 import sys
 
 import numpy as np
@@ -26,57 +25,64 @@ except ImportError:
     sys.stderr.write("需要 ROS1 环境\n")
     sys.exit(1)
 
+BIRTH = (1.01, 0.98)  # iris 出生 gazebo 偏移
+
 
 def analyze(path, t0, t1, vth, hold=0.5, adj=0.3):
-    cmds, vels = [], []
+    cmds, ts, vv, pos = [], [], [], []
+    goals = []
     with rosbag.Bag(path) as bag:
         lo = bag.get_start_time() + t0
         hi = bag.get_start_time() + t1
         for topic, msg, t in bag.read_messages(
-                topics=['/position_cmd', '/mavros/local_position/odom']):
-            ts = t.to_sec()
-            if not (lo <= ts <= hi):
+                topics=['/position_cmd', '/gazebo/model_states',
+                        '/move_base_simple/goal']):
+            tsx = t.to_sec()
+            if not (lo <= tsx <= hi):
                 continue
             if topic == '/position_cmd':
-                cmds.append((ts, msg.trajectory_id))
+                cmds.append((tsx, msg.trajectory_id))
+            elif topic == '/move_base_simple/goal':
+                goals.append((tsx, msg.pose.position.x, msg.pose.position.y,
+                              msg.pose.position.z))
             else:
-                v = msg.twist.twist.linear
-                vels.append((ts, math_hypot3(v.x, v.y, v.z)))
-    if len(vels) < 50:
+                idx = [k for k, n in enumerate(msg.name) if 'iris' in n]
+                if not idx:
+                    continue
+                i = idx[0]
+                p = msg.pose[i].position
+                w = msg.twist[i].linear
+                ts.append(tsx)
+                vv.append(math.sqrt(w.x**2 + w.y**2 + w.z**2))
+                pos.append((p.x - BIRTH[0], p.y - BIRTH[1], p.z))
+    if len(ts) < 100 or not goals:
         return None
-    tv = np.array([x[0] for x in vels])
-    vv = np.array([x[1] for x in vels])
-    # 飞行段：空中（|z| 无法从这里取——用 odom 全量重读 z）
-    # 飞行窗口 = 连续 z>0.3 的区间（排除地面静置大段污染停顿占比）
-    with rosbag.Bag(path) as bag:
-        zs = [(t.to_sec(), msg.pose.pose.position.z) for _, msg, t in
-              bag.read_messages(topics=['/mavros/local_position/odom'])]
-    tz = np.array([z[0] for z in zs])
-    zz = np.array([z[1] for z in zs])
-    win = []
-    i = 0
-    while i < len(zz):
-        if zz[i] > 0.3:
-            j = i
-            while j + 1 < len(zz) and zz[j + 1] > 0.3:
-                j += 1
-            if tz[j] - tz[i] >= 3.0:
-                win.append((tz[i], tz[j]))
-            i = j + 1
+    ts = np.array(ts)
+    vv = np.array(vv)
+    pos = np.array(pos)
+    # goal 批次：相邻 <10s 为同批（harness 重发），取末批首条为巡航起点
+    goals.sort()
+    batches = [[goals[0]]]
+    for g in goals[1:]:
+        if g[0] - batches[-1][-1][0] < 10.0:
+            batches[-1].append(g)
         else:
-            i += 1
-    if not win:
+            batches.append([g])
+    goal = batches[-1][0]
+    d = np.linalg.norm(pos - np.array(goal[1:]), axis=1)
+    m = ts > goal[0]
+    near = np.where(m & (d < 0.5))[0]
+    if len(near) == 0:
         return None
-    # 取最长空中窗
-    a0, b0 = max(win, key=lambda w: w[1] - w[0])
-    m = (tv >= a0) & (tv <= b0)
-    tv, vv = tv[m], vv[m]
-    dur = tv[-1] - tv[0]
+    b0 = ts[near[0]]
+    a0 = ts[np.searchsorted(ts, goal[0])]
+    w = (ts >= a0) & (ts <= b0)
+    ts_w, vv_w = ts[w], vv[w]
+    dur = ts_w[-1] - ts_w[0]
     if dur < 5:
         return None
 
-    stop = vv < vth
-    # 停顿区间
+    stop = vv_w < vth
     spans = []
     i = 0
     while i < len(stop):
@@ -84,8 +90,8 @@ def analyze(path, t0, t1, vth, hold=0.5, adj=0.3):
             j = i
             while j + 1 < len(stop) and stop[j + 1]:
                 j += 1
-            if tv[j] - tv[i] >= hold:
-                spans.append((tv[i], tv[j]))
+            if ts_w[j] - ts_w[i] >= hold:
+                spans.append((ts_w[i], ts_w[j]))
             i = j + 1
         else:
             i += 1
@@ -95,21 +101,19 @@ def analyze(path, t0, t1, vth, hold=0.5, adj=0.3):
     tid = np.array([c[1] for c in cmds])
     replans = np.asarray(
         tc[np.where(np.diff(tid) != 0)[0] + 1] if len(tc) > 1 else [])
+    replans = replans[(replans >= a0) & (replans <= b0)]
 
     n_adjacent = n_mid = 0
-    gaps = []
     for (a, b) in spans:
-        near = replans[(replans >= a - adj) & (replans <= b + adj)]
-        if len(near) > 0:
+        near_r = replans[(replans >= a - adj) & (replans <= b + adj)] \
+            if len(replans) else []
+        if len(near_r) > 0:
             n_adjacent += 1
-            gaps.append(float(near[0] - a) * 1000)
         else:
             n_mid += 1
-            d = np.min(np.abs(replans - a)) if len(replans) else float('nan')
-            gaps.append(float(d))
 
     return {
-        'bag': path.split('/')[-2],
+        'bag': path.split('/')[-1].replace('flight_', '').replace('.bag', ''),
         'fly_dur_s': round(dur, 1),
         'stop_pct': round(100 * stop_total / dur, 1),
         'n_stops': len(spans),
@@ -117,11 +121,6 @@ def analyze(path, t0, t1, vth, hold=0.5, adj=0.3):
         'mid_traj': n_mid,
         'adj_pct': round(100 * n_adjacent / max(1, len(spans)), 1),
     }
-
-
-def math_hypot3(a, b, c):
-    import math
-    return math.sqrt(a * a + b * b + c * c)
 
 
 def main():
@@ -137,12 +136,12 @@ def main():
         if r:
             rows.append(r)
     if not rows:
-        print('无有效飞行段')
+        print('无有效巡航段（需 bag 含 goal + model_states + 到位<0.5m）')
         return
     cols = ['bag', 'fly_dur_s', 'stop_pct', 'n_stops', 'adjacent',
             'mid_traj', 'adj_pct']
-    print('\n=== W13-1 停顿-replan 对齐（adjacent=停顿与replan邻接; '
-          'adj_pct高=重规划等待主导）===')
+    print('\n=== W13-1 停顿-replan 对齐（真值口径; adjacent=邻接replan'
+          '=重规划等待型; adj_pct高→改 thresh_replan 系参数有效）===')
     print('%-18s %10s %8s %7s %8s %8s %7s' % tuple(cols))
     for r in rows:
         print('%-18s %10s %8s %7s %8s %8s %7s' % (

@@ -191,12 +191,15 @@ def synth_feed(rospy, dur):
     imu = Imu()
     imu.linear_acceleration.z = 9.81
     t0 = rospy.Time.now()
-    for ph, t, p, v, _ in seq:
+    imu_n = 6  # 每帧间补 6 条 IMU(≈125Hz, 满足 integrate 覆盖率检查)
+    for idx, (ph, t, p, v, _) in enumerate(seq):
         o = Odometry()
         o.header.stamp = t0 + rospy.Duration(t)
         o.pose.pose.position.x, o.pose.pose.position.y, o.pose.pose.position.z = p
         o.twist.twist.linear.x = v[0]
-        ip.publish(imu)
+        for k in range(imu_n if idx else 1):
+            imu.header.stamp = o.header.stamp - rospy.Duration((imu_n - k) * 0.008)
+            ip.publish(imu)
         op.publish(o)
         time.sleep(1.0 / RATE / 2)  # 提速播放
     time.sleep(2)

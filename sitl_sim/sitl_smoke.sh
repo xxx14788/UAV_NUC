@@ -2,7 +2,7 @@
 # SITL 一键冒烟(T1-W5,本目录最重要的基础设施)。
 # 自动完成:持锁 → 起 SITL → mavros → px4ctrl → 冷 planner → bag → 起飞 → 确认 armed
 #   → 发 goal(7,-4,1) → 等到位(<0.5m 或超时) → kill planner → 降落 → 停 bag
-#   → analyze_flight.py → 四指标 PASS/FAIL → 全清理 → 放锁。
+#   → analyze_flight.py → 六指标 PASS/FAIL → 全清理 → 放锁。
 # 任何一步失败即 FAIL 并保留现场日志路径(不中途清进程,便于事后 rostopic 取证;
 #   取证完毕手动 cleanup)。
 # 用法: bash sitl_smoke.sh [--world NAME] [--goal x y z] [--keep] [--skip-sitl]
@@ -121,6 +121,16 @@ sleep 2
 log "bag recording -> $BAG"
 
 # ---- 6. 起飞 ----
+# 六指标-5: 起飞前 est-vs-truth 偏航探针(磁参数健康的一等公民指标)
+YAW_OUT=$(timeout 15 python3 "$SIM/smoke_probe.py" --yaw 2>/dev/null | grep YAWDIFF)
+YAWDIFF=$(echo "$YAW_OUT" | grep -o "[-0-9.]*" | head -1)
+if [ -n "$YAWDIFF" ] && [ "$YAWDIFF" != "nan" ]; then
+    PASS_YAW=$(python3 -c "print(1 if abs(float('$YAWDIFF'))<5 else 0)")
+    log "est-vs-truth 偏航差 ${YAWDIFF}deg(<5)->$PASS_YAW (metric: yaw-align)"
+else
+    YAWDIFF=n/a; PASS_YAW=0
+    log "WARN: yaw 探针无数据(odom/gazebo truth 缺)"
+fi
 bash "$SIM/04_takeoff.sh" >> "$LOG" 2>&1 || fail "takeoff 发布失败"
 ARMED=0
 for i in $(seq 1 30); do
@@ -138,6 +148,9 @@ timeout 4 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped \
 # /position_cmd 频率(飞行段采样)
 nohup timeout 30 rostopic hz -w 100 /position_cmd > "$RUN/poscmd_hz.txt" 2>&1 &
 PID_HZ=$!
+# 六指标-6: 飞行中深度流探针(渲染饱和致盲的一等公民指标)
+nohup timeout 32 python3 "$SIM/smoke_probe.py" --depthhz > "$RUN/depth_hz.txt" 2>&1 &
+PID_DH=$!
 
 ARRIVED=0
 for i in $(seq 1 120); do
@@ -176,20 +189,23 @@ for i in $(seq 1 20); do [ -f "$BAG" ] && break; sleep 1; done
 ANALYSIS="$RUN/analysis.txt"
 python3 "$WS/sitl_sim/analysis/analyze_flight.py" "$BAG" --goal "$GOAL_X" "$GOAL_Y" "$GOAL_Z" 2>&1 | tee "$ANALYSIS"
 
-# ---- 10. 四指标判定 ----
+# ---- 10. 六指标判定 ----
 ARR_ERR=$(grep -o 'arrival_err(stable 10s mean)=[0-9.]*m' "$ANALYSIS" | sed 's/.*)=//; s/m$//' | head -1)
 MIN_DIST=$(grep -o 'overall=[0-9.]*m' "$ANALYSIS" | grep -o '[0-9.]*' | head -1)
 HZ=$(grep -o 'average rate: [0-9.]*' "$RUN/poscmd_hz.txt" | grep -o '[0-9.]*' | tail -1)
 [ -z "$HZ" ] && HZ=0
-PASS_ARR=0; PASS_DIST=0; PASS_HZ=0; PASS_DISARM=0
+PASS_ARR=0; PASS_DIST=0; PASS_HZ=0; PASS_DISARM=0; PASS_DEPTH=0
+DEPTHHZ=$(grep -o 'DEPTHHZ=[0-9.]*' "$RUN/depth_hz.txt" 2>/dev/null | grep -o '[0-9.]*' | head -1)
+[ -z "$DEPTHHZ" ] && DEPTHHZ=0
+python3 -c "exit(0 if float('$DEPTHHZ')>=9 else 1)" 2>/dev/null && PASS_DEPTH=1
 python3 -c "exit(0 if float('${ARR_ERR:-99}')<0.5 else 1)" 2>/dev/null && PASS_ARR=1
 python3 -c "exit(0 if float('${MIN_DIST:-0}')>0.349 else 1)" 2>/dev/null && PASS_DIST=1
 python3 -c "exit(0 if float('$HZ')>=50 else 1)" 2>/dev/null && PASS_HZ=1
 [ "$DISARM" -eq 0 ] && PASS_DISARM=1
 
-log "四指标: arrival=${ARR_ERR:-n/a}m(<0.5)->$PASS_ARR  min_dist=${MIN_DIST:-n/a}m(>0.349)->$PASS_DIST  poscmd_hz=$HZ(>=50)->$PASS_HZ  auto_disarm->$PASS_DISARM"
+log "六指标: arrival=${ARR_ERR:-n/a}m(<0.5)->$PASS_ARR  min_dist=${MIN_DIST:-n/a}m(>0.349)->$PASS_DIST  poscmd_hz=$HZ(>=50)->$PASS_HZ  auto_disarm->$PASS_DISARM  yaw_align=${YAWDIFF}deg(<5)->$PASS_YAW  depth_hz=${DEPTHHZ}Hz(>=9)->$PASS_DEPTH"
 VERDICT=FAIL
-[ $PASS_ARR -eq 1 ] && [ $PASS_DIST -eq 1 ] && [ $PASS_HZ -eq 1 ] && [ $PASS_DISARM -eq 1 ] && VERDICT=PASS
+[ $PASS_ARR -eq 1 ] && [ $PASS_DIST -eq 1 ] && [ $PASS_HZ -eq 1 ] && [ $PASS_DISARM -eq 1 ] && [ "$PASS_YAW" = 1 ] && [ $PASS_DEPTH -eq 1 ] && VERDICT=PASS
 echo "RESULT=$VERDICT" > "$RUN/RESULT"
 log "RESULT=$VERDICT  (全部证据: $RUN)"
 
