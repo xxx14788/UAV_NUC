@@ -88,3 +88,74 @@ t2w5_p1/p1b 即 EKF2 源控制飞行（VINS 未接管）: 起飞/悬停正常，
 1. goal 到位: 7.04m vs 验收 0.5m（阻塞在规划/控制链，T3 已根因，非 VINS 层）
 2. VINS 在 px4ctrl 剖面下漂移: 60m@240s vs 温和剖面 0.137m@52.6s（加速度尖峰 6g vs <1.5g）
 3. bagB–E 离线重放 init 毒槽位（Vs[i]=e25 非有界写入产物，疑上游 UB）未根治，门控转为安全拒绝
+
+
+# U1 毒槽位根治(2026-09-28 凌晨,T2b)
+
+## 机制级根因(插桩+dump 铁证,证据链完整)
+
+**写入者:processIMU 传播;毒源:跨时钟域 dt=1.79e9s。** 非无界写、非 UB、非 ceres。
+
+四路插桩(estimator.cpp, U1DBG×E20×bag-B 原始重放)第一行即命中:
+
+```
+T2POISON src=IMU-prop fc=1 j=1 |V|=1.196e+25 dt=1.791e+09 |acc|=9.873 detR=1.7e30
+```
+
+逐帧序列:fc=1 → e25,fc=2..10 → e40(每帧一个新槽位,窗口满后 fc=10 反复累乘)。
+
+### 完整因果链
+
+1. **bag-B/C/D/E 图像戳=sim 域(15.6~149s),IMU 戳=unix 域(1.79e9)**——dump 首帧实测
+   (图像 hdr 15.644 vs IMU hdr 1790502951.6,域差 1.79e9s)。W5 账本"bagB–E 均 unix 域"
+   系记录错误(混淆 header 与 arrival;arrival 均为 unix 墙钟)。成因与 W5 在线域分裂同源:
+   录制 roscore 的 use_sim_time 被并行会话翻面,仅 bagA(W2 第一段)全程 sim 域幸存。
+2. VINS `getIMUInterval(prevTime, curTime)`:图像域 curTime≈15.x,IMU 戳 1.79e9 > curTime,
+   收集循环 `while(front < t1)` 恒假 → 每帧只交出 1 条 IMU(尾部无条件 push front),
+   `dt[0] = 1.79e9 − prevTime` 每帧恒为 1.79e9。
+3. `processIMU` 以 dt=1.79e9 传播:`Rs[j] *= deltaQ(un_gyr*dt)` 三角函数溢出 →
+   Rs 烂化(插桩 detR=1.7e30);`Ps += 0.5*dt²*un_acc` 与烂化 Rs 的 un_acc 连乘 →
+   Vs e25 → 后续帧继承毒值 → e40。
+4. 后置 init 门拒绝 → reinit(clearState)→ **域分裂是数据属性,不变** → 下一窗口逐帧
+   重演 → "确定性复生"。逐位跨二进制一致 = 同一确定性 dt 序列。
+5. 账本未解之谜的槽位分布解释:i=1(每窗口首个传播槽位吃 dt[0])、i=10(窗口满后
+   每帧累乘);176/220 落 i=10 因 init 快照时刻它累乘最多。
+
+### 嫌疑清算(任务书 1a)
+
+- α `solveGyroscopeBias` Bgs 无界写:**排除**——写循环 i≤WINDOW_SIZE 有界,且只写 Bgs
+- β `Headers[i]` 无界推进:未及深查(α/根因已定,毒源与拷贝循环无关);v3 已修拷贝行界
+- γ `ImageFrame.pre_integration` 所有权:**泄漏非 UAF**——`all_image_frame.clear()` 条目
+  裸指针直接丢弃不 delete(clearState 已 delete tmp_pre_integration,无 double-free);
+  累计泄漏量级:每 reinit 窗口 11 条 × IntegrationBase(~KB 级),不阻断,暂不修(登记)
+- 附带发现(死代码):后置门 reject 分支 `return` 写在内联重置代码**之前**,
+  重置段 unreachable——实际重置由 processMeasurements 循环头 reinit_request 消费者
+  (clearState+setParameter)完成,行为正确,但死代码易误导,已清理(见修复清单)
+
+## 修复(双层)
+
+| 层 | 修复 | 位置 | 性质 |
+|---|---|---|---|
+| 数据面 | bag-B/C/D/E 图像/camera_info 戳平移到 IMU 域(t2_shift_img_stamps.py,配对中位偏移 +1.79e9,p5–p95 散布 <0.02s) | 生成 ~/sitl_sim/bags/t2_[BCDE]_shift.bag | 存量数据可用化 |
+| C++ 防线 | processMeasurements dt 钳制:dt∉[0,0.5] 或非有限 → 置 0(该样本只更新 acc_0,不传播不进预积分),ROS_ERROR 限流告警 | estimator.cpp processMeasurements IMU 消费循环 | 任何跨域/乱序/复位瞬态不再产毒;0.5s=125Hz 步长 62 倍裕量 |
+
+附带修复:后置门 reject 分支 unreachable 内联重置代码删除(死代码,行为已由 reinit 消费者覆盖)。
+
+## 三连回归
+
+| 项 | 结果 | 判定 |
+|---|---|---|
+| ① bagA×E20 | ATE 0.137m/52.5s/无发散/yaw 0.22°(基线 0.137m) | ✓ 零退步 |
+| ② bag-B(shift)×E20 | `Initialization finish`(历史首次)ATE 0.1186m/64.9s/无发散/yaw −2.9° | ✓ |
+| ②' C/D/E(shift)×E20 | init 全通(C/D/E 历史首次);ATE 可算:C 31.2m@7.0s 发散、D 767m 立即发散、E 11.0m@15.2s 发散 | ✓(可算);跟踪短板移交 U3/U4(D 不满足豁免条件,记 U4 靶点) |
+| ③ 确定性 harness bag-C(shift)×E20×3 | md5 三轮全一致 `a6e07acc9390b6a5c52200e4ed619bfd` n=246 | ✓ 真确定(v1/v2 悬案裁决) |
+| 死代码删除后 bagA 终验 | ATE 0.1372m,与基线一致 | ✓ |
+| 额外:bagA 首帧 dt=16.7(prevTime 初始 −1)被钳 | 原版靠 fc=0 不传播侥幸无害,钳制后显式安全 | ✓ |
+| 额外:bag-B 中途 dt=−0.54ms(IMU 乱序)被钳 | P1 脏流类问题同防线覆盖 | ✓ |
+
+## 对既有判决的冲击(→U2 复审依据)
+
+- W3 矩阵 bag-B/C/E×全 28 变体的行**全部无效**(输入数据跨域,与配置变量无关)
+- "E03-on-B td 漂 −190s"极可能是跨域伪影(td 估计器把域差学走)→ U2 重审
+- W5 p1b"戳平移后即刻 init"与本根因完全一致(平移消除跨域)
+- H-B(外参)/H-C(参数)嫌疑的 B/C/E 段证据全部要重采

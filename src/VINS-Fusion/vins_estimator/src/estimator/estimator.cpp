@@ -9,6 +9,7 @@
 
 #include "estimator.h"
 #include "../utility/visualization.h"
+#include <cstdio>
 
 Estimator::Estimator(): f_manager{Rs}
 {
@@ -320,6 +321,27 @@ void Estimator::processMeasurements()
                         dt = curTime - accVector[i - 1].first;
                     else
                         dt = accVector[i].first - accVector[i - 1].first;
+                    // T2-U1 dt clamp (2026-09-28): 跨时钟域防线。
+                    // 实测 bag-B/C/D/E 图像戳(sim 域 ~15-150s)与 IMU 戳(unix
+                    // 1.79e9) 跨域时,getIMUInterval 每帧只交出一条 unix 域
+                    // IMU,dt[0]=|域差|≈1.79e9s 进 processIMU 传播:deltaQ(w*dt)
+                    // 三角函数溢出烂化 Rs(detR→1e30),Ps/Vs 连乘滚至 e25-e40
+                    // (T2POISON 插桩实锤 fc=1 j=1 dt=1.791e9 |V|=1.2e25)。
+                    // 钳制:dt 超出 [0, 0.5](125Hz 步长 62 倍裕量)或非有限时
+                    // 置 0(该样本只更新 acc_0,不传播不进预积分),毒状态无从
+                    // 产生;域问题由 t2_preflight_check/域卫士在系统层裁决。
+                    if (!(dt >= 0.0 && dt <= 0.5))
+                    {
+                        static ros::Time t2_last_warn;
+                        ros::Time t2_now = ros::Time::now();
+                        if ((t2_now - t2_last_warn).toSec() > 5.0 || t2_last_warn.isZero())
+                        {
+                            ROS_ERROR("dt clamp: dt=%.4g imu_t=%.4f prev=%.4f (domain split or IMU disorder?)",
+                                      dt, accVector[i].first, prevTime);
+                            t2_last_warn = t2_now;
+                        }
+                        dt = 0.0;
+                    }
                     processIMU(accVector[i].first, dt, accVector[i].second, gyrVector[i].second);
                 }
             }
@@ -412,6 +434,9 @@ void Estimator::processIMU(double t, double dt, const Vector3d &linear_accelerat
         Vector3d un_acc = 0.5 * (un_acc_0 + un_acc_1);
         Ps[j] += dt * Vs[j] + 0.5 * dt * dt * un_acc;
         Vs[j] += dt * un_acc;
+        if (solver_flag == INITIAL && (!Vs[j].allFinite() || Vs[j].norm() > 100.0))
+            ROS_WARN("T2POISON src=IMU-prop fc=%d j=%d |V|=%.4g dt=%.4g |acc|=%.4g |gyr|=%.4g detR=%.6f",
+                     frame_count, j, Vs[j].norm(), dt, linear_acceleration.norm(), angular_velocity.norm(), Rs[j].determinant());
     }
     acc_0 = linear_acceleration;
     gyr_0 = angular_velocity; 
@@ -493,6 +518,17 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
             f_manager.triangulate(frame_count, Ps, Rs, tic, ric);
             if (frame_count == WINDOW_SIZE)
             {
+                {
+                    char t2buf[900]; int t2off = 0;
+                    t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off,
+                                      "T2SNAP pre AIF=%d fc=%d Vs:", (int)all_image_frame.size(), frame_count);
+                    for (int k = 0; k <= WINDOW_SIZE; k++)
+                        t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " %.3g", Vs[k].norm());
+                    t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " Ps:");
+                    for (int k = 0; k <= WINDOW_SIZE; k++)
+                        t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " %.3g", Ps[k].norm());
+                    ROS_WARN("%s", t2buf);
+                }
                 map<double, ImageFrame>::iterator frame_it;
                 int i = 0;
                 for (frame_it = all_image_frame.begin(); frame_it != all_image_frame.end() && i <= WINDOW_SIZE; frame_it++)
@@ -559,35 +595,26 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 else
                 {
                     ROS_WARN("stereo init post-optimization states insane, re-init");
+                    {
+                        char t2buf[900]; int t2off = 0;
+                        t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, "T2SNAP post-reject Vs:");
+                        for (int k = 0; k <= WINDOW_SIZE; k++)
+                            t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " %.3g", Vs[k].norm());
+                        t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " Ps:");
+                        for (int k = 0; k <= WINDOW_SIZE; k++)
+                            t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " %.3g", Ps[k].norm());
+                        t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " detRs:");
+                        for (int k = 0; k <= WINDOW_SIZE; k++)
+                            t2off += snprintf(t2buf + t2off, sizeof(t2buf) - t2off, " %.4f", Rs[k].determinant());
+                        ROS_WARN("%s", t2buf);
+                    }
                     reinit_request = true;
                     return;
-                    // 不能调 clearState（内部抢 mProcess 锁）也不能 return
-                    // （会把 processMeasurements 的 while(1) 线程整个退掉，
-                    // 首次实测复现：拒绝后 45s 零输出）。内联重置初始化上下文，
-                    // 保留 tic/ric 外参与 IMU 连续性，重攒窗口后自然重试。
-                    all_image_frame.clear();
-                    frame_count = 0;
-                    initFirstPoseFlag = false;
-                    inputImageCnt = 0;
-                    sum_of_back = 0;
-                    sum_of_front = 0;
-                    for (int i = 0; i <= WINDOW_SIZE; i++)
-                    {
-                        Rs[i].setIdentity();
-                        Ps[i].setZero();
-                        Vs[i].setZero();
-                        Bas[i].setZero();
-                        Bgs[i].setZero();
-                        dt_buf[i].clear();
-                        linear_acceleration_buf[i].clear();
-                        angular_velocity_buf[i].clear();
-                        if (pre_integrations[i] != nullptr)
-                        {
-                            delete pre_integrations[i];
-                        }
-                        pre_integrations[i] = nullptr;
-                    }
-                    f_manager.clearState();
+                    // T2-U1 (2026-09-28): 此前 return 后遗留整段 unreachable
+                    // 内联重置死代码(all_image_frame.clear()..f_manager.clearState()),
+                    // 实际重置由 processMeasurements 循环头的 reinit_request 消费者
+                    // (clearState+setParameter, 不持 mProcess 锁, 实测安全)完成,
+                    // 已删除以免误导后续审计。
                 }
             }
         }
@@ -1223,6 +1250,20 @@ void Estimator::optimization()
     TicToc t_solver;
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
+    if (solver_flag == INITIAL)
+    {
+        double t2vmax = 0; int t2vidx = -1;
+        for (int k = 0; k <= WINDOW_SIZE; k++)
+        {
+            double t2n = sqrt(para_SpeedBias[k][0] * para_SpeedBias[k][0] +
+                              para_SpeedBias[k][1] * para_SpeedBias[k][1] +
+                              para_SpeedBias[k][2] * para_SpeedBias[k][2]);
+            if (t2n > t2vmax) { t2vmax = t2n; t2vidx = k; }
+        }
+        ROS_WARN("T2OPT post-solve vmax=%.4g @i=%d init_cost=%.4g final_cost=%.4g iters=%d term=%d",
+                 t2vmax, t2vidx, summary.initial_cost, summary.final_cost,
+                 static_cast<int>(summary.iterations.size()), static_cast<int>(summary.termination_type));
+    }
     //cout << summary.BriefReport() << endl;
     ROS_DEBUG("Iterations : %d", static_cast<int>(summary.iterations.size()));
     //printf("solver costs: %f \n", t_solver.toc());
