@@ -57,6 +57,10 @@
 | `planner/plan_manage/launch/run_planner_sitl.launch`（T3 修改） | T1-W4 relay 临时下架为注释（含 T1 relay-v2 设计存档）：relay 订阅 rgb_info 激活 rgb 渲染，单传感器双流在 Xvfb llvmpipe 饱和压垮深度流→grid_map 空图直线穿箱（smoke5/run_182104 A/B 两轮实证；grid_map 内参来自 launch 参数不消费 caminfo 话题） |
 | `sitl_sim/`（T3 新增） | analysis/analyze_takeoff_divergence.py（P1 离线复盘：到达序锚定/时戳修复/翻转-振荡-盲图签名）；t3_verify_flight.sh（障碍区侧场景验证 harness：传送+EKF2 settle+goal 重发+四看门狗）；t3_clean.sh；snap_rviz.sh；b0_headless.rviz（轨迹/膨胀占据/深度云 display）；worlds/sitl_world_obstacles_v2.world（box_D/E 1.5m 狭缝，已装 PX4 worlds）；analysis/analyze_flight.py 加 --world v2；docs/t3_experiments.md 试验台账 |
 | `planner/plan_manage/launch/advanced_param_sitl.xml`（新增） | `_exp` 版的仿真参数：obstacles_inflation 0.337→0.299；外参走 grid_map 默认 optical→body 矩阵（SITL 相机 RPY=0 时旋转正确，平移差 0.1m 在膨胀半径内） |
+| `px4ctrl/src/attitude_utils.h` + `px4ctrl/test/test_controller_attitude.cpp`（T3-W9 新增） | 姿态公式抽取纯函数 + NaN/Inf 防护（非有限输入返回单位姿态）+ gtest 8 用例（悬停恒等/四向倾角/z<0 护栏/退化正交/yaw wrap 连续性/老式等价锁<0.5°@倾角≤4°/NaN 安全/网格性质）8/8 绿；controller.cpp 改调用（行为与 0de090e 内联版一致） |
+| `planner/plan_manage/src/traj_server.cpp`（T3-W7 续篇修改） | ①YAW_DOT_MAX PI/4→PI/2 定版（45 已证致掠射建图侵蚀 run_193052 弃用；90=硬甩消除与掠射侵蚀的折中）；②新轨迹到达时 last_yaw_ 重置为机体实际 odom yaw（经 traj_server/odom_topic 参数订阅，空=上游行为；仅 SITL launch 传入）——消除起点 yaw 从上一轨迹残留值追赶的瞬态（V1 轮 58 次 >150°/s 追赶事件实证，yaw_closure_analysis.py） |
+| `sitl_sim/analysis/`（T3 续篇新增 5 工具） | controller_replay.py（三实现 A/B/C 回放+保真核验+对齐率决策表：老欧拉法全历史失败腿倾角错向 78-170° 定罪，帧补丁 P 中位 0.01°→保留）；yaw_closure_analysis.py（Y2 阶跃-replan 对齐/Y3 速率跟踪滞后）；map_truth_diff.py（占据栅格重建 vs 真障碍体素 diff + 离线融合重演参数扫描；健康环境缺失率 0.000）；stoppage_analysis.py（停顿-replan 对齐：成功轮 100% 邻接 replan=重规划等待型）；leg_database.py（跨会话全 bag 指标库 → docs/analysis/legs.csv） |
+| `sitl_sim/` harness（T3 续篇修改+新增） | t3_verify_flight.sh：传送前 world 就绪+单机体断言（W7v1 多实例混流事故加固）+SPAWN_YAW 环境参数化；two_leg_flight.sh（新增，无传送两段式返程腿 harness——EKF2 瞬爆隔离实验 2/2 复现载体）；env_health_check.sh（五项自检：磁参数/shm/进程孤儿/深度频率/日志体量）；teleport_stats.sh（EKF2 重锚统计）；t3_clean.sh 升级（shm+ipcs+Xvfb+大文件报告）；三脚本录制清单+occupancy/occupancy_inflate/bspline/深度流/相机内参 |
 
 ## 4. SITL 全流程仿真（脚本在本仓库 `sitl_sim/`，每脚本一个终端，按编号执行）
 
