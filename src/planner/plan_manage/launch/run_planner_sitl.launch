@@ -59,6 +59,19 @@
         <arg name="point4_y" value="0.0" />
         <arg name="point4_z" value="1.0" />
     </include>
+    <!-- T1-W4: depth camera_info 合成转发。根因:gazebo_ros_openni_kinect 的
+         DepthInfoConnect 不调 SetActive(true),仅订阅 camera_info 时传感器不激活→零消息
+         (分析:sitl_sim/t1_evidence/w4_caminfo_analysis.md)。K/D 与 rgb 同源同值。 -->
+    <!-- T3 2026-09-27: relay 临时下架说明 + T1 relay-v2 设计存档(重挂时去掉第二段注释符)。
+         v1 relay 订阅 rgb_info 会激活 rgb 渲染,双流在 Xvfb llvmpipe 饱和压垮深度流,
+         grid_map 空图直线穿箱(smoke5/run_182104 实证)。T1 v2 方案:改用直接 fx/fy
+         参数、不订阅 rgb camera_info,避免激活 RGB 渲染。2026-09-27 v2 回归冒烟重挂。 -->
+    <node pkg="depth_caminfo_relay" type="depth_caminfo_relay_node" name="depth_caminfo_relay" output="screen">
+        <param name="depth_image" value="/iris_depth_camera/camera/depth/image_raw" />
+        <param name="fx" value="454.6857718666893" />
+        <param name="fy" value="454.6857718666893" />
+        <param name="out" value="/iris_depth_camera/camera/depth/camera_info" />
+    </node>
     <!-- trajectory server：源码发布绝对话题 /position_cmd，与 px4ctrl ~cmd 对接 -->
     <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
         <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
