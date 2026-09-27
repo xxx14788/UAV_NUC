@@ -1,4 +1,11 @@
 <launch>
+    <!-- T2b-U6 (2026-09-28): sim 时钟域配方固化。/use_sim_time 必须在
+         mavros 启动前置真(mavros IMU 戳随启动时刻的参数定域; 之后翻面会造成
+         gazebo 相机戳=sim 域与 mavros IMU 戳=unix 域分家 1.79e9s, VINS 永无法
+         对齐且 dt=1.79e9 毒化传播——W5 220 次门控拒绝与 U1 毒槽位的实测根因)。
+         本 launch 置真仅保证 vins/vins_to_mavros 域; mavros 由 02_start_mavros.sh
+         更早置真, 勿在两者之间翻面。结构性防线: domain_guard.py + preflight。 -->
+    <param name="/use_sim_time" value="true"/>
     <!-- A7 仿真 VINS 入口：VINS-Fusion 双目+IMU 里程计 + vins_to_mavros 转发。
          前置：iris_stereo_vins 模型 SITL 已启动（start_sitl_vins.sh），
                mavros 已启动，且已执行 mavcmd long 511 105 5000（IMU 提频，
