@@ -1,0 +1,80 @@
+{
+  "n_frames": 590,
+  "n_imu": 3798,
+  "checks": {
+    "1_epipolar": {
+      "dy_rms_static": {
+        "mean": 4.715229670092521,
+        "std": 6.424091358219268,
+        "n": 522
+      },
+      "dy_rms_motion": {
+        "mean": NaN,
+        "std": NaN,
+        "n": 0
+      },
+      "corr_dy_vs_gyro": NaN
+    },
+    "2_disparity": {
+      "intra_std_static": {
+        "mean": 5.859414793505813,
+        "std": 10.136445657716283,
+        "n": 165
+      },
+      "intra_std_motion": {
+        "mean": NaN,
+        "std": NaN,
+        "n": 0
+      },
+      "median_step_static": {
+        "mean": 0.6716105563581483,
+        "std": 0.7954012227536578,
+        "n": 121
+      },
+      "median_step_motion": {
+        "mean": NaN,
+        "std": NaN,
+        "n": 0
+      }
+    },
+    "3_flow_imu": {
+      "residual_rms_left_static": {
+        "mean": Infinity,
+        "std": NaN,
+        "n": 589
+      },
+      "residual_rms_left_motion": {
+        "mean": NaN,
+        "std": NaN,
+        "n": 0
+      },
+      "residual_rms_right_static": {
+        "mean": Infinity,
+        "std": NaN,
+        "n": 589
+      },
+      "residual_rms_right_motion": {
+        "mean": NaN,
+        "std": NaN,
+        "n": 0
+      },
+      "lr_residual_corr": NaN
+    },
+    "4_xcorr": {
+      "global_shift_px": -5.138367013830646,
+      "lag_vote_rate_static": 0.1969439728353141,
+      "lag_vote_rate_motion": NaN,
+      "margin_mean_static": -0.002800716576957532,
+      "margin_mean_motion": NaN
+    }
+  },
+  "n_static": 590,
+  "n_motion": 0,
+  "verdicts": {
+    "1_epipolar": false,
+    "2_disparity": false,
+    "3_flow_imu": false,
+    "4_xcorr": false
+  },
+  "H_A": "排除"
+}

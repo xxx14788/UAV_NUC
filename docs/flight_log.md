@@ -17,3 +17,6 @@
 | 2026-09-27 | ~/sitl_sim/t1_evidence/(无bag,现场日志) | ~6h | 仿真（SITL） | T1 排障日:px4ctrl 断连卡死根因三连实证(gdb 冻结栈/AUTO_TAKEOFF 死角/投递窗口),repro+恢复3/3 |
 | 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_165340/flight.bag | ~90s | 仿真（SITL） | T1 smoke#1 FAIL:残留空场会话致避障判定全0(轨迹本身0.049m到位/100Hz/disarm均过) |
 | 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_171440/flight.bag | ~110s | 仿真（SITL） | T1 smoke#3 PASS 四指标:到位0.166m/避障0.552m/poscmd 100.2Hz/自动disarm(F1-F5修复版基线) |
+| 2026-09-27 | t2_A~E (t2_*.bag) | 各30-65s | W2 激励录制: 静置+起飞悬停/慢巡航/冲刺/纯yaw/降落, OFFBOARD 直控 | 传感器数据完整, 用途=W1 同步检验+W3 矩阵 |
+| 2026-09-27 | t2w5_p1_210129 | ~250s | W5-1 并行 ATE: EKF2 控制+VINS 旁观 | VINS 因时间域分裂无法 init(后修复配方); goal 到位失败(7.04m, 规划链问题) |
+| 2026-09-27 | t2w5_p2_215545 | ~160s | W5-2 VINS 闭环首通: sim 域统一配方 | VINS 在线 init 成功+门控转发 1320 帧; 机动段 VINS 漂移 60m; 无异常降落 |
