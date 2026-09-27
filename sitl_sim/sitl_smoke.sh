@@ -74,11 +74,12 @@ fi
 if [ "$SKIP_SITL" -eq 0 ]; then
     nohup roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14557 > "$RUN/mavros.log" 2>&1 &
 fi
-for i in $(seq 1 60); do
+# 300s 窗:清洁环境 ~30s 连上;退化环境(当日多次重启后)实测 3-8 分钟才连上
+for i in $(seq 1 150); do
     timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' && break
     sleep 2
 done
-timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' || fail "mavros 120s 未连上 PX4,见 $RUN/mavros.log"
+timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' || fail "mavros 300s 未连上 PX4,见 $RUN/mavros.log"
 log "mavros connected"
 
 # ---- 3. px4ctrl ----

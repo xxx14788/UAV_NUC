@@ -39,7 +39,9 @@ for ln in sys.stdin:
         if ln.startswith(k+':'):
             v[k] = float(ln.split(':')[1])
 try:
-    print(math.degrees(2*math.atan2(v['z'], v['w'])))
+    y = math.degrees(2*math.atan2(v['z'], v['w']))
+    y = (y + 180) % 360 - 180   # 归一化到 [-180,180](如 -0.8° 会算出 359.2°)
+    print(y)
 except KeyError:
     print('nan')
 ")

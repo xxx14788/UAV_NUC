@@ -20,3 +20,8 @@
 | 2026-09-27 | t2_A~E (t2_*.bag) | 各30-65s | W2 激励录制: 静置+起飞悬停/慢巡航/冲刺/纯yaw/降落, OFFBOARD 直控 | 传感器数据完整, 用途=W1 同步检验+W3 矩阵 |
 | 2026-09-27 | t2w5_p1_210129 | ~250s | W5-1 并行 ATE: EKF2 控制+VINS 旁观 | VINS 因时间域分裂无法 init(后修复配方); goal 到位失败(7.04m, 规划链问题) |
 | 2026-09-27 | t2w5_p2_215545 | ~160s | W5-2 VINS 闭环首通: sim 域统一配方 | VINS 在线 init 成功+门控转发 1320 帧; 机动段 VINS 漂移 60m; 无异常降落 |
+| 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_181440/flight.bag | ~110s | 仿真（SITL） | T1 smoke5 FAIL:T3栈+relay v1;est偏航错位致穿箱(min_dist 0.214/vel 788m/s接触爆炸) |
+| 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_182104/flight.bag | ~110s | 仿真（SITL） | T1 归因对照轮(HEAD栈+relay v1)FAIL:同签名→排除T3栈,relay v1存疑 |
+| 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_193052/flight.bag | ~110s | 仿真（SITL） | T1 smoke10(HEAD栈+relay v2)FAIL:同穿箱签名→疑环境性致盲 |
+| 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_193748/flight.bag | ~100s | 仿真（SITL） | T1 HEAD栈+relay v2:飞行机构完美(1轮起飞/40s到点/干净降落)但穿箱(B/C=0.000);终版归因=磁校准污染(est偏航错位),非relay |
+| 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_194855/flight.bag | ~110s | 仿真（SITL） | T1 Xvfb重启终验FAIL:Xvfb重启不愈;夜间进一步退化为mavros连接延迟5-7分钟(22:4x三轮),认证移交次日清洁环境(runbook:t1_evidence/w4_cert_runbook.md) |

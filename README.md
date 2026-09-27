@@ -82,6 +82,11 @@
 | `vins_to_mavros/src/vins_to_mavros_node.cpp` | T2-W4 健康门控：相邻帧跳变>1m 或速度>5m/s 停止转发 /mavros/vision_pose/pose 并 ROS_ERROR，连续 20 帧平稳自动恢复；阈值 rosparam（~gate_pos_jump/gate_vel/gate_stable_frames/gate_enabled）。2026-09-26 翻机事故防线，sitl_sim/analysis/vins_gate_test.py 集成单测通过 |
 | `worlds/sitl_world_obstacles.world`（新增） | 避障测试 world：3 个静态箱（odom 系坐标表见文件头注释）；安装=复制到 PX4 sitl_gazebo-classic/worlds/，启动=SITL_WORLD=sitl_world_obstacles 配合 start_sitl_depth.sh；physics 必须 0.004s/250Hz（PX4 lockstep 硬约束） |
 | `gzserver_wrapper.sh`（新增） | gzserver 包装脚本，附加 libgazebo_ros_api_plugin.so（noetic 传感器插件依赖全局 ros::init）；由 start_sitl_depth.sh 经 PATH 前置生效，不改 PX4 上游 |
+| `sitl_smoke.sh`（T1-W5 新增） | 一键冒烟：持锁→SITL(可选world)→mavros(300s窗)→px4ctrl→冷planner→bag→起飞→goal(7,-4,1)→四指标判定(到位<0.5m/避障>0.349m/poscmd≥50Hz/自动disarm)→清理→放锁；失败保留现场。回归标准入口 |
+| `sitl_lock.sh` / `status_append.py`（T1 新增） | 三任务 SITL 运行时锁(get/release/force/status,属主前缀校验)；STATUS.md UTF-8 安全追加(ssh echo 中文乱码的替代) |
+| `README_runtime.md` / `log_truncate_guard.sh`（T1 新增） | 运行时纪律一页纸(锁/重启序列/五坑/冷态/通用工程坑)；日志>1GB 自动截断到 10MB |
+| `test/`（T1 新增） | repro_px4ctrl_stall / test_px4ctrl_recovery(W1 验收) / w1_recovery_boundary_probe / w2_imu_rate_sweep / w3_yaw_check |
+| `worlds/sitl_north*.world`（T1-W3 新增） | 磁北对齐 +X(6e-5 0 0)三变体;⚠️换磁 world 会话后 PX4 会把磁校准写入 build/.../rootfs/parameters.bson,污染后续默认世界会话的偏航估计(2026-09-27 实证),混用 world 后需检查/复位(见 ~/sitl_sim/t1_evidence/w4_cert_runbook.md) |
 
 **仿真已验证**：2026-09-23 三次完整"起飞→悬停→降落"（SITL，非实飞；`~/sitl_sim/bags/` 下 3 个 bag，最长 106s；px4ctrl 100Hz 姿态控制 + mavros EKF2 里程计）。
 **当前缺口**：planner（EGO-Planner）尚未接入 SITL 回路——需要深度相机模型（PX4 自带 `iris_depth_camera`）+ 深度/odom 话题接线 + goal 触发 + `traj_server` `/position_cmd` → px4ctrl。
