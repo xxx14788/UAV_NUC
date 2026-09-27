@@ -49,6 +49,12 @@ if [ "$SKIP_SITL" -eq 0 ]; then
     pkill -9 -f "bin/px[4]" 2>/dev/null; pkill -9 -f "gzserve[r]" 2>/dev/null
     pkill -f "px4ctrl_nod[e]" 2>/dev/null; pkill -f "roslaunch.*px4launc[h]" 2>/dev/null; pkill -f "roslaunch.*run_ctrl_sit[l]" 2>/dev/null
     pkill -f "devel/lib/ego_planne[r]" 2>/dev/null
+    pkill -f "depth_caminfo_rela[y]" 2>/dev/null
+    # 连 ROS master 一起清:跨 boot 复用的 master 上悬挂的注册/参数状态会诱发
+    # mavros timesync 循环复位(Time jump 刷屏)与分钟级慢连(2026-09-27 夜实证:
+    # 重启后首 boot 8s 连上且零刷屏;同 master 第二个 boot 复发)。每轮全新 ROS 图
+    pkill -f "roslaunc[h]" 2>/dev/null; pkill -f "rosmaste[r]" 2>/dev/null
+    pkill -f "roscore" 2>/dev/null; pkill -f "rosout" 2>/dev/null
     sleep 3
 fi
 

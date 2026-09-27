@@ -1,4 +1,6 @@
 <launch>
+    <!-- T1-W4 认证开关:轮A基线(false)/轮B认证(true) -->
+    <arg name="relay_on" default="false" />
     <!-- EGO-Planner SITL 入口（single_run_in_exp.launch 的仿真版，实机版不动）。
          链路：Gazebo iris_depth_camera 深度 + mavros EKF2 odom -> ego_planner -> traj_server
                -> /position_cmd -> px4ctrl(run_ctrl_sitl.launch 已对接)。
@@ -66,7 +68,8 @@
          v1 relay 订阅 rgb_info 会激活 rgb 渲染,双流在 Xvfb llvmpipe 饱和压垮深度流,
          grid_map 空图直线穿箱(smoke5/run_182104 实证)。T1 v2 方案:改用直接 fx/fy
          参数、不订阅 rgb camera_info,避免激活 RGB 渲染。2026-09-27 v2 回归冒烟重挂。 -->
-    <node pkg="depth_caminfo_relay" type="depth_caminfo_relay_node" name="depth_caminfo_relay" output="screen">
+    <!-- RELAY-OFF-FOR-ROUND-A(W4 认证轮A基线,轮B恢复) -->
+    <node if="$(arg relay_on)" pkg="depth_caminfo_relay" type="depth_caminfo_relay_node" name="depth_caminfo_relay" output="screen">
         <param name="depth_image" value="/iris_depth_camera/camera/depth/image_raw" />
         <param name="fx" value="454.6857718666893" />
         <param name="fy" value="454.6857718666893" />
