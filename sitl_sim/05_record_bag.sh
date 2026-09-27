@@ -26,4 +26,5 @@ exec rosbag record -O "$BAG" \
      /mavros/setpoint_raw/local \
      /mavros/battery \
      /gazebo/model_states \
-     /rosout
+     /rosout \n     /iris_stereo_vins/vins_cam_left/image_raw \n     /iris_stereo_vins/vins_cam_right/image_raw
+# T1-W6: 双目图像话题(T2 离线重放需要;仅 iris_stereo_vins 模型发布,depth 模型下安全跳过;图像体积大注意磁盘

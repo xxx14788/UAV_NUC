@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>depth_caminfo_relay</name>
+  <version>0.1.0</version>
+  <description>
+    SITL workaround(T1-W4): gazebo_ros_openni_kinect 的 DepthInfoConnect 不调
+    SetActive(true),导致"仅订阅 depth/camera_info"时传感器不激活、话题零消息。
+    本节点订阅 rgb camera_info + depth image_raw,按深度帧 header 合成发布 depth
+    camera_info(K/D 与 rgb 一致——同一物理相机,内外参同源)。
+  </description>
+  <maintainer email="uav@example.com">UAV_NUC</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>message_filters</depend>
+</package>
