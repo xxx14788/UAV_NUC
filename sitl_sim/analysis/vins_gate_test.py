@@ -131,8 +131,10 @@ def run_logic_only():
 
 # ---------------------------------------------------------------- 集成模式
 def run_integration():
+    # 隔离 master（11313）：绝不污染其他会话（live SITL/EKF2）——
+    # 测试会发布合成 odom 并监听 vision_pose，串到活动系统上会真把 EKF2 带崩
+    os.environ["ROS_MASTER_URI"] = "http://localhost:11313"
     import rospy
-    import rosgraph
     from nav_msgs.msg import Odometry
     from geometry_msgs.msg import PoseStamped
 
@@ -142,20 +144,25 @@ def run_integration():
         print(f"[ERROR] 节点未编译: {node_bin}，先 catkin_make（或用 --logic-only）")
         return False
 
-    started_master = False
-    if not rosgraph.is_master_online():
-        print("[INFO] 启动 roscore ...")
-        master = subprocess.Popen(["roscore"], stdout=subprocess.DEVNULL,
-                                  stderr=subprocess.DEVNULL)
-        started_master = True
-        for _ in range(50):
+    print("[INFO] 启动隔离 rosmaster :11313 ...")
+    master = subprocess.Popen(["rosmaster", "-p", "11313"],
+                              stdout=subprocess.DEVNULL,
+                              stderr=subprocess.DEVNULL)
+    import time as _t
+    import rosgraph
+    for _ in range(50):
+        try:
             if rosgraph.is_master_online():
                 break
-            time.sleep(0.2)
-        else:
-            print("[ERROR] roscore 启动失败")
-            return False
+        except Exception:
+            pass
+        _t.sleep(0.2)
+    else:
+        print("[ERROR] rosmaster 启动失败")
+        master.terminate()
+        return False
 
+    node = None
     try:
         rospy.init_node("vins_gate_test", disable_signals=True)
         # 门控参数（与 C++ 默认一致；显式 set 保证确定性）
@@ -163,13 +170,10 @@ def run_integration():
                      ("gate_stable_frames", 20), ("gate_enabled", True)]:
             rospy.set_param(f"/vins_to_mavros/{k}", v)
         node = subprocess.Popen(
-            ["rosrun", "--prefix", "source devel/setup.bash &&",
-             "vins_to_mavros", "vins_to_mavros_node"],
-            shell=False, executable="/bin/bash",
-            args=["/bin/bash", "-c",
-                  "source ~/catkin_ws/devel/setup.bash && "
-                  f"exec {node_bin} __name:=vins_to_mavros"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            ["/bin/bash", "-c",
+             f"exec {node_bin} __name:=vins_to_mavros"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            env={**os.environ})
         time.sleep(1.5)
         if node.poll() is not None:
             print("[ERROR] vins_to_mavros_node 启动即退出")
@@ -190,7 +194,6 @@ def run_integration():
 
         seq = gen_phases()
         t_start = rospy.get_time()
-        t0 = t_start
         for ph, t, p in seq:
             while rospy.get_time() - t_start < t:
                 if rospy.is_shutdown():
@@ -206,15 +209,12 @@ def run_integration():
             pub.publish(o)
         # 收尾等传输
         time.sleep(0.5)
-        node.terminate()
-        node.wait(timeout=5)
 
         # 统计断言
-        n1 = sum(1 for i, ph in enumerate(recv["phase"]) if ph == 1)
+        n1 = sum(1 for ph in recv["phase"] if ph == 1)
         idx2 = [i for i, ph in enumerate(recv["phase"]) if ph == 2]
         idx3 = [i for i, ph in enumerate(recv["phase"]) if ph == 3]
-        # 阶段2 首帧时间: 发散序列第 1 帧就该被拦（jump=3m×0.02s... 第1帧相对
-        # 上一帧位移 0 → 第 2 帧起 3m/0.02s=150m/s），允许 ≤GATE_GRACE 帧
+        # 发散序列第 1 帧位移 0（相对上一帧），第 2 帧起 3m/0.02s=150m/s
         ok1 = n1 >= int(RUN_S * RATE * 0.9)
         ok2 = len(idx2) <= GATE_GRACE + 2
         ok3 = len(idx3) >= 1
@@ -226,8 +226,13 @@ def run_integration():
               f"{'PASS' if ok3 else 'FAIL'}")
         return ok1 and ok2 and ok3
     finally:
-        if started_master:
-            master.terminate()
+        if node is not None:
+            node.terminate()
+            try:
+                node.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                node.kill()
+        master.terminate()
 
 
 def main():
