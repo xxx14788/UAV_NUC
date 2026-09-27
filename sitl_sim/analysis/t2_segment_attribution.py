@@ -83,19 +83,19 @@ def main():
     # LK 光流/角点存活: 相邻帧前向跟踪
     flow_mag = {}   # img_stamp -> (存活率, 中位流幅)
     prev = None
-    for (ta, st, im) in imgs:
+    for (ta, tstamp, im) in imgs:
         small = cv2.resize(im, (320, 240))
         if prev is not None:
             p0 = cv2.goodFeaturesToTrack(prev, 150, 0.01, 20)
             if p0 is not None and len(p0) >= 10:
-                p1, st, err_, _ = cv2.calcOpticalFlowPyrLK(
+                p1, stlk, err_ = cv2.calcOpticalFlowPyrLK(
                     prev, small, p0, None,
                     winSize=(21, 21), maxLevel=3,
                     criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01))
-                ok = st.ravel() == 1
+                ok = stlk.ravel() == 1
                 if ok.sum() >= 5:
                     d = np.linalg.norm((p1[ok] - p0[ok]).reshape(-1, 2), axis=1)
-                    flow_mag[st] = (ok.sum() / len(p0), float(np.median(d)))
+                    flow_mag[tstamp] = (ok.sum() / len(p0), float(np.median(d)))
         prev = small
 
     ia_n = np.linalg.norm(ia, axis=1)

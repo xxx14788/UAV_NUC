@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # T2b-U2 复审批:干净 init(平移 bag)下重审 td/ext 判决 + mono 复测
 # 依赖 U1 修复后的 vins 二进制与 t2_[BCDE]_shift.bag
-set -u
+source /opt/ros/noetic/setup.bash 2>/dev/null || true
 source /opt/ros/noetic/setup.bash
+set -u
 source "$HOME/catkin_ws/devel/setup.bash"
 C=~/sitl_sim/t2_configs
 R=~/sitl_sim/bags

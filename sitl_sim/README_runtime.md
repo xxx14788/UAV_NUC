@@ -53,3 +53,15 @@ rostopic echo /debugPx4ctrl/fsm_state    # 1Hz: 状态名 + triggered/state_recv
 - `nohup bash ~/sitl_sim/log_truncate_guard.sh &`(>1GB 自动截断到 10MB,防 5.8GB 重演)
 - 状态一律经 `python3 ~/sitl_sim/status_append.py "HH:MM | T1 | <单元> | <状态> | <备注>"`
   追加(ssh echo 中文会乱码)
+
+## 7. mavros 连接与慢连(2026-09-28 U2 定案)
+
+- fcu_url 目标端口=**14580**(PX4 v1.17 offboard 实例,`px4-rc.mavlink`:`-u 14580 -o 14540`)。
+  历史 14557 是 2018-09(7f016b5fd4)之前的死约定,靠 libmavconn 的源地址学习才碰巧能用;
+  已全量改 14580(b827148),老 master 上 3/3 boot 2.7s 直连。
+- `TM: Time jump` 刷屏=timesync 滤波器 50.6s 重收敛周期(500 样本@10Hz),伴生噪音,
+  不影响连接,忽略即可。
+- **慢连(分钟级)**:仅在 09-27 当日 70+ boot 的累积态出现过;干净系统 29 连 boot 均
+  2.7-3.0s(u2loop 曲线),NUC 重启后未复现。**fresh-master 清场(smoke 内置)保留为
+  保险不退役**;若白天再现分钟级慢连:先 `ls-remote` 对照当天 boot 数,判定是否回到
+  累积态,处置=重启 NUC(有人时段)+ STATUS 记录,不要只做进程级清理(09-27 已证不愈)。

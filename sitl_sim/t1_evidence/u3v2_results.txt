@@ -1,0 +1,4 @@
+baseline triggered_after=nones armed_after=2.4s
+r1 triggered_after=nones armed_after=nones
+r2 triggered_after=nones armed_after=3.8s
+r3 triggered_after=nones armed_after=nones

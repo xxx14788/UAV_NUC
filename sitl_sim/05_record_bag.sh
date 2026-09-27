@@ -22,6 +22,11 @@ exec rosbag record -O "$BAG" \
      /mavros/local_position/odom \
      /mavros/local_position/velocity_local \
      /mavros/imu/data \
+     /drone_0_ego_planner_node/grid_map/occupancy \
+     /drone_0_ego_planner_node/grid_map/occupancy_inflate \
+     /drone_0_planning/bspline \
+     /iris_depth_camera/camera/depth/image_raw \
+     /iris_depth_camera/camera/depth/camera_info \
      /mavros/setpoint_raw/attitude \
      /mavros/setpoint_raw/local \
      /mavros/battery \

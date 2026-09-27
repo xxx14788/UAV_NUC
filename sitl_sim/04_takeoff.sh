@@ -5,7 +5,10 @@
 #  - v2(09-27): -r 1×4s 重试制 → 吸收 SITL 重启后 15-40s 投递停滞窗口
 #  - v3(09-27 夜): 每轮 20s 长窗×-r 2 + 并行 armed 监视。退化环境下新建
 #    pub→px4ctrl 的 TCPROS 建连可长达数十秒,4s 短窗会零投递(实测);
-#    20s 窗让单轮建连+发布全覆盖,90s 总预算。
+#    20s 窗让单轮建连全覆盖,90s 总预算。U3(09-28)实测:新 pub 的 TCPROS 建连在
+#    px4ctrl(roscpp)侧随机失败(~50%,稳态也有),单次协商失败后 roscpp 不重试,
+#    需下一次 publisherUpdate(=新 pub 进程)才重连——轮长缩到 12s 提高重掷密度。
+#    机制详见 t1_evidence/u3_conclusion.md。
 # px4ctrl 对重复 TAKEOFF 幂容(triggered 每 cycle 清零;离开 MANUAL_CTRL 后静默忽略)。
 # 用法: 04_takeoff.sh [总超时秒数,默认 90]
 source /opt/ros/noetic/setup.bash
@@ -17,11 +20,11 @@ DEADLINE=$(( $(date +%s) + ${1:-90} ))
 n=0
 while [ "$(date +%s)" -lt "$DEADLINE" ]; do
     n=$((n + 1))
-    timeout 20 rostopic pub -r 2 /px4ctrl/takeoff_land \
+    timeout 12 rostopic pub -r 2 /px4ctrl/takeoff_land \
          quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 1" >/dev/null 2>&1 &
     PUB=$!
     ok=0
-    for i in $(seq 1 20); do
+    for i in $(seq 1 12); do
         if timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: True'; then ok=1; break; fi
         sleep 1
     done

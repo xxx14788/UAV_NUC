@@ -1,0 +1,8 @@
+stable1 ok=1 t=3.4s
+stable2 ok=0 t=9.8s
+stable3 ok=0 t=9.8s
+stable4 ok=0 t=9.7s
+restart1 ok=0 t=11.4s
+restart2 ok=0 t=9.7s
+restart3 ok=0 t=11.3s
+restart4 ok=0 t=9.7s

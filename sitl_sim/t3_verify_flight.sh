@@ -116,6 +116,11 @@ nohup rosbag record -O "$BAG" \
      /px4ctrl/takeoff_land /mavros/state /mavros/extended_state \
      /mavros/local_position/odom /mavros/local_position/velocity_local \
      /mavros/imu/data /mavros/setpoint_raw/attitude \
+          /drone_0_ego_planner_node/grid_map/occupancy \
+     /drone_0_ego_planner_node/grid_map/occupancy_inflate \
+     /drone_0_planning/bspline \
+     /iris_depth_camera/camera/depth/image_raw \
+     /iris_depth_camera/camera/depth/camera_info \
      /mavros/battery /gazebo/model_states /rosout > "$RUN/bag.log" 2>&1 &
 PID_BAG=$!
 sleep 2
