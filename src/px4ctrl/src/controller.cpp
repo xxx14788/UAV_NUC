@@ -34,20 +34,29 @@ LinearControl::calculateControl(const Desired_State_t &des,
       des_acc += Eigen::Vector3d(0,0,param_.gra);
 
       u.thrust = computeDesiredCollectiveThrustSignal(des_acc);
-      double roll,pitch,yaw,yaw_imu;
-      double yaw_odom = fromQuaternion2yaw(odom.q);
-      double sin = std::sin(yaw_odom);
-      double cos = std::cos(yaw_odom);
-      roll = (des_acc(0) * sin - des_acc(1) * cos )/ param_.gra;
-      pitch = (des_acc(0) * cos + des_acc(1) * sin )/ param_.gra;
-      // yaw = fromQuaternion2yaw(des.q);
-      yaw_imu = fromQuaternion2yaw(imu.q);
-      // Eigen::Quaterniond q = Eigen::AngleAxisd(yaw,Eigen::Vector3d::UnitZ())
-      //   * Eigen::AngleAxisd(roll,Eigen::Vector3d::UnitX())
-      //   * Eigen::AngleAxisd(pitch,Eigen::Vector3d::UnitY());
-      Eigen::Quaterniond q = Eigen::AngleAxisd(des.yaw,Eigen::Vector3d::UnitZ())
-        * Eigen::AngleAxisd(pitch,Eigen::Vector3d::UnitY())
-        * Eigen::AngleAxisd(roll,Eigen::Vector3d::UnitX());
+      /* 姿态目标改为期望加速度向量直接构造（几何控制器法）。原实现先按当前
+         yaw_odom 把 des_acc 折算成 roll/pitch，再与目标 des.yaw 组欧拉角四元数：
+         yaw 误差大时（返程掉头 >90deg）PX4 按最短路径追该四元数会穿倒扣姿态，
+         且倾角方向瞬时错向——2026-09-26 两次障碍区侧起飞返程坠机的根因（数值
+         证据 sitl_sim/t3_experiments.md W1，docs/analysis/t3w1_*.png；2026-09-27
+         V1 轮独立复现）。本式倾角只由加速度矢量决定，yaw 以连续 (cos,sin)
+         参与，无 ±180deg 绕环奇异。
+         zb.z 下限护栏（0.1g）：des_acc.z<0（向下加速需求超重力，如强过冲）时
+         老式小角度公式退化为近水平姿态，本式若不钳制会构造倒扣姿态。 */
+      Eigen::Vector3d zb = des_acc;
+      if (zb(2) < 0.1 * param_.gra)
+        zb(2) = 0.1 * param_.gra;
+      zb.normalize();
+      Eigen::Vector3d xc(std::cos(des.yaw), std::sin(des.yaw), 0.0);
+      Eigen::Vector3d yb = zb.cross(xc);
+      if (yb.norm() < 1e-3) // 倾角近 90deg 且朝向航向的退化情形，兜底防 NaN
+        yb = zb.cross(Eigen::Vector3d::UnitX());
+      yb.normalize();
+      Eigen::Matrix3d R_des;
+      R_des.col(0) = yb.cross(zb);
+      R_des.col(1) = yb;
+      R_des.col(2) = zb;
+      Eigen::Quaterniond q(R_des);
       u.q = imu.q * odom.q.inverse() * q;
 
 
@@ -91,8 +100,13 @@ LinearControl::computeDesiredCollectiveThrustSignal(
 {
   double throttle_percentage(0.0);
   
-  /* compute throttle, thr2acc has been estimated before */
-  throttle_percentage = des_acc(2) / thr2acc_;
+  /* compute throttle, thr2acc has been estimated before。
+     T3 2026-09-27: RLS 估计器在快速自旋段会被旋转加速度伪影喂爆(悬停名义
+     ~13.8 m/s^2，病态时发散到无穷使油门恒 0，V2f 实证 des_a_z 正常而 thr=0)。
+     使用点钳位到 [5,40]:健康估计不受影响，病态时油门下限 ~0.25 保持可控，
+     健康反馈下 RLS 可自行收敛回。 */
+  double thr2acc = std::max(5.0, std::min(40.0, thr2acc_));
+  throttle_percentage = des_acc(2) / thr2acc;
   throttle_percentage = std::max(0.0, std::min(1.0, throttle_percentage));
 
   return throttle_percentage;
@@ -103,6 +117,8 @@ LinearControl::estimateThrustModel(
     const Eigen::Vector3d &est_a,
     const Parameter_t &param)
 {
+  if (!param_.thr_map.enable_rls) // SITL 冻结模式:名义映射恒定
+    return false;
   ros::Time t_now = ros::Time::now();
   while (timed_thrust_.size() >= 1)
   {

@@ -33,7 +33,9 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     K2: 1.6942 # Needs precise calibration!
     K3: 0.6786 # Needs precise calibration! K3 equals THR_MDL_FAC in https://docs.px4.io/master/en/config_mc/pid_tuning_guide_multicopter.html.
     # approximate thrust mapping parameters
-    hover_percentage: 0.71  # Thrust percentage in Stabilize/Arco mode # *
+hover_percentage: 0.71
+enable_rls: false   # T3: SITL推力曲线恒定,冻结RLS自适应(防机动段伪影喂爆,V2f/V2g实证)
+# Thrust percentage in Stabilize/Arco mode # *
 
 gain:
     # Cascade PID controller. Recommend to read the code.

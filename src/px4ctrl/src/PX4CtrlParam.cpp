@@ -56,6 +56,10 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	read_essential_param(nh, "thrust_model/K3", thr_map.K3);
 	read_essential_param(nh, "thrust_model/accurate_thrust_model", thr_map.accurate_thrust_model);
 	read_essential_param(nh, "thrust_model/hover_percentage", thr_map.hover_percentage);
+	// T3 2026-09-27: RLS 推力映射自适应在 SITL 快速机动段可被加速度伪影喂爆致油门塌 0
+	// (V2f/V2g 实证)。可选参数默认 true(实机零改动);SITL yaml 置 false 冻结估计器
+	// (SITL 推力曲线恒定,名义 hover_percentage 即足够)。
+	nh.param("thrust_model/enable_rls", thr_map.enable_rls, true);
 	
 
 	max_angle /= (180.0 / M_PI);

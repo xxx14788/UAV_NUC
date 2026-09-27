@@ -1,0 +1,139 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <!-- 避障测试 world v2（T3-W3）：v1(box_A/B/C) 全保留 + box_D/E 构成 1.5m 狭缝。
+         坐标系换算与 v1 相同：EKF2 odom 原点 = 机体 spawn 点 gazebo(1.01, 0.98)，
+         gazebo_xy = odom_xy + (1.01, 0.98)。分析脚本一律用下述 odom 坐标。
+         障碍表（odom 中心 / 尺寸 x*y*z / gazebo 中心 / 用途）:
+           box_A (3.5, -1.5) 1.0*1.0*1.8 (4.51, -0.52)  起飞到 goal 主路径
+           box_B (5.0, -2.5) 1.5*1.0*1.2 (6.01, -1.52)  主路径，需绕行
+           box_C (4.5, -3.5) 1.0*1.0*2.2 (5.51, -2.52)  goal 侧翼
+           box_D (6.4, -2.0) 1.0*1.0*2.8 (7.41, -1.02)  狭缝南壁
+           box_E (6.4,  0.5) 1.0*1.0*2.8 (7.41,  1.48)  狭缝北壁
+         狭缝: 缝心 odom (6.4, -0.75)，自由净宽 1.5m（odom y in [-1.5, 0]），
+           膨胀 0.299 后可行走廊 0.9m。壁高 2.8m + 地图上限 z=3.0 封死越顶，
+           强制穿缝。壁心较任务书参考 (5.5,-1.0) 东移约 0.9m：参考点被 box_B
+           (odom x in [4.25,5.75]) 占据，东移为最近的无重叠放置。
+         穿缝验证 goal（odom）: (8.0, -1.0, 1.0)，origin 到 goal 直线在缝段
+           y 约 -0.74 至 -0.86，落在缝内。 -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://asphalt_plane</uri>
+    </include>
+    <physics name="default_physics" default="0" type="ode">
+      <gravity>0 0 -9.8066</gravity>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>10</iters>
+          <sor>1.3</sor>
+          <use_dynamic_moi_rescaling>0</use_dynamic_moi_rescaling>
+        </solver>
+        <constraints>
+          <cfm>0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>100</contact_max_correcting_vel>
+          <contact_surface_layer>0.001</contact_surface_layer>
+        </constraints>
+      </ode>
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>0</shadows>
+    </scene>
+
+    <model name="box_A">
+      <pose>4.51 -0.52 0.9 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.0 1.0 1.8</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.0 1.0 1.8</size></box></geometry>
+          <material>
+            <ambient>0.8 0.2 0.2 1</ambient>
+            <diffuse>0.8 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="box_B">
+      <pose>6.01 -1.52 0.6 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 1.0 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 1.0 1.2</size></box></geometry>
+          <material>
+            <ambient>0.2 0.6 0.2 1</ambient>
+            <diffuse>0.2 0.6 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="box_C">
+      <pose>5.51 -2.52 1.1 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.0 1.0 2.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.0 1.0 2.2</size></box></geometry>
+          <material>
+            <ambient>0.2 0.2 0.8 1</ambient>
+            <diffuse>0.2 0.2 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="box_D">
+      <pose>7.41 -1.02 1.4 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.0 1.0 2.8</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.0 1.0 2.8</size></box></geometry>
+          <material>
+            <ambient>0.8 0.5 0.1 1</ambient>
+            <diffuse>0.8 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="box_E">
+      <pose>7.41 1.48 1.4 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.0 1.0 2.8</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.0 1.0 2.8</size></box></geometry>
+          <material>
+            <ambient>0.6 0.2 0.8 1</ambient>
+            <diffuse>0.6 0.2 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

@@ -52,6 +52,10 @@
 | `planner/plan_manage/launch/run_planner_sitl.launch`（新增） | EGO-Planner SITL 入口：odom←`/mavros/local_position/odom`、深度←`/iris_depth_camera/camera/depth/image_raw`、内参 848x480 fx454.68（SDF hfov 推算）、map 30x30、max_vel 0.5；traj_server 输出 `/position_cmd` 对接 px4ctrl |
 | `planner/plan_env/src/grid_map.cpp` | `setCacheOccupancy` 加 `boundIndex(id)` 防御：raycast 端点被 `closetPointInMap` 夹到地图边界表面时浮点误差可使 index 越界（SITL 远距离深度可复现 segfault，2026-09-26 addr2line 定位） |
 | `planner/plan_manage/src/traj_server.cpp` | 删除轨迹完成分支的 `return`：原版到点后停发 /position_cmd，px4ctrl 0.5s 超时退回悬停、40s 后自动降落；现到达后持续发布终点悬停目标（对实机同样为改进） |
+| `px4ctrl/src/controller.cpp` + `PX4CtrlParam.{h,cpp}` + `config/ctrl_param_sitl.yaml`（T3-W2 修改） | ①姿态目标改期望加速度向量直接构造（几何控制器法，zb.z≥0.1g 护栏）——修复大偏航误差下旧欧拉组合式的发散（2026-09-26 两轮坠机第一层根因，V1 独立复现；实机小 yawchg 场景数学等价）。②新增 thrust_model/enable_rls 参数（默认 true 实机零改动）+thr2acc 使用点钳位[5,40]，SITL yaml 置 false——RLS 推力映射在快速机动段被加速度伪影喂爆致油门塌 0（V2f/V2g 实证；SITL 推力曲线恒定无需自适应） |
+| `planner/plan_manage/src/traj_server.cpp`（T3-W2 修改） | YAW_DOT_MAX_PER_SEC PI→PI/4（180→45deg/s）：消除轨迹起点无速率限制的偏航硬甩（~145° 掉头 0.6s 内甩完），自旋 transient 致跟踪发散（四轮实证）；145° 掉头 3.2s 完成，成功腿行为无感知差异 |
+| `planner/plan_manage/launch/run_planner_sitl.launch`（T3 修改） | T1-W4 relay 临时下架为注释（含 T1 relay-v2 设计存档）：relay 订阅 rgb_info 激活 rgb 渲染，单传感器双流在 Xvfb llvmpipe 饱和压垮深度流→grid_map 空图直线穿箱（smoke5/run_182104 A/B 两轮实证；grid_map 内参来自 launch 参数不消费 caminfo 话题） |
+| `sitl_sim/`（T3 新增） | analysis/analyze_takeoff_divergence.py（P1 离线复盘：到达序锚定/时戳修复/翻转-振荡-盲图签名）；t3_verify_flight.sh（障碍区侧场景验证 harness：传送+EKF2 settle+goal 重发+四看门狗）；t3_clean.sh；snap_rviz.sh；b0_headless.rviz（轨迹/膨胀占据/深度云 display）；worlds/sitl_world_obstacles_v2.world（box_D/E 1.5m 狭缝，已装 PX4 worlds）；analysis/analyze_flight.py 加 --world v2；docs/t3_experiments.md 试验台账 |
 | `planner/plan_manage/launch/advanced_param_sitl.xml`（新增） | `_exp` 版的仿真参数：obstacles_inflation 0.337→0.299；外参走 grid_map 默认 optical→body 矩阵（SITL 相机 RPY=0 时旋转正确，平移差 0.1m 在膨胀半径内） |
 
 ## 4. SITL 全流程仿真（脚本在本仓库 `sitl_sim/`，每脚本一个终端，按编号执行）

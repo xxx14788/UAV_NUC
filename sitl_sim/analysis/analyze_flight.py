@@ -29,6 +29,14 @@ OBSTACLES = {
     "box_B": (5.0, -2.5, 0.0, 1.5, 1.0, 1.2),
     "box_C": (4.5, -3.5, 0.0, 1.0, 1.0, 2.2),
 }
+# sitl_world_obstacles_v2（T3-W3）：v1 全保留 + box_D/E 狭缝（坐标见 world 头注释）
+OBSTACLES_V2 = {
+    "box_A": (3.5, -1.5, 0.0, 1.0, 1.0, 1.8),
+    "box_B": (5.0, -2.5, 0.0, 1.5, 1.0, 1.2),
+    "box_C": (4.5, -3.5, 0.0, 1.0, 1.0, 2.2),
+    "box_D": (6.4, -2.0, 0.0, 1.0, 1.0, 2.8),
+    "box_E": (6.4, 0.5, 0.0, 1.0, 1.0, 2.8),
+}
 INFLATION = 0.299   # grid_map obstacles_inflation（advanced_param_sitl.xml）
 SAFETY_MARGIN = 0.05
 MAX_VEL = 0.5       # run_planner_sitl.launch max_vel
@@ -46,6 +54,9 @@ def dist_point_box(p, box):
 def main():
     bag_path = sys.argv[1]
     goal_cli = None
+    global OBSTACLES
+    if "--world" in sys.argv and sys.argv[sys.argv.index("--world") + 1] == "v2":
+        OBSTACLES = OBSTACLES_V2
     if "--goal" in sys.argv:
         i = sys.argv.index("--goal")
         goal_cli = [float(sys.argv[i + 1]), float(sys.argv[i + 2]), float(sys.argv[i + 3])]

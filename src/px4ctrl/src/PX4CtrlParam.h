@@ -38,6 +38,7 @@ public:
 		double K3;
 		bool accurate_thrust_model;
 		double hover_percentage;
+			bool enable_rls;
 	};
 
 	struct RCReverse
