@@ -84,6 +84,18 @@ rosnode info px4ctrl >/dev/null 2>&1 || fail "px4ctrl 未起来"
 sleep 3
 log "px4ctrl up"
 
+# ---- 传送前环境自检(W7v1 事故加固:多实例/加载竞态防线) ----
+# 2026-09-28 W7v1 轮事故:残留 gazebo 与本轮 world 混流,model_states 出现
+# 无箱数组与重名机体 iris_depth_camera_0,传送错机体+150s 未到位。
+MODELS=$(timeout 8 rostopic echo -n1 /gazebo/model_states/name 2>/dev/null)
+for i in $(seq 1 30); do
+    echo "$MODELS" | grep -q box_A && break
+    sleep 2; MODELS=$(timeout 8 rostopic echo -n1 /gazebo/model_states/name 2>/dev/null)
+done
+echo "$MODELS" | grep -q box_A || fail "world 未就绪(30s 无 box_A,疑加载竞态/残留实例),拒飞"
+NIRIS=$(echo "$MODELS" | grep -c 'iris')
+[ "$NIRIS" -eq 1 ] || fail "iris* 模型 $NIRIS 个(应恰 1,多实例污染),拒飞——现场保留,排查:pgrep -a gzserver"
+
 # ---- 传送(disarmed 状态) + EKF2 收敛等待 ----
 log "teleport -> gazebo ($GX,$GY,$GZ) yaw ${SPAWN_YAW_DEG}deg (= odom ($SPAWN_OX,$SPAWN_OY))"
 timeout 10 rosservice call /gazebo/set_model_state "{model_state: {model_name: iris_depth_camera, pose: {position: {x: $GX, y: $GY, z: $GZ}, orientation: {x: 0.0, y: 0.0, z: $QZ, w: $QW}}, reference_frame: world}}" >>"$LOG" 2>&1 || fail "set_model_state 服务调用失败"
