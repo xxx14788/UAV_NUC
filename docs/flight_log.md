@@ -25,3 +25,9 @@
 | 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_193052/flight.bag | ~110s | 仿真（SITL） | T1 smoke10(HEAD栈+relay v2)FAIL:同穿箱签名→疑环境性致盲 |
 | 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_193748/flight.bag | ~100s | 仿真（SITL） | T1 HEAD栈+relay v2:飞行机构完美(1轮起飞/40s到点/干净降落)但穿箱(B/C=0.000);终版归因=磁校准污染(est偏航错位),非relay |
 | 2026-09-27 | ~/sitl_sim/smoke_runs/run_2026-09-27_194855/flight.bag | ~110s | 仿真（SITL） | T1 Xvfb重启终验FAIL:Xvfb重启不愈;夜间进一步退化为mavros连接延迟5-7分钟(22:4x三轮),认证移交次日清洁环境(runbook:t1_evidence/w4_cert_runbook.md) |
+| 2026-09-28 | u3v2/u3v3/u3v4 (t1_evidence/) | 各~30s | 仿真(SITL) | T1-U3 投递停滞矩阵:baseline/成功轮 armed 1.8-3.8s;新pub→px4ctrl TCPROS 随机失败~50%(稳态也有),机制档案 u3_conclusion.md |
+| 2026-09-28 | u4_2026-09-28 (t1_evidence/) | ~60s | 仿真(SITL) | T1-U4b 磁复发实验:sitl_north+默认world 各一轮起飞;实证复位未save,DECL 195°复发,根治=DECL_TYPE=1 |
+| 2026-09-28 | smoke_runs/run_2026-09-28_021048/flight.bag | ~110s | 仿真(SITL) | T1-U5 轮A(relay off)PASS 六指标:到位0.177/避障0.432/poscmd100.2/disarm/yaw -0.51°/depth 13.2Hz |
+| 2026-09-28 | smoke_runs/run_2026-09-28_021506,021949/flight.bag | ~110s | 仿真(SITL) | T1-U5 轮B(relay on v2 override)FAIL×2:末端震荡 stable_n=0(arrival 1.009/0.743);后归因多agent争抢污染(排他窗对照) |
+| 2026-09-28 | smoke_runs/run_2026-09-28_023213,023658/flight.bag | ~110s | 仿真(SITL) | T1-U5 轮B(relay on v3 独立话题,排他窗)PASS×2:到位0.225/0.231,六指标全绿,W4认证完成 |
+| 2026-09-28 | u6_2026-09-28 (t1_evidence/) | 0 | 仿真(SITL) | T1-U6.2 恢复测试 0/3 环境作废(与T3 W7撞窗,px4ctrl被正当清场;致歉记录见 STATUS 02:58) |
