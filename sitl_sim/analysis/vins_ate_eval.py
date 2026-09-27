@@ -89,30 +89,35 @@ def bag_has(bag, topic):
 
 
 def se2_align(est, gt, align_sec):
-    """前 align_sec 秒: yaw 主方向差 δ + 起点平移差 → SE(2) 对齐 est。"""
-    m = est["t"] - est["t"][0] <= align_sec
+    """先把 gt 插值到 est 时刻（两流频率可不同），再取前 align_sec 秒估计
+    yaw 主方向差 δ + 起点平移差 → SE(2) 对齐 est。"""
+    gt_yaw_full = np.unwrap(
+        [yaw_from_quat(*q) for q in gt["q"]])
+    gt_p_i = np.stack(
+        [np.interp(est["t"], gt["t"], gt["p"][:, k]) for k in range(3)], 1)
+    gt_yaw_i = np.interp(est["t"], gt["t"], gt_yaw_full)
+    yaw_e = np.unwrap([yaw_from_quat(*q) for q in est["q"]])
+    m = (est["t"] - est["t"][0]) <= align_sec
     if m.sum() < 5:
         m = slice(None)
-    yaw_e = np.array([yaw_from_quat(*est["q"][i]) for i in
-                      range(len(est["q"]))])
-    yaw_g = np.array([yaw_from_quat(*gt["q"][i]) for i in
-                      range(len(gt["q"]))])
-    # 对齐窗内 yaw 差的圆均值（处理 ±π 缠绕）
     if isinstance(m, np.ndarray):
-        d = np.arctan2(np.sin(yaw_e[m] - yaw_g[m]), np.cos(yaw_e[m] - yaw_g[m]))
+        d = np.arctan2(np.sin(yaw_e[m] - gt_yaw_i[m]),
+                       np.cos(yaw_e[m] - gt_yaw_i[m]))
         delta = math.atan2(np.mean(np.sin(d)), np.mean(np.cos(d)))
-        p0_e, p0_g = est["p"][m].mean(axis=0), gt["p"][m].mean(axis=0)
+        p0_e = est["p"][m].mean(axis=0)
+        p0_g = gt_p_i[m].mean(axis=0)
     else:
-        d = np.arctan2(np.sin(yaw_e - yaw_g), np.cos(yaw_e - yaw_g))
+        d = np.arctan2(np.sin(yaw_e - gt_yaw_i),
+                       np.cos(yaw_e - gt_yaw_i))
         delta = math.atan2(np.mean(np.sin(d)), np.mean(np.cos(d)))
-        p0_e, p0_g = est["p"].mean(axis=0), gt["p"].mean(axis=0)
-    # est 世界系 = gt 世界系绕 z 旋 delta（est.p ≈ R(delta)·gt.p），
-    # 对齐需施加逆旋转 R(-delta)
+        p0_e = est["p"].mean(axis=0)
+        p0_g = gt_p_i.mean(axis=0)
+    # est 世界系 = gt 世界系绕 z 旋 delta，对齐需施加逆旋转 R(-delta)
     c, s = math.cos(delta), math.sin(delta)
     R = np.array([[c, s, 0], [-s, c, 0], [0, 0, 1]])
     p_aligned = (R @ (est["p"] - p0_e).T).T + p0_g
     yaw_aligned = yaw_e - delta
-    return p_aligned, yaw_aligned, delta, yaw_g
+    return p_aligned, yaw_aligned, delta, (gt_p_i, gt_yaw_i)
 
 
 def interp_gt(gt, t_est):
@@ -124,8 +129,8 @@ def interp_gt(gt, t_est):
 
 
 def evaluate(est, gt, align_sec, div_thresh):
-    p_al, yaw_al, delta, yaw_g_raw = se2_align(est, gt, align_sec)
-    gt_p, gt_yaw = interp_gt(gt, est["t"])
+    p_al, yaw_al, delta, gt_interp = se2_align(est, gt, align_sec)
+    gt_p, gt_yaw = gt_interp
     err = p_al - gt_p
     err_n = np.linalg.norm(err, axis=1)
     dur = est["t"][-1] - est["t"][0]
@@ -162,6 +167,9 @@ def main():
     ap.add_argument("bagfile")
     ap.add_argument("--vins-topic", default=VINS_TOPIC_DEF,
                     help=f"默认 {VINS_TOPIC_DEF}，无则回退 {VINS_TOPIC_ALT}")
+    ap.add_argument("--vins-bag", default=None,
+                    help="VINS 输出所在 bag（重放试验时 odom 在私有 master 的"
+                         "录制 bag 里，真值在本 bag；省略则同 bag")
     ap.add_argument("--gt", default="auto",
                     help="auto|/mavros/local_position/odom|gazebo")
     ap.add_argument("--align-sec", type=float, default=5.0)
@@ -170,13 +178,18 @@ def main():
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
-    if not bag_has(args.bagfile, args.vins_topic):
-        if bag_has(args.bagfile, VINS_TOPIC_ALT):
+    if args.vins_bag:
+        # 重放模式: VINS 输出在私有 master 的录制 bag，真值在 args.bagfile
+        src = args.vins_bag
+    else:
+        src = args.bagfile
+    if not bag_has(src, args.vins_topic):
+        if bag_has(src, VINS_TOPIC_ALT):
             print(f"[INFO] {args.vins_topic} 不在 bag 中，回退 {VINS_TOPIC_ALT}")
             args.vins_topic = VINS_TOPIC_ALT
         else:
-            raise SystemExit(f"bag 中既无 {args.vins_topic} 也无 {VINS_TOPIC_ALT}")
-    est = load_traj(args.bagfile, args.vins_topic)
+            raise SystemExit(f"{src} 中既无 {args.vins_topic} 也无 {VINS_TOPIC_ALT}")
+    est = load_traj(src, args.vins_topic)
     if len(est["t"]) < 10:
         raise SystemExit("VINS odom 样本不足")
 
