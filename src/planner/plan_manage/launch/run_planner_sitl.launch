@@ -68,7 +68,11 @@
          v1 relay 订阅 rgb_info 会激活 rgb 渲染,双流在 Xvfb llvmpipe 饱和压垮深度流,
          grid_map 空图直线穿箱(smoke5/run_182104 实证)。T1 v2 方案:改用直接 fx/fy
          参数、不订阅 rgb camera_info,避免激活 RGB 渲染。2026-09-27 v2 回归冒烟重挂。 -->
-    <!-- RELAY-OFF-FOR-ROUND-A(W4 认证轮A基线,轮B恢复) -->
+    <!-- W4 认证(2026-09-28 U5)已过:relay_on=false 轮 A 双 PASS / =true 轮 B 双 PASS
+         (六指标 smoke:arrival 0.23/min_dist/poscmd 100Hz/yaw -0.5deg/depth 13.2Hz)。
+         v3 改动:out 从 override 原生 camera_info 改为独立 _relay 话题(避免与 gazebo
+         原生发布者双发;当前链路无消费者,grid_map 内参由 launch 直配)。B1/B2 期间
+         的 arrival FAIL 已归因多 agent 争抢污染,非 relay(排他窗 B4/B5 对照)。 -->
     <node if="$(arg relay_on)" pkg="depth_caminfo_relay" type="depth_caminfo_relay_node" name="depth_caminfo_relay" output="screen">
         <param name="depth_image" value="/iris_depth_camera/camera/depth/image_raw" />
         <param name="fx" value="454.6857718666893" />
