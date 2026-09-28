@@ -32,7 +32,24 @@ if [ "$WITH_SITL" -eq 1 ] && rostopic list 2>/dev/null | grep -q mavros; then
         v=$(timeout 10 rosservice call /mavros/param/get "param_id: '$p'" 2>/dev/null \
             | grep -oE 'integer: [0-9]+|real: [-0-9.e]+' | head -1 | awk '{print $2}')
         case "$p" in
-            CAL_MAG0_ID|CAL_MAG1_ID) [ "${v:-1}" = "0" ] && pass "$p=0 (复位态)" || fail "$p=$v 非零(磁校准残留,见 t1_evidence/w4_cert_runbook.md)";;
+            CAL_MAG0_ID|CAL_MAG1_ID)
+                # v6-V6 (2026-09-29): 分链判定。VINS 起飞链上非零=必需磁标定
+                # (T3 轮9b 实证: 复位->ARM rejected by PX4, v1.17 无磁 yaw 不可观
+                # 测->prearm 阻塞; CAL_MAG0/1_ID=197388/197644 已定案不可复位)。
+                # depth 链(w4_cert_runbook 上下文)保留旧 FAIL 判定。
+                if [ "$WITH_SITL" -eq 1 ] && rostopic list 2>/dev/null | grep -q iris_stereo_vins; then
+                    if [ "${v:-1}" = "0" ]; then
+                        warn "$p=0: VINS 链此态通常被 prearm 拒(需磁标定,见 STATUS 00:18 T3 定案)"
+                    else
+                        pass "$p=$v (VINS 起飞链必需磁标定,不可复位态)"
+                    fi
+                elif [ "${v:-1}" = "0" ]; then
+                    pass "$p=0 (复位态)"
+                else
+                    # 离线无法辨链: 项目主链=VINS(非零=必需不可复位,00:18 定案)降 WARN;
+                    # depth 链复位要求见 w4_cert_runbook
+                    warn "$p=$v 非零: VINS 链=必需磁标定(不可复位); depth 链=残留应复位(w4 runbook)"
+                fi;;
             EKF2_MAG_DECL) v2=$(echo "${v:-1}" | awk '{printf "%.3f", $1}'); [ "$v2" = "0.000" ] && pass "$p=0" || fail "$p=$v 非0(195°磁偏注入事故同源)";;
             SENS_BOARD_ROT) [ "${v:-x}" = "0" ] && pass "$p=0" || warn "$p=$v (非默认,人工确认)";;
         esac
@@ -65,8 +82,15 @@ else
 fi
 
 echo "-- 4) 深度流频率 --"
-if [ "$WITH_SITL" -eq 1 ] && rostopic list 2>/dev/null | grep -q iris_depth_camera; then
-    hz=$(timeout 22 rostopic hz /iris_depth_camera/camera/depth/image_raw 2>/dev/null | tail -1 | grep -oE 'average rate: [0-9.]+' | awk '{print $3}')
+# v6-V6 (2026-09-29): 深度探针双前缀(iris_depth_camera 独立机型 / iris_stereo_vins rig 内嵌)
+DEPTH_TOPIC=""
+if [ "$WITH_SITL" -eq 1 ]; then
+    for _t in /iris_depth_camera/camera/depth/image_raw /iris_stereo_vins/camera/depth/image_raw; do
+        rostopic list 2>/dev/null | grep -qx "$_t" && DEPTH_TOPIC="$_t" && break
+    done
+fi
+if [ "$WITH_SITL" -eq 1 ] && [ -n "$DEPTH_TOPIC" ]; then
+    hz=$(timeout 22 rostopic hz "$DEPTH_TOPIC" 2>/dev/null | tail -1 | grep -oE 'average rate: [0-9.]+' | awk '{print $3}')
     if [ -z "$hz" ]; then fail "深度流 20s 无输出(渲染饿死,relay 事故签名)"; \
     elif awk "BEGIN{exit !($hz < 20)}"; then fail "深度流 ${hz}Hz < 20Hz(llvmpipe 饱和前兆)"; \
     else pass "深度流 ${hz}Hz"; fi

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# 【v7 定位声明 2026-09-29】本脚本已降级为 511 三档探针/地面静置专用；
+# 飞轮（起栈+init 门+起飞+goal+四指标）一律用 vins_smoke.sh（仓库标准,9c7cee9+）。
+# 遗留坑已修: init 门 echo 引号(下方 v7 注释处)。分析口径注记见 round_result.sh 头
+# 与 docs/vision_acceptance_protocol.md（W3 协议 8de82a9）；PX4 实机参数导出扫描
+# 由 param_hygiene.sh 的 PX4_PARAM_EXPORT 环境变量挂接（未设=WARN 跳过,非 FAIL）。
 # T1-v5 V1 飞行轮编排（V1.2 地面 60s + V4.2 mavcmd 511 实测；MODE=hover 为 V1.3 备用）。
 # 用法: bash v1_flight.sh ground|hover
 # 前置: SITL.lock 空闲（本脚本自取 owner=T1-V1，结束时 t3_clean 顺带释放）。
@@ -84,7 +89,8 @@ T0=$(date +%s)
 ok=0; for i in $(seq 1 40); do sleep 2
     # 注意: rostopic echo 的字段路径订阅(/topic/field)在本环境假阴性("not published"
     # 而 hz 正常)——两度误杀活链的教训;必须用裸话题 echo 判流
-    timeout 3 rostopic echo -n1 /vins_estimator/imu_propagate 2>/dev/null | grep -q 'frame_id: world' && { ok=1; break; }; done
+    # v7 (2026-09-29): echo 输出 frame_id 带引号("world"), 裸 'frame_id: world' 永不匹配(T3 23:06 实锤类) -> 宽松匹配
+    timeout 3 rostopic echo -n1 /vins_estimator/imu_propagate 2>/dev/null | grep -q 'frame_id:.*world' && { ok=1; break; }; done
 [ $ok = 1 ] || { LOG "FATAL 80s 内 VINS 未 init(imu_propagate 无消息)"; exit 1; }
 LOG "VINS init 完成, 等待 $(( (i)*2 ))s"
 sleep 5
