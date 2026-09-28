@@ -40,3 +40,5 @@
 | 2026-09-28 | t2v3_hover_203248.bag | ~71s | 仿真（SITL）T2-W1.2 悬停轮(VINS odom 直供 px4ctrl,起飞0.75m+悬停30s+降) | 成功 | T1 共享分析(V1.3):悬停保持中位 0.005m/max 0.021m,优于 0.03m 基线与 EKF2 参照 0.050m;全程 125Hz 无断流 |
 | 2026-09-28 | t2v3_route_203830.bag(active) | ~2min | 仿真（SITL）T2-W1.3 航线轮(VINS 链) | 失败 | 20:40 链崩(gzserver/px4 逝,sitl log 尾=Connection closed by client),bag 停写;残锁至 21:00 由 T1 清;T2 侧归因待其台账 |
 | 2026-09-28 | v1_ground_salvage_211520.bag | 67s | 仿真（SITL）T1-v5 V1.2 地面静态轮(VINS 链,未起飞;双 T1 实例同链打捞) | 成功 | fsm_state 67 帧零跳变(odom_recv=1 恒);静态游走 12.6cm 包络零均值;V4.2 三档 50/125/215Hz |
+| 2026-09-29 | run_WD1b_032925/flight.bag | ~3min | 仿真（SITL）T1-v6.1 W-D1b（D1 修复验证轮，VINS 平滑重锚+odom 门首飞） | 失败（T2 域） | VINS t=32s 瞬态发散死亡（重启后首轮锚偏类，17.3m 帧跳变，X1 轮 10 同款第 9 次复现）；**活窗（重锚期）零尖峰零阶跃 \|v\|<0.5 = D1 修复实飞 PASS**；死窗 1215 尖峰属纯传播爬升（\|v\|→49.91 被 T2 发布端 50 线防线截停）；**D2 门实战首验：实拒 200+ 帧，三层依序 ACC(\|v\|=0.26)→JUMP→VEL，px4ctrl 零毒值摄入** |
+| 2026-09-29 | run_WD1b_033751/flight.bag | ~7min | 仿真（SITL）T1-v6.1 W-D1c（W-D1 全指标重试） | ENV-FAIL | gazebo/px4 轮中死亡（环境性，E4.2 口径不计飞行预算）；leg1 真值 7.4m 未达；与 T3 重放矩阵并发期环境不稳 |
