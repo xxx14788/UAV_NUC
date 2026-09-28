@@ -82,6 +82,8 @@
 | `sitl_sim/start_sitl_vins.sh`（新增） | iris_stereo_vins 模型启动（同 start_sitl_depth 五坑处理） |
 | `VINS-Fusion/vins_estimator/src/estimator/estimator.cpp/.h` | T2-W4 修复：①stereo+IMU 初始化质量门（原版窗口满即无条件完成，PnP 失败帧静默沿用废姿态→首帧 odometry 天文数字），前置查 bias/状态+后置查状态，不合格经 reinit_request 完全重启 ②failureDetection 启用（原版首行 return false 整个检测为死代码）+状态幅值判据 ③all_image_frame 拷贝循环加边界（越界写） |
 | VINS-Fusion vins_estimator estimator.cpp | T2b-U1:①processMeasurements dt 钳制防线(dt∉[0,0.5]s 置 0+限流告警;跨时钟域/IMU 乱序不再产毒,机制见 docs/t2_experiments.md U1 章) ②毒槽位插桩四路(T2POISON/T2SNAP/T2OPT,保留为可观测性) ③stereo init 后置门 reject 分支 unreachable 死代码清理(行为不变,reinit 消费者已覆盖) | 2026-09-28 |
+| PX4 sitl_gazebo-classic stereo_vins_rig.sdf | T2b-E18 实验临时改 update_rate 30→60 与分辨率变体(录制 60Hz 两变体 bag 后已还原基线 30Hz/640×480;机制与数据见 docs/t2_experiments.md E18 章) | 2026-09-28 |
+| sitl_sim/analysis 新工具 8 个 | t2_segment_attribution.py(分段误差归因)/t2_dy_row_profile.py(dy 行×视差分桶)/t2_bag_concat.py(A+D 拼接)/t2_bag_transform.py(降帧降分)/t2_domain_guard.py(+selftest, 域卫士)/t2_preflight_check.py(五项自检)/t2_gate_test_v2.py(门控五阶段+真实回归)/t2_dump_stamps.py(域诊断) | 2026-09-28 |
 | `VINS-Fusion/vins_estimator/src/estimator/feature_manager.cpp` | T2-W4：solvePoseByPnP 启用 RANSAC 版（上游注释掉的原选），抗退化三角化点 |
 | `VINS-Fusion/vins_estimator/src/featureTracker/feature_tracker.cpp` | T2-W4：立体视差下限 1px 过滤（零视差错配→深度 e17→PnP e33 链路掐断） |
 | `vins_to_mavros/src/vins_to_mavros_node.cpp` | T2-W4 健康门控：相邻帧跳变>1m 或速度>5m/s 停止转发 /mavros/vision_pose/pose 并 ROS_ERROR，连续 20 帧平稳自动恢复；阈值 rosparam（~gate_pos_jump/gate_vel/gate_stable_frames/gate_enabled）。2026-09-26 翻机事故防线，sitl_sim/analysis/vins_gate_test.py 集成单测通过 |
