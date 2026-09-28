@@ -69,3 +69,10 @@ msg_timeout:
     cmd:  0.5
     imu:  0.5
     bat:  0.5
+
+#odom sanity gate（T1-D2 2026-09-29 flyaway 防线；实机 yaml 不含此 key=默认关闭旧行为, README §3 登记）
+odom_gate:
+  enabled: true
+  max_vel: 5.0
+  max_acc: 10.0
+  max_jump: 1.0

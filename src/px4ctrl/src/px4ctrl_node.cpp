@@ -128,7 +128,12 @@ int main(int argc, char *argv[])
     {
         r.sleep();
         ros::spinOnce();
-        fsm.process(); // We DO NOT rely on feedback as trigger, since there is no significant performance difference through our test.
+            // T1-D2: inject odom value-sanity gate config (flyaway defense)
+    fsm.odom_data.sanity_cfg.enabled = param.odom_gate.enabled;
+    fsm.odom_data.sanity_cfg.max_vel = param.odom_gate.max_vel;
+    fsm.odom_data.sanity_cfg.max_acc = param.odom_gate.max_acc;
+    fsm.odom_data.sanity_cfg.max_jump = param.odom_gate.max_jump;
+    fsm.process(); // We DO NOT rely on feedback as trigger, since there is no significant performance difference through our test.
     }
 
     return 0;

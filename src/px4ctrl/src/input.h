@@ -13,6 +13,9 @@
 #include <sensor_msgs/BatteryState.h>
 #include <uav_utils/utils.h>
 #include "PX4CtrlParam.h"
+#include "odom_sanity.h"
+#include "odom_sanity.h"
+#include "odom_sanity.h"
 
 class RC_Data_t
 {
@@ -61,6 +64,11 @@ public:
   nav_msgs::Odometry msg;
   ros::Time rcv_stamp;
   bool recv_new_msg;
+
+  // T1-D2 (2026-09-29): value-sanity gate state (flyaway defense). Injected
+  // from params in node main; default disabled = legacy behavior.
+  OdomSanityConfig sanity_cfg;
+  OdomSanityState sanity_st;
 
   Odom_Data_t();
   void feed(nav_msgs::OdometryConstPtr pMsg);

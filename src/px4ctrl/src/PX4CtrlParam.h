@@ -56,6 +56,17 @@ public:
 		bool no_RC;
 		double height;
 		double speed;
+
+	};
+
+	struct OdomSanityGate_t
+	{
+		// T1-D2 (2026-09-29): odom value-sanity gate. Defaults keep legacy
+		// behavior when keys are absent (real-machine yaml untouched).
+		bool enabled = false;
+		double max_vel = 5.0;
+		double max_acc = 10.0;
+		double max_jump = 1.0;
 	};
 
 	Gain gain;
@@ -64,6 +75,7 @@ public:
 	RCReverse rc_reverse;
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
+	OdomSanityGate_t odom_gate;
 
 	int pose_solver;
 	double mass;

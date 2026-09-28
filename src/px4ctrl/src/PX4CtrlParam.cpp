@@ -30,6 +30,15 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	read_essential_param(nh, "msg_timeout/imu", msg_timeout.imu);
 	read_essential_param(nh, "msg_timeout/bat", msg_timeout.bat);
 
+	// T1-D2 (2026-09-29): non-essential -- absent keys keep code defaults
+	// (enabled=false -> legacy). SITL yaml sets them explicitly.
+	nh.param("odom_gate/enabled", odom_gate.enabled, false);
+	nh.param("odom_gate/max_vel", odom_gate.max_vel, 5.0);
+	nh.param("odom_gate/max_acc", odom_gate.max_acc, 10.0);
+	nh.param("odom_gate/max_jump", odom_gate.max_jump, 1.0);
+	ROS_WARN("[px4ctrl] odom sanity gate: enabled=%d max_vel=%.1f max_acc=%.1f max_jump=%.2f",
+	         (int)odom_gate.enabled, odom_gate.max_vel, odom_gate.max_acc, odom_gate.max_jump);
+
 	read_essential_param(nh, "pose_solver", pose_solver);
 	read_essential_param(nh, "mass", mass);
 	read_essential_param(nh, "gra", gra);

@@ -127,11 +127,32 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
 {
     ros::Time now = ros::Time::now();
 
-    msg = *pMsg;
-    rcv_stamp = now;
-    recv_new_msg = true;
+    // T1-D2 (2026-09-29): value-sanity gate. Violating frames are REJECTED
+    // before touching state: msg/rcv_stamp keep the last accepted frame, so
+    // sustained garbage expires the existing freshness timeout
+    // (odom_is_received) and degrades via the EXISTING MANUAL_CTRL path --
+    // identical to a real odom dropout, no new behavior class. Disabled by
+    // default (real-machine yaml has no key) = exact legacy behavior.
+    {
+        Eigen::Vector3d p_in, v_in, w_in;
+        Eigen::Quaterniond q_in;
+        uav_utils::extract_odometry(pMsg, p_in, v_in, q_in, w_in);
+        double t_in = pMsg->header.stamp.isZero() ? now.toSec()
+                                                  : pMsg->header.stamp.toSec();
+        OdomSanityVerdict verdict = odom_sanity_check(sanity_cfg, sanity_st, t_in, p_in, v_in);
+        if (verdict != OdomSanityVerdict::ACCEPT)
+        {
+            if (sanity_st.rejected % sanity_cfg.warn_every == 1)
+                ROS_ERROR("[px4ctrl] odom sanity gate REJECTED frame (v=%d): |v|=%.2f |p|=%.2f |dv|ref, total_rejected=%ld",
+                          (int)verdict, v_in.norm(), p_in.norm(), sanity_st.rejected);
+            return;  // state untouched: freshness clock runs on last healthy frame
+        }
+        msg = *pMsg;
+        rcv_stamp = now;
+        recv_new_msg = true;
+        p = p_in; v = v_in; q = q_in; w = w_in;
+    }
 
-    uav_utils::extract_odometry(pMsg, p, v, q, w);
 
 // #define VEL_IN_BODY
 #ifdef VEL_IN_BODY /* Set to 1 if the velocity in odom topic is relative to current body frame, not to world frame.*/

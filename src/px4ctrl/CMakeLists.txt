@@ -54,4 +54,9 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_controller_attitude
     test/test_controller_attitude.cpp)
   target_link_libraries(test_controller_attitude ${catkin_LIBRARIES})
+
+  # T1-D2: odom value-sanity gate gtest (odom_sanity.h, no ROS dependency)
+  catkin_add_gtest(test_odom_sanity
+    test/test_odom_sanity.cpp)
+  target_link_libraries(test_odom_sanity ${catkin_LIBRARIES})
 endif()
