@@ -48,6 +48,7 @@ T_CONN=$(date +%s); LOG "mavros up (${i}x2s)"
 hz_of() { timeout "${2:-20}" rostopic hz "$1" 2>/dev/null | grep -oE 'average rate: [0-9.]+' | tail -1 | awk '{print $3}'; }
 
 # ---------- V4.2: mavcmd 511 提频实测（105=HIGHRES_IMU→/mavros/imu/data_raw） ----------
+# hover 模式不发三档探针，但必须应用 511（否则 T2 preflight 的 IMU>100Hz 门红项中止）
 if [ "$MODE" = "ground" ]; then
     R_DEF=$(hz_of /mavros/imu/data_raw 15)
     A1=$(rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0 2>&1 | tail -1); sleep 2
@@ -63,6 +64,11 @@ if [ "$MODE" = "ground" ]; then
     } | tee "$EV/rate511.txt"
     LOG "511 实测完成: def=${R_DEF:-NA} 5000us=${R_5K:-NA} 2500us=${R_25:-NA}"
     sleep 2
+else
+    rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0 >/dev/null 2>&1
+    sleep 2
+    R_5K=$(hz_of /mavros/imu/data_raw 20)
+    LOG "hover 模式 511 105 5000 应用: ${R_5K:-NA} Hz"
 fi
 
 # ---------- VINS + 转发 + px4ctrl ----------
@@ -107,8 +113,15 @@ else
     T_HOV=$(date +%s)
     LOG "悬停 30s 计时"
     sleep 30
-    LOG "降落指令"
-    timeout 20 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null 2>&1
+    LOG "降落指令(重掷制,防 U3 投递随机失败)"
+    for k in 1 2 3; do
+        timeout 12 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null 2>&1 &
+        for j in $(seq 1 12); do
+            timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: False' && break 2
+            sleep 1
+        done
+        wait $! 2>/dev/null
+    done
     sleep 15
 fi
 kill -INT $REC 2>/dev/null; sleep 3
