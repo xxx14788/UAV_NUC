@@ -47,7 +47,13 @@
 2. 需要的只是**流程顺序**：起栈→VINS init→再触发起飞（start_sitl_vins 编排已如此）
 3. 参考点 2cm 差异：真值对比类工具登记（map_truth_diff / analyze_flight 对齐段），不动参数
 
-## V1.2/V1.3 待验证点（由本表派生）
+## V1.2/V1.3 实测结果（已回填,2026-09-28 晚）
+
+见 `sitl_sim/t1_evidence/v1_flight_results.md`：悬停保持中位 0.005m（PASS,优于
+0.03m 基线与 EKF2 参照 0.050m）；静态漂移 2-3cm/45s；imu_propagate 125Hz 逐帧零断流
+（maxgap 12ms）；出生点平移假象(+1.01,+0.98)复现。msg_timeout 不调的结论获实测支持。
+
+## V1.2 待补点（剩余）
 
 1. init 完成瞬态：latest_V 首帧速度幅度（FSM 静止门 0.1 m/s 是否被瞬态卡住）
 2. 地面静止 60s：imu_propagate vs gazebo 真值漂移量化（漂移率）

@@ -5,6 +5,12 @@
 	     PX4 EKF2 不动：vins_to_mavros 照实机把 VINS 位姿喂 /mavros/vision_pose/pose。
 
 	     node name 必须保持 "px4ctrl"（源码 nh("~") 私有话题依赖）。 -->
+	<!-- 同构注解(T1-v5 V4.2): 本链路起栈后须先执行
+	     rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0
+	     (HIGHRES_IMU 提频,VINS 输入 /mavros/imu/data_raw;实测 125Hz,机制=请求间隔被
+	     mavlink tick ~4ms 网格量化;4000us 档实测 223Hz 可达实机 200Hz 级,切换属
+	     T2 域验证后决策)。px4ctrl 姿态桥走 /mavros/imu/data(ATT_QUATERNION ~50Hz),
+	     与 511 无关(见 sitl_sim/t1_evidence/v4_imu_freq_assessment.md)。 -->
 	<node pkg="px4ctrl" type="px4ctrl_node" name="px4ctrl" output="screen">
 
 		<!-- 仿真 VINS：高频低延迟里程计（body=IMU 系，与机体系近似对齐） -->

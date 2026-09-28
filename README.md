@@ -47,7 +47,7 @@ px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
 |---|---|---|---|
 | 相机内参 fx | 454.68（iris 模型 hfov 86° 推算） | 387.51（D435 实标） | 传感器模型几何必然（fx 必须匹配仿真相机） |
 | obstacles_inflation | 0.299 | 0.337 | 实机含云台杆遮挡标定；SITL 无杆（A3 决策 2026-09-26，如需保守可统一 0.337 重验） |
-| VINS IMU 源 | /mavros/imu/data_raw 100Hz | mavcmd 511 设 200Hz | SITL 传感器插件上限；频域影响在 VINS 域评估 |
+| VINS IMU 源 | /mavros/imu/data_raw：511 105 5000→实测 **125Hz**（5000us 被 tick 量化到 8ms）；4000us 档实测 **223Hz** 可达实机级（切换待 T2 域验证） | mavcmd 511 设 200Hz | V4.2 实测 2026-09-28（bag+probe6 双证）：请求间隔被 mavlink tick ~4ms 网格量化；默认档 50Hz（W2）；频域影响在 VINS 域评估 |
 | 相机平移外参 | 模型 0.1m 前置 | D435 实测外参 | sim_stereo 配置已按模型标定（T2 域） |
 | PX4 固件 | px4_sitl v1.17 | fmu 实机版 | R5：SITL 动过的 PX4 参数（MAG_TYPE/SDLOG 等）一律不同步实机 |
 
@@ -119,6 +119,11 @@ VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
 | `planner/plan_manage/src/traj_server.cpp`（T3-W7 续篇修改） | ①YAW_DOT_MAX PI/4→PI/2 定版（45 已证致掠射建图侵蚀 run_193052 弃用；90=硬甩消除与掠射侵蚀的折中）；②新轨迹到达时 last_yaw_ 重置为机体实际 odom yaw（经 traj_server/odom_topic 参数订阅，空=上游行为；仅 SITL launch 传入）——消除起点 yaw 从上一轨迹残留值追赶的瞬态（V1 轮 58 次 >150°/s 追赶事件实证，yaw_closure_analysis.py） |
 | `sitl_sim/analysis/`（T3 续篇新增 5 工具） | controller_replay.py（三实现 A/B/C 回放+保真核验+对齐率决策表：老欧拉法全历史失败腿倾角错向 78-170° 定罪，帧补丁 P 中位 0.01°→保留）；yaw_closure_analysis.py（Y2 阶跃-replan 对齐/Y3 速率跟踪滞后）；map_truth_diff.py（占据栅格重建 vs 真障碍体素 diff + 离线融合重演参数扫描；健康环境缺失率 0.000）；stoppage_analysis.py（停顿-replan 对齐：成功轮 100% 邻接 replan=重规划等待型）；leg_database.py（跨会话全 bag 指标库 → docs/analysis/legs.csv） |
 | `sitl_sim/` harness（T3 续篇修改+新增） | t3_verify_flight.sh：传送前 world 就绪+单机体断言（W7v1 多实例混流事故加固）+SPAWN_YAW 环境参数化；two_leg_flight.sh（新增，无传送两段式返程腿 harness——EKF2 瞬爆隔离实验 2/2 复现载体）；env_health_check.sh（五项自检：磁参数/shm/进程孤儿/深度频率/日志体量）；teleport_stats.sh（EKF2 重锚统计）；t3_clean.sh 升级（shm+ipcs+Xvfb+大文件报告）；三脚本录制清单+occupancy/occupancy_inflate/bspline/深度流/相机内参 |
+
+| `sitl_sim/param_hygiene.sh`（T1-v5 V2 新增） | 实机零 GPS 静态扫描（R5 落地）：四类对象（ctrl_param_fpv.yaml／*_exp* 链+full_vins_px4.launch／realsense_d435 全目录／PX4_PARAM_EXPORT 可选）；FAIL/INFO(显式关闭)/EXEMPT(注释/行内 hygiene-exempt) 三态；gps/MAV_CMD 176/course/global origin/MAV_FRAME GLOBAL 五类模式；自测 10/10（含四类注入捕获），当前实机 9 对象全 PASS；接入 env_health_check 第 6 项 |
+| `sitl_sim/env_health_check.sh`（T1-v5 V3 修复+扩项） | 五项→六项；静默 EXIT=1 根因=set -u 下 source ROS 时 1.ros_distro.sh:3 引用未定义 ROS_DISTRO 直接中止外层脚本（2>/dev/null 吞掉报错），修复=source 先于 set -u；env -i 复现+回归双门禁过 |
+| `sitl_sim/v1_flight.sh`+`t1_evidence/v1_{ground,hover}_analysis.py`+`t1_evidence/v1_flight_results.md`（T1-v5 V1/V4 新增） | VINS 链路轮编排器（锁 T1-V1/清场补杀 vins 系/fresh-master+use_sim_time 前置/VINS init 门/T2 preflight/511 三档探针/降落重掷/t3_clean 收尾释锁；bag 增录 fsm_state+debugPx4ctrl）+双口径分析器+实测：悬停保持中位 0.005m（PASS,优于 0.03m 基线与 EKF2 参照 0.050m）、静态漂移 2-3cm/45s、imu_propagate 125Hz 零断流（maxgap 12ms）、出生点平移假象(+1.01,+0.98)复现登记 |
+| `docs/t1_vins_odom_contract.md`（T1-v5 V1.1 新增,双会话合并） | px4ctrl odom 契约差异表（源码级+bag 实证）：EKF2 odom vs VINS imu_propagate 12 维度；结论=契约兼容无需改参，两真差异属流程适配（init 前零发布/参考点 IMU 2cm），msg_timeout 不调（调大有害） |
 
 ## 4. SITL 全流程仿真（脚本在本仓库 `sitl_sim/`，每脚本一个终端，按编号执行）
 
