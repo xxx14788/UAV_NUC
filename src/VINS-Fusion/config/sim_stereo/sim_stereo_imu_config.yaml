@@ -78,3 +78,7 @@ td: 0.00
 rolling_shutter: 0
 rolling_shutter_tr: 0
 roll_shutter_rho: 0
+
+#reanchor smoothing（T1-D1 2026-09-29: 发布侧平滑重锚; 实机 yaml 不含此 key=默认关闭旧行为, README §3 登记）
+reanchor_smooth: 1
+reanchor_smooth_frames: 15

@@ -63,6 +63,8 @@ extern int MIN_DIST;
 extern double F_THRESHOLD;
 extern int SHOW_TRACK;
 extern int FLOW_BACK;
+extern bool REANCHOR_SMOOTH;        // T1-D1: publish-side smooth reanchor switch
+extern int REANCHOR_SMOOTH_FRAMES;  // T1-D1: amortize frame count
 
 void readParameters(std::string config_file);
 

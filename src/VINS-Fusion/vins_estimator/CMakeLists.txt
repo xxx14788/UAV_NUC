@@ -54,6 +54,11 @@ target_link_libraries(vins_lib ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRAR
 
 
 add_executable(vins_node src/rosNodeTest.cpp)
+
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(test_reanchor_smoother test/test_reanchor_smoother.cpp)
+  target_include_directories(test_reanchor_smoother PRIVATE src)
+endif()
 target_link_libraries(vins_node vins_lib) 
 
 add_executable(kitti_odom_test src/KITTIOdomTest.cpp)

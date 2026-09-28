@@ -257,6 +257,8 @@ int main(int argc, char **argv)
     printf("config_file: %s\n", argv[1]);
 
     readParameters(config_file);
+    // T1-D1: publish-side smooth reanchor amortize width from config
+    estimator.reanchor_smoother.frames = REANCHOR_SMOOTH_FRAMES;
     estimator.setParameter();
 
 #ifdef EIGEN_DONT_PARALLELIZE

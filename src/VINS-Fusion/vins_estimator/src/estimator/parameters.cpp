@@ -23,6 +23,8 @@ double BIAS_ACC_THRESHOLD;
 double BIAS_GYR_THRESHOLD;
 double SOLVER_TIME;
 int NUM_ITERATIONS;
+bool REANCHOR_SMOOTH = false;       // T1-D1: publish-side smooth reanchor (default off = legacy)
+int REANCHOR_SMOOTH_FRAMES = 15;    // T1-D1: amortize frames @125Hz (0.12s)
 int ESTIMATE_EXTRINSIC;
 int ESTIMATE_TD;
 int ROLLING_SHUTTER;
@@ -106,6 +108,15 @@ void readParameters(std::string config_file)
     NUM_ITERATIONS = fsSettings["max_num_iterations"];
     MIN_PARALLAX = fsSettings["keyframe_parallax"];
     MIN_PARALLAX = MIN_PARALLAX / FOCAL_LENGTH;
+
+    // T1-D1 (2026-09-29): absent key keeps defaults (off) -> real-machine
+    // configs with no key behave exactly as before. SITL sim_stereo yaml
+    // sets reanchor_smooth: 1.
+    if (!fsSettings["reanchor_smooth"].empty())
+        REANCHOR_SMOOTH = (int)fsSettings["reanchor_smooth"];
+    if (!fsSettings["reanchor_smooth_frames"].empty())
+        REANCHOR_SMOOTH_FRAMES = (int)fsSettings["reanchor_smooth_frames"];
+    printf("REANCHOR_SMOOTH: %d frames: %d\n", REANCHOR_SMOOTH, REANCHOR_SMOOTH_FRAMES);
 
     fsSettings["output_path"] >> OUTPUT_FOLDER;
     VINS_RESULT_PATH = OUTPUT_FOLDER + "/vio.csv";

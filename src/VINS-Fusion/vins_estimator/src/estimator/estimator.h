@@ -28,6 +28,7 @@
 #include "../initial/initial_sfm.h"
 #include "../initial/initial_alignment.h"
 #include "../initial/initial_ex_rotation.h"
+#include "reanchor_smoother.h"
 #include "../factor/imu_factor.h"
 #include "../factor/pose_local_parameterization.h"
 #include "../factor/marginalization_factor.h"
@@ -78,6 +79,12 @@ class Estimator
                                      double depth, Vector3d &uvi, Vector3d &uvj);
     void updateLatestStates();
     void fastPredictIMU(double t, Eigen::Vector3d linear_acceleration, Eigen::Vector3d angular_velocity);
+    // T1-D1: single-source IMU propagation step (shared by the anchored chain
+    // fastPredictIMU and the updateLatestStates shadow chain).
+    void propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
+                       Eigen::Quaterniond &Q, Eigen::Vector3d &acc_0, Eigen::Vector3d &gyr_0,
+                       const Eigen::Vector3d &Ba, const Eigen::Vector3d &Bg,
+                       double tn, const Eigen::Vector3d &accn, const Eigen::Vector3d &gyrn);
     bool IMUAvailable(double t);
     void initFirstIMUPose(vector<pair<double, Eigen::Vector3d>> &accVector);
 
@@ -172,6 +179,7 @@ class Estimator
     double latest_time;
     Eigen::Vector3d latest_P, latest_V, latest_Ba, latest_Bg, latest_acc_0, latest_gyr_0;
     Eigen::Quaterniond latest_Q;
+    ReanchorSmoother reanchor_smoother;   // T1-D1: publish-side smooth reanchor (kernel untouched)
 
     bool initFirstPoseFlag;
     bool initThreadFlag;

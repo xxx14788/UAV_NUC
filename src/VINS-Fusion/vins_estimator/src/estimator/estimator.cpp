@@ -217,7 +217,23 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
         // 阈), 越界即停发: 消费方按 odom 停流进各自 failsafe, 毒值不出门。
         if (latest_P.allFinite() && latest_V.allFinite() &&
             latest_P.norm() < 1e3 && latest_V.norm() < 50.0)
-            pubLatestOdometry(latest_P, latest_Q, latest_V, t);
+        {
+            // T1-D1 (2026-09-29): publish-side smooth reanchor -- published
+            // value overlays the amortizing reanchor offset; estimator kernel
+            // latest_* untouched. Boundedness gate above still checked on the
+            // raw states (poison values are caught before smoothing).
+            // REANCHOR_SMOOTH=0 (default; real-machine yaml has no key) keeps
+            // the exact legacy publish behavior.
+            if (REANCHOR_SMOOTH)
+            {
+                Eigen::Vector3d P_pub = latest_P + reanchor_smoother.offset_P;
+                Eigen::Vector3d V_pub = latest_V + reanchor_smoother.offset_V;
+                pubLatestOdometry(P_pub, latest_Q, V_pub, t);
+                reanchor_smoother.step();
+            }
+            else
+                pubLatestOdometry(latest_P, latest_Q, latest_V, t);
+        }
         mPropagate.unlock();
     }
 }
@@ -665,6 +681,16 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
         optimization();
         set<int> removeIndex;
         outliersRejection(removeIndex);
+        // T2-R1.5/R3 插桩:每帧状态轨迹(printf+fflush 防 nohup stdout 缓冲吞行)
+        printf("[T2diag] t=%.4f P=[%.4f %.4f %.4f] V=[%.4f %.4f %.4f] |Bas|=%.6f |Bgs|=%.7f tic0=[%.4f %.4f %.4f] tic1=[%.4f %.4f %.4f] td=%.5f track=%d\n",
+               Headers[WINDOW_SIZE],
+               Ps[WINDOW_SIZE].x(), Ps[WINDOW_SIZE].y(), Ps[WINDOW_SIZE].z(),
+               Vs[WINDOW_SIZE].x(), Vs[WINDOW_SIZE].y(), Vs[WINDOW_SIZE].z(),
+               Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm(),
+               tic[0].x(), tic[0].y(), tic[0].z(),
+               tic[1].x(), tic[1].y(), tic[1].z(),
+               td, f_manager.last_track_num);
+        fflush(stdout);
         f_manager.removeOutlier(removeIndex);
         if (! MULTIPLE_THREAD)
         {
@@ -676,6 +702,15 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
 
         if (failureDetection())
         {
+            // T2-R1.5 插桩:判据快照与触发行同 printf(stdout 缓冲丢失教训)
+            printf("[T2fail] t=%.4f P=[%.4g %.4g %.4g] V=[%.4g %.4g %.4g] |Bas|=%.4g |Bgs|=%.4g tic0=[%.4f %.4f %.4f] td=%.5f track=%d\n",
+                   Headers[WINDOW_SIZE],
+                   Ps[WINDOW_SIZE].x(), Ps[WINDOW_SIZE].y(), Ps[WINDOW_SIZE].z(),
+                   Vs[WINDOW_SIZE].x(), Vs[WINDOW_SIZE].y(), Vs[WINDOW_SIZE].z(),
+                   Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm(),
+                   tic[0].x(), tic[0].y(), tic[0].z(),
+                   td, f_manager.last_track_num);
+            fflush(stdout);
             ROS_WARN("failure detection!");
             failure_occur = 1;
             clearState();
@@ -1273,6 +1308,13 @@ void Estimator::optimization()
                  static_cast<int>(summary.iterations.size()), static_cast<int>(summary.termination_type));
     }
     //cout << summary.BriefReport() << endl;
+    // T2-R1.5/R3 插桩:全阶段求解器健康(printf+fflush)
+    printf("[T2slv] t=%.4f phase=%d init_cost=%.6g final_cost=%.6g iters=%d term=%d slv_ms=%.1f\n",
+           Headers[frame_count], solver_flag,
+           summary.initial_cost, summary.final_cost,
+           static_cast<int>(summary.iterations.size()),
+           static_cast<int>(summary.termination_type), t_solver.toc());
+    fflush(stdout);
     ROS_DEBUG("Iterations : %d", static_cast<int>(summary.iterations.size()));
     //printf("solver costs: %f \n", t_solver.toc());
 
@@ -1714,24 +1756,44 @@ void Estimator::outliersRejection(set<int> &removeIndex)
     }
 }
 
+void Estimator::propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
+                               Eigen::Quaterniond &Q, Eigen::Vector3d &acc_0, Eigen::Vector3d &gyr_0,
+                               const Eigen::Vector3d &Ba, const Eigen::Vector3d &Bg,
+                               double tn, const Eigen::Vector3d &accn, const Eigen::Vector3d &gyrn)
+{
+    double dt = tn - t;
+    t = tn;
+    Eigen::Vector3d un_acc_0 = Q * (acc_0 - Ba) - g;
+    Eigen::Vector3d un_gyr = 0.5 * (gyr_0 + gyrn) - Bg;
+    Q = Q * Utility::deltaQ(un_gyr * dt);
+    Eigen::Vector3d un_acc_1 = Q * (accn - Ba) - g;
+    Eigen::Vector3d un_acc = 0.5 * (un_acc_0 + un_acc_1);
+    P = P + dt * V + 0.5 * dt * dt * un_acc;
+    V = V + dt * un_acc;
+    acc_0 = accn;
+    gyr_0 = gyrn;
+}
+
 void Estimator::fastPredictIMU(double t, Eigen::Vector3d linear_acceleration, Eigen::Vector3d angular_velocity)
 {
-    double dt = t - latest_time;
-    latest_time = t;
-    Eigen::Vector3d un_acc_0 = latest_Q * (latest_acc_0 - latest_Ba) - g;
-    Eigen::Vector3d un_gyr = 0.5 * (latest_gyr_0 + angular_velocity) - latest_Bg;
-    latest_Q = latest_Q * Utility::deltaQ(un_gyr * dt);
-    Eigen::Vector3d un_acc_1 = latest_Q * (linear_acceleration - latest_Ba) - g;
-    Eigen::Vector3d un_acc = 0.5 * (un_acc_0 + un_acc_1);
-    latest_P = latest_P + dt * latest_V + 0.5 * dt * dt * un_acc;
-    latest_V = latest_V + dt * un_acc;
-    latest_acc_0 = linear_acceleration;
-    latest_gyr_0 = angular_velocity;
+    propagateOnce(latest_time, latest_P, latest_V, latest_Q, latest_acc_0, latest_gyr_0,
+                  latest_Ba, latest_Bg, t, linear_acceleration, angular_velocity);
 }
 
 void Estimator::updateLatestStates()
 {
     mPropagate.lock();
+    // T1-D1 (2026-09-29): shadow chain -- snapshot the continuous propagation
+    // state before the overwrite, integrate it alongside the re-anchored chain
+    // over the replayed IMU buffer, yielding the simultaneous PURE reanchor
+    // delta (shadow - latest) that feeds the publish-side smoother. Kernel
+    // states latest_* keep their original semantics, unchanged.
+    Eigen::Vector3d sh_P = latest_P, sh_V = latest_V;
+    Eigen::Vector3d sh_acc_0 = latest_acc_0, sh_gyr_0 = latest_gyr_0;
+    Eigen::Quaterniond sh_Q = latest_Q;
+    double sh_t = latest_time;
+    const Eigen::Vector3d sh_Ba = latest_Ba, sh_Bg = latest_Bg;
+
     latest_time = Headers[frame_count] + td;
     latest_P = Ps[frame_count];
     latest_Q = Rs[frame_count];
@@ -1750,8 +1812,12 @@ void Estimator::updateLatestStates()
         Eigen::Vector3d acc = tmp_accBuf.front().second;
         Eigen::Vector3d gyr = tmp_gyrBuf.front().second;
         fastPredictIMU(t, acc, gyr);
+        if (REANCHOR_SMOOTH && solver_flag == NON_LINEAR)
+            propagateOnce(sh_t, sh_P, sh_V, sh_Q, sh_acc_0, sh_gyr_0, sh_Ba, sh_Bg, t, acc, gyr);
         tmp_accBuf.pop();
         tmp_gyrBuf.pop();
     }
+    if (REANCHOR_SMOOTH && solver_flag == NON_LINEAR)
+        reanchor_smoother.addJump(sh_P - latest_P, sh_V - latest_V);
     mPropagate.unlock();
 }
