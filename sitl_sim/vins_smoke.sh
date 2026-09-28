@@ -25,23 +25,28 @@ EV="$L/vins_smoke_runs/run_${TAG}_$(date +%H%M%S)"
 mkdir -p "$EV"
 exec > >(tee "$EV/round.log") 2>&1
 
-# ---------- 锁(T3 前缀; trap 属主守卫:锁被抢时绝不动他人现场) ----------
+# ---------- 锁(T4-E1 v2 统一仲裁:死主自动接管/心跳/磁盘水位线门;流名载体=权序标签) ----------
 LOCK="$L/SITL.lock"
-MYOWNER="T3-vsmoke-$$-$(date +%H%M)"
-ln -s "$MYOWNER" "$LOCK" 2>/dev/null || { LOG "FATAL 锁被占($(readlink "$LOCK" 2>/dev/null))"; exit 1; }
+SL="$L/sitl_lock.sh"
+MYSTREAM="${SMOKE_OWNER:-T3-$TAG}"
+"$SL" get "$MYSTREAM" || { LOG "FATAL 锁获取失败(活主持有或盘门拒绝,原因见上)"; exit 1; }
+MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
+"$SL" hbloop "$MYSTREAM" & HBPID=$!
 cleanup() {
+  kill "$HBPID" 2>/dev/null
   pkill -f 'vins_nod[e]' 2>/dev/null; pkill -f 'vins_to_mavro[s]' 2>/dev/null
   pkill -f 'px4ctrl_nod[e]' 2>/dev/null; pkill -f 'rosbag recor[d]' 2>/dev/null
   pkill -f 'simulator_mavlin[k]' 2>/dev/null; pkill -f 'sitl_run.s[h]' 2>/dev/null
   pkill -9 -f 'bin/px[4]' 2>/dev/null; pkill -9 -x gzserver 2>/dev/null
   pkill -x gzclient 2>/dev/null
+  pkill -f 'start_sitl_vin[s]' 2>/dev/null; pkill -f 'sleep infinit[y]' 2>/dev/null
   pkill -f '02_start_mavro[s]' 2>/dev/null; pkill -x mavros_node 2>/dev/null
   pkill -f 'run_ctrl_sitl_vin[s]' 2>/dev/null; pkill -f 'run_planner_sitl_vin[s]' 2>/dev/null
   pkill -f 'src/launch/sim_vins.launc[h]' 2>/dev/null
   pkill -f 'roslaunc[h]' 2>/dev/null; pkill -f 'roscor[e]' 2>/dev/null
   sleep 3
 }
-trap 'if [ "$(readlink "$LOCK" 2>/dev/null || true)" = "$MYOWNER" ]; then cleanup; rm -f "$LOCK"; fi' EXIT
+trap 'if [ "$(readlink "$LOCK" 2>/dev/null || true)" = "$MYOWNER" ]; then cleanup; "$SL" release "$MYSTREAM" >/dev/null 2>&1; fi' EXIT
 
 # ---------- 清场断言(不动他人,只拒绝脏现场) ----------
 A=$(pgrep -xc px4 2>/dev/null || true); A=${A:-0}
@@ -109,12 +114,15 @@ rostopic info /position_cmd 2>/dev/null | grep -q Publishers || { LOG "FATAL pla
 LOG "五件套齐(px4ctrl+ego)"
 
 # ---------- 紧凑录制(无图像,~40MB/轮;磁盘两次100%教训) ----------
+IMG_TOPICS=""
+[ "${VINS_SMOKE_IMAGES:-0}" = "1" ] && IMG_TOPICS="/iris_stereo_vins/vins_cam_left/image_raw /iris_stereo_vins/vins_cam_right/image_raw"
 BAG="$EV/flight.bag"
 nohup rosbag record -O "$BAG" \
   /vins_estimator/imu_propagate /vins_estimator/odometry /vins_estimator/feature_pts \
   /mavros/imu/data_raw /mavros/local_position/odom /mavros/state \
   /mavros/setpoint_raw/attitude /debugPx4ctrl/fsm_state /debugPx4ctrl \
   /gazebo/model_states /px4ctrl/takeoff_land /position_cmd /move_base_simple/goal /clock \
+  $IMG_TOPICS \
   > "$EV/record.log" 2>&1 &
 REC=$!
 sleep 3
@@ -218,6 +226,7 @@ kill -INT $REC 2>/dev/null; sleep 3
 # ---------- 四指标 RESULT(独立脚本 round_result.sh,与 resume 共用) ----------
 bash "$HOME/sitl_sim/round_result.sh" "$BAG" "$GX" "$GY" "$GZ" "$WORLD" "$EV" "$ARR" "$ARR2" "$HASL2" "$L2X" "$L2Y" "$L2Z" > "$EV/RESULT.txt" 2>&1
 tail -10 "$EV/RESULT.txt"
+grep -q "RESULT=ENV-FAIL" "$EV/RESULT.txt" && LOG "ENV-FAIL 环境性崩溃口径(E4.2):重试不计入飞行预算"
 
 # ---------- 清场(函数已前置+EXIT trap;正常路径显式调一遍) ----------
 cleanup

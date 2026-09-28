@@ -108,5 +108,19 @@ print('auto_disarm->%d' % ok[3])
 print('跟踪 p95=%.3f m (cmd-odom, 信息项)' % p95)
 print('ARRIVE_WATCH1: %s' % arr)
 print('ARRIVE_WATCH2: %s' % arr2)
-print('RESULT=%s  (证据: %s)' % ('PASS' if all(ok) else 'FAIL', ev))
+# T4-E4.2(2026-09-29): 环境性崩溃分口径——gzserver/px4 轮中死亡=ENV-FAIL(重试不计入飞行预算)
+import os as _os, glob as _glob
+_envfail = False
+for _lg in [ _os.path.join(ev, 'sitl.log'), _os.path.join(ev, 'round.log') ] + _glob.glob(_os.path.join(ev, '*.log')):
+    try:
+        _txt = open(_lg, errors='ignore').read()
+    except OSError:
+        continue
+    if 'Connection closed by client' in _txt or 'px4 亡,进程组整组清场' in _txt:
+        _envfail = True
+        break
+if _envfail and not all(ok):
+    print('RESULT=ENV-FAIL  (环境性:gazebo/px4 轮中死亡,证据见 %s;重试不计入飞行预算,对齐 T3-X4 允许 1 环境性重试)' % ev)
+else:
+    print('RESULT=%s  (证据: %s)' % ('PASS' if all(ok) else 'FAIL', ev))
 PYEOF

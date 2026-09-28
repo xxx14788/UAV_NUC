@@ -14,8 +14,7 @@ LOG() { echo "[$(date +%H:%M:%S)] $*"; }
 
 # ---------- 锁 ----------
 LOCK="$HOME/sitl_sim/SITL.lock"
-if [ -e "$LOCK" ]; then LOG "FATAL 锁被占($(readlink "$LOCK" 2>/dev/null))"; exit 1; fi
-ln -s "T1-V1" "$LOCK" || { LOG "FATAL 取锁失败"; exit 1; }
+bash "$HOME/sitl_sim/sitl_lock.sh" get T1-V1 || { LOG "FATAL 锁获取失败(原因见上)"; exit 1; }
 
 # ---------- 清场（补杀 t3_clean 不管的 vins/mavros 子进程） ----------
 pkill -f 'vins_nod[e]' 2>/dev/null; pkill -f 'vins_to_mavro[s]' 2>/dev/null
