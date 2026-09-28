@@ -37,6 +37,20 @@ px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
   VINS-Fusion 配置维持无 GPS 依赖；给 SITL 加的任何 GPS 相关参数
   不得同步到实机配置。
 
+**R6 仿真-实机链路同构**（2026-09-28 用户强化裁定）：仿真验证链路的
+节点拓扑与话题语义必须与实机 full_vins_px4.launch 同构——同环节：
+传感器模型 → VINS-Fusion → vins_to_mavros → px4ctrl（~odom=VINS 直供）
+→ EGO-Planner（odom=VINS、深度建图）→ traj_server → px4ctrl。允许的
+差异仅限"传感器模型几何必然"与"已论证登记"两类。当前已登记差异：
+
+| 差异点 | SITL | 实机 | 依据 |
+|---|---|---|---|
+| 相机内参 fx | 454.68（iris 模型 hfov 86° 推算） | 387.51（D435 实标） | 传感器模型几何必然（fx 必须匹配仿真相机） |
+| obstacles_inflation | 0.299 | 0.337 | 实机含云台杆遮挡标定；SITL 无杆（A3 决策 2026-09-26，如需保守可统一 0.337 重验） |
+| VINS IMU 源 | /mavros/imu/data_raw 100Hz | mavcmd 511 设 200Hz | SITL 传感器插件上限；频域影响在 VINS 域评估 |
+| 相机平移外参 | 模型 0.1m 前置 | D435 实测外参 | sim_stereo 配置已按模型标定（T2 域） |
+| PX4 固件 | px4_sitl v1.17 | fmu 实机版 | R5：SITL 动过的 PX4 参数（MAG_TYPE/SDLOG 等）一律不同步实机 |
+
 **切链路接口备忘**（SITL GPS→VINS 切换时）：iris_stereo_vins 的深度
 话题前缀为 `/iris_stereo_vins/...`（run_planner_sitl.launch 的
 depth_topic 当前硬编码 `/iris_depth_camera/...`，切链路时需参数化）；

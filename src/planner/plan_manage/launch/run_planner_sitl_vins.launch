@@ -1,17 +1,25 @@
 <launch>
-    <!-- EGO-Planner SITL + 仿真 VINS 版（A7）。
-         与 run_planner_sitl.launch 的唯一差异：odom 源换成 /vins_estimator/imu_propagate
-         （仿真 VINS，与实机 single_run_in_exp.launch 的里程计源一致）。
-         深度仍来自 iris_stereo_vins 模型的深度相机（避障不变）。 -->
+    <!-- EGO-Planner SITL-VINS 同构入口（T3 2026-09-28，README 0 R1/R6）。
+         与实机 single_run_in_exp.launch 同构：odom=VINS 直供(imu_propagate)、
+         深度=iris_stereo_vins 模型 depth_camera 子模型
+         (话题前缀=/iris_stereo_vins,子模型 cameraName=camera 相对名)。
+         配套：start_sitl_vins.sh + sim_vins.launch + run_ctrl_sitl_vins.launch。
+         与 GPS 代位版(run_planner_sitl.launch)的差异仅在 odom/depth 话题源，
+         参数集相同(差异登记见 README 0 R6 表)。 -->
+    <!-- T1-W4 认证开关:轮A基线(false)/轮B认证(true) -->
+    <arg name="relay_on" default="false" />
+    <!-- number of moving objects -->
     <arg name="obj_num" value="10" />
     <arg name="drone_id" value="0"/>
 
+    <!-- 任务书 A3：30x30 起步；上界留 A5 避障余量 -->
     <arg name="map_size_x" value="30"/>
     <arg name="map_size_y" value="30"/>
     <arg name="map_size_z" value="3.0"/>
-    <!-- 里程计源：仿真 VINS（P2 目标态；EKF2 版见 run_planner_sitl.launch） -->
+    <!-- SITL 里程计源：mavros EKF2（P2 换仿真 VINS 后此处改参即可） -->
     <arg name="odom_topic" value="/vins_estimator/imu_propagate"/>
 
+    <!-- main algorithm params -->
     <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
         <arg name="drone_id" value="$(arg drone_id)"/>
         <arg name="map_size_x_" value="$(arg map_size_x)"/>
@@ -20,17 +28,25 @@
         <arg name="odometry_topic" value="$(arg odom_topic)"/>
         <arg name="obj_num_set" value="$(arg obj_num)" />
         <arg name="camera_pose_topic" value="nouse1"/>
+        <!-- Gazebo openni 插件深度图：32FC1 米制，grid_map 自动 x1000 转 16UC1 -->
         <arg name="depth_topic" value="/iris_stereo_vins/camera/depth/image_raw"/>
         <arg name="cloud_topic" value="nouse2"/>
+        <!-- 内参来源：SDF hfov=1.5009831567(848x480) 推算，A1.5 实测话题 10Hz 稳定 -->
         <arg name="cx" value="424.5"/>
         <arg name="cy" value="240.5"/>
-        <arg name="fx" value="454.6858"/>
-        <arg name="fy" value="454.6858"/>
+        <arg name="fx" value="454.68"/>
+        <arg name="fy" value="454.68"/>
+        <!-- 保守起步（任务书 A3）；catkin_make/SITL 冒烟后再提 -->
         <arg name="max_vel" value="0.5" />
         <arg name="max_acc" value="6.0" />
+        <!--always set to 1.5 times grater than sensing horizen-->
         <arg name="planning_horizon" value="6" />
         <arg name="use_distinctive_trajs" value="false" />
+        <!-- 1: use 2D Nav Goal to select goal  -->
+        <!-- 2: use global waypoints below  -->
         <arg name="flight_type" value="1" />
+        <!-- global waypoints -->
+        <!-- It generates a piecewise min-snap traj passing all waypoints -->
         <arg name="point_num" value="1" />
         <arg name="point0_x" value="15" />
         <arg name="point0_y" value="0" />
@@ -48,8 +64,30 @@
         <arg name="point4_y" value="0.0" />
         <arg name="point4_z" value="1.0" />
     </include>
+    <!-- T1-W4: depth camera_info 合成转发。根因:gazebo_ros_openni_kinect 的
+         DepthInfoConnect 不调 SetActive(true),仅订阅 camera_info 时传感器不激活→零消息
+         (分析:sitl_sim/t1_evidence/w4_caminfo_analysis.md)。K/D 与 rgb 同源同值。 -->
+    <!-- T3 2026-09-27: relay 临时下架说明 + T1 relay-v2 设计存档(重挂时去掉第二段注释符)。
+         v1 relay 订阅 rgb_info 会激活 rgb 渲染,双流在 Xvfb llvmpipe 饱和压垮深度流,
+         grid_map 空图直线穿箱(smoke5/run_182104 实证)。T1 v2 方案:改用直接 fx/fy
+         参数、不订阅 rgb camera_info,避免激活 RGB 渲染。2026-09-27 v2 回归冒烟重挂。 -->
+    <!-- W4 认证(2026-09-28 U5)已过:relay_on=false 轮 A 双 PASS / =true 轮 B 双 PASS
+         (六指标 smoke:arrival 0.23/min_dist/poscmd 100Hz/yaw -0.5deg/depth 13.2Hz)。
+         v3 改动:out 从 override 原生 camera_info 改为独立 _relay 话题(避免与 gazebo
+         原生发布者双发;当前链路无消费者,grid_map 内参由 launch 直配)。B1/B2 期间
+         的 arrival FAIL 已归因多 agent 争抢污染,非 relay(排他窗 B4/B5 对照)。 -->
+    <node if="$(arg relay_on)" pkg="depth_caminfo_relay" type="depth_caminfo_relay_node" name="depth_caminfo_relay" output="screen">
+        <param name="depth_image" value="/iris_stereo_vins/camera/depth/image_raw" />
+        <param name="fx" value="454.6857718666893" />
+        <param name="fy" value="454.6857718666893" />
+        <param name="out" value="/iris_stereo_vins/camera/depth/camera_info_relay" />
+    </node>
+    <!-- trajectory server：源码发布绝对话题 /position_cmd，与 px4ctrl ~cmd 对接 -->
     <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
         <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
         <param name="traj_server/time_forward" value="1.0" type="double"/>
+        <!-- T3-W7-Y2: traj_server 起点 yaw 基准用机体实际朝向(经 odom)，
+             仅 SITL launch 传入；实机版 run_planner.launch 不动 -->
+        <param name="traj_server/odom_topic" value="/vins_estimator/imu_propagate"/>
     </node>
 </launch>
