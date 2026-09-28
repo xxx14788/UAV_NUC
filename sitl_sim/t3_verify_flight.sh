@@ -78,6 +78,11 @@ done
 timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'connected: True' || fail "mavros 未连上"
 log "mavros connected"
 
+# T3-U 修复: SITL 关磁融合——yaw 传送跳变使 mag innov 恒超 gate(0.41 vs 健康0.00),
+# fused 0.49→0.00→0.14, yaw 失持续参考在起飞机动下疯转(W12b ulog 定罪 vs 02_49_30 对照)。
+# EKF2_MAG_TYPE=5(none): yaw 参考改 GPS course+IMU, SITL 磁场模拟为纯干扰源。
+timeout 15 rosservice call /mavros/param/set "{param_id: 'EKF2_MAG_TYPE', real: 3.0}" >>"$LOG" 2>&1 && log "EKF2_MAG_TYPE=3 已设(磁仅地面yaw对齐,飞行中不用)"
+
 nohup roslaunch px4ctrl run_ctrl_sitl.launch > "$RUN/px4ctrl.log" 2>&1 &
 for i in $(seq 1 30); do rosnode info px4ctrl >/dev/null 2>&1 && break; sleep 1; done
 rosnode info px4ctrl >/dev/null 2>&1 || fail "px4ctrl 未起来"

@@ -438,3 +438,55 @@ box_D=0.506m、box_E=0.870m（阈 0.349m）——1.5m 净缝膨胀后 0.9m 走�
 3. harness 探针跨轮污染（旧探针进程未随 t3_clean 清理）已修——
    t3_clean 已加 pkill；若再现 rostopic echo 读到 stale d,先
    pgrep -f arr_probe
+
+
+## U 线：传送版 ulog 定罪 + 磁融合修复半程（%s）
+
+### ulog 定罪（零飞行轮成本：rootfs/log/2026-09-28/ 已有 14 个 ulog）
+
+工具 sitl_sim/analysis/ulog_ekf2_reanchor.py。对照设计：失控轮
+02_55_37（W12b 传送 yaw145）vs 健康轮 02_49_30（smoke①原点 PASS 0.060m）。
+
+| 证据 | 失控轮（传送±60s） | 健康对照 | 判定 |
+|---|---|---|---|
+| gnss_pos innov / fused | 传送后 0.025m / **1.00** | 0.04m / 0.99 | GPS 融合健康——"GPS 冲突论"**否决** |
+| gnss_vel innov / fused | 0.05-0.46m / 0.95-1.00 | 0.05 / 0.99 | 同上 |
+| **mag innov / fused** | innov 恒 0.41-0.46 / fused **0.49→0.00→0.58→0.14** | innov 0.00-0.22 / fused **0.98** | **磁融合崩——根因** |
+| baro_hgt innov | 30-60s 爆至 7.3m | max 0.20 | 失控结果非原因 |
+| reset 事件 | 仅 vel_to_gps+yaw_aligned（正常重锚） | — | 无异常 reset |
+
+**定罪链**：yaw145° 传送 → 磁测量与 EKF2 姿态预测差 145° → mag gate
+持续拒绝（fused→0）→ yaw 失持续参考（GPS course 低速弱可观测）→
+起飞机动中 yaw 疯转（analyze 的 sp_pitch ±180=欧拉假象，方法论红线1
+第三次应验）→ 侧向耦合错 → 位置失控。E1 线的"EKF2 重锚损伤"修正为
+"**磁融合在 yaw 跳变后崩**"——EKF2 位置层全程健康。
+
+### 修复实验（单变量 5 轮，b3/b4 参数调用 YAML 语法错为无效轮）
+
+| 轮 | 配置 | 结果 |
+|---|---|---|
+| b/b2 | 基线+MAV_CMD176 | flip/osc, std 124/80（昨 E 线） |
+| b3/b4 | MAG_TYPE=5 但 rosservice YAML 缺 {}，**未生效** | 同基线（125/103）——无效轮 |
+| b5 | MAG_TYPE=5 生效 | **sp_pitch_std 125→2.84, flip/osc=0 疯转消失**；但 EKF2 起飞位置爆（takeoff z=-0.97 地下）——无磁模式 yaw 靠 GPS course 对齐,起飞瞬间反向 |
+| b6 | TYPE=3 | bag 空（环境累积态,今日 12 boot） |
+| b7 | TYPE=3+NUC 重启 | **flip/osc=0 复证**；11s 位置爆 |xy|=15.6——同 b5 副作用 |
+
+### 结论
+
+1. **根因层修复证实**：关磁即消疯转（b5/b7 flip=osc=0 双证）。
+2. **PX4 v1.17 EKF2 无磁/仅地面磁模式不能直接用**：起飞加速瞬间
+   GPS-course yaw 对齐可反向（b5/b7 位置爆双证）——需中间配方。
+3. 下夜单变量候选（按嫌疑度）：①EKF2_MAG_NOISE 放大（降权重保参考,
+   非全关）②MAG_TYPE=2/6（fuse-during-flight 变体）③传送后先小幅
+   直线飞行 2m 建立 GPS course 再发返程 goal（流程级,harness 可改）。
+4. W12 最终矩阵不变：3/5（①③④）+ ②⑤传送版阻塞（根因已 ulog 定罪,
+   修复差最后一步配方）；tag 仍不打。
+
+### U 线入库
+
+- ulog_ekf2_reanchor.py（重锚证据链提取：aid_src 五源 innov/fused 分桶
+  + reset 事件 + 多 EKF instance 维度）
+- t3_verify_flight.sh：px4ctrl up 后 param set EKF2_MAG_TYPE（当前=3,
+  b7 验证消疯转有效；位置爆副作用在案,启用与否由下夜配方定夺）
+- 教训：rosservice call YAML 字典须外层花括号 `{param_id: ..., real: ...}`
+  （b3/b4 两轮烧在缺 {} 上）
