@@ -36,3 +36,7 @@
 | 2026-09-28 | t2_C_60hz320.bag | 26.5s | 仿真（SITL）T2b-E18 R1 | 成功 | 送达 23.9Hz；重放 C 段 150m（分辨率灾难，视差精度主导） |
 | 2026-09-28 | t2_A_60hz640.bag | 54.7s | 仿真（SITL）T2b-E18 R2（60Hz/640×480 变体） | 成功 | 送达 22.3Hz；重放 A 段 0.070m（基线 0.137，−49%） |
 | 2026-09-28 | t2_C_60hz640.bag | 36.4s | 仿真（SITL）T2b-E18 R2 | 成功 | 送达 21.9Hz；重放 C 段 14.4m@15.9s（基线 31.3@6.7，−54%）；SDF 录后还原 30Hz 基线 |
+| 2026-09-28 | t2v3_ground_202520.bag | ~45s | 仿真（SITL）T2-W1.1 地面轮(VINS 链,未起飞) | 成功 | preflight 全绿;T1 共享分析:imu_propagate 125Hz 零断流,静态漂移 2-3cm/45s |
+| 2026-09-28 | t2v3_hover_203248.bag | ~71s | 仿真（SITL）T2-W1.2 悬停轮(VINS odom 直供 px4ctrl,起飞0.75m+悬停30s+降) | 成功 | T1 共享分析(V1.3):悬停保持中位 0.005m/max 0.021m,优于 0.03m 基线与 EKF2 参照 0.050m;全程 125Hz 无断流 |
+| 2026-09-28 | t2v3_route_203830.bag(active) | ~2min | 仿真（SITL）T2-W1.3 航线轮(VINS 链) | 失败 | 20:40 链崩(gzserver/px4 逝,sitl log 尾=Connection closed by client),bag 停写;残锁至 21:00 由 T1 清;T2 侧归因待其台账 |
+| 2026-09-28 | v1_ground_salvage_211520.bag | 67s | 仿真（SITL）T1-v5 V1.2 地面静态轮(VINS 链,未起飞;双 T1 实例同链打捞) | 成功 | fsm_state 67 帧零跳变(odom_recv=1 恒);静态游走 12.6cm 包络零均值;V4.2 三档 50/125/215Hz |
