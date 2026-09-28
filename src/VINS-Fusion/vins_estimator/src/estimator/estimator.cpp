@@ -209,7 +209,15 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
     {
         mPropagate.lock();
         fastPredictIMU(t, linearAcceleration, angularVelocity);
-        pubLatestOdometry(latest_P, latest_Q, latest_V, t);
+        // T2-v3 W1.3 (2026-09-28): 发布端有界性防线。route 轮实测: ceres
+        // 发散时 double2vector 把天文数字状态写进 latest_*, 125Hz 的
+        // fastPredictIMU 即时外送, failureDetection 要到下一图像帧才拦截
+        // —— px4ctrl 直供链路(imu_propagate 无门控)已吃到 e6 级毒值引发
+        // 飞逸(实测 1.6e6 m)。发布前做有界性检查(与 failureDetection 同
+        // 阈), 越界即停发: 消费方按 odom 停流进各自 failsafe, 毒值不出门。
+        if (latest_P.allFinite() && latest_V.allFinite() &&
+            latest_P.norm() < 1e3 && latest_V.norm() < 50.0)
+            pubLatestOdometry(latest_P, latest_Q, latest_V, t);
         mPropagate.unlock();
     }
 }

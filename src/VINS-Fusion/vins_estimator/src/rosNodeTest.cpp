@@ -13,6 +13,7 @@
 #include <queue>
 #include <map>
 #include <thread>
+#include <sys/resource.h>
 #include <mutex>
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
@@ -226,6 +227,23 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "vins_estimator");
     ros::NodeHandle n("~");
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
+    // T2-v3 W1.3 (2026-09-28): route 轮实测 vins_node 栈段陷阱崩溃
+    // (dmesg trap stack segment, libvins_lib 内, 全天唯一一次, route 模式
+    // 特有)。防御性修复: glibc 的 std::thread 栈默认取 RLIMIT_STACK,
+    // 在线程创建前抬高软限到硬限(cap 512MB), processThread/sync_thread
+    // 全覆盖; 主线程栈 exec 时已定不受影响。
+    {
+        struct rlimit rl;
+        if (getrlimit(RLIMIT_STACK, &rl) == 0 && rl.rlim_cur < rl.rlim_max)
+        {
+            rlim_t want = rl.rlim_max;
+            const rlim_t cap = 512UL * 1024 * 1024;
+            if (rl.rlim_max > cap) want = cap;
+            rl.rlim_cur = want;
+            if (setrlimit(RLIMIT_STACK, &rl) == 0)
+                printf("vins stack guard: RLIMIT_STACK soft -> %lu MB\n", (unsigned long)(want / (1024 * 1024)));
+        }
+    }
 
     if(argc != 2)
     {

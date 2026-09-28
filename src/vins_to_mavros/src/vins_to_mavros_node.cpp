@@ -99,7 +99,15 @@ class ImuConsistency
 public:
   ImuConsistency(ros::NodeHandle& pnh)
   {
-    pnh.param("imu_check_enabled", enabled_, true);
+    // T2-v3 W1.1 (2026-09-28): 默认改为 false。地面静态实测误报根因:
+    // 窗口锚定速度取自 vision twist(静态噪声 ~0.05-0.3 m/s)+姿态残余
+    // 倾角的重力投影残差(≈g·sinθ),1s 窗内死推位移即超 0.15m 下限的
+    // 50% 阈值——健康静态 VINS 被连续误判 SMOOTH DRIFT 并挂起
+    // vision_pose(悬停工况会饿死 EKF2 EV 融合,飞行关键级危害)。
+    // v2 重设计要点(未实现): ①窗口位移比较改速度增量+低通 ②窗口级
+    // 最小二乘加速度偏置在线估计(吸收倾角/零偏) ③起评延迟至起飞后。
+    // 跳变门(W4 第一道)不受影响,保持启用。
+    pnh.param("imu_check_enabled", enabled_, false);
     pnh.param("imu_rel_dev_thresh", rel_thresh_, 0.5);
     pnh.param("imu_dev_need", dev_need_, 5);
     pnh.param("imu_win_frames", win_frames_, 20);   // 1s @20Hz
