@@ -5,7 +5,7 @@
 仓库根即 catkin 工作空间根（内含 `src/`），clone 后 `catkin_make` 即可编译（build/devel 已 gitignore）。
 
 > **多人/多 agent 协作仓库**：动手前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（凭据安全、提交与推送纪律）。
-> **项目规范**：[docs/workflow.md](docs/workflow.md)（工作流与验证门槛）· [docs/coding-style.md](docs/coding-style.md)（代码与配置风格）· [docs/flight_log.md](docs/flight_log.md)（飞行/仿真实验记录）。
+> **项目规范**：[docs/workflow.md](docs/workflow.md)（工作流与验证门槛）· [docs/coding-style.md](docs/coding-style.md)（代码与配置风格）· [docs/flight_log.md](docs/flight_log.md)（飞行/仿真实验记录）· [docs/realflight_checklist.md](docs/realflight_checklist.md)（实飞检查单：IMU 250Hz 三步检查+固件台账）。
 
 
 ## 0. 架构红线：纯视觉导航（VINS + EGO-Planner + PX4），不许依赖 GPS

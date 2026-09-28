@@ -6,7 +6,7 @@
 #   左目光学中心 (0.12, 0.05, 0.03)，右目 (0.12, -0.05, 0.03)，RPY=0
 #   optical->body 旋转 = [[0,0,1],[-1,0,0],[0,-1,0]]（z前 x右 y下 -> x前 y左 z上）
 # IMU：mavros 转发的 PX4 SITL IMU（同实机 realsense 配置做法），
-#   使用前需 mavcmd long 511 105 5000 提到 200Hz（见 sitl_sim 文档）
+#   使用前需 mavcmd long 511 105 4000 提到名义 250Hz（SITL 实测 ~223；5000 会锁死 125，见 sitl_sim 文档）
 
 #common parameters
 imu: 1

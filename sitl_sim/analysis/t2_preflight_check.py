@@ -5,7 +5,7 @@
 检查项:
   1 stamp 同域: |img_med - imu_med| < 1.0s(以最近窗口中位)
   2 双目 ~20Hz(>15)
-  3 IMU >100Hz(提频后 ~125)
+  3 IMU >200Hz(名义250/SITL实测~223; ~125=误配5000网格锁死)
   4 /gazebo/model_states 存在(真值链路)
   5 /mavros/state connected==true
 退出码 0=全绿, 1=有红项(逐项打印)。供 t2_w5_run.sh / t2_init_probe.sh 调用。
@@ -81,7 +81,7 @@ def main():
     report("双目频率", hz_l > 15 and hz_r > 15, "L %.1fHz R %.1fHz" % (hz_l, hz_r))
     ispan = max(c.imu) - min(c.imu)
     hz_i = (len(c.imu) - 1) / ispan if ispan > 0.1 else 0
-    report("IMU 频率", hz_i > 100, "%.1fHz (需 >100, mavcmd long 511 105 5000 0 提频)" % hz_i)
+    report("IMU 频率", hz_i > 200, "%.1fHz (需 >200, 名义250; mavcmd long 511 105 4000 提频; ~125=5000误配)" % hz_i)
     report("真值 model_states", c.gt > 0, "%d 帧" % c.gt)
     report("mavros connected", c.state is not None and bool(c.state.connected),
            "connected=%s" % (c.state.connected if c.state else "无消息"))
