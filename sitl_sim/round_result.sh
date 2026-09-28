@@ -116,7 +116,8 @@ for _lg in [ _os.path.join(ev, 'sitl.log'), _os.path.join(ev, 'round.log') ] + _
         _txt = open(_lg, errors='ignore').read()
     except OSError:
         continue
-    if 'Connection closed by client' in _txt or 'px4 亡,进程组整组清场' in _txt:
+    if ('Connection closed by client' in _txt or 'px4 亡,进程组整组清场' in _txt
+            or _os.path.exists(_os.path.join(ev, 'ENVDEAD'))):
         _envfail = True
         break
 if _envfail and not all(ok):

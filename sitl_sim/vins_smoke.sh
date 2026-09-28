@@ -34,6 +34,7 @@ MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
 "$SL" hbloop "$MYSTREAM" & HBPID=$!
 cleanup() {
   kill "$HBPID" 2>/dev/null
+  pkill -f "tee $EV/round.lo[g]" 2>/dev/null   # exec>(tee) 进程替换会让 bash 退出时等 tee,tee 等 stdout 写者→挂壳;杀之解锁(E2 验收实测)
   pkill -f 'vins_nod[e]' 2>/dev/null; pkill -f 'vins_to_mavro[s]' 2>/dev/null
   pkill -f 'px4ctrl_nod[e]' 2>/dev/null; pkill -f 'rosbag recor[d]' 2>/dev/null
   pkill -f 'simulator_mavlin[k]' 2>/dev/null; pkill -f 'sitl_run.s[h]' 2>/dev/null
@@ -222,6 +223,11 @@ done
 [ $disarmed = 1 ] && LOG "已 disarm" || LOG "WARN 降落未确认 disarmed"
 sleep 3
 kill -INT $REC 2>/dev/null; sleep 3
+
+# ---------- 轮中环境死亡活体检查(E4.2;清场前栈应在,缺=崩) ----------
+if ! pgrep -x gzserver >/dev/null 2>&1 || ! pgrep -x px4 >/dev/null 2>&1; then
+  echo "$(date +%T) gzserver/px4 活体检查缺席(gz=$(pgrep -xc gzserver || echo 0) px4=$(pgrep -xc px4 || echo 0))" > "$EV/ENVDEAD"
+fi
 
 # ---------- 四指标 RESULT(独立脚本 round_result.sh,与 resume 共用) ----------
 bash "$HOME/sitl_sim/round_result.sh" "$BAG" "$GX" "$GY" "$GZ" "$WORLD" "$EV" "$ARR" "$ARR2" "$HASL2" "$L2X" "$L2Y" "$L2Z" > "$EV/RESULT.txt" 2>&1

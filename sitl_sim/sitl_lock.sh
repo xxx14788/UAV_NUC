@@ -152,9 +152,8 @@ force)
   [ -f "$PRECLAIM" ] || { echo "无 preclaim 记录,先 preclaim(三条件前置)" >&2; exit 5; }
   claimer=$(grep '^claimer=' "$PRECLAIM" | cut -d= -f2)
   ptarget=$(grep '^target='  "$PRECLAIM" | cut -d= -f2-)
-  pts=$(grep '^ts='       "$PRECLAIM" | cut -d= -f2)
   [ "$claimer" = "$STREAM" ] || { echo "preclaim 属 $claimer,非 $STREAM" >&2; exit 5; }
-  pw=$(( $(date +%s) - pts ))
+  pw=$(( $(date +%s) - $(stat -c %Y "$PRECLAIM") ))   # 文件 mtime=preclaim 时刻(测试可 touch 伪造)
   [ "$pw" -ge 300 ] || { echo "异议窗未满: ${pw}s < 300s" >&2; exit 5; }
   cur=$(cur_target 2>/dev/null || echo GONE)
   [ "$cur" = "$ptarget" ] || { echo "属主守卫: 锁已易主($cur ≠ preclaim 时 $ptarget),中止" >&2; exit 6; }

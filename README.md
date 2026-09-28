@@ -148,6 +148,7 @@ VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
 | PX4 sitl_gazebo-classic stereo_vins_rig.sdf | T2b-E18 实验临时改 update_rate 30→60 与分辨率变体(录制 60Hz 两变体 bag 后已还原基线 30Hz/640×480;机制与数据见 docs/t2_experiments.md E18 章) | 2026-09-28 |
 | sitl_sim/analysis 新工具 8 个 | t2_segment_attribution.py(分段误差归因)/t2_dy_row_profile.py(dy 行×视差分桶)/t2_bag_concat.py(A+D 拼接)/t2_bag_transform.py(降帧降分)/t2_domain_guard.py(+selftest, 域卫士)/t2_preflight_check.py(五项自检)/t2_gate_test_v2.py(门控五阶段+真实回归)/t2_dump_stamps.py(域诊断) | 2026-09-28 |
 | VINS-Fusion rosNodeTest.cpp / estimator.cpp / vins_to_mavros | T2-v3 W1:①RLIMIT_STACK 软限抬至硬限(vins_node 栈段陷阱崩溃防御) ②inputIMU 发布端有界性防线(ceres 发散毒值 e6 级不再外送 px4ctrl 直供链) ③imu_check_enabled 默认 false(地面静态误报实测,v2 设计要求在代码注释) | 2026-09-28 |
+| VINS-Fusion vins_estimator estimator.cpp | T2-v4.1 R1/R3 插桩：①[T2diag] 每滑窗优化帧状态轨迹（P/V/\|Bas\|/\|Bgs\|/tic01/td/track，printf+fflush 防 nohup stdout 缓冲吞行）②[T2slv] 全阶段求解器健康（init/final cost/iters/termination/耗时，原版仅 INITIAL 阶段）③[T2fail] failureDetection 判据快照并入触发行（判据行被 stdout 缓冲丢失问题的根治）。回归：E20×bagA ATE 0.130 ∈ 历史 [0.115,0.137] | 2026-09-29 |
 | sitl_sim 新工具 | t2v3_flight.sh(W1/W2 在线编排:延迟装配/goal回执重试/abort清场)/t2v3_eval.py(在线轮双口径评估)/t2_dx_col_profile.py;docs/vision_acceptance_protocol.md+sim2real_runbook.md 入库 | 2026-09-28 |
 | `VINS-Fusion/vins_estimator/src/estimator/feature_manager.cpp` | T2-W4：solvePoseByPnP 启用 RANSAC 版（上游注释掉的原选），抗退化三角化点 |
 | `VINS-Fusion/vins_estimator/src/featureTracker/feature_tracker.cpp` | T2-W4：立体视差下限 1px 过滤（零视差错配→深度 e17→PnP e33 链路掐断） |
