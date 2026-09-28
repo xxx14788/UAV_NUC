@@ -10,6 +10,7 @@
 #   3) SITL 相关进程孤儿（无锁却跑着 gzserver/px4/Xvfb/rosbag）
 #   4) 深度流频率（--with-sitl: 名义 30Hz，<20Hz 判 FAIL——llvmpipe 饱和前兆）
 #   5) 日志体量（~/.ros/log >2GB WARN）
+#   6) 实机零 GPS 配置卫生（T1-V2：调 param_hygiene.sh 静态扫描，R5 落地）
 # T1-V3 修复(09-28)：原为 set -u 在 source 之前——ROS setup.bash 引用未定义变量
 # 时 set -u 直接致命退出（|| true 救不了 sourced 脚本内的 unbound abort），
 # 且 source 行 2>/dev/null 把报错吞掉 → EXIT=1 零输出。先 source 再 set -u
@@ -77,7 +78,21 @@ echo "-- 5) 日志体量 --"
 sz=$(du -sm ~/.ros/log 2>/dev/null | cut -f1)
 [ "${sz:-0}" -lt 2000 ] && pass "~/.ros/log ${sz:-0}MB" || warn "~/.ros/log ${sz}MB >2GB(可清:rm -rf ~/.ros/log/*)"
 sz2=$(du -sm /tmp 2>/dev/null | cut -f1)
-[ "${sz2:-0}" -lt 500 ] && pass "/tmp ${sz2:-0}MB" || warn "/tmp ${sz2}MB"
+[ "${sz2:-0}" -lt 500 ] && pass "/tmp ${sz2:-0}MB" || warn "/tmp ${sz2:-0}MB"
+
+echo "-- 6) 实机零 GPS 配置卫生（R5） --"
+HYG="$(dirname "$0")/param_hygiene.sh"
+if [ -x "$HYG" ]; then
+    hyg_out=$(bash "$HYG" 2>&1); hyg_rc=$?
+    if [ "$hyg_rc" -eq 0 ]; then
+        pass "param_hygiene 实机配置零 GPS 依赖$(echo "$hyg_out" | grep -c '\[PASS\]') 项全过"
+    else
+        fail "param_hygiene 报 FAIL（R5 违规或对象缺失）："
+        echo "$hyg_out" | grep -E '\[FAIL\]' | head -5 | sed 's/^/      /'
+    fi
+else
+    warn "param_hygiene.sh 不可达($HYG)，跳过零 GPS 卫生检查"
+fi
 
 echo "== 结果: FAIL=$FAILS WARN=$WARNS =="
 [ "$FAILS" -eq 0 ] && exit 0 || exit 1
