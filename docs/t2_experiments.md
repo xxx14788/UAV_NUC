@@ -747,3 +747,89 @@ setup.bash 冲突已修(ROS_DISTRO 等预设);vins_ate_eval se2_align est/gt 等
 - 结果: t2_results/R14_*(9 cell), R14B_E23_*(重跑 3), R14C_E20_t2_C_shift,
   R15E20_t2_A_173156(插桩回归 0.130∈[0.115,0.137] ✓)
 - C++: estimator.cpp T2diag/T2slv/T2fail 三处插桩(printf+fflush)
+# T2-v4.1 R3 瞬态发散机制插桩战役(2026-09-29 03:20-05:00,主线上半场)
+
+## R3.1 复现器解剖与机制链(五层全证,代码/数据行号级)
+
+**统一机制链**(route7 在线+C_shift 离线+bagA 竖直瞬态三源互证):
+
+```
+[数据层] 仿真相机无噪声 → 弱纹理区灰度梯度严格=0
+   ↓ (自帧跟踪 0/19 铁证: LK 光流方程 Hessian 奇异,status=0)
+[特征层] LK 断链(冲刺大位移/旋转流 + 静止区零梯度) → goodFeatures 每帧
+   检出的全是新 id → last_track_num=0 + new_feature_num 主导
+   ↓ (C_shift 数据侧存活率中位 0.00; VINS 内 track=0 全程)
+[窗口层] addFeatureCheckParallax 的 new>0.5*last 判据触发 → 每帧狂滑
+   marginalize oldest → 优化窗仅存的历史约束被持续丢弃
+   ↓ (solver 93% term0=迭代即停,无东西可优化)
+[优化器层] 无视觉约束窗口中 V/tic/Bas 联合爆走(22.43-22.87s 实测共爆:
+   |V| 0.14→1.72, tic0x 0.26→0.42, |Bas| 0.43→0.69 同步)
+   ↓ (E22 绑死外参后速度爆冲被抑制=外参自由度是放大器的反向实证)
+[failure 层] |Bas| 爬向 2.5 阈值(bagA 起飞瞬态 0.049→2.15;route7 在线
+   failure@bag 30.5s=goal 冲刺段,离线重放发散点精确一致) → reboot →
+   移动中 re-init 死(0/5,见 R4)
+```
+
+**勘误(入账)**:
+1. C 段真实剖面=3s 冲刺(4.65m/s)+17s 悬停(非"持续快巡航"),VINS 6.7s
+   发散于冲刺末;"C 段 31.3m 天花板"主体=发散后静止段的持续误差
+2. T2b"C 段参数级天花板=帧率约束"结论**降级**:帧率(20→22Hz 改善 14.4m)
+   与外参(31.3→15.0)都是贡献因素,主因=无噪声图像的特征死亡
+3. route7 裁决位定性:40s 坠机后为 628s 趴地毒数据(纯 IMU 积分数学必然
+   爆),有效窗=0-40s;E20/E22 发散@30.5s、E23 挺过冲刺、护栏版推迟 4.4s
+4. B_shift 30.3-30.9s 有静止突跳事件(63-102px 单帧,LK 全灭后自然恢复,
+   VINS 存活)——偶发塌方可自愈,持续塌方才致命
+
+## R3.3 修复落地(四件套,全部入库)
+
+| # | 修复 | 位置 | 依据 |
+|---|---|---|---|
+| 1 | 相机 gaussian 噪声 stddev=0.004(实测灰度 σ=1.084) | stereo_vins_rig.sdf 两相机(两份副本同步) | 合成注入 σ=1 存活率 0→0.51;实测 σ=1.08→0.83。量纲:1.0→std108(淹没),0.01→2.65,0.004→1.084(非线性,三轮定标) |
+| 2 | FB 往返阈值 0.5→2.0(两处:时序流+立体流) | feature_tracker.cpp | σ=1 噪声往返抖动物理上界~2px;0.5 拒掉 75% 健康跟踪;立体流 0.5 在噪声下杀光全部立体匹配(track=0 全程实锤) |
+| 3 | 特征雨护栏(last<10 且 new>0.5*last 时不再 marg old) | feature_manager.cpp addFeatureCheckParallax | 断链时狂滑丢历史约束是爆走的窗口层根因;保老帧=保持约束 |
+| 4 | 视觉饥饿冻结外参(track<20 时 Ex_Pose 块 constant) | estimator.cpp optimization() | E22 绑外参抑制爆冲的反向应用 |
+
+实机 realsense 零改动(红线 ✓,噪声是 sim 对实机 readout 噪声的等价物)。
+
+## R3.3b 新基线验证(SDF 噪声 bag t2_C_033818,四轮定标)
+
+同 C 段飞行脚本对照(旧 bag 无噪声 vs 新 bag σ=1.08,均为 wall 域原始
++shift 工具统一域后重放):
+
+| 配置 | 旧 C_shift(无噪声) | 新 C_033818(σ=1.08) |
+|---|---|---|
+| E20(ext1,z0.03) | **31.3m/6.7s 发散** | **0-24s 误差 0.03-0.18m**;26s 后=飞行失控坠毁毒段(roll -145°) |
+| E22(ext0+精确) | 15.0m/8.7s | 坠毁前同量级健康(rmse 含毒段 3.48) |
+| E23(ext1+精确) | 31.2m/6.7s | 同 E20 形态(rmse 含毒段 5.26) |
+
+**C 段同剖面从 6.7s/31m 发散 → 坠毁前 26s 全程亚分米级=数量级根治**。
+新 bag 尾部(28s+)残余现象登记:三配置 tic0 在线估计跳向同一吸引子
+(0.085,0.036,-0.003)且 E24(estimate_td:1,td 收敛 +4.6ms)不救——
+竖直机动段存在时延-外参残余耦合(shift 残余时延 p5-p95=±14ms 被
+关掉的 td 吸收进外参),移交 R2′/R5 在线矩阵(在线管线 /clock 时钟
+同域无 shift 残余,预期表现不同)。
+
+旧 bag 回归(修复不劣化):bagA 0.131(基线 0.137/0.130)/B_shift
+0.131(0.119,+10% 护栏在 30s 突跳帧触发)/route7 发散推迟 4.4s。
+
+## 工程事故与工具修复(入账)
+
+- t2_replay.sh 残留 vins_node 顶号("new node registered with same
+  name")吞 E23 三 cell → 起栈前清残留修复
+- t2_w2_run.sh 锁检查与 sitl_lock.sh 新 target 格式(流名-PID-时间)不
+  兼容 → case 前缀匹配修复
+- t2_replay.sh 支持 T2_PLAY_EXTRA(play 参数注入,R4 截段实验用)
+- gazebo 相机噪声 SDF 标签格式:<camera> 下 <noise><type>gaussian</type>
+  子元素式(非 <noise_type> 属性式,后者被静默忽略——第一轮重录失败的
+  根因,静默陷阱登记)
+
+## 产物
+
+- C++: feature_manager.cpp(护栏)/feature_tracker.cpp(FB×2)/
+  estimator.cpp(冻结+插桩,见 R1 章)
+- SDF: stereo_vins_rig.sdf 噪声(两份副本)
+- 配置: E24_ext1_td1(td 在线估计变体)
+- bag: t2_C_031448/032001/032526(定标史)/t2_C_033818(σ=1.08 定稿)+
+  *_shift 统一域版
+- 脚本: t2_lk_survival.py(--noise 合成注入)/t2_noise_calib.sh
+- 结果: t2_results/R33*(护栏回归)/R33F/G/H/I(新基线矩阵)

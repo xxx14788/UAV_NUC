@@ -93,7 +93,18 @@ bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vec
     //if (frame_count < 2 || last_track_num < 20)
     //if (frame_count < 2 || last_track_num < 20 || new_feature_num > 0.5 * last_track_num)
     if (frame_count < 2 || last_track_num < 20 || long_track_num < 40 || new_feature_num > 0.5 * last_track_num)
+    {
+        // T2-R3.3 特征雨护栏: 完全断链(last_track_num<10)时 new>0.5*last 是 LK 断链的
+        // 被动产物而非场景切换信号——原逻辑此刻狂滑 marg old,窗口仅存的历史约束被丢弃,
+        // 优化器在无视觉约束窗口把 V/tic/Bas 联合推向爆走(C_shift 三配置实测 track=0
+        // 全程+22.43-22.87s 共爆; t2_lk_survival.py 数据侧存活率中位 0.00 独立实锤)。
+        // 改为不 marg old(调用方走 MARGIN_SECOND_NEW,窗口不推进),老帧约束保留,
+        // IMU 传播继续,特征链恢复后自动回归正常滑窗。frame_count<2 保持原语义。
+        if (frame_count >= 2 && last_track_num < 10 &&
+            new_feature_num > 0.5 * std::max(last_track_num, 1))
+            return false;
         return true;
+    }
 
     for (auto &it_per_id : feature)
     {

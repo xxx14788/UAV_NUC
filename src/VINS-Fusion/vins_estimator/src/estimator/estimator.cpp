@@ -1277,6 +1277,15 @@ void Estimator::optimization()
     ROS_DEBUG("visual measurement count: %d", f_m_cnt);
     //printf("prepare for ceres: %f \n", t_prepare.toc());
 
+    // T2-R3.3: 视觉饥饿窗(last_track_num<20,同 init 门槛)冻结外参优化自由度——
+    // 断链窗口中 tic 与 V/Bas 联合爆走实测(E20×B tic0 爆漂 0.52m; E22 绑定外参后
+    // 速度爆冲被抑制的实证反向应用)。特征恢复即自动解冻。
+    if (ESTIMATE_EXTRINSIC == 1 && frame_count >= WINDOW_SIZE &&
+        f_manager.last_track_num < 20)
+    {
+        for (int i = 0; i < NUM_OF_CAM; i++)
+            problem.SetParameterBlockConstant(para_Ex_Pose[i]);
+    }
     ceres::Solver::Options options;
 
     options.linear_solver_type = ceres::DENSE_SCHUR;

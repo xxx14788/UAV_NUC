@@ -142,7 +142,10 @@ map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> FeatureTracker::trackIm
             //cv::calcOpticalFlowPyrLK(cur_img, prev_img, cur_pts, reverse_pts, reverse_status, err, cv::Size(21, 21), 3); 
             for(size_t i = 0; i < status.size(); i++)
             {
-                if(status[i] && reverse_status[i] && distance(prev_pts[i], reverse_pts[i]) <= 0.5)
+                // T2-R3.3: 0.5 -> 2.0。sigma=1.0 相机噪声(见 stereo_vins_rig.sdf)
+                // 下往返抖动物理上界~2px(两次独立噪声实现);0.5 会拒掉 75%
+                // 健康跟踪(sigma=1 实测 FB<2 占 79%)。无噪声旧 bag 上 FB≈0 不受影响。
+                if(status[i] && reverse_status[i] && distance(prev_pts[i], reverse_pts[i]) <= 2.0)
                 {
                     status[i] = 1;
                 }
@@ -221,7 +224,9 @@ map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> FeatureTracker::trackIm
                 cv::calcOpticalFlowPyrLK(rightImg, cur_img, cur_right_pts, reverseLeftPts, statusRightLeft, err, cv::Size(21, 21), 3);
                 for(size_t i = 0; i < status.size(); i++)
                 {
-                    if(status[i] && statusRightLeft[i] && inBorder(cur_right_pts[i]) && distance(cur_pts[i], reverseLeftPts[i]) <= 0.5)
+                    // T2-R3.3: 0.5 -> 2.0 与时序流同修(相机噪声 sigma~2.65 下立体往返抖动
+                    // 物理上界~2px; 0.5 实测杀光全部立体匹配→track=0 全程)
+                    if(status[i] && statusRightLeft[i] && inBorder(cur_right_pts[i]) && distance(cur_pts[i], reverseLeftPts[i]) <= 2.0)
                         status[i] = 1;
                     else
                         status[i] = 0;

@@ -32,6 +32,16 @@
         <visualize>false</visualize>
         <pose>0.02 0.05 0 0 0 0</pose>
         <camera>
+          <!-- T2-R3.3: 仿真相机噪声修复(实机 readout 噪声的 sim 等价物)。
+               根因:无噪声合成图像弱纹理区梯度严格=0,pyrLK 光流方程奇异,
+               C 段静止悬停 LK 存活率 0.00(自帧跟踪 0/19 实锤);
+               sigma=1.0 合成注入实测存活率 0.51 全段复活。实机 realsense
+               无需此配置(有物理噪声),零改动红线不受影响。 -->
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.004</stddev>
+          </noise>
           <horizontal_fov>1.2</horizontal_fov>
           <image>
             <format>R8G8B8</format>
@@ -60,6 +70,16 @@
         <visualize>false</visualize>
         <pose>0.02 -0.05 0 0 0 0</pose>
         <camera>
+          <!-- T2-R3.3: 仿真相机噪声修复(实机 readout 噪声的 sim 等价物)。
+               根因:无噪声合成图像弱纹理区梯度严格=0,pyrLK 光流方程奇异,
+               C 段静止悬停 LK 存活率 0.00(自帧跟踪 0/19 实锤);
+               sigma=1.0 合成注入实测存活率 0.51 全段复活。实机 realsense
+               无需此配置(有物理噪声),零改动红线不受影响。 -->
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.004</stddev>
+          </noise>
           <horizontal_fov>1.2</horizontal_fov>
           <image>
             <format>R8G8B8</format>
