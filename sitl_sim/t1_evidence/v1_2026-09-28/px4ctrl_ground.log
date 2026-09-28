@@ -1,0 +1,310 @@
+[33m[WARN] [1790601159.868648801, 82.332000000]: You should disable "print_value" if you are in regular usage.[0m
+[33m[WARN] [1790601160.379773897, 82.844000000]: PX4CTRL] Remote controller disabled, be careful![0m
+[33m[WARN] [1790601161.397100583, 83.852000000]: ODOM frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601161.397165820, 83.852000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601163.437074448, 85.884000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601164.457067281, 86.892000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601165.457055654, 87.896000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601166.467059829, 88.900000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601167.487067044, 89.916000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601168.507077835, 90.936000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601169.517128239, 91.940000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601170.527066925, 92.952000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601171.537069039, 93.960000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601172.557084104, 94.976000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601173.577056970, 95.992000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601174.587077731, 97.000000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601175.607084843, 98.012000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601176.617099075, 99.020000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601177.657095219, 100.040000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601178.687060210, 101.060000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601179.707107482, 102.076000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601180.717085454, 103.084000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601181.747095378, 104.092000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601182.767054326, 105.100000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601183.787080862, 106.120000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601184.817072048, 107.128000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601185.817085250, 108.132000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601186.817079332, 109.136000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601187.837102966, 110.156000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601188.857104716, 111.176000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601189.877069591, 112.196000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601190.877049452, 113.200000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601191.897129687, 114.216000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601192.917076191, 115.236000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601193.937638478, 116.256000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601194.957068941, 117.276000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601195.977072459, 118.296000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601196.997068826, 119.316000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601198.027056794, 120.336000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601199.027057161, 121.340000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601200.047076307, 122.360000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601201.067051083, 123.376000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601202.067049071, 124.380000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601203.077055874, 125.392000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601204.087071024, 126.400000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601205.107055067, 127.420000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601206.127067913, 128.436000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601207.147073656, 129.456000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601208.167055429, 130.476000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601209.187097297, 131.492000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601210.187051983, 132.496000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601211.207096848, 133.512000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601212.217070530, 134.520000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601213.227078196, 135.532000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601214.247075075, 136.552000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601215.257058458, 137.560000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601216.277080765, 138.576000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601217.297052067, 139.596000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601218.317073369, 140.616000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601219.337082491, 141.632000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601220.337063109, 142.636000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601221.357073383, 143.656000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601222.377056208, 144.672000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601223.397120435, 145.692000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601224.407086904, 146.696000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601225.427074608, 147.712000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601226.427082983, 148.716000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601227.447078906, 149.732000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601228.467073086, 150.752000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601229.487081393, 151.772000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601230.497096981, 152.776000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601231.517091307, 153.792000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601232.517082953, 154.796000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601233.537088328, 155.816000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601234.557069950, 156.832000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601235.577082400, 157.852000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601236.597057996, 158.872000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601237.607087403, 159.880000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601238.617082652, 160.892000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601239.627076850, 161.900000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601240.657058321, 162.916000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601241.657057460, 163.920000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601242.677068306, 164.936000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601243.707085539, 165.952000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601244.707060502, 166.956000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601245.727062886, 167.976000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601246.747112303, 168.992000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601247.767082238, 170.012000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601248.807081229, 171.020000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601249.937095703, 172.036000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601250.977078816, 173.048000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601251.997099277, 174.052000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601252.987079430, 175.056000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601253.987135782, 176.060000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601255.147095874, 177.072000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601256.167071375, 178.092000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601257.157070662, 179.100000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601258.177089672, 180.112000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601259.207094820, 181.132000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601260.217110603, 182.136000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601261.237059554, 183.156000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601262.247057619, 184.176000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601263.267050708, 185.192000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601264.277055521, 186.196000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601265.277096583, 187.200000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601266.307066613, 188.216000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601267.317129181, 189.236000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601268.317095521, 190.236000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601269.337061755, 191.252000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601270.357079474, 192.272000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601271.377060790, 193.292000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601272.387078495, 194.300000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601273.407070723, 195.316000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601274.427058546, 196.336000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601275.447076799, 197.352000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601276.467059774, 198.372000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601277.487105106, 199.392000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601278.497074526, 200.400000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601279.517053771, 201.420000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601280.537056112, 202.436000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601281.557065551, 203.452000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601282.587121596, 204.480000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601283.607067743, 205.500000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601284.630724554, 206.520000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601285.647091440, 207.536000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601286.657071480, 208.540000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601287.677068425, 209.560000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601288.697055458, 210.572000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601289.697123060, 211.576000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601290.717056425, 212.596000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601291.737081352, 213.612000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601292.757090099, 214.632000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601293.777079878, 215.652000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601294.787061107, 216.656000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601295.797086732, 217.672000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601296.817083584, 218.692000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601297.847078557, 219.720000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601298.867053565, 220.740000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601299.897024513, 221.756000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601300.897062830, 222.760000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601301.917073313, 223.776000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601302.937084964, 224.796000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601303.957077615, 225.812000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601304.957060246, 226.816000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601305.977054058, 227.836000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601306.997065342, 228.856000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601308.017079613, 229.872000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601309.047072935, 230.876000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601310.067054605, 231.892000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601311.077074862, 232.900000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601312.097087902, 233.920000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601313.117062675, 234.940000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601314.137101006, 235.956000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601315.137106323, 236.960000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601316.157074828, 237.976000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601317.177066722, 238.996000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601318.207083805, 240.016000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601319.227057620, 241.036000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601320.247073814, 242.052000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601321.277060741, 243.080000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601322.297067722, 244.096000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601323.317083951, 245.116000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601324.337063070, 246.136000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601325.357074869, 247.152000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601326.377080650, 248.156000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601327.397060226, 249.176000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601328.427025681, 250.196000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601329.447058520, 251.216000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601330.477084566, 252.232000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601331.497082368, 253.252000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601332.517078227, 254.272000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601333.527061523, 255.276000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601334.527060121, 256.280000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601335.547076060, 257.296000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601336.567057493, 258.316000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601337.587058729, 259.332000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601338.607085905, 260.352000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601339.627137176, 261.360000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601340.647082770, 262.376000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601341.647078509, 263.380000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601342.667065582, 264.400000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601343.687101894, 265.420000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601344.707076279, 266.432000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601345.717103892, 267.440000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601346.827100179, 268.452000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601347.837108681, 269.460000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601348.867066053, 270.480000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601349.877097600, 271.492000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601350.897078963, 272.512000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601351.907074548, 273.520000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601352.927081799, 274.540000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601353.947021219, 275.560000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601354.967065895, 276.580000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601355.987087750, 277.596000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601356.997082501, 278.604000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601358.017073314, 279.616000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601359.047052306, 280.636000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601360.067075908, 281.656000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601361.087068812, 282.676000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601362.117097818, 283.696000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601363.137083956, 284.716000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601364.157154605, 285.736000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601365.177125190, 286.752000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601366.187630432, 287.756000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601367.207019852, 288.780000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601368.227090638, 289.792000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601369.227075498, 290.796000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601370.247048802, 291.812000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601371.267062245, 292.832000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601372.277056255, 293.840000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601373.297106867, 294.860000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601374.317072756, 295.880000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601375.337054598, 296.900000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601376.357074346, 297.916000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601377.377079104, 298.936000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601378.397082609, 299.956000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601379.417087026, 300.972000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601380.427062324, 301.976000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601381.447065805, 302.996000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601382.467061218, 304.016000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601383.487065598, 305.036000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601384.547074545, 306.052000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601385.557125705, 307.056000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601386.587054302, 308.080000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601387.597092611, 309.092000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601388.597131572, 310.096000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601389.617076572, 311.112000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601390.627075771, 312.120000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601391.647100970, 313.140000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601392.677127042, 314.160000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601393.697053687, 315.176000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601394.697075194, 316.180000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601395.707036613, 317.192000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601396.727086549, 318.212000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790601397.747075259, 319.232000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31mWARNING: disk usage in log directory [/home/uav/.ros/log] is over 1GB.
+It's recommended that you use the 'rosclean' command.[0m
+... logging to /home/uav/.ros/log/130e0eca-bb3e-11f1-8813-8f8ef68ad52e/roslaunch-uav4-68888.log
+Checking log directory for disk usage. This may take a while.
+Press Ctrl-C to interrupt
+]2;/home/uav/catkin_ws/src/px4ctrl/launch/run_ctrl_sitl_vins.launch
+[1mstarted roslaunch server http://uav4:45789/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /px4ctrl/auto_takeoff_land/enable: True
+ * /px4ctrl/auto_takeoff_land/enable_auto_arm: True
+ * /px4ctrl/auto_takeoff_land/no_RC: True
+ * /px4ctrl/auto_takeoff_land/takeoff_height: 0.75
+ * /px4ctrl/auto_takeoff_land/takeoff_land_speed: 0.5
+ * /px4ctrl/ctrl_freq_max: 100.0
+ * /px4ctrl/gain/KAngP: 20.0
+ * /px4ctrl/gain/KAngR: 20.0
+ * /px4ctrl/gain/KAngY: 20.0
+ * /px4ctrl/gain/Kp0: 1.5
+ * /px4ctrl/gain/Kp1: 1.5
+ * /px4ctrl/gain/Kp2: 1.5
+ * /px4ctrl/gain/Kv0: 1.5
+ * /px4ctrl/gain/Kv1: 1.5
+ * /px4ctrl/gain/Kv2: 1.5
+ * /px4ctrl/gain/Kvd0: 0.0
+ * /px4ctrl/gain/Kvd1: 0.0
+ * /px4ctrl/gain/Kvd2: 0.0
+ * /px4ctrl/gain/Kvi0: 0.0
+ * /px4ctrl/gain/Kvi1: 0.0
+ * /px4ctrl/gain/Kvi2: 0.0
+ * /px4ctrl/gra: 9.81
+ * /px4ctrl/low_voltage: 13.2
+ * /px4ctrl/mass: 1.5
+ * /px4ctrl/max_angle: 25
+ * /px4ctrl/max_manual_vel: 1.0
+ * /px4ctrl/msg_timeout/bat: 0.5
+ * /px4ctrl/msg_timeout/cmd: 0.5
+ * /px4ctrl/msg_timeout/imu: 0.5
+ * /px4ctrl/msg_timeout/odom: 0.5
+ * /px4ctrl/msg_timeout/rc: 0.5
+ * /px4ctrl/pose_solver: 1
+ * /px4ctrl/rc_reverse/pitch: True
+ * /px4ctrl/rc_reverse/roll: False
+ * /px4ctrl/rc_reverse/throttle: True
+ * /px4ctrl/rc_reverse/yaw: False
+ * /px4ctrl/rotor_drag/k_thrust_horz: 0.0
+ * /px4ctrl/rotor_drag/x: 0.0
+ * /px4ctrl/rotor_drag/y: 0.0
+ * /px4ctrl/rotor_drag/z: 0.0
+ * /px4ctrl/thrust_model/K1: 0.7583
+ * /px4ctrl/thrust_model/K2: 1.6942
+ * /px4ctrl/thrust_model/K3: 0.6786
+ * /px4ctrl/thrust_model/accurate_thrust_model: False
+ * /px4ctrl/thrust_model/enable_rls: False
+ * /px4ctrl/thrust_model/hover_percentage: 0.71
+ * /px4ctrl/thrust_model/print_value: True
+ * /px4ctrl/use_bodyrate_ctrl: False
+ * /px4ctrl/use_px4_position_ctrl: False
+ * /rosdistro: noetic
+ * /rosversion: 1.17.4
+
+NODES
+  /
+    px4ctrl (px4ctrl/px4ctrl_node)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/uav/catkin_ws/src/px4ctrl/launch/run_ctrl_sitl_vins.launch http://localhost:11311
+[1mprocess[px4ctrl-1]: started with pid [68909][0m
+[px4ctrl-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

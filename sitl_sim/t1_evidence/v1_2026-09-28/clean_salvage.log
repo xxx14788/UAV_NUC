@@ -1,0 +1,14 @@
+== t3_clean 2026-09-28 21:16:36 ==
+清 SysV shm 段 7 个
+Xvfb :99 已停
+-- 残留大文件（>500MB，含未关闭 .active）--
+5.1GB	/home/uav/sitl_sim/bags/t2w5_p1_092335.bag
+1.0GB	/home/uav/sitl_sim/bags/t2_E_shift.bag
+1.2GB	/home/uav/sitl_sim/bags/flight_2026-09-26_222034.bag
+1.2GB	/home/uav/sitl_sim/bags/t2_D_175728.bag
+1.8GB	/home/uav/sitl_sim/bags/t2_A_173156.bag
+1.8GB	/home/uav/sitl_sim/bags/t2_A_clean.bag
+1.5GB	/home/uav/sitl_sim/bags/t2v3_ground_202520.bag
+2.2GB	/home/uav/sitl_sim/bags/t2_B_175551.bag
+-- 遗留进程复核 --
+CLEANED

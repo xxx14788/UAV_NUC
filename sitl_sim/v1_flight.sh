@@ -31,7 +31,9 @@ yes | rosnode cleanup >/dev/null 2>&1 || true
 pgrep -x Xvfb >/dev/null || { nohup Xvfb :99 -screen 0 1280x1024x24 >/dev/null 2>&1 & sleep 2; }
 export DISPLAY=:99
 
-# ---------- SITL（V1 地面静态用默认 empty world,减渲染负载） ----------
+# ---------- SITL（V1.2 修正: 默认 obstacles world——empty world 无纹理,VINS 走
+# "无条件 init" 劣化路径(T2 W3 已立案);obstacles=T2 全部已验证轮次的世界） ----------
+export SITL_WORLD="${SITL_WORLD:-sitl_world_obstacles}"
 nohup bash "$HOME/sitl_sim/start_sitl_vins.sh" > "$EV/sitl_${MODE}.log" 2>&1 &
 ok=0; for i in $(seq 1 45); do sleep 2
     rostopic list 2>/dev/null | grep -q 'vins_cam_left/image_raw' && { ok=1; break; }; done
@@ -81,7 +83,9 @@ rostopic info /px4ctrl/takeoff_land 2>/dev/null | grep -q Publishers || { LOG "W
 # ---------- VINS init 门 ----------
 T0=$(date +%s)
 ok=0; for i in $(seq 1 40); do sleep 2
-    timeout 3 rostopic echo -n1 /vins_estimator/imu_propagate/pose/position/z 2>/dev/null | grep -qE '^-?[0-9]' && { ok=1; break; }; done
+    # 注意: rostopic echo 的字段路径订阅(/topic/field)在本环境假阴性("not published"
+    # 而 hz 正常)——两度误杀活链的教训;必须用裸话题 echo 判流
+    timeout 3 rostopic echo -n1 /vins_estimator/imu_propagate 2>/dev/null | grep -q 'frame_id: world' && { ok=1; break; }; done
 [ $ok = 1 ] || { LOG "FATAL 80s 内 VINS 未 init(imu_propagate 无消息)"; exit 1; }
 LOG "VINS init 完成, 等待 $(( (i)*2 ))s"
 sleep 5

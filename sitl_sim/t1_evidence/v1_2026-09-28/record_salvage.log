@@ -1,0 +1,51 @@
+[0m[INFO] [1790601325.875358501]: Subscribing to /clock[0m
+[0m[INFO] [1790601325.876920793]: Subscribing to /debugPx4ctrl[0m
+[0m[INFO] [1790601325.878256756]: Subscribing to /debugPx4ctrl/fsm_state[0m
+[0m[INFO] [1790601325.879579658]: Subscribing to /gazebo/model_states[0m
+[0m[INFO] [1790601325.881092279]: Subscribing to /mavros/imu/data[0m
+[0m[INFO] [1790601325.882269265]: Subscribing to /mavros/imu/data_raw[0m
+[0m[INFO] [1790601325.883328779]: Subscribing to /mavros/local_position/odom[0m
+[0m[INFO] [1790601325.884211301]: Subscribing to /mavros/setpoint_raw/attitude[0m
+[0m[INFO] [1790601325.885053901]: Subscribing to /mavros/state[0m
+[0m[INFO] [1790601325.885883489]: Subscribing to /mavros/vision_pose/pose[0m
+[0m[INFO] [1790601325.886747047]: Subscribing to /position_cmd[0m
+[0m[INFO] [1790601325.887975701]: Subscribing to /px4ctrl/takeoff_land[0m
+[0m[INFO] [1790601325.888795947]: Subscribing to /vins_estimator/imu_propagate[0m
+[0m[INFO] [1790601325.889690412]: Subscribing to /vins_estimator/odometry[0m
+[0m[INFO] [1790601326.143314863, 247.916000000]: Recording to '/home/uav/catkin_ws/sitl_sim/t1_evidence/v1_2026-09-28/v1_ground_salvage_2115.bag'.[0m
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator
+Error in XmlRpcClient::writeRequest: write error (Connection refused).
+Error in XmlRpcDispatch::work: couldn't find source iterator

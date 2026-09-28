@@ -35,3 +35,33 @@
   （行为级 fsm 稳定证据;fsm_state 话题级证据待另一实例轮）。
 - VINS hold 中位=(0.146,0.296,0.720) vs 真值=(1.208,1.299,0.843): 差 ≈(1.06,1.00)=出生点
   平移假象（同上）,相对保持不受影响。
+
+## 补充:T1 自跑 salvage 轮(21:15,接管条款)+ V4.2 三档终值(2026-09-28 21:1x)
+
+数据源: v1_ground_salvage_211520.bag(T1 ground 轮打捞;链=run2 的 obstacles world 会话,
+VINS 已 init 后录制 67s 静置,preflight ALL_GREEN,fsm_state 双话题在内)。
+
+| 指标 | 实测 | 备注 |
+|---|---|---|
+| fsm_state 稳定性 | **67 帧全程 MANUAL_CTRL(state_recv=1 odom_recv=1),0 跳变** | V1.2 fsm 稳定性证据闭环:静置全程 odom 健康位恒 1,无超时态闪跳 |
+| imu_propagate | 124.8Hz,maxgap 20ms,n=8380 | 与 T2 bag 一致(125Hz 档) |
+| ekf odom / vision_pose | 30.0Hz / 9.7Hz | 复证 |
+| 静态游走(67s,VINS 龄~150-215s 窗) | 幅度 0.079/0.126/0.032m,**首末差 0.001/0.004/-0.005m** | 零均值游走非漂移;比 T2 早期窗(2.5cm)大——近地相机几何差/视觉优化重锚微跳嫌疑,长窗影响归 T2 域(W2);悬停实测 0.5cm 不受影响 |
+| VINS 原点 vs 出生点 | (-0.035,0.053,-0.010) vs (1.010,0.980,0.104) | 出生点平移假象第三次复现 |
+
+### V4.2 三档终值(run2 21:12,14580 链路,obstacles world)
+
+| 档位 | 实测 |
+|---|---|
+| 默认(未 511) | **50.000Hz** |
+| 511 105 5000 | **125.000Hz** |
+| 511 105 2500(400Hz req) | **215.1Hz**(与 probe6 的 4000us=223Hz 合并:网格量化 ~4ms tick) |
+
+### 工具教训(跨会话保留)
+
+1. **rostopic echo 字段路径(/topic/field)订阅假阴性**:报 "does not appear to be published"
+   而裸话题 hz 正常——本环境两度误杀活链;判流必须裸话题 echo 或 hz。
+2. v1_flight.sh 原版 FATAL 路径不清理(链+锁泄漏)——salvage 教训,编排脚本 FATAL 前须
+   走清场段(已修:门探针改裸话题;FATAL 清场责任在使用者,脚本尾部正常路径含 t3_clean)。
+3. empty world 无纹理→VINS 走 T2-W3 已立案的"无条件 init"劣化路径;VINS 链路一律用
+   sitl_world_obstacles(脚本默认已改)。
