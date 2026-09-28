@@ -23,13 +23,17 @@ image_width: 640
 image_height: 480
 
 # Extrinsic parameter between IMU(body) and Camera（body=IMU/机体系，cam=optical）
+# T2-R4/R2p (2026-09-29): 外参精确化入库。z 0.03(手推hack) -> -0.02。
+# 推导: gz sdf -p 实证 include-pose 覆盖语义(相机 base 系 z=0, 非 rig 注释 0.035);
+# IMU=iris::/imu_link (0,0,0.02)(gazebo_imu_plugin 挂载); body_T_cam z = 0-0.02。
+# x/y/旋转不变(0.12,±0.05 与惯例矩阵经 phaseCorr 视差自洽+ext:1 终值 x 收敛互证)。
 body_T_cam0: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
    data: [ 0.0, 0.0, 1.0, 0.12,
        -1.0, 0.0, 0.0, 0.05,
-       0.0, -1.0, 0.0, 0.03,
+       0.0, -1.0, 0.0, -0.02,
        0., 0., 0., 1. ]
 body_T_cam1: !!opencv-matrix
    rows: 4
@@ -37,7 +41,7 @@ body_T_cam1: !!opencv-matrix
    dt: d
    data: [ 0.0, 0.0, 1.0, 0.12,
        -1.0, 0.0, 0.0, -0.05,
-       0.0, -1.0, 0.0, 0.03,
+       0.0, -1.0, 0.0, -0.02,
        0., 0., 0., 1. ]
 
 #Multiple thread support
