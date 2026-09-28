@@ -258,6 +258,14 @@ void cmdCallback(const ros::TimerEvent &e)
 
   last_yaw_ = cmd.yaw;
 
+  // T3-E2 诊断: 发布点低频日志（区分超时段/轨迹段;对齐 px4ctrl 侧消费）
+  ROS_INFO_THROTTLE(1.0,
+      "[tsdiag] t_cur=%.2f dur=%.2f traj_id=%d pos=(%.2f,%.2f,%.2f) "
+      "vel=(%.2f,%.2f,%.2f) acc=(%.2f,%.2f,%.2f) yaw=%.1f",
+      t_cur, traj_duration_, traj_id_,
+      pos(0), pos(1), pos(2), vel(0), vel(1), vel(2),
+      acc(0), acc(1), acc(2), yaw_yawdot.first);
+
   pos_cmd_pub.publish(cmd);
 }
 

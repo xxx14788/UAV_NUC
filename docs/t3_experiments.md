@@ -375,3 +375,66 @@ box_D=0.506m、box_E=0.870m（阈 0.349m）——1.5m 净缝膨胀后 0.9m 走�
 5. rviz 截图（W5 遗留）：本夜无 T4 判读轮，下夜补。
 
 ### 飞行轮消耗：14/15-18（预算内）
+
+
+## EKF2 修复线（%s，用户授权自主修复，撤销昨晚部分结论）
+
+### 重要勘误（推翻 2026-09-28 凌晨两段式定罪节）
+
+1. **"EKF2 瞬爆"结论撤销**：昨夜 2legA/B 的分析被三重新证据推翻——
+   ①est-vs-truth 全程 ≤0.28m（2legB，含失控段），EKF2 估计健康；
+   ②IMU 尖峰=落地撞击（t+64.9 尖峰簇与坠落同时刻，真值证实）；
+   ③z 单步跳 5m=摔地静止后的 EKF2 重收敛，是结果不是原因。
+2. 失控真链：到位悬停后 cmd 自主异常（2legB 急停轨迹终点
+   (5.99,-3.61,0.43)+v=0；2legA cmd 游走）→ 机体跟异常 cmd 失控 →
+   坠落 → EKF2 重收敛跳变。cmd 异常的精确触发层未及定罪（见下）。
+3. **W12①"hold 偏差场景特异性"撤销**：今天 NUC 重启后 ① 到位
+   0.060m（历史最佳）——hold 偏差与 cmd 异常同为环境累积态表现。
+
+### 今日实验链（10 飞行轮 + 离线）
+
+| 轮 | 内容 | 结果 |
+|---|---|---|
+| 2legD | 白天基线复现 | leg2 失控（3/3 复现 → 非夜间环境性） |
+| 2legE/F/H | 三点插桩版（tsdiag/pmdiag/egodiag） | leg1 全部 REACHED+悬停 300s+ 链路三点自洽无异常；但 harness arrived() 探针在高负载（rosbag 深度流）下 TCPROS 建连饿死 → 假 ABORT 未达 leg2 |
+| 2legG | 手动发 leg2 goal（绕过探针） | **leg2 REACHED 到位**——返程腿链路在插桩版（09:48 重编）+干净环境健康 |
+| smoke-E4 | 标准流程回归门禁 | 六指标 PASS（0.193/0.370） |
+| W12①(重跑) | NUC 重启清累积态后 | **PASS 到位 0.060m** |
+| W12②(W12b) | 传送版返程（对照） | FAIL flip/osc——同日两段式健康 vs 传送版爆 = 定罪传送场景 |
+| W12②(W12b2) | +MAV_CMD 176 GPS origin 重置 | FAIL 但疯转减轻（sp_pitch_std 124→80,final_err 5.48→3.8）——方向正确未根治 |
+
+### 结论与移交
+
+1. **返程腿问题分解为两个独立缺陷**：
+   a. 非传送路径（原点起飞两段式）：**已被环境恢复+重编自愈**（今天
+      G 轮 REACHED；触发条件与 09:48 重编或 boot 累积态相关，精确
+      自愈机制未定罪——留档）。
+   b. 传送路径（t3_verify_flight）：**真 EKF2 重锚损伤**——传送跳变
+      9m < GPS 噪声，EKF2 状态与 GPS 测量冲突，起飞机动激发疯转。
+      MAV_CMD 176 origin 重置部分有效。根治需 ulog（SDLOG_MODE=1）
+      看 innovation/reset 序列——**EKF2 内部，归 T1 域**（本次移交
+      附带对照实验数据，非甩锅：t3_runs/W12b_105x、W12b2_111x、
+      2legG 三组同日对照）。
+2. W12 终矩阵：①③④ PASS + ②⑤传送版 EKF2 重锚阻塞（⑤与②同
+   harness 同根因未重复消耗）+ G 轮两段式返程 REACHED 替代验证。
+   **3/5，tag 仍不打**。
+3. 飞行轮：昨 14 + 今 10 = 24（超任务书预算，用户授权的修复线）。
+
+### 今日入库/改动
+
+- 三点低频诊断插桩（traj_server [tsdiag] / px4ctrl [pmdiag] /
+  EGO [egodiag]）——保留为常驻低频日志
+- two_leg_flight.sh：长驻到位探针（原 per-call TCPROS 建连在高负载
+  下饿死,2legE/F/H 实证）；t3_clean 后探针进程清理由 pkill 补充
+- t3_verify_flight.sh：传送后 MAV_CMD 176 GPS origin 重置（部分
+  有效性实锤,留给 T1 的 ulog 深挖接力）
+- analysis/ekf2_burst_analysis.py（爆点传感器层解剖工具）
+
+### 续接指引（下夜）
+
+1. T1：SDLOG_MODE=1 复现传送轮 → ulog innovation/reset 定罪重锚损伤
+   机理 → 修复后 t3_verify ②⑤ 补飞 → 5/5 → tag（配方已就绪）
+2. 非传送路径"自愈"机制可选考古（价值低,环境性已定性）
+3. harness 探针跨轮污染（旧探针进程未随 t3_clean 清理）已修——
+   t3_clean 已加 pkill；若再现 rostopic echo 读到 stale d,先
+   pgrep -f arr_probe

@@ -80,6 +80,30 @@ nohup rosbag record -O "$RUN/flight.bag" \
 PID_BAG=$!
 log "bag recording"
 
+# T3-E2: 长驻到位探针（新 TCPROS 连接高负载饿死,2legE/F 实证）
+cat > /tmp/arr_probe.py <<'PY'
+import rospy, math
+from nav_msgs.msg import Odometry
+from std_msgs.msg import Float64
+rospy.init_node('arr_probe')
+pub = rospy.Publisher('/arr_probe/d', Float64, queue_size=1)
+g = [7.0, -4.0, 1.0]
+def cb(m):
+    p = m.pose.pose.position
+    pub.publish(math.dist((p.x, p.y, p.z), tuple(g)))
+rospy.Subscriber('/mavros/local_position/odom', Odometry, cb)
+while not rospy.is_shutdown():
+    gp = rospy.get_param('/arr_probe/goal', None)
+    if gp:
+        try: g = [float(x) for x in gp.split()]
+        except Exception: pass
+    rospy.sleep(1.0)
+PY
+nohup python3 /tmp/arr_probe.py > /dev/null 2>&1 &
+PID_PROBE=$!
+rosparam set /arr_probe/goal "${LEG1[*]}"
+
+
 bash "$SIM/04_takeoff.sh" 90 >>"$LOG" 2>&1 || fail "takeoff 失败"
 log "armed, hover settle 8s"; sleep 8
 
@@ -87,17 +111,12 @@ send_goal(){
   timeout 10 rostopic pub -1 /move_base_simple/goal geometry_msgs/PoseStamped \
     "{header: {frame_id: 'world'}, pose: {position: {x: $1, y: $2, z: $3}, orientation: {w: 1.0}}}" >/dev/null 2>&1
 }
-arrived(){  # $1..3 goal, $4 timeout_s → 0=arrived
+arrived(){  # $1..3 goal, $4 timeout_s -> 0=arrived
+  # T3-E2: 读长驻探针话题（每次新建 TCPROS 连接在高负载下饿死,2legE/F 实证）
   local t0=$(date +%s) d
+  rosparam set /arr_probe/goal "$1 $2 $3" 2>/dev/null
   while [ $(( $(date +%s) - t0 )) -lt "${4:-90}" ]; do
-    d=$(timeout 4 python3 -c "
-import rospy, math
-from nav_msgs.msg import Odometry
-rospy.init_node('arr_chk', anonymous=True)
-m = rospy.wait_for_message('/mavros/local_position/odom', Odometry, timeout=3)
-p = m.pose.pose.position
-print(math.dist((p.x,p.y,p.z), ($1,$2,$3)))
-" 2>/dev/null)
+    d=$(timeout 12 rostopic echo -n1 /arr_probe/d 2>/dev/null | grep -oE 'data: [0-9.e-]+' | awk '{print $2}')
     [ -n "$d" ] && awk "BEGIN{exit !($d < 0.5)}" && return 0
     sleep 2
   done

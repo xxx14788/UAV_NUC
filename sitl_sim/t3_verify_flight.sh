@@ -99,6 +99,23 @@ NIRIS=$(echo "$MODELS" | grep -c 'iris')
 # ---- 传送(disarmed 状态) + EKF2 收敛等待 ----
 log "teleport -> gazebo ($GX,$GY,$GZ) yaw ${SPAWN_YAW_DEG}deg (= odom ($SPAWN_OX,$SPAWN_OY))"
 timeout 10 rosservice call /gazebo/set_model_state "{model_state: {model_name: iris_depth_camera, pose: {position: {x: $GX, y: $GY, z: $GZ}, orientation: {x: 0.0, y: 0.0, z: $QZ, w: $QW}}, reference_frame: world}}" >>"$LOG" 2>&1 || fail "set_model_state 服务调用失败"
+sleep 3  # 等传送后 GPS 流更新(T3-E2)
+# T3-E2: 传送后 GPS origin 重置(MAV_CMD 176)——传送跳变 ~9m 小于 GPS 噪声,
+# EKF2 检测不到重锚需求,状态与 GPS 测量冲突在起飞机动下爆发(W12b 对照:
+# 同日两段式健康/传送版爆)。SET_GPS_GLOBAL_ORIGIN 强制 EKF2 origin 重锚。
+GP_LINE=$(timeout 8 rostopic echo -n1 /mavros/global_position/global 2>/dev/null)
+read -r LAT LON ALT <<< "$(printf '%s\n' "$GP_LINE" | python3 -c "
+import sys
+v = {}
+for ln in sys.stdin:
+    parts = ln.split(':', 1)
+    if len(parts) == 2 and parts[0].strip() in ('latitude', 'longitude', 'altitude'):
+        v[parts[0].strip()] = parts[1].strip()
+print(v.get('latitude', ''), v.get('longitude', ''), v.get('altitude', ''))
+")"
+if [ -n "$LAT" ] && [ "$LAT" != "" ]; then
+  timeout 10 rosservice call /mavros/cmd/command "{broadcast: false, command: 176, confirmation: 0, param1: 0.0, param2: 0.0, param3: 0.0, param4: 0.0, param5: $LAT, param6: $LON, param7: $ALT}" >>"$LOG" 2>&1 && log "EKF2 origin 重置已发(MAV_CMD 176)"
+fi
 SETTLED=0
 for i in $(seq 1 45); do
     p=$(timeout 5 rostopic echo -n1 /mavros/local_position/odom/pose/pose/position 2>/dev/null)

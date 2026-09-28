@@ -564,6 +564,8 @@ namespace ego_planner
       {
         if (t_cur > info->duration_ - 1e-2)
         {
+          ROS_WARN("[egodiag] REACHED target -> WAIT_TARGET: t_cur=%.2f dur=%.2f end=(%.2f,%.2f,%.2f)",
+                   t_cur, info->duration_, end_pt_(0), end_pt_(1), end_pt_(2));
           have_target_ = false;
           have_trigger_ = false;
 
@@ -584,6 +586,12 @@ namespace ego_planner
       }
       else if (t_cur > replan_thresh_)
       {
+        ROS_WARN("[egodiag] replan by t_cur>thresh: t_cur=%.2f dur=%.2f "
+                 "local_tgt=(%.2f,%.2f,%.2f) end=(%.2f,%.2f,%.2f) pos=(%.2f,%.2f,%.2f)",
+                 t_cur, info->duration_,
+                 local_target_pt_(0), local_target_pt_(1), local_target_pt_(2),
+                 end_pt_(0), end_pt_(1), end_pt_(2),
+                 pos(0), pos(1), pos(2));
         changeFSMExecState(REPLAN_TRAJ, "FSM");
       }
 

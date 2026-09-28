@@ -230,6 +230,13 @@ void Command_Data_t::feed(quadrotor_msgs::PositionCommandConstPtr pMsg)
     msg = *pMsg;
     rcv_stamp = ros::Time::now();
 
+    // T3-E2 诊断: px4ctrl 侧消费点低频日志（与 traj_server 发布点对齐）
+    ROS_INFO_THROTTLE(1.0,
+        "[pmdiag] rcv p=(%.2f,%.2f,%.2f) v=(%.2f,%.2f,%.2f) yaw=%.1f id=%d",
+        pMsg->position.x, pMsg->position.y, pMsg->position.z,
+        pMsg->velocity.x, pMsg->velocity.y, pMsg->velocity.z,
+        pMsg->yaw, pMsg->trajectory_id);
+
     p(0) = msg.position.x;
     p(1) = msg.position.y;
     p(2) = msg.position.z;
