@@ -10,8 +10,12 @@
 #   3) SITL 相关进程孤儿（无锁却跑着 gzserver/px4/Xvfb/rosbag）
 #   4) 深度流频率（--with-sitl: 名义 30Hz，<20Hz 判 FAIL——llvmpipe 饱和前兆）
 #   5) 日志体量（~/.ros/log >2GB WARN）
-set -u
+# T1-V3 修复(09-28)：原为 set -u 在 source 之前——ROS setup.bash 引用未定义变量
+# 时 set -u 直接致命退出（|| true 救不了 sourced 脚本内的 unbound abort），
+# 且 source 行 2>/dev/null 把报错吞掉 → EXIT=1 零输出。先 source 再 set -u
+# （与 start_sitl_vins.sh 同一约定）。
 source /opt/ros/noetic/setup.bash 2>/dev/null || true
+set -u
 WITH_SITL=0
 [ "${1:-}" = "--with-sitl" ] && WITH_SITL=1
 FAILS=0; WARNS=0
