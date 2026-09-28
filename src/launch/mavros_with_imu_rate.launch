@@ -4,8 +4,8 @@
       <arg name="fcu_url" value="/dev/pixhawk:921600"/>
     </include>
 
-    <!-- 5 秒后设 HIGHRES_IMU 为 200Hz -->
+    <!-- 5 秒后设 HIGHRES_IMU 流间隔 4000us(250Hz)。前提: FC 上 IMU_INTEG_RATE=250(BMI055 陀螺 2000Hz ODR, /8 整数分频), set 后 save+reboot 生效; 不设则实机仍为 200Hz -->
     <node pkg="mavros" type="mavcmd" name="set_imu_rate" output="screen"
-          args="long 511 105 5000 0 0 0 0 0"
+          args="long 511 105 4000 0 0 0 0 0"
           launch-prefix="bash -c 'sleep 5; $0 $@'"/>
   </launch>

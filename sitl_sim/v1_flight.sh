@@ -57,7 +57,7 @@ if [ "$MODE" = "ground" ]; then
     R_5K=$(hz_of /mavros/imu/data_raw 25)
     A2=$(rosrun mavros mavcmd long 511 105 2500 0 0 0 0 0 2>&1 | tail -1); sleep 2
     R_25=$(hz_of /mavros/imu/data_raw 20)
-    A3=$(rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0 2>&1 | tail -1)
+    A3=$(rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 2>&1 | tail -1)
     {
         echo "V4.2 mavcmd 511 实测 $(date '+%F %T')"
         echo "默认档(未 511):        ${R_DEF:-无输出} Hz"
@@ -67,10 +67,10 @@ if [ "$MODE" = "ground" ]; then
     LOG "511 实测完成: def=${R_DEF:-NA} 5000us=${R_5K:-NA} 2500us=${R_25:-NA}"
     sleep 2
 else
-    rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0 >/dev/null 2>&1
+    rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 >/dev/null 2>&1
     sleep 2
     R_5K=$(hz_of /mavros/imu/data_raw 20)
-    LOG "hover 模式 511 105 5000 应用: ${R_5K:-NA} Hz"
+    LOG "hover 模式 511 105 4000 应用: ${R_5K:-NA} Hz"
 fi
 
 # ---------- VINS + 转发 + px4ctrl ----------
