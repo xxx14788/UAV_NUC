@@ -1,0 +1,24 @@
+[0m[INFO] [1790619002.324265896]: init begins[0m
+vins stack guard: RLIMIT_STACK soft -> 512 MB
+config_file: /tmp/d1_cfg_smooth.yaml
+USE_IMU: 1
+IMU_TOPIC: /mavros/imu/data_raw
+REANCHOR_SMOOTH: 1 frames: 15
+result path /home/uav/vins_output//vio.csv
+[33m[WARN] [1790619002.512359185]:  Optimize extrinsic param around initial guess![0m
+camera number 2
+[0m[INFO] [1790619002.517620637]: Synchronized sensors, fix time offset: 0[0m
+[0m[INFO] [1790619002.517672407]: ROW: 480 COL: 640 [0m
+ exitrinsic cam 0
+ 0  0  1
+-1  0  0
+ 0 -1  0
+0.12 0.05 0.03
+ exitrinsic cam 1
+ 0  0  1
+-1  0  0
+ 0 -1  0
+ 0.12 -0.05  0.03
+set g    0    0 9.81
+[33m[WARN] [1790619002.528588410]: waiting for image and imu...[0m
+vins_node: /usr/include/boost/smart_ptr/shared_ptr.hpp:734: typename boost::detail::sp_member_access<T>::type boost::shared_ptr<T>::operator->() const [with T = camodocal::Camera; typename boost::detail::sp_member_access<T>::type = camodocal::Camera*]: Assertion `px != 0' failed.
