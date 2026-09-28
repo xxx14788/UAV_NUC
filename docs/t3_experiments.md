@@ -511,3 +511,59 @@ box_D=0.506m、box_E=0.870m（阈 0.349m）——1.5m 净缝膨胀后 0.9m 走�
   VINS 链路跑法 GPS_LINK=0 跳过）。
 - **②⑤ 正确验收路径**：iris_stereo_vins + sim_vins.launch +
   run_ctrl_sitl_vins.launch（VINS 直供），切链路接口备忘在 README §0。
+# T3 v5 X1 战役记录（2026-09-28/29 夜）— VINS 同构链路首飞冒烟
+
+> 结论先行：**harness 全链路完备且多轮全绿验证；X1 验收被 T2 已表征的
+> VINS 运动瞬态发散（非确定，本夜 8 飞行轮全灭）阻塞**。移交 T2-W3 域。
+> 工具成果：vins_smoke.sh / round_result.sh / resume.sh（三件套已入库）。
+> 用户 01:09 叫停，X1 移交任务书 v6 续接。
+
+## 轮次清单（goal 统一 (7,-4,1)，obstacles world，4000us 标准档）
+
+| 轮 | 时刻 | 结果 | 定因 |
+|---|---|---|---|
+| 1 | 22:38 | FATAL 技术轮 | 环境source顺序bug：基座setup.bash覆盖devel ws包路径→vins_node包解析失败从未启动（simvins.log ERROR实证） |
+| 2 | 22:50 | FATAL 技术轮 | init门grep无引号：rostopic echo输出`frame_id: "world"`带引号，裸`frame_id: world`永不匹配（继承自并行T1实例的不完整诊断"field-path假阴性"，其修复版从未端到端验证） |
+| 3 | 22:56 | 中止 | 心跳取证实锤prop=125Hz在发、VINS已init、echo-grep坏→kill保栈；T2合法覆锁（我脚本已死属遗弃），resume按属主守卫中止零损伤 |
+| 4 | 23:18 | preflight红项 | T2新门>200Hz vs 我5000us=125Hz（网格量化伪影，632e0ee后标准=4000us） |
+| 5 | 23:20 | FAIL 爆散 | **223Hz+默认config**：VINS飞行中发散至740m；planner无辜（cmd直达goal保持）；px4ctrl安全（真值仅飘3.7m+auto disarm） |
+| 6 | 23:32 | FAIL 早死 | VINS运行15s（1862帧）后节点死亡（起飞机动期间；疑T2 22:09版rosNodeTest栈RLIMIT卫兵击杀） |
+| 7 | 23:44 | FAIL 跳变 | **VINS帧中途跳变2.7m**（t+30-45s追目标途中）：目标物理位置被移走，机体忠追新位（新帧0.16m达标/VINS自报0.131m），物理距原定目的地3.16m。跳变判据上线（锚差|pre-post|=3.065m） |
+| 8 | 23:50 | FAIL 爆散 | VINS爆散86m后停流；watcher零回调=odom已死 |
+| 9a | 00:04 | FATAL | 自身最小boot未清（清场断言正确拒绝） |
+| 9b | 00:09 | FAIL arm拒 | **磁复位反转教训**：CAL_MAG0/1_ID清零→v1.17无磁yaw不可观测→**ARM rejected by PX4**（对照轮5-8带磁4/4 armed）。已恢复197388/197644。"残留"实为本SITL起飞链必需磁标定，以"不可复位"结案 |
+| 10 | 00:18 | FAIL 爆散 | 重启后首轮：锚偏16m全程发散（排除环境累积态假设）+降落未确认（VINS劣化轮的land确认难） |
+| 11 | 00:24 | FAIL 早死 | run_X1_002443：VINS在watcher前已死（零回调签名，同轮6/8型） |
+| 12 | 00:28 | FAIL 劣化 | run_X1_002831：锚偏1.8m（估计劣化非干净跳变），min_truth 3.11m |
+
+**飞行轮小计：8 轮全 FAIL，其中 7 轮 VINS 质量类（爆散×3/早死×2/跳变×1/劣化×1）、
+1 轮磁复位误操作（已逆转+恢复）。技术轮 4（source顺序/引号/覆锁中 abort/preflight门）全部定因修复。**
+
+## 关键技术定案（本战役新增知识）
+
+1. **rostopic echo 引号陷阱**：本环境 echo 输出字符串字段带引号（`frame_id: "world"`），
+   grep 模式必须 `frame_id: "?world"?`。这是两轮"VINS 未 init"误杀的真根因——
+   field-path 假阴性诊断不完整（bare echo 同病）。
+2. **环境 source 顺序**：`devel/setup.bash` 必须 LAST；在其后重复 source 基座会
+   覆盖工作空间包路径（节点 type 解析失败）。
+3. **VINS 帧跳变的度量学**：帧中途跳变轮的"真值到位"无单一定义——正确口径=帧稳定性
+   判据（goal前锚 vs 末段锚差>0.5m→跳变定性 FAIL），干净轮锚差 cm 级不受影响。
+   round_result.sh 已内置。
+4. **磁标定不可复位**（VINS 链路）：CAL_MAG*_ID 清零→prearm 阻塞。
+5. **VINS 发散轮的安全底**：px4ctrl 在 odom 垃圾下仍保持安全（真值仅米级漂移、
+   无失控、自动降落可触发）；planner 全程无辜（cmd 始终指向 goal）。
+6. 4000us 标准依据（T2 632e0ee）：5000us 被 lockstep 4ms 网格量化为 125Hz 伪影。
+
+## 移交 T2-W3 域的材料
+
+- 7 个 VINS 质量类失败样本 bag（vins_smoke_runs/run_X1_{232055,233210,234437,235012,001817,002443,002831}）
+  含：imu_propagate/odometry/feature_pts/model_states(真值)/setpoint/全插桩话题
+- 发散形态分类：连续爆散（740m/86m/16m锚偏）与离散帧跳变（2.7m）两型，均集中于
+  起飞爬升/goal 加速瞬态（与 T2 表征一致，外参先验放大论）
+- 采样率：4000us(223Hz)+E20定稿config 与 125Hz+同 config 均发散（率无关性旁证）
+- 环境累积态排除：NUC 重启（23:58）后首轮即爆散（轮10）
+
+## X2-X4 状态
+
+被 X1 验收阻塞（同一 VINS 质量前置）。harness 侧就绪：--goal/--world/--leg2 全参数化，
+①③④⑤场景一条命令可跑。任务书 v6（2026-09-29）为续接契约。
