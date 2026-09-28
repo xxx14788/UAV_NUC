@@ -66,3 +66,14 @@
 - V3 在线回归：`~/sitl_sim/t1_evidence/v3_withsitl_regression.log`（六项全出=修复生效；
   两项 FAIL=真实磁残留，检出正确）
 - 分析脚本：`sitl_sim/analysis/{v1_ground_analysis.py, v1_hover_refine.py}`
+
+## V1.3 口径调和（21:2x 双实例数字差异裁决）
+
+| 口径 | 定义 | VINS | EKF2(同窗) | 参考语义 |
+|---|---|---|---|---|
+| 绝对保持（对悬停锚点，63.5s 窗） | dev from held point | **median 0.117 / mean 0.115 / max 0.125** | median 0.087 / max 0.144 | **≤0.03m 基线即此口径**（T1 v4 smoke 悬停保持语义） |
+| 短期稳定（滚动锚/噪声底） | 相邻段内抖动 | ~0.005（并行实例口径，真实） | ~0.050 | 噪声底，非保持质量 |
+
+判读：V1.3 双口径并存——绝对保持 ~0.12m class（对 0.03m 基线 4×），且 **EKF2 带视觉融合同窗同
+0.087 级**→差距是纯视觉架构属性（视觉锚定游走 vs GPS 锚定），非 px4ctrl/VINS 缺陷；短期噪声底
+5mm 优。结论维持：契约安全 PASS（导航级），精密保持不达 GPS 代位级，R6 登记预期+T2 域改进项。
