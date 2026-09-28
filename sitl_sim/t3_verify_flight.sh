@@ -81,7 +81,9 @@ log "mavros connected"
 # T3-U 修复: SITL 关磁融合——yaw 传送跳变使 mag innov 恒超 gate(0.41 vs 健康0.00),
 # fused 0.49→0.00→0.14, yaw 失持续参考在起飞机动下疯转(W12b ulog 定罪 vs 02_49_30 对照)。
 # EKF2_MAG_TYPE=5(none): yaw 参考改 GPS course+IMU, SITL 磁场模拟为纯干扰源。
-timeout 15 rosservice call /mavros/param/set "{param_id: 'EKF2_MAG_TYPE', real: 3.0}" >>"$LOG" 2>&1 && log "EKF2_MAG_TYPE=3 已设(磁仅地面yaw对齐,飞行中不用)"
+if [ "${GPS_LINK:-1}" = "1" ]; then  # GPS 代位域专属(README 0 R3)
+  timeout 15 rosservice call /mavros/param/set "{param_id: 'EKF2_MAG_TYPE', real: 3.0}" >>"$LOG" 2>&1 && log "EKF2_MAG_TYPE=3 已设(磁仅地面yaw对齐,飞行中不用)"
+fi
 
 nohup roslaunch px4ctrl run_ctrl_sitl.launch > "$RUN/px4ctrl.log" 2>&1 &
 for i in $(seq 1 30); do rosnode info px4ctrl >/dev/null 2>&1 && break; sleep 1; done
@@ -105,6 +107,7 @@ NIRIS=$(echo "$MODELS" | grep -c 'iris')
 log "teleport -> gazebo ($GX,$GY,$GZ) yaw ${SPAWN_YAW_DEG}deg (= odom ($SPAWN_OX,$SPAWN_OY))"
 timeout 10 rosservice call /gazebo/set_model_state "{model_state: {model_name: iris_depth_camera, pose: {position: {x: $GX, y: $GY, z: $GZ}, orientation: {x: 0.0, y: 0.0, z: $QZ, w: $QW}}, reference_frame: world}}" >>"$LOG" 2>&1 || fail "set_model_state 服务调用失败"
 sleep 3  # 等传送后 GPS 流更新(T3-E2)
+if [ "${GPS_LINK:-1}" = "1" ]; then  # GPS 代位域专属 origin 重置(README 0 R3,VINS 链路跳过)
 # T3-E2: 传送后 GPS origin 重置(MAV_CMD 176)——传送跳变 ~9m 小于 GPS 噪声,
 # EKF2 检测不到重锚需求,状态与 GPS 测量冲突在起飞机动下爆发(W12b 对照:
 # 同日两段式健康/传送版爆)。SET_GPS_GLOBAL_ORIGIN 强制 EKF2 origin 重锚。
@@ -121,6 +124,7 @@ print(v.get('latitude', ''), v.get('longitude', ''), v.get('altitude', ''))
 if [ -n "$LAT" ] && [ "$LAT" != "" ]; then
   timeout 10 rosservice call /mavros/cmd/command "{broadcast: false, command: 176, confirmation: 0, param1: 0.0, param2: 0.0, param3: 0.0, param4: 0.0, param5: $LAT, param6: $LON, param7: $ALT}" >>"$LOG" 2>&1 && log "EKF2 origin 重置已发(MAV_CMD 176)"
 fi
+fi  # end GPS_LINK guard
 SETTLED=0
 for i in $(seq 1 45); do
     p=$(timeout 5 rostopic echo -n1 /mavros/local_position/odom/pose/pose/position 2>/dev/null)

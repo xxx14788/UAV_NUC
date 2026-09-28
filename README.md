@@ -7,6 +7,41 @@
 > **多人/多 agent 协作仓库**：动手前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（凭据安全、提交与推送纪律）。
 > **项目规范**：[docs/workflow.md](docs/workflow.md)（工作流与验证门槛）· [docs/coding-style.md](docs/coding-style.md)（代码与配置风格）· [docs/flight_log.md](docs/flight_log.md)（飞行/仿真实验记录）。
 
+
+## 0. 架构红线：纯视觉导航（VINS + EGO-Planner + PX4），不许依赖 GPS
+
+> 2026-09-28 用户裁定，优先级高于一切任务书/验收指标，T1/T2/T3/T4 全体生效。
+
+**目标架构（实机）**：D435 双目+IMU → VINS-Fusion（**唯一位置源**）→
+px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
+深度流建图；PX4 只承担姿态/推力内环。EKF2 位置估计**不参与控制链路**。
+
+**规则**：
+
+- **R1 定位层验证必须走 VINS 链路**：估计质量/重锚/初始化/yaw 参考等
+  定位层指标的验证，必须使用 iris_stereo_vins 模型 + sim_vins.launch +
+  run_ctrl_sitl_vins.launch（均在库）。GPS 代位链路上的定位层结论
+  对实机无效，不得作为验收依据。
+- **R2 GPS 代位链路的合法用途**：EKF2 local_position 当 odom 的现有链路
+  （iris_depth_camera + run_ctrl_sitl.launch）只允许验证流程/规划/
+  控制器层（odom 视为黑盒，与定位源无关）。此类验证报告必须标注
+  "GPS 代位"。
+- **R3 修复的架构合规检查**：任何进入正式修复（入库/定版）的参数或
+  代码改动，必须论证在 VINS 直供架构下有效或无害。GPS 专属操作
+  （GPS origin 重置、GPS course 流程、GPS 域 EKF2 参数精调）不得进入
+  VINS 链路的 harness 与配置。
+- **R4 验收口径**：tag 门禁类验收（如 sitl-v0.x）中，定位层指标
+  （到位精度/重锚质量）只计 VINS 链路结果；流程层指标可引 GPS 代位
+  结果但须标注。
+- **R5 实机配置零 GPS 现状保持**：ctrl_param.yaml（实机版）、*_exp.launch、
+  VINS-Fusion 配置维持无 GPS 依赖；给 SITL 加的任何 GPS 相关参数
+  不得同步到实机配置。
+
+**切链路接口备忘**（SITL GPS→VINS 切换时）：iris_stereo_vins 的深度
+话题前缀为 `/iris_stereo_vins/...`（run_planner_sitl.launch 的
+depth_topic 当前硬编码 `/iris_depth_camera/...`，切链路时需参数化）；
+VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
+
 ## 1. NUC 整体布局（本仓库只是其中一块）
 
 | 路径 | 内容 |

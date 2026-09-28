@@ -490,3 +490,24 @@ box_D=0.506m、box_E=0.870m（阈 0.349m）——1.5m 净缝膨胀后 0.9m 走�
   b7 验证消疯转有效；位置爆副作用在案,启用与否由下夜配方定夺）
 - 教训：rosservice call YAML 字典须外层花括号 `{param_id: ..., real: ...}`
   （b3/b4 两轮烧在缺 {} 上）
+
+
+## 架构合规标注（%s，README §0 生效后的既有结果重释）
+
+用户裁定架构红线：纯视觉（VINS+EGO+PX4）不许依赖 GPS。据此对本台账
+既有结论做架构合规标注（结论本身不撤销，验证语义重标）：
+
+- **GPS 代位（R2 语义，仅流程/规划/控制器层有效）**：
+  P0 环境闭环、W7 偏航修复、W9 回放/单测、W8 建图裁决、W11 v2 穿缝、
+  W12①③④、W13 停顿分析、E 线非传送自愈结论——这些验证中 odom 被
+  视为黑盒，与定位源无关，对 VINS 架构仍成立。
+- **GPS 代位链路专属（R1/R3：对实机无效，不得作验收依据）**：
+  U 线全部（GPS aid 源分析、MAV_CMD 176、EKF2_MAG_TYPE 配方）、
+  E 线传送版定罪的"重锚损伤"表述（重锚是 EKF2-GPS 域概念；磁融合崩
+  机理对 VINS 链路仍具参考价值但需在 VINS 链路重验）、W12②⑤的
+  FAIL 结果（传送场景在 VINS 链路下的表现未验证）。
+- **harness 处置**：t3_verify_flight.sh 的 GPS 专属段（origin 重置+
+  MAG_TYPE）已用 GPS_LINK 环境变量门控（缺省=1 兼容 GPS 代位链路；
+  VINS 链路跑法 GPS_LINK=0 跳过）。
+- **②⑤ 正确验收路径**：iris_stereo_vins + sim_vins.launch +
+  run_ctrl_sitl_vins.launch（VINS 直供），切链路接口备忘在 README §0。
