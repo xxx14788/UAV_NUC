@@ -120,8 +120,8 @@ REC=$!
 sleep 3
 
 # ---------- 起飞 ----------
-LOG "起飞触发 (04_takeoff 60s 预算)"
-if ! bash "$L/04_takeoff.sh" 60 > "$EV/takeoff.log" 2>&1; then
+LOG "起飞触发 (04_takeoff 120s 预算,重启后首boot慢投递余量)"
+if ! bash "$L/04_takeoff.sh" 120 > "$EV/takeoff.log" 2>&1; then
   LOG "FATAL takeoff 失败"; tail -5 "$EV/takeoff.log"; exit 1
 fi
 sleep 13
@@ -202,9 +202,9 @@ fi
 timeout 8 rostopic hz /position_cmd 2>/dev/null | grep 'average rate' | tail -1 > "$EV/poscmd_hz.txt"
 
 # ---------- 降落(重掷制) ----------
-LOG "降落指令"
+LOG "降落指令(5 轮重掷)"
 disarmed=0
-for k in 1 2 3; do
+for k in 1 2 3 4 5; do
   timeout 12 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null 2>&1 &
   for j in $(seq 1 12); do
     timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: False' && { disarmed=1; break 2; }

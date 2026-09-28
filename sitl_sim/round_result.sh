@@ -36,10 +36,36 @@ with rosbag.Bag(bag,'r') as b:
         elif topic == '/move_base_simple/goal':
             p = msg.pose.position; goals.append((ts,p.x,p.y,p.z))
 if not prop: print('RESULT=FAIL 无 imu_propagate'); sys.exit()
+def near(arr, tt): return min(arr, key=lambda p: abs(p[0]-tt))
 p0 = prop[0]; a = None
-for t in truth:
-    if t[0] >= p0[0]: a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3]); break
+# 锚点取 goal 后 5s 窗的均值对(目标生效帧;VINS 帧中途跳变时早期锚会误判,X1_234437 实证)
+g1_ts0 = next((g[0] for g in goals if abs(g[1]-gx)<0.01 and abs(g[2]-gy)<0.01 and abs(g[3]-gz)<0.01), prop[0][0])
+aw_from, aw_to = g1_ts0, g1_ts0 + 5
+pw = [p for p in prop if aw_from <= p[0] <= aw_to]
+if pw:
+    tw = [near(truth, p[0]) for p in pw[:50]]
+    if tw:
+        a = (sum(t[1] for t in tw)/len(tw) - sum(p[1] for p in pw[:50])/len(pw),
+             sum(t[2] for t in tw)/len(tw) - sum(p[2] for p in pw[:50])/len(pw),
+             sum(t[3] for t in tw)/len(tw) - sum(p[3] for p in pw[:50])/len(pw))
+if a is None:
+    for t in truth:
+        if t[0] >= p0[0]: a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3]); break
 if a is None and truth: t = truth[0]; a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3])
+# 帧稳定性:goal前锚 vs 末段锚(差>0.5m=VINS帧中途跳变→任务物理未完成,FAIL 定性)
+a_pre = None
+for t in truth:
+    if t[0] >= p0[0]:
+        a_pre = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3]); break
+a_post = None
+if prop and truth:
+    tp = near(prop, prop[-1][0]-3); tg = near(truth, tp[0])
+    a_post = (tg[1]-tp[1], tg[2]-tp[2], tg[3]-tp[3])
+jump = 99.9
+if a_pre and a_post:
+    jump = math.sqrt(sum((x-y)**2 for x,y in zip(a_pre, a_post)))
+print('anchor(goal+5s窗): (%.3f, %.3f, %.3f) | 帧稳定性 |pre-post|=%.3f m%s'
+      % (a[0], a[1], a[2], jump, '  <-- VINS 帧中途跳变!' if jump > 0.5 else ''))
 t2_start = None
 if hasl2:
     for g in goals:
@@ -67,6 +93,9 @@ for c in cmd:
 dev.sort(); p95 = dev[int(0.95*len(dev))] if dev else -1
 disarm_ok = (not armed[-1]) if armed else False
 ok = [dt1 < 0.5, mind > 0.349, hz >= 50, disarm_ok]
+if jump > 0.5:
+    ok[0] = 0
+    print('判据: VINS 帧跳变(%.2fm)>0.5m → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)' % jump)
 print('leg1 到位(真值) min=%.3f m (<0.5)->%d | leg1(VINS自报) min=%.3f m' % (dt1, ok[0], dv1))
 if hasl2 and t2_start:
     dt2 = leg_min(truth, (l2x,l2y,l2z), t2_start, t_end)
