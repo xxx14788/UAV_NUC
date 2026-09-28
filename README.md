@@ -51,6 +51,15 @@ px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
 | 相机平移外参 | 模型 0.1m 前置 | D435 实测外参 | sim_stereo 配置已按模型标定（T2 域） |
 | PX4 固件 | px4_sitl v1.17 | fmu 实机版 | R5：SITL 动过的 PX4 参数（MAG_TYPE/SDLOG 等）一律不同步实机 |
 
+**多会话并行纪律**（2026-09-28，历史事故固化）：
+① 构建互斥——catkin_make 前在 STATUS 发预告行，等飞轮间隙执行（SITL
+锁不管 build 目录，09-28 01:56 双会话并发编译 FAILED 实证）；② 离线会话
+三不——不起 SITL 进程、不构建（预告窗除外）、重计算避开飞轮窗口
+（CPU 挤压致探针/投递饿死实证）；③ 任何 boot/循环类脚本每轮前
+`sitl_lock.sh get` 查锁（多实例混流事故实证）；④ force 抢占双条件——
+锁龄超 30min 且 `pgrep -f "bin/px4|gzserver"` 为零；⑤ 锁 owner 一律带
+任务线前缀（smoke 调用方传 `SMOKE_OWNER=T3` 等，缺省 T1 兼容）。
+
 **切链路接口备忘**（SITL GPS→VINS 切换时）：iris_stereo_vins 的深度
 话题前缀为 `/iris_stereo_vins/...`（run_planner_sitl.launch 的
 depth_topic 当前硬编码 `/iris_depth_camera/...`，切链路时需参数化）；

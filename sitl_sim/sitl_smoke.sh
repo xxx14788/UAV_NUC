@@ -40,7 +40,9 @@ WORLD_OVERRIDE=0   # --skip-sitl 时不动 world
 log() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 fail() { log "FAIL: $*"; echo "RESULT=FAIL" > "$RUN/RESULT"; log "现场保留: $RUN (进程未清,取证后手动: pkill -f 'bin/px4|gzserver|px4ctrl_node|roslaunch.*px4.launch'; $SIM/sitl_lock.sh release)"; exit 1; }
 
-bash "$SIM/sitl_lock.sh" get "T1-smoke-$$" >/dev/null 2>&1 || fail "SITL 锁被占用($($SIM/sitl_lock.sh status))"
+# T3 2026-09-28: owner 参数化——多会话并行时调用方传 SMOKE_OWNER=T3 等标识,
+# 缺省 T1 向后兼容(09-28 凌晨 T3 会话跑的轮被误记 T1 的教训)
+bash "$SIM/sitl_lock.sh" get "${SMOKE_OWNER:-T1}-smoke-$$" >/dev/null 2>&1 || fail "SITL 锁被占用($($SIM/sitl_lock.sh status))"
 trap 'rc=$?; if [ $rc -ne 0 ]; then $SIM/sitl_lock.sh release >/dev/null 2>&1 || true; fi' EXIT
 log "lock acquired; run dir=$RUN"
 
