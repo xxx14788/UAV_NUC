@@ -38,11 +38,21 @@ class Gate:
         self.leak_v = 0      # ACCEPT 且 |v|>max_vel(毒帧漏入)
         self.leak_far = 0    # ACCEPT 且 |p|>1e3
         self.t0_bag = None
+        self.pipe_off = None   # 回放管线延迟(首 50 帧 t_now−stamp 中位;
+        #  实机不存在此偏移——回放域绝对戳龄须扣除,否则 AGE 层全是伪影)
+        self.age_samples = []
 
     def feed(self, stamp, t_now, p, v):
         self.n += 1
         if self.t0_bag is None:
             self.t0_bag = stamp
+        raw_age = t_now - stamp
+        if self.pipe_off is None:
+            self.age_samples.append(raw_age)
+            if len(self.age_samples) >= 50:
+                self.pipe_off = sorted(self.age_samples)[len(self.age_samples) // 2]
+            return "WARMUP"
+        age = raw_age - self.pipe_off
         def rej(k):
             self.counts[k] = self.counts.get(k, 0) + 1
             if self.first_reject_t is None:
@@ -53,7 +63,7 @@ class Gate:
         if self.has_ref:
             if stamp < self.last_stamp - 1e-9:
                 return rej("STAMP_BACK")
-            if (t_now - stamp) > CFG["stamp_age_max"]:
+            if age > CFG["stamp_age_max"]:
                 return rej("STAMP_AGE")
         else:
             self.has_ref = True
@@ -89,12 +99,13 @@ class Gate:
 def main():
     bag = os.path.abspath(sys.argv[1])
     port = sys.argv[2] if len(sys.argv) > 2 else "11315"
-    name = os.path.basename(bag)[:-4]
+    name = os.path.basename(os.path.dirname(bag)) if \
+        os.path.basename(bag) == "flight.bag" else os.path.basename(bag)[:-4]
     uri = f"http://localhost:{port}"
     env = dict(os.environ, ROS_MASTER_URI=uri)
-    subprocess.run(["rosmaster", "-p", port], env=env,
-                   stdout=open("/tmp/gate_sim_master.log", "w"), stderr=subprocess.STDOUT,
-                   start_new_session=True)
+    subprocess.Popen(["rosmaster", "-p", port], env=env,
+                     stdout=open("/tmp/gate_sim_master.log", "w"), stderr=subprocess.STDOUT,
+                     start_new_session=True)
     time.sleep(2)
     play = subprocess.Popen(["rosbag", "play", bag, "--clock"], env=env,
                             stdout=open(f"/tmp/gate_sim_play_{name}.log", "w"),
@@ -121,9 +132,10 @@ def main():
     time.sleep(3)
     play.terminate()
     subprocess.run(["pkill", "-f", f"rosmaster -p {port}"], check=False)
-    accepted = gate.n - sum(v for k, v in gate.counts.items())
+    accepted = gate.n - sum(v for k, v in gate.counts.items()) - 50  # 50=warmup 帧
     rep = {"bag": name, "frames": gate.n, "accepted": accepted,
            "rejects_by_layer": gate.counts,
+           "pipe_offset_s": round(gate.pipe_off, 4) if gate.pipe_off is not None else None,
            "first_reject_bag_t": gate.first_reject_t,
            "leak_vel": gate.leak_v, "leak_far": gate.leak_far,
            "cfg": CFG}
