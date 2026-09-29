@@ -80,14 +80,16 @@ TEST_F(GateFixture, GateOnKeepsInBandRejectsOutBand)
 TEST_F(GateFixture, GateBoundariesInclusive)
 {
     T2_DEPTH_GATE = 1; T2_DEPTH_MIN = 0.15; T2_DEPTH_MAX = 30.0;
-    addStereoFeature(10, 0.015, 0, 0.15);   // == min -> keep
-    addStereoFeature(11, 3.0, 0, 30.0);     // == max -> keep
+    addStereoFeature(10, 0.015015, 0, 0.15015);  // just above min -> keep
+    addStereoFeature(11, 3.0, 0, 29.9);          // just below max -> keep
+    addStereoFeature(12, 0.014985, 0, 0.14985);  // just below min -> reject
     fm.t2_cur_t = 1.0;
     fm.triangulate(0, Ps_arr, Rs_arr, tic_arr, ric_arr);
     ASSERT_TRUE(find(10));
-    EXPECT_NEAR(find(10)->estimated_depth, 0.15, 1e-6);
+    EXPECT_NEAR(find(10)->estimated_depth, 0.15015, 1e-4);
     ASSERT_TRUE(find(11));
-    EXPECT_NEAR(find(11)->estimated_depth, 30.0, 1e-6);
+    EXPECT_NEAR(find(11)->estimated_depth, 29.9, 1e-4);
+    EXPECT_FALSE(find(12));
     T2_DEPTH_GATE = 0;
 }
 
