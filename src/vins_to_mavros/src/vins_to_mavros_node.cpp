@@ -111,7 +111,16 @@ public:
     pnh.param("imu_rel_dev_thresh", rel_thresh_, 0.5);
     pnh.param("imu_dev_need", dev_need_, 5);
     pnh.param("imu_win_frames", win_frames_, 20);   // 1s @20Hz
+    // T2-R6 v2 (2026-09-29): 三改造参数
+    pnh.param("imu_start_windows", start_windows_, 14);  // 起评延迟(v2b): 21s 覆盖 EMA 收敛期(τ10s, 静止重力残余吸收)
+    pnh.param("imu_lpf_tau", lpf_tau_, 0.5);             // 锚定速度低通 [s]
+    pnh.param("imu_bias_window", bias_win_, 10.0);       // 偏置 EMA 时间常数 [s](v2b)
+    pnh.param("imu_win_sec", win_sec_, 1.5);             // 窗口时长, 时间基(v2b)
     have_last_ = false;
+    have_lpf_ = false;
+    win_count_ = 0;
+    acc_T_ = 0.0;
+    for (int i = 0; i < 3; i++) { b_hat_[i] = 0; acc_dv_[i] = 0; v_lpf_[i] = 0; v_lpf_win0_[i] = 0; }
     dev_cnt_ = 0;
     viol_total_ = 0;
     frame_idx_ = 0;
@@ -134,13 +143,34 @@ public:
     if (!enabled_)
       return true;
     double t1 = msg->header.stamp.toSec();
+    // T2-R6 v2①: 锚定速度 LPF(twist 噪声 0.05-0.3 m/s 压制; 静态误报根因之一)
+    if (!have_lpf_)
+    {
+      v_lpf_[0] = msg->twist.twist.linear.x;
+      v_lpf_[1] = msg->twist.twist.linear.y;
+      v_lpf_[2] = msg->twist.twist.linear.z;
+      have_lpf_ = true;
+    }
+    else if (have_last_)
+    {
+      double dtl = t1 - last_t_;
+      if (dtl > 0)
+      {
+        double alpha = std::min(dtl / lpf_tau_, 1.0);
+        v_lpf_[0] += alpha * (msg->twist.twist.linear.x - v_lpf_[0]);
+        v_lpf_[1] += alpha * (msg->twist.twist.linear.y - v_lpf_[1]);
+        v_lpf_[2] += alpha * (msg->twist.twist.linear.z - v_lpf_[2]);
+      }
+    }
     if (!have_last_)
     {
       last_t_ = t1;
-      // 首帧: 锚定 IMU 速度状态 = vision twist(物理初值, 此后独立演化)
-      v_[0] = msg->twist.twist.linear.x;
-      v_[1] = msg->twist.twist.linear.y;
-      v_[2] = msg->twist.twist.linear.z;
+      anchor_t_ = t1;
+      v_lpf_win0_[0] = v_lpf_[0]; v_lpf_win0_[1] = v_lpf_[1]; v_lpf_win0_[2] = v_lpf_[2];
+      // 首帧: 锚定 IMU 速度状态 = LPF 后 vision twist(v2①)
+      v_[0] = v_lpf_[0];
+      v_[1] = v_lpf_[1];
+      v_[2] = v_lpf_[2];
       last_p_[0] = msg->pose.pose.position.x;
       last_p_[1] = msg->pose.pose.position.y;
       last_p_[2] = msg->pose.pose.position.z;
@@ -149,7 +179,34 @@ public:
       return true;
     }
     // 取 [last_t_, t1] 区间 IMU 死推算
+    double v_before[3] = {v_[0], v_[1], v_[2]};
     bool integrated = integrate(last_t_, t1, msg);
+    // T2-R6 v2②: 长窗偏置累积(窗内 IMU raw 速度增量 vs vision LPF 速度增量;
+    // 满_bias_win_ 才更新 b_hat_——恒定倾角/零偏被吸收,缓漂不被追赶)
+    if (integrated)
+    {
+      double Tw = t1 - last_t_;
+      for (int k = 0; k < 3; k++)
+        acc_dv_[k] += (v_[k] - v_before[k]) + b_hat_[k] * Tw
+                      - (v_lpf_[k] - v_lpf_win0_[k]);
+      acc_T_ += Tw;
+      if (acc_T_ >= 0.5)
+      {
+        // T2-R6 v2b: EMA 每窗更新(替代 20s 批量——批量首次更新前 ~36s 裸奔,
+        // 静止重力残余 g·sinθ 期间 IMU 死推 0.1-0.28m/窗是三工况误报主源之二;
+        // EMA α=win/τ_bias, 静止首窗收敛大半, 机动瞬态被平滑)
+        double bw[3];
+        for (int k = 0; k < 3; k++) bw[k] = acc_dv_[k] / acc_T_;
+        double alpha_b = std::min(acc_T_ / bias_win_, 1.0);
+        for (int k = 0; k < 3; k++) b_hat_[k] += alpha_b * (bw[k] - b_hat_[k]);
+        ROS_INFO("vins_to_mavros imu-check v2: bias ema |b|=%.3f win_obs=%.3f",
+                 std::sqrt(b_hat_[0]*b_hat_[0]+b_hat_[1]*b_hat_[1]+b_hat_[2]*b_hat_[2]),
+                 std::sqrt(bw[0]*bw[0]+bw[1]*bw[1]+bw[2]*bw[2]));
+        for (int k = 0; k < 3; k++) acc_dv_[k] = 0;
+        acc_T_ = 0.0;
+      }
+      v_lpf_win0_[0] = v_lpf_[0]; v_lpf_win0_[1] = v_lpf_[1]; v_lpf_win0_[2] = v_lpf_[2];
+    }
     // vision 窗口位移
     double dv[3] = {msg->pose.pose.position.x - anchor_p_[0],
                     msg->pose.pose.position.y - anchor_p_[1],
@@ -160,12 +217,20 @@ public:
     bool ok = true;
     if (integrated)
     {
+      // T2-R6 v2③: 起评延迟(init 质量依赖期不判,静态误报根因之三)
+      win_count_++;
+      if (win_count_ <= start_windows_)
+        ok = true;
+      else
+      {
       double diff[3] = {dv[0] - dp_imu_[0], dv[1] - dp_imu_[1], dv[2] - dp_imu_[2]};
       double nd = std::sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]);
       double denom = std::max(std::max(nv, ni), 0.15);  // 悬停下限, 防微小数值误报
       double rel = nd / denom;
       ++frame_idx_;
-      if (frame_idx_ >= (size_t)win_frames_)
+      // T2-R6 v2b: 窗口判定改时间基(odometry 实际 10Hz, 20 帧语义=2s 死推窗,
+      // 位移噪声底放大 4x 是三工况误报主源之一; 时间基回归设计语义)
+      if (t1 - anchor_t_ >= win_sec_)
       {
         frame_idx_ = 0;
         if (rel > rel_thresh_)
@@ -188,16 +253,18 @@ public:
                      "counter %d -> 0", rel * 100, dev_cnt_);
           dev_cnt_ = 0;
         }
-        // 重锚: 窗口起点重置(IMU 死推不长期裸奔), 速度状态重新锚定 vision
-        v_[0] = msg->twist.twist.linear.x;
-        v_[1] = msg->twist.twist.linear.y;
-        v_[2] = msg->twist.twist.linear.z;
+        // 重锚: 窗口起点重置(IMU 死推不长期裸奔), 速度状态锚定 LPF 后 vision(v2①)
+        anchor_t_ = t1;
+        v_[0] = v_lpf_[0];
+        v_[1] = v_lpf_[1];
+        v_[2] = v_lpf_[2];
         dp_imu_[0] = dp_imu_[1] = dp_imu_[2] = 0;
         anchor_p_[0] = msg->pose.pose.position.x;
         anchor_p_[1] = msg->pose.pose.position.y;
         anchor_p_[2] = msg->pose.pose.position.z;
       }
       ok = dev_cnt_ < dev_need_;
+      }
     }
     last_t_ = t1;
     last_p_[0] = msg->pose.pose.position.x;
@@ -249,6 +316,8 @@ private:
         double aw[3];
         rot(aw, q, ab);
         aw[2] -= 9.81;  // 去重力(ENU, 静止比力 +z)
+        // T2-R6 v2②: 减长窗偏置(吸收倾角重力投影残差/acc 零偏)
+        for (int k = 0; k < 3; k++) aw[k] -= b_hat_[k];
         double am[3];
         if (have_acc_)
           for (int k = 0; k < 3; k++) am[k] = 0.5 * (aw[k] + a_prev_[k]);
@@ -274,6 +343,14 @@ private:
   bool have_last_;
   bool have_acc_;
   int dev_cnt_;
+  bool have_lpf_;
+  int win_count_;
+  int start_windows_;
+  double lpf_tau_, bias_win_;
+  double v_lpf_[3], v_lpf_win0_[3];
+  double b_hat_[3], acc_dv_[3], acc_T_;
+  double win_sec_;
+  double anchor_t_ = 0;
   int viol_total_;
   size_t frame_idx_;
   double last_t_;
