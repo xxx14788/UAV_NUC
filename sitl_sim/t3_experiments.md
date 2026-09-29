@@ -746,3 +746,14 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 `docs/t3_xline_runbook.md`:五轮(①③④②⑤)逐轮命令/时长/采集矩阵(双到位/p95/帧跳变 forensics 口径/特征数/--leg2 锚差漂移=forensics_v2 final_drift)/判据表(A1/A2/B/C/D/J0/P0,0.5m 原口径+0.75m 协商门标注"未裁定前按原口径")/ENV-FAIL 三签名决策树(真值流断/poscmd 归零/SITL 死;ENV-FAIL 不计不断连绿)/七类失败分支回挖预案(每种失败→查什么→判给谁,W-A 漏网即停 X 线对齐 Y4 纪律)/X4 双记账规则(栈代一致性凭据=git HEAD+config md5 快照)与 tag sitl-v0.4 四项前置检查单/已知坑位十条(vins_smoke 头注+X 线实战)。零上下文可执行标准:预检 6 项打钩含三工具自测。
 
 @T2:X4 打 tag 前会查你 STATUS(锁章 5);X 轮若现 173345 型 Bas 爆炸即停线通告(Y4 纪律)。
+
+## T3 v7.2 Y1.3:全库法证扫描器与跨战役发散数据库(2026-09-30 夜)
+
+`analysis/t3_library_forensics.py`(symlink flight.bag 技巧全库复用 forensics v2 口径;自测双绿:232055=FAIL-发散 smj632 / ground=健康 smj0)→ **数据库 `analysis/t3_library_forensics_db.{csv,json}` 283 行全覆盖**(库=283 目标,覆盖率验收过):
+
+- 构成:smoke_run 31(全轮)+ replay_product 229(t2_results 全目录)+ whitelist_bag 23(ground/hover/route/w2b 系+早期直录;t2_A-E 矩阵袋属 T2-W-B2 镜像域,范围声明在挖掘册)
+- 判决分布:无袋行 152(纯评估目录,按规则入账不留空)/健康-无帧跳变 49/FAIL-发散(爆散) 30/FAIL-数值溢出 30/FAIL-劣化 17/判废-双流污染 3/SCAN-ERROR 2(R5REP=已知崩溃残片 ROSBagFormatException、flight_195352.orig=未索引,均如实记因非静默)
+- 带图袋(X1img 9.3G×2/173345 4.9G)topics 过滤扫通;X1img2_020706 **新发现双流污染签名**(imu_hdr 回退 11330/clock 回退 4545,此前未定性——02:07 时段与 04:35 判废轮同源嫌疑,Y1.4 展开)
+- 173345 行 Bas 峰=3.3662 与台账"Bas→3.37"逐位一致;行字段含 t*/分叉/Bas/Bgs/track/双流回退/终态漂移/距离地/平滑帧跳变,每行可溯源(证据路径列)
+
+@T2:W-B2 镜像普查可直接引用本库(replay_product 229 行已覆盖你域回放产物);W-A1 深度普查若需加列我们协 同扩 schema。
