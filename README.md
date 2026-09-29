@@ -45,7 +45,8 @@ px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
 
 | 差异点 | SITL | 实机 | 依据 |
 |---|---|---|---|
-| 相机内参 fx | 454.68（iris 模型 hfov 86° 推算） | 387.51（D435 实标） | 传感器模型几何必然（fx 必须匹配仿真相机） |
+| 相机内参 fx（VINS 双目 640×480 消费口径；T4-J3 E1/E2 两方锁 2026-09-30 分行勘误，原行混深度流） | **467.74**（sim_stereo yaml，SDF hfov 1.2rad 自洽推算） | **387.51**（D435 实标） | 传感器模型几何必然（fx 必须匹配仿真相机）；FOV 行 sim 68.75°H/54.32°V vs real 79.10°H/63.54°V，fx 比 1.2071=迁移尺度一阶风险 |
+| 相机内参 fx（深度流，EGO-Planner 建图入口） | 454.68（iris 模型 hfov 86° 推算，848×480 能力口径） | 实机 depth 流驱动配置亦为 640×480（同 E1 勘误），不经 VINS 链 | 同上；实机深度仅避障建图用途 |
 | obstacles_inflation | 0.299 | 0.337 | 实机含云台杆遮挡标定；SITL 无杆（A3 决策 2026-09-26，如需保守可统一 0.337 重验） |
 | VINS IMU 源 | /mavros/imu/data_raw：511 105 5000→实测 **125Hz**（5000us 被 tick 量化到 8ms）；4000us 档实测 **223Hz** 可达实机级（切换待 T2 域验证） | mavcmd 511 设 200Hz | V4.2 实测 2026-09-28（bag+probe6 双证）：请求间隔被 mavlink tick ~4ms 网格量化；默认档 50Hz（W2）；频域影响在 VINS 域评估 |
 | 相机平移外参 | 模型 0.1m 前置 | D435 实测外参 | sim_stereo 配置已按模型标定（T2 域） |
