@@ -31,8 +31,11 @@ forensics.json 字段字典(机器口径;新增字段只加不删,改动在此�
   t_star_odom/t_star_prop  {t_star, jump_m, frame_dt_ms, truth_move_m, real_motion}
                            或 {t_star:None, reason} (断流/无跳变)
   fork_odom_prop      {n_pairs, t_fork, fork_max_m, precursor_5s_max_m}
+  frame_jumps_raw_odom      odom 帧间|dp|>0.1 计数(真机动排除+断流首帧排除)(Y1.3)
+  frame_jumps_smoothed_odom odom 3 帧滑动均值后 |dp|>0.1 计数(平滑口径,Y1.3)
   prop_gap            {t_gap, gap_s} 或 None (早死)
-  end_state           {prop/odom_bbox_diag_m, final_drift_prop_truth_m}
+  end_state           {prop/odom_bbox_diag_m, final_drift_prop_truth_m,
+                      truth_z_med, truth_z_max}                    (Y1.3 距离地)
   verdict             {morph, t_star, divergence_type, nearest_event, note,
                       poisoning_suspect}                              (Y1.2B)
   morph 取值: 爆散|跳变(离散大帧跳)|小跳/渐进劣化|无帧跳变(慢劣化或未发散)|早死(VINS 停流)|数值溢出型(含 extreme 帧)
@@ -264,6 +267,31 @@ def analyze(run_dir, topic_filter=None):
     rep["t_star_odom"] = find_t_star(odom, "odometry")
     rep["t_star_prop"] = find_t_star(prop, "imu_propagate")
 
+    # ---------- Y1.3 增:帧跳变计数(raw 真机动排除 / smoothed 3 帧滑动均值口径) ----------
+    def count_jumps_raw(seq):
+        n = 0
+        for i in range(1, len(seq)):
+            if seq[i][0] - seq[i - 1][0] > EARLY_DEATH_GAP:
+                continue  # 断流后首帧不算帧跳变
+            if dist3(seq[i], seq[i - 1]) > JUMP_M:
+                truth_move = None
+                if truth:
+                    _, j0 = nearest(ts_truth, seq[i - 1][0])
+                    _, j1 = nearest(ts_truth, seq[i][0])
+                    truth_move = dist3(truth[j1], truth[j0])
+                if truth_move is not None and truth_move > JUMP_M:
+                    continue  # 真机动
+                n += 1
+        return n
+    sm = []
+    for i in range(len(odom)):
+        lo, hi = max(0, i - 1), min(len(odom), i + 2)
+        sm.append(tuple(sum(odom[j][k] for j in range(lo, hi)) / (hi - lo) for k in (1, 2, 3)))
+    sm_j = sum(1 for i in range(1, len(sm))
+               if math.dist(sm[i], sm[i - 1]) > JUMP_M and odom[i][0] - odom[i - 1][0] <= EARLY_DEATH_GAP)
+    rep["frame_jumps_raw_odom"] = count_jumps_raw(odom)
+    rep["frame_jumps_smoothed_odom"] = sm_j
+
     # ---------- odom vs prop 分叉 ----------
     fork = {"n_pairs": 0}
     if odom and prop:
@@ -303,6 +331,10 @@ def analyze(run_dir, topic_filter=None):
         return math.hypot(max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs))
     end_state = {"prop_bbox_diag_m": round(bbox_diag(prop), 2),
                  "odom_bbox_diag_m": round(bbox_diag(odom), 2)}
+    if truth:
+        zs = sorted(r[3] for r in truth)
+        end_state["truth_z_med"] = round(zs[len(zs) // 2], 2)
+        end_state["truth_z_max"] = round(zs[-1], 2)
     if prop and truth:
         def tail_anchor(seq, tail=3.0):
             t_end = seq[-1][0]
