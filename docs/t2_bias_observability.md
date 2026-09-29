@@ -67,3 +67,14 @@
 - 生成脚本 analysis/t2_bias_observability.py(合成+视觉两变体,数值一致性自检)
 - 数据 wb4_bias_observability_{synthetic,vision}.json(逐激励谱+二次型)
 - 本册 docs/t2_bias_observability.md
+
+## 实测投影(2026-09-30 04:50 完成——方法学否定,证伪入账)
+
+- 实施:合成(maneuver+vision)零空间基 36/66 维 + WA1V_RCAN_TRACE 轮 T2diag 分量
+  轨迹(t=28-38 吸水窗 95 帧)投影。
+- **结果:|proj_null|/|dBa| = 0.000(全帧)**——解读为**构造不可定义**而非物理结论:
+  VINS 滑窗每帧重排参数空间(帧索引移动),"同一物理 bias 变量"跨帧不保持,
+  实测增量向量与合成窗口参数块的对应无法建立。**此路不通入账(总纲5)**。
+- 保留的定性证据:**ΔBa 方向集中度 eig=0.651/0.342/0.007**——吸水期漂移
+  半定向(主方向 65%),与"系统性毒残差驱动+噪声"一致,支持吸水池机制但
+  非零空间论证。数据:~/sitl_sim/t2_results/wb4_real_projection.json。
