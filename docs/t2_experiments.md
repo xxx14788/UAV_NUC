@@ -1012,3 +1012,52 @@ X4 五连飞建议两段式短航线+到位门 0.75m 协商(或等 T2 下一册�
 - 脚本修复: t2v3_flight.sh 4000us+大写 PROF+锁格式;批量件
   t2_r5_w2batch.sh/t2_r5_eval_all.py
 - 磁盘: 清理后 71G(69%)
+
+## W-A0 开工核验(2026-09-30 02:03-02:20,任务书 v4.3 W-A 修复主链开工)
+
+**结论:六项全过,环境健康,现场=研究态 HEAD 65674ab,可动代码。**
+
+1. **四签名 grep 复核(全过)**:
+   - `#if 0`@imu_factor.h:61 repropagate 块在,阈值 0.10/0.01 在块内✓
+     (附注:该文件实有 **4 处** #if 0——:61/:103/:129 + **:157**;:157 是上游原生
+     `#if 0/#else` 雅可比二选一结构(simple identity vs corrected_delta_q),任务书
+     "共 3 处"系计数遗漏;git log 该文件仅 1a069ca(init)未动过,非他人改动。
+     W-A3.2 考古范围扩为四处)
+   - `//rejectWithF()`@featureTracker/feature_tracker.cpp:173 注释✓(函数本体 :323;
+     注:目录名是 featureTracker/ 非 feature_tracker/,estimator/feature_manager.cpp
+     同理,任务书路径笔误已勘正)
+   - INIT_DEPTH 活代码 4 处:fm.cpp :355(双目)/:390(两帧运动)/:442(SVD)/
+     :492(removeBackShiftDepth),:438 注释✓;grep 0.15 深度硬门 0 命中=W-A1 确未动工✓
+   - FB 2.0 双流生效:tracker :148(时序 distance<=2.0) + :229(立体)✓
+2. **燃料链 ls**:flight.bag(173345) 4.9G✓;t3_results/{R_CAN,CTRL2,R_T05,R_ACC056,
+   R_GYR}_*✓;t3_configs(入库区)T01/T02/T03/T05✓;回放工具五件在入库区 analysis/✓;
+   私有 master 11312 空闲✓;盘 66G(>20G 水位线)✓
+3. **全场 pgrep**:vins_node/gzserver/px4/roscore/rosbag 全 0✓;STATUS 尾=T3 20:14
+   任务书落盘通告,X 线挂起等本册 W-A,t3_wa_gate.py 未交付(判据用本条手工口径)✓
+4. **双基线复读(WA0_CTRL2/WA0_RCAN,新试验号不覆盖历史,串行 11312)**:
+   | 指标 | CTRL2 历史→复读 | R_CAN 历史→复读 | 判决 |
+   |---|---|---|---|
+   | ATE@post60 | 0.144→**0.144** | 1.564→**1.565** | 精确复现 |
+   | n_odom | 3458→3458 | 171→171 | 精确复现 |
+   | t* | 76.7→76.6 | 11.0→11.0 | 复现 |
+   | frame_jumps(raw) | 1875→1873 | 7→6 | ±2 噪声 |
+   | frame_jumps_smoothed | —→23 | —→29 | 新字段 |
+   两基线全对上=环境健康,修环境不需要,可动代码。R_CAN 尾部 Aborted(core dumped)
+   =收尾析构已知形态(红线7),VINS 存活=1 全程。
+5. **三判据手工口径定标(W-A0 正式判据,t3_wa_gate.py 交付后对账)**:
+   从两基线 vins.log 提取(T2diag 1723/108 帧,T2slv 1724/109 帧):
+   - **判据① Bas**:= CTRL2 形态。硬门 Bas>2.5 帧数=0(即 failureDetection 不触发,
+     T2fail 计数=0);软统计 Bas>1.0 帧占比<1%(CTRL2 实测 2/1723=0.1%,全部集中于
+     t=88.5-88.9 单一 goal 加速瞬态且自愈;R_CAN=Bas 爬升 2.53@t=38.7→reboot→
+     产出停摆 n_odom=171)。
+   - **判据② ATE**:ATE@post60 ≤ 0.144×1.10 = **0.158m**。
+   - **判据③ init_cost**:= 无 reboot 循环 + >1e4 帧数≤9(CTRL2 实测 9/1724)+无
+     78→17k 周期循环形态。注意 init_cost 绝对值不可作判别量:CTRL2 稳态中位
+     **2120**(>1e3 占 58.6% 属正常工作点),R_CAN 中位反而只有 386——判别量是
+     周期爆炸+reboot 形态,任务书"无>1e3 尖峰"字面口径在 CTRL2 自身不成立,
+     已按实测分布勘正(防宽判:三条判据取更严解释)。
+   - 工具对账协议(总纲3):本册新工具(t2_depth_census/t2cost 分解/frame_dumper/
+     feature_census)交付前必须在本两目录(WA0_CTRL2/WA0_RCAN)对账,数字与本条
+     一致才可用。
+6. **核验快照**:git HEAD=65674ab(工作树净);日期 2026-09-30 02:03-02:20 CST;
+   本条即为 W-A1 的 diff 基准。
