@@ -66,7 +66,7 @@ def fb_residual(img_from, img_to, pts):
     good0 = st0.ravel() == 1
     if good0.sum() < 8:
         return None
-    d = np.linalg.norm(pts[good0] - p0[good0], axis=1)
+    d = np.linalg.norm(pts[good0].reshape(-1, 2) - p0[good0].reshape(-1, 2), axis=1)
     return d
 
 
@@ -94,11 +94,13 @@ def main():
     with open(os.path.join(args.frames_dir, 'manifest.json')) as f:
         man = json.load(f)
     lf = sorted([fr for fr in man['frames']
-                 if os.path.basename(fr['topic']).startswith(('vins_cam_left', 'infra1', 'left'))
-                 and fr['tag'] == ''], key=lambda x: x['t_rec'])
+                 if ('cam_left' in fr['topic'] or 'infra1' in fr['topic']
+                     or 'left' in fr['topic']) and fr['tag'] == ''],
+                key=lambda x: x['t_rec'])
     rf = sorted([fr for fr in man['frames']
-                 if os.path.basename(fr['topic']).startswith(('vins_cam_right', 'infra2', 'right'))
-                 and fr['tag'] == ''], key=lambda x: x['t_rec'])
+                 if ('cam_right' in fr['topic'] or 'infra2' in fr['topic']
+                     or 'right' in fr['topic']) and fr['tag'] == ''],
+                key=lambda x: x['t_rec'])
     # 备选: 文件名匹配
     if not lf:
         lf = [dict(file=os.path.basename(p), t_rec=0.0, tag='')

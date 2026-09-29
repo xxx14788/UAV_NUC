@@ -90,8 +90,9 @@ def main():
     # pass 2: 选帧（每段均匀 per-seg 个选中帧；pairs 时并入其紧邻下一帧）
     span = t_max - t_min
     seg_bounds = [t_min + span * i / args.segments for i in range(args.segments + 1)]
-    short_of = {t: ('L%d' % i if len(args.topic) > 1 else 'M') for i, t in enumerate(args.topic)}
-    want = {}   # ts -> (topic, seq_no, tag)  seq_no 按选中帧编号, next 帧继承
+    short_of = {t: (('L%d' if i == 0 else 'R%d') % i if len(args.topic) > 1 else 'M')
+                for i, t in enumerate(args.topic)}
+    want = {}   # (topic, ts) -> (seq_no, tag)  双目同步同 ts, 必须复合键
     for t in args.topic:
         ss = sorted(stamps[t])
         nxt = {ss[i]: ss[i + 1] for i in range(len(ss) - 1)}
@@ -105,18 +106,17 @@ def main():
             for j in idx:
                 sel = in_seg[j]
                 k += 1
-                want[sel] = (t, k, '')
+                want[(t, sel)] = (k, '')
                 if args.pairs and sel in nxt:
-                    want[nxt[sel]] = (t, k, '_next')
+                    want[(t, nxt[sel])] = (k, '_next')
 
     # pass 3: 写 PNG
     for topic, msg, t_rec in bag.read_messages(topics=args.topic):
         ts = t_rec.to_sec()
-        if ts not in want:
+        key = (topic, ts)
+        if key not in want:
             continue
-        t, k, tag = want[ts]
-        if t != topic:
-            continue
+        k, tag = want[key]
         gray = to_gray8(img_to_array(msg))
         si = args.segments - 1
         for i in range(args.segments):
@@ -125,7 +125,7 @@ def main():
                 break
         fn = '%s_%s_s%d_%04d%s.png' % (
             os.path.splitext(os.path.basename(args.bag))[0],
-            short_of[t], si, k, tag)
+            short_of[topic], si, k, tag)
         cv2.imwrite(os.path.join(args.out, fn), gray)
         manifest['frames'].append({
             'file': fn, 'topic': topic, 't_rec': round(ts, 4), 'seg': si,

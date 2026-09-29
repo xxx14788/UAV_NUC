@@ -58,3 +58,20 @@
 - T2 任务书 v4.1 锁指针已核对其头注(09-29 晨增补"锁规范指针"),与 E1 无口径冲突;T1 §3.3/T3 锁章指针同。
 - X1 30 轮 throttle 零复发验收: 归后续飞轮自然统计(架构性消除,预期恒绿)。
 - vision_inputs 素材池随 T3-D0 批次增长;T4 下一执行者按 vision_materials.md §4 错峰规则切判读。
+
+## J3 sim-to-real 视觉六维基线（2026-09-30, C09 dossier E1→E8 快胜序执行）
+
+**结论**: 六维表已并入 docs/sim2real_runbook.md §6（数字正源=docs/t4_j3_e1e2_evidence.md）;
+runbook CF-1 勘误（848×480=能力口径, 驱动实读 infra/depth 均 640×480）+README R6 表 CF-2 分行
+（VINS 双目 fx 467.74 vs 387.51, 深度流 454.68 单列）+CF-6 IMU 行核对无冲突, 已随 commit 入库。
+
+- **E1 口径两方锁**: rs_camera_vins.launch（infra 640×480@30/emitter=0）↔ realsense yaml（640×480, fx=387.508, 零畸变）一致, P1 预言成立
+- **E2 FOV 行**: sim 68.75°H/54.32°V（1.042sr）vs real 79.10°H/63.54°V（1.368sr）, fx 比 1.2071=迁移尺度一阶 ~+21%; 样张 camera_info 换算法与 color 规格互证 <1°; 帧级极线复核缺（四公开源 infra 双目全阴: 官方样张×3/M2DGR/M3DGR/OpenLORIS 逐一实查）
+- **E3 噪声行**: sim 侧 X1img σ̂ 直筛=**0.0 实锤注入前袋**（M4 调和注记 C12-EXP2 步骤 0 裁决读数, 平坦区梯度严格 0=T2-R3 根因图像侧证据）; 实机侧 IR σ̂=数据缺口挂账（color 上界 1.16-3.0 仅边界）; **P25 口径方法论**（patch σ̂ 分布 25 分位抗运动污染, depth 流 6.56→0.044 两数量级实证）入 T3-D0 复验强制口径
+- **E7 曝光/模糊行**: sim 曝光常数零假设两侧通过（p_sat=0/γ=1.0/hist 恒 139）; t_exp=8ms 样张实测落账; 模糊行 L=f·v·t_exp/Z 公式链+t_exp 锚, 方向能量 sim 0.200=纹理本底非模糊
+- **E6 纹理行**: 对照先行交付（sim 37/帧@640×480 vs 样张 117-150/帧@1080p, 场景类禁跨类比; 方向集中度 sim 2×）; 正源挂账 T3-D0
+- **E5 深度行**: 划界后 INIT_DEPTH 占比引 T2-WA1 census（n_init_replace）不另测; depth 流 σ_z 双口径示范; 分区域残差两侧正源挂账
+- **E4 FB 残差**: 注入前袋对照边界登记（时序 pool P90=30.7px 运动主导/立体 0.71px, 无 FPN 时时序尾>>立体尾反向）——双峰检验挂账等四件套后袋
+- **挂账四项**（禁静默省略）: 实机 IR σ̂+H6（解锁=实机帧/新代位源）; sim σ 送达复验+E4 双峰+E6 正源+深度正源（解锁=T3-D0 四件套后带图袋, 年代门双通道+P25 口径）; 联动待办=T1-F2 位置环架构拍板后入 runbook
+- **J1.3/J2 维持挂账**: 素材仍 2 带图轮（1 毁损）; T2-WA 轮无图像流不产素材; 24h 时效红线待素材到货触发
+- 工具入库: sitl_sim/analysis/j3_{extract_frames,image_metrics,fb_residual}.py（三 bug 修复记录在案: 双目同 ts 键碰撞/short_of 覆盖/(N,1,2) 点形状 norm）
