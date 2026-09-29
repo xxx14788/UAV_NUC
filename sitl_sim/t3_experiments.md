@@ -786,3 +786,14 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 ## T3 v7.2 Y3:legs 历史全量重扫收口(2026-09-30 夜)
 
 `docs/t3_legs_rescan.md`+`analysis/t3_legs_rescan.{py,csv}`(56 腿行)+x4judge 5/5 自动判定(以五已知 FAIL 轮验证 0/5 正确)。要点:①**出生点对齐是前置**——袋首 5s 窗 prop−truth 中位全库一致 (-1.01,-1.00,-0.09),对齐后 route_112652 双腿到位 0.284/0.263 与 T2 口径 0.244/0.237 差<0.04m(未对齐=+0.65m 假误差);②在盘新旧判零冲突(X 族 28 腿一致 FAIL;route PASS 加固:smj=0+锚差 0.27-0.33);③已清盘 11 组历史轮(W7/2legA-H/W12/V2)以无袋行入账,新判不可算如实标注;④X4 袋保全纪律明文化(不可重算实证)。X 族腿分布:发散 12/未到位 12/污染 3/无腿 1;flight 早期 19 腿为登记型基线(1 PASS 0.10m)。
+
+## T3 v7.2 Z1.2/Z1.3:防护门 v2 设计+定值+双轨验证收口(2026-09-30 夜)
+
+`docs/t3_z1_failsafe_design.md`+`src/px4ctrl/src/odom_sanity_v2.h`(未接线,enabled_v2 默认 false=v1 逐位不变)+`test/test_odom_sanity_v2.cpp`+`analysis/t3_gate_sim.py`+`t3_r_scan.{py,json}`。
+
+1. **定值**:r 门=0.08m(健康当前层 imu_propagate p999 0.025×3,C07 带内);stamp_age=0.2s;实机 odom 流阈值另标(已声明);回放域 CTRL2 vins_out 双发布者+r p999=1.01=回放 odom 不可标定(红线 7 的 r 域证据)。
+2. **gtest 轨 11/11 全绿**(独立 g++ 编译,避 catkin_make 全量构建动 T2 W-A WIP)。初版 2 失败均测试自身缺陷,如实账;定型语义:陈旧突发整段 BACK(单调基线仅 ACCEPT 推进),AGE 捕冻结型滞后。
+3. **bag 轨 3/3 全绿**:043355 双流袋 BACK 主导拒 15792/105449 速度爬坡袋 VEL 主导拒 10595+R 373/ground 健康基线零拒帧——零漏拦×零误伤双达标(C07-E4a/E5),层分布与设计预言精确一致。
+4. 已知盲区如实账:慢速协调位移(2m/s<VEL 帽)全层盲=H13(防线=慢漂泄漏上界/E6 漂移率门);K1(failureDetection reboot 语义)移交 T2/W-A;升级动作链(锁存锚降级,Z1.1-F5 实证)与 max_angle/thrust 接线待 T1-E1 0.5 裁决后异议窗实施。
+
+@T1:v2 与你的 D2 门完全后向兼容(v1 层不动);接线与否、62 连拒升级链与 0.5(EKF2-odom 闭环)联动,在 Z1.4 握手定。

@@ -124,14 +124,21 @@ TEST(OdomGateV2, CoordinatedInstant_FirstLayerACC)
       << "首触层=ACC(dv/dt 巨大);C07-P3 'VEL 1 帧检出'在 ACC 前置层序下归层为 ACC,拦截等价";
 }
 
-// 陈旧突发:首帧 STAMP-BACK(戳回退),后续 STAMP-AGE(戳龄持续超限);值本身健康
+// 陈旧突发:整段 STAMP-BACK(单调基线只在 ACCEPT 推进,陈旧戳直到追上最后接受戳都是回退);
+// 冻结型滞后(stamp 正常前进但接收钟超前)= STAMP-AGE。值本身完全健康=拦的是戳不是值
 TEST(OdomGateV2, StaleBurst_STAMPLayers)
 {
   SimStream s;
   for (int i = 0; i < 1000; ++i) s.feed(V3::Zero(), VZ());
   EXPECT_EQ(OdomSanityVerdictV2::REJECT_STAMP_BACK, s.feed(V3(0, 0, 0), VZ(), 3.0));
-  // 陈旧段继续(戳从回退点前移,仍落后本地钟 ~3s)
-  EXPECT_EQ(OdomSanityVerdictV2::REJECT_STAMP_AGE, s.feed(V3(0, 0, 0), VZ(), 2.9955));
+  EXPECT_EQ(OdomSanityVerdictV2::REJECT_STAMP_BACK, s.feed(V3(0, 0, 0), VZ(), 2.9955));
+  // 冻结型:stamp 相对上一 ACCEPT 正常推进,但本地接收钟超前 0.5s(收到旧帧)
+  OdomSanityStateV2 st2;
+  OdomSanityConfigV2 cfg2;
+  cfg2.enabled = true; cfg2.enabled_v2 = true;
+  odom_sanity_check_v2(cfg2, st2, 100.0, 100.0, V3::Zero(), VZ());     // 建参考
+  EXPECT_EQ(OdomSanityVerdictV2::REJECT_STAMP_AGE,
+            odom_sanity_check_v2(cfg2, st2, 100.0045, 100.5045, V3(0, 0, 0), VZ()));
 }
 
 // 时戳回退(双流污染签名,043355 型 -13s):STAMP-BACK 拦
@@ -161,11 +168,13 @@ TEST(OdomGateV2, StopFlowResume_NoContinuityFalsePositive)
   }
 }
 
-// 占空比 90% 间歇毒:毒帧零摄入(净帧照常 ACCEPT)
+// 占空比 90% 间歇毒:毒帧零摄入(净帧照常 ACCEPT;参考由前置健康段建立=实机时序)
 TEST(OdomGateV2, DutyCycle90_Intermittent)
 {
   SimStream s;
   V3 p = V3::Zero();
+  for (int i = 0; i < 100; ++i)  // 健康段建立参考(毒流不会先于健康流出现)
+    s.feed(p += V3(0.0001, 0, 0), VZ());
   long accepted_poison = 0;
   for (int i = 0; i < 2000; ++i)
   {

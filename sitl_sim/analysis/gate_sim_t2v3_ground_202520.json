@@ -1,0 +1,18 @@
+{
+ "bag": "t2v3_ground_202520",
+ "frames": 5606,
+ "accepted": 5556,
+ "rejects_by_layer": {},
+ "pipe_offset_s": 1790709899.7958,
+ "first_reject_bag_t": null,
+ "leak_vel": 0,
+ "leak_far": 0,
+ "cfg": {
+  "max_vel": 5.0,
+  "max_acc": 10.0,
+  "max_jump": 0.6,
+  "reboot_dt": 1.0,
+  "max_r": 0.08,
+  "stamp_age_max": 0.2
+ }
+}

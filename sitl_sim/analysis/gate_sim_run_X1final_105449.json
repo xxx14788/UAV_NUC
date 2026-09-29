@@ -1,0 +1,24 @@
+{
+ "bag": "run_X1final_105449",
+ "frames": 16684,
+ "accepted": 1922,
+ "rejects_by_layer": {
+  "ACC": 3558,
+  "R": 373,
+  "VEL": 10595,
+  "JUMP": 166,
+  "STAMP_AGE": 20
+ },
+ "pipe_offset_s": 1790709731.719,
+ "first_reject_bag_t": 0.4,
+ "leak_vel": 0,
+ "leak_far": 0,
+ "cfg": {
+  "max_vel": 5.0,
+  "max_acc": 10.0,
+  "max_jump": 0.6,
+  "reboot_dt": 1.0,
+  "max_r": 0.08,
+  "stamp_age_max": 0.2
+ }
+}
