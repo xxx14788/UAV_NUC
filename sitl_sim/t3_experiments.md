@@ -670,3 +670,13 @@ F1 决策(依 D2 决策表 C4 分支):仓库 sim_stereo estimate_extrinsic 1→0
 3. 本线 D2 六配置回放的同刻 Bas 爆走(0.03→0.5-1.15)与之同相,历史证据相容
 
 事故登记:10:59 我清场 pkill 误杀 T2-R5 R5REP 回放 vins_node(已原样恢复);10:40:26 vins_estimator 被杀事件非本线(时间线撇清已 STATUS,凶手未明,疑 T1 monitor 或 OOM)。
+
+### F 线续:acc_n 第一性原理校准(2026-09-29 午,T2-R5 移交配套)
+
+方法:t2v3_ground 静止袋(125Hz)去趋势残差实测 σ;VINS-Fusion IMU 协议 acc_n 为密度口径(方差按 acc_n²·dt 累积),故真值 acc_n=σ·√dt。
+
+实测:σ_acc=0.0732(各向同性)/σ_gyr=0.0082 → **真值 acc_n=0.0065、gyr_n=0.0007;yaml 现值 0.1/0.01 超设 15×/13×**(yaml 注释自证"与实机 realsense 同量级,仿真 IMU 噪声更小,此为保守假设"——保守假设实为病灶)。
+
+证据相容性:①D2 六配置同刻 Bas 爆走(优化器 15× 不信 IMU→瞬态全进 bias/速度);②T2-R5 三次在线 Bas 爆炸 2.6-3.0(goal 瞬态);③C6 回放(acc005≈真值)在旧二进制(观测层坏)更糟——不构成反证,新二进制+健康特征下收紧待 R5REP 框架裁决;④T2-R5 的 1.78×(223/125)是二阶修正,15× 为主项。
+
+产出:t3_configs/T05_noise_calib(ext0+精确外参+acc_n0.0065+gyr_n0.0007);工具 sigma_ground.py。移交 T2-R5 在其 route 袋回放框架做 T05 vs 现值对照;Bas 爆炸消失→在线验证→本线 X 矩阵解锁。
