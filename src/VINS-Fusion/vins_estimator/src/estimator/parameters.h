@@ -47,6 +47,21 @@ extern std::string IMU_TOPIC;
 extern double TD;
 extern int ESTIMATE_TD;
 extern int ROLLING_SHUTTER;
+// T2-WA1G: depth-domain gate (defaults = gate off, legacy behavior)
+extern int T2_DEPTH_GATE;
+extern double T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL;
+// T2-WA23456G (defaults = legacy behavior)
+extern int T2_VISION_LOSS;
+extern double T2_CAUCHY_DELTA;
+extern int T2_REJECT_F;
+extern int T2_CHI2_GATE;
+extern double T2_CHI2_M, T2_CHI2_CONF;
+extern int T2_PRIOR_GATE;
+extern double T2_PRIOR_COST_THR, T2_PRIOR_DBAS_THR, T2_PRIOR_SHARE_THR;
+extern int T2_PRIOR_COOLDOWN, T2_PRIOR_STRATEGY, T2_COST_TRACE;
+// T2-WA3G
+extern int T2_REPROPAGATE;
+extern double T2_REPROP_BA_THR, T2_REPROP_BG_THR;
 extern int ROW, COL;
 extern int NUM_OF_CAM;
 extern int STEREO;

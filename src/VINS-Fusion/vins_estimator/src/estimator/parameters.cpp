@@ -10,6 +10,21 @@
 #include "parameters.h"
 
 double INIT_DEPTH;
+// T2-WA1G: depth-domain gate globals
+int T2_DEPTH_GATE = 0;
+double T2_DEPTH_MIN = 0.15, T2_DEPTH_MAX = 30.0, T2_XCHECK_TOL = 0.30;
+// T2-WA23456G globals (defaults = legacy behavior)
+int T2_VISION_LOSS = 0;
+double T2_CAUCHY_DELTA = 4.0;
+int T2_REJECT_F = 0;
+int T2_CHI2_GATE = 0;
+double T2_CHI2_M = 5.0, T2_CHI2_CONF = 0.95;
+int T2_PRIOR_GATE = 0;
+double T2_PRIOR_COST_THR = 5e3, T2_PRIOR_DBAS_THR = 0.05, T2_PRIOR_SHARE_THR = 0.5;
+int T2_PRIOR_COOLDOWN = 5, T2_PRIOR_STRATEGY = 1, T2_COST_TRACE = 0;
+// T2-WA3G globals
+int T2_REPROPAGATE = 0;
+double T2_REPROP_BA_THR = 0.10, T2_REPROP_BG_THR = 0.01;
 double MIN_PARALLAX;
 double ACC_N, ACC_W;
 double GYR_N, GYR_W;
@@ -116,6 +131,56 @@ void readParameters(std::string config_file)
         REANCHOR_SMOOTH = (int)fsSettings["reanchor_smooth"];
     if (!fsSettings["reanchor_smooth_frames"].empty())
         REANCHOR_SMOOTH_FRAMES = (int)fsSettings["reanchor_smooth_frames"];
+    // T2-WA1G: depth-domain gate knobs (absent key = gate OFF = legacy behavior;
+    // real-machine configs without these keys are bit-identical to upstream)
+    if (!fsSettings["t2_depth_gate"].empty())
+        T2_DEPTH_GATE = (int)fsSettings["t2_depth_gate"];
+    if (!fsSettings["t2_depth_min"].empty())
+        T2_DEPTH_MIN = (double)fsSettings["t2_depth_min"];
+    if (!fsSettings["t2_depth_max"].empty())
+        T2_DEPTH_MAX = (double)fsSettings["t2_depth_max"];
+    if (!fsSettings["t2_xcheck_tol"].empty())
+        T2_XCHECK_TOL = (double)fsSettings["t2_xcheck_tol"];
+    printf("T2_DEPTH_GATE: %d min=%.3f max=%.3f xcheck_tol=%.2f\n",
+           T2_DEPTH_GATE, T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL);
+    // T2-WA23456G knobs (absent = legacy)
+    if (!fsSettings["t2_vision_loss"].empty())
+        T2_VISION_LOSS = (int)fsSettings["t2_vision_loss"];
+    if (!fsSettings["t2_cauchy_delta"].empty())
+        T2_CAUCHY_DELTA = (double)fsSettings["t2_cauchy_delta"];
+    if (!fsSettings["t2_reject_f"].empty())
+        T2_REJECT_F = (int)fsSettings["t2_reject_f"];
+    if (!fsSettings["t2_chi2_gate"].empty())
+        T2_CHI2_GATE = (int)fsSettings["t2_chi2_gate"];
+    if (!fsSettings["t2_chi2_m"].empty())
+        T2_CHI2_M = (double)fsSettings["t2_chi2_m"];
+    if (!fsSettings["t2_chi2_conf"].empty())
+        T2_CHI2_CONF = (double)fsSettings["t2_chi2_conf"];
+    if (!fsSettings["t2_prior_gate"].empty())
+        T2_PRIOR_GATE = (int)fsSettings["t2_prior_gate"];
+    if (!fsSettings["t2_prior_cost_thr"].empty())
+        T2_PRIOR_COST_THR = (double)fsSettings["t2_prior_cost_thr"];
+    if (!fsSettings["t2_prior_dbas_thr"].empty())
+        T2_PRIOR_DBAS_THR = (double)fsSettings["t2_prior_dbas_thr"];
+    if (!fsSettings["t2_prior_share_thr"].empty())
+        T2_PRIOR_SHARE_THR = (double)fsSettings["t2_prior_share_thr"];
+    if (!fsSettings["t2_prior_cooldown"].empty())
+        T2_PRIOR_COOLDOWN = (int)fsSettings["t2_prior_cooldown"];
+    if (!fsSettings["t2_prior_strategy"].empty())
+        T2_PRIOR_STRATEGY = (int)fsSettings["t2_prior_strategy"];
+    if (!fsSettings["t2_cost_trace"].empty())
+        T2_COST_TRACE = (int)fsSettings["t2_cost_trace"];
+    // T2-WA3G knobs
+    if (!fsSettings["t2_repropagate"].empty())
+        T2_REPROPAGATE = (int)fsSettings["t2_repropagate"];
+    if (!fsSettings["t2_reprop_ba_thr"].empty())
+        T2_REPROP_BA_THR = (double)fsSettings["t2_reprop_ba_thr"];
+    if (!fsSettings["t2_reprop_bg_thr"].empty())
+        T2_REPROP_BG_THR = (double)fsSettings["t2_reprop_bg_thr"];
+    printf("T2 knobs: loss=%d cauchy=%.2f rejectF=%d chi2=%d(m=%.1f conf=%.2f) prior=%d(cost=%.4g dbas=%.3f share=%.2f cd=%d strat=%d) cost_trace=%d\n",
+           T2_VISION_LOSS, T2_CAUCHY_DELTA, T2_REJECT_F, T2_CHI2_GATE, T2_CHI2_M, T2_CHI2_CONF,
+           T2_PRIOR_GATE, T2_PRIOR_COST_THR, T2_PRIOR_DBAS_THR, T2_PRIOR_SHARE_THR,
+           T2_PRIOR_COOLDOWN, T2_PRIOR_STRATEGY, T2_COST_TRACE);
     printf("REANCHOR_SMOOTH: %d frames: %d\n", REANCHOR_SMOOTH, REANCHOR_SMOOTH_FRAMES);
 
     fsSettings["output_path"] >> OUTPUT_FOLDER;

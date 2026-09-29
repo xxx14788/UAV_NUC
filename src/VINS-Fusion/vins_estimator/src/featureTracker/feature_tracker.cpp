@@ -170,7 +170,9 @@ map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> FeatureTracker::trackIm
 
     if (1)
     {
-        //rejectWithF();
+        // T2-WA5G: RANSAC-F rejection behind switch (absent key = off = upstream commented behavior)
+        if (T2_REJECT_F)
+            rejectWithF();
         ROS_DEBUG("set mask begins");
         TicToc t_m;
         setMask();

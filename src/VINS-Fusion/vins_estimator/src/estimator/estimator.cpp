@@ -10,6 +10,7 @@
 #include "estimator.h"
 #include "../utility/visualization.h"
 #include <cstdio>
+#include <cstdlib>  // T1-E2: REANCHOR_DEBUG env gate
 
 Estimator::Estimator(): f_manager{Rs}
 {
@@ -197,6 +198,9 @@ void Estimator::inputImage(double t, const cv::Mat &_img, const cv::Mat &_img1)
     
 }
 
+// T1-E2: one-shot env read (stderr forensics; see audit doc E2_writepoint_audit.md)
+static const bool reanchor_dbg = (getenv("REANCHOR_DEBUG") != nullptr);
+
 void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vector3d &angularVelocity)
 {
     mBuf.lock();
@@ -208,7 +212,17 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
     if (solver_flag == NON_LINEAR)
     {
         mPropagate.lock();
+        // T1-E2 A8: re-read solver_flag under mPropagate (TOCTOU hygiene;
+        // after beta the init-side write lives inside this critical section).
+        if (solver_flag != NON_LINEAR)
+        {
+            mPropagate.unlock();
+            return;
+        }
         fastPredictIMU(t, linearAcceleration, angularVelocity);
+        // T1-E2 C03-A4 escape (b): a clamped step holds the publish side;
+        // consumers see odom stop-flow into their failsafes (no silent
+        // healthy-rate wrong-position stream). Cleared by ULS on_anchor.
         // T2-v3 W1.3 (2026-09-28): 发布端有界性防线。route 轮实测: ceres
         // 发散时 double2vector 把天文数字状态写进 latest_*, 125Hz 的
         // fastPredictIMU 即时外送, failureDetection 要到下一图像帧才拦截
@@ -527,8 +541,10 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 if(result)
                 {
                     optimization();
-                    updateLatestStates();
-                    solver_flag = NON_LINEAR;
+                    // T1-E2 C03-A3 beta: flag set inside ULS critical section
+                    // (capture guard true -> init delta captured; naive
+                    // reordering forbidden, see C03 exclusion table).
+                    updateLatestStates(true);
                     slideWindow();
                     ROS_INFO("Initialization finish!");
                 }
@@ -613,8 +629,8 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 }
                 if (init_sane_post)
                 {
-                    updateLatestStates();
-                    solver_flag = NON_LINEAR;
+                    // T1-E2 C03-A3 beta (see init1 comment)
+                    updateLatestStates(true);
                     slideWindow();
                     ROS_INFO("Initialization finish!");
                 }
@@ -655,8 +671,8 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
             if(frame_count == WINDOW_SIZE)
             {
                 optimization();
-                updateLatestStates();
-                solver_flag = NON_LINEAR;
+                // T1-E2 C03-A3 beta (see init1 comment)
+                updateLatestStates(true);
                 slideWindow();
                 ROS_INFO("Initialization finish!");
             }
@@ -1767,13 +1783,23 @@ void Estimator::outliersRejection(set<int> &removeIndex)
     }
 }
 
-void Estimator::propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
+// T1-E2 C03-A4: returns true when the step was clamped (dt outside [0,0.5]).
+// Clamp semantics = T2-U1 style: time-base advances, NO integration for this
+// step (advancing time keeps the next healthy dt finite; skipping the advance
+// would freeze the chain -- V7 blind-alley, see C03 V11).
+bool Estimator::propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
                                Eigen::Quaterniond &Q, Eigen::Vector3d &acc_0, Eigen::Vector3d &gyr_0,
                                const Eigen::Vector3d &Ba, const Eigen::Vector3d &Bg,
                                double tn, const Eigen::Vector3d &accn, const Eigen::Vector3d &gyrn)
 {
     double dt = tn - t;
     t = tn;
+    if (PropagateGuard::dt_invalid(dt))
+    {
+        acc_0 = accn;
+        gyr_0 = gyrn;
+        return true;
+    }
     Eigen::Vector3d un_acc_0 = Q * (acc_0 - Ba) - g;
     Eigen::Vector3d un_gyr = 0.5 * (gyr_0 + gyrn) - Bg;
     Q = Q * Utility::deltaQ(un_gyr * dt);
@@ -1783,17 +1809,34 @@ void Estimator::propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
     V = V + dt * un_acc;
     acc_0 = accn;
     gyr_0 = gyrn;
+    return false;
 }
 
 void Estimator::fastPredictIMU(double t, Eigen::Vector3d linear_acceleration, Eigen::Vector3d angular_velocity)
 {
-    propagateOnce(latest_time, latest_P, latest_V, latest_Q, latest_acc_0, latest_gyr_0,
-                  latest_Ba, latest_Bg, t, linear_acceleration, angular_velocity);
+    bool clamped = propagateOnce(latest_time, latest_P, latest_V, latest_Q, latest_acc_0, latest_gyr_0,
+                                 latest_Ba, latest_Bg, t, linear_acceleration, angular_velocity);
+    if (clamped)
+    {
+        propagate_guard.on_clamp();
+        if (reanchor_dbg)
+        {
+            fprintf(stderr, "[E2clamp] latest_time=%.3f t=%.3f clamp_count=%d\n",
+                    latest_time, t, propagate_guard.clamp_count);
+            fflush(stderr);
+        }
+    }
 }
 
-void Estimator::updateLatestStates()
+void Estimator::updateLatestStates(bool set_flag)
 {
     mPropagate.lock();
+    // T1-E2 C03-A3 beta: init points pass set_flag=true; setting the flag
+    // INSIDE the critical section makes the addJump guard true at init
+    // (init delta captured) and pins the flag write under the same lock the
+    // publisher reads under (TOCTOU window closed at the init path).
+    if (set_flag)
+        solver_flag = NON_LINEAR;
     // T1-D1 (2026-09-29): shadow chain -- snapshot the continuous propagation
     // state before the overwrite, integrate it alongside the re-anchored chain
     // over the replayed IMU buffer, yielding the simultaneous PURE reanchor
@@ -1828,7 +1871,34 @@ void Estimator::updateLatestStates()
         tmp_accBuf.pop();
         tmp_gyrBuf.pop();
     }
+    // T1-E2 C03-A3 gap guard: cross-second time-base break between the
+    // shadow chain and the first replay sample -> skip the capture (count
+    // it) instead of feeding a meter-scale garbage delta into the smoother;
+    // D2 position jump gate remains the raw-stream backstop.
     if (REANCHOR_SMOOTH && solver_flag == NON_LINEAR)
-        reanchor_smoother.addJump(sh_P - latest_P, sh_V - latest_V);
+    {
+        bool gap = !tmp_accBuf.empty() &&
+                   PropagateGuard::gap_skip_needed(sh_t, tmp_accBuf.front().first);
+        if (gap)
+        {
+            propagate_guard.on_gap_skip();
+            if (reanchor_dbg)
+                fprintf(stderr, "[E2gap] sh_t=%.3f buf0=%.3f skip#=%d\n",
+                        sh_t, tmp_accBuf.front().first, propagate_guard.gap_skips);
+        }
+        else
+        {
+            if (reanchor_dbg)
+                fprintf(stderr, "[E2uls] flag=%d sh_t=%.3f new_t=%.3f dP=[%.4f %.4f %.4f] |dP|=%.4f first_dt=%.4f\n",
+                        (int)solver_flag, sh_t, latest_time,
+                        (sh_P - latest_P).x(), (sh_P - latest_P).y(), (sh_P - latest_P).z(),
+                        (sh_P - latest_P).norm(),
+                        tmp_accBuf.empty() ? -1.0 : (tmp_accBuf.front().first - sh_t));
+            reanchor_smoother.addJump(sh_P - latest_P, sh_V - latest_V);
+        }
+    }
+    // T1-E2 C03-A4 escape (b): ULS finished (overwrite+replay done) -> the
+    // re-anchored chain is trustworthy again, release the publish hold.
+    propagate_guard.on_anchor();
     mPropagate.unlock();
 }

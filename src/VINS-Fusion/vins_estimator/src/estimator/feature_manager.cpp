@@ -351,6 +351,11 @@ static bool t2SvdDepth(const FeaturePerId &fp, int frameCnt, Vector3d Ps[], Matr
 
 void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 {
+    // T2-WA1G: depth-domain gate - out-of-range / cross-disagreeing features are
+    // erased after the loop (INIT_DEPTH silent pseudo-depth path fully removed
+    // when gate on; absent config key = gate off = upstream behavior bit-identical)
+    std::set<int> t2_gate_reject;
+    int t2_stat_tri = 0, t2_stat_rej = 0, t2_stat_xrej = 0, t2_stat_init = 0;
     for (auto &it_per_id : feature)
     {
         if (it_per_id.estimated_depth > 0)
@@ -369,10 +374,15 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                            t2_cur_t, it_per_id.feature_id, it_per_id.estimated_depth, d2, rel,
                            (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame);
                     it_per_id.t2_xcheck_frame = frameCnt;
+                    // T2-WA1G NOTE: cross-disagreement REJECTION was falsified by census
+                    // data (2026-09-30: pass-bag ROUTE112652 rel P50=0.849, gt30=77% -
+                    // far-range features have intrinsically high solution variance at
+                    // 0.1m baseline; any tol would massacre healthy tracks). Dump-only.
                 }
             }
             continue;
         }
+        t2_stat_tri++;
 
         if(STEREO && it_per_id.feature_per_frame[0].is_stereo)
         {
@@ -413,10 +423,26 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                        (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
                        (depth > 0) ? "ok" : "init_neg");
             }
+            // T2-WA1G: stereo branch gate - out-of-range depth rejects the track
+            // (replaces the silent INIT_DEPTH pseudo-depth path when gate on)
+            if (T2_DEPTH_GATE)
+            {
+                if (depth < T2_DEPTH_MIN || depth > T2_DEPTH_MAX || !(depth > 0))
+                {
+                    t2_gate_reject.insert(it_per_id.feature_id);
+                    t2_stat_rej++;
+                    continue;
+                }
+                it_per_id.estimated_depth = depth;
+                continue;
+            }
             if (depth > 0)
                 it_per_id.estimated_depth = depth;
             else
+            {
                 it_per_id.estimated_depth = INIT_DEPTH;
+                t2_stat_init++;
+            }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
             printf("stereo %d pts: %f %f %f gt: %f %f %f \n",it_per_id.feature_id, point3d.x(), point3d.y(), point3d.z(),
@@ -455,10 +481,25 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                    (depth > 0) ? depth : INIT_DEPTH,
                    (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
                    (depth > 0) ? "ok" : "init_neg");
+            // T2-WA1G: two-frame motion branch gate (same policy as stereo)
+            if (T2_DEPTH_GATE)
+            {
+                if (depth < T2_DEPTH_MIN || depth > T2_DEPTH_MAX || !(depth > 0))
+                {
+                    t2_gate_reject.insert(it_per_id.feature_id);
+                    t2_stat_rej++;
+                    continue;
+                }
+                it_per_id.estimated_depth = depth;
+                continue;
+            }
             if (depth > 0)
                 it_per_id.estimated_depth = depth;
             else
+            {
                 it_per_id.estimated_depth = INIT_DEPTH;
+                t2_stat_init++;
+            }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
             printf("motion  %d pts: %f %f %f gt: %f %f %f \n",it_per_id.feature_id, point3d.x(), point3d.y(), point3d.z(),
@@ -516,12 +557,40 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
                (it_per_id.estimated_depth < 0.1) ? "init_low" : "ok");
 
+        // T2-WA1G: SVD branch gate - out-of-range or degenerate depth rejects the
+        // track (replaces the silent <0.1 -> INIT_DEPTH pseudo-depth path)
+        if (T2_DEPTH_GATE)
+        {
+            if (it_per_id.estimated_depth < T2_DEPTH_MIN ||
+                it_per_id.estimated_depth > T2_DEPTH_MAX)
+            {
+                t2_gate_reject.insert(it_per_id.feature_id);
+                t2_stat_rej++;
+                it_per_id.estimated_depth = -1.0;
+                continue;
+            }
+            continue;
+        }
         if (it_per_id.estimated_depth < 0.1)
         {
             it_per_id.estimated_depth = INIT_DEPTH;
+            t2_stat_init++;
         }
 
     }
+    // T2-WA1G: apply gate rejections + per-frame stats (T2frame schema)
+    if (!t2_gate_reject.empty())
+    {
+        for (auto it = feature.begin(); it != feature.end();)
+        {
+            if (t2_gate_reject.count(it->feature_id))
+                it = feature.erase(it);
+            else
+                ++it;
+        }
+    }
+    printf("[T2gate] t=%.4f tri=%d rej=%d xrej=%d init_replace=%d gate=%d\n",
+           t2_cur_t, t2_stat_tri, t2_stat_rej, t2_stat_xrej, t2_stat_init, T2_DEPTH_GATE);
 }
 
 void FeatureManager::removeOutlier(set<int> &outlierIndex)
@@ -571,6 +640,13 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
                     printf("[T2depth] t=%.4f id=%d src=shift u=-1 v=-1 depth=%.4f depth2=-1.0000 track=%d sf=0 flag=%s\n",
                            t2_cur_t, it->feature_id, INIT_DEPTH,
                            (int)it->feature_per_frame.size(), "init_neg");
+                // T2-WA1G: transfer gate - out-of-range reprojected depth drops the track
+                // (instead of silent INIT_DEPTH pseudo-depth when gate on)
+                if (T2_DEPTH_GATE && !(dep_j >= T2_DEPTH_MIN && dep_j <= T2_DEPTH_MAX))
+                {
+                    it = feature.erase(it);
+                    continue;
+                }
                 if (dep_j > 0)
                     it->estimated_depth = dep_j;
                 else

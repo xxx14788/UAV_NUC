@@ -58,13 +58,18 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
 //delta_v = Qi.inverse() * (g * sum_dt + Vj - Vi);
 //delta_q = Qi.inverse() * Qj;
 
-#if 0
-        if ((Bai - pre_integration->linearized_ba).norm() > 0.10 ||
-            (Bgi - pre_integration->linearized_bg).norm() > 0.01)
+        // T2-WA3G: repropagate when bias moved far from the preintegration
+        // linearization point (Forster TRO17: first-order correction invalid
+        // for large bias change); upstream shipped this disabled behind #if 0.
+        // absent key = off = upstream behavior. NOTE: Evaluate runs on the
+        // solver thread and rewrites the shared IntegrationBase - benign-race
+        // window shared with upstream's own processIMU-increment design.
+        if (T2_REPROPAGATE &&
+            ((Bai - pre_integration->linearized_ba).norm() > T2_REPROP_BA_THR ||
+             (Bgi - pre_integration->linearized_bg).norm() > T2_REPROP_BG_THR))
         {
             pre_integration->repropagate(Bai, Bgi);
         }
-#endif
 
         Eigen::Map<Eigen::Matrix<double, 15, 1>> residual(residuals);
         residual = pre_integration->evaluate(Pi, Qi, Vi, Bai, Bgi,

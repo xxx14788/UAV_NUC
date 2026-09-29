@@ -29,6 +29,7 @@
 #include "../initial/initial_alignment.h"
 #include "../initial/initial_ex_rotation.h"
 #include "reanchor_smoother.h"
+#include "propagate_guard.h"
 #include "../factor/imu_factor.h"
 #include "../factor/pose_local_parameterization.h"
 #include "../factor/marginalization_factor.h"
@@ -77,11 +78,11 @@ class Estimator
     double reprojectionError(Matrix3d &Ri, Vector3d &Pi, Matrix3d &rici, Vector3d &tici,
                                      Matrix3d &Rj, Vector3d &Pj, Matrix3d &ricj, Vector3d &ticj, 
                                      double depth, Vector3d &uvi, Vector3d &uvj);
-    void updateLatestStates();
+    void updateLatestStates(bool set_flag = false);  // C03-A3 beta: init points pass true (flag set inside mPropagate)
     void fastPredictIMU(double t, Eigen::Vector3d linear_acceleration, Eigen::Vector3d angular_velocity);
     // T1-D1: single-source IMU propagation step (shared by the anchored chain
     // fastPredictIMU and the updateLatestStates shadow chain).
-    void propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,
+    bool propagateOnce(double &t, Eigen::Vector3d &P, Eigen::Vector3d &V,  // T1-E2: returns true when clamped
                        Eigen::Quaterniond &Q, Eigen::Vector3d &acc_0, Eigen::Vector3d &gyr_0,
                        const Eigen::Vector3d &Ba, const Eigen::Vector3d &Bg,
                        double tn, const Eigen::Vector3d &accn, const Eigen::Vector3d &gyrn);
@@ -180,6 +181,7 @@ class Estimator
     Eigen::Vector3d latest_P, latest_V, latest_Ba, latest_Bg, latest_acc_0, latest_gyr_0;
     Eigen::Quaterniond latest_Q;
     ReanchorSmoother reanchor_smoother;   // T1-D1: publish-side smooth reanchor (kernel untouched)
+    PropagateGuard propagate_guard;       // T1-E2: dt-clamp hold / gap-skip counters (C03 A3/A4)
 
     bool initFirstPoseFlag;
     bool initThreadFlag;
