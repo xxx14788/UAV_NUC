@@ -61,7 +61,7 @@ max_num_iterations: 8
 keyframe_parallax: 10.0
 
 #imu parameters（与实机 realsense 配置同量级；仿真 IMU 噪声更小，此为保守假设）
-acc_n: 0.1
+acc_n: 0.2    # T2-R5轮2: 125Hz时代调定0.1,223Hz+闭环放大下goal加速瞬态Bas 3.0爆炸(轮1实测),E15网格机动段稳健点0.2
 gyr_n: 0.01
 acc_w: 0.001
 gyr_w: 0.001
