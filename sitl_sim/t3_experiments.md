@@ -715,3 +715,17 @@ F1 决策(依 D2 决策表 C4 分支):仓库 sim_stereo estimate_extrinsic 1→0
 - 我的 rmatrix cp 多目标写法 bug 导致 R_ACC056#1 空洞 pass(相机 yaml 未拷入→启动断言)——已修重跑。
 
 X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
+
+## T3 v7.2 Y1.1:W-A 解锁门机械化判据器 t3_wa_gate.py(2026-09-30 夜)
+
+四轴判决(⓪存活覆盖率/①Bas 三重口径/②ATE 基线+10%/③init_cost 相对倍率尖峰),阈值全外置 `analysis/t3_wa_gate_thresholds.json`,CSV 汇总批模式供 W-A 矩阵/C3 回归用。
+
+**自测对账(强制,双侧通过)**:R_CAN=FAIL(coverage 0.085 早死/Bas peak 2.5345+超限占比 2.78%/ATE 1.564/spike rate 5.56%+maxratio 215×/尖峰间隔中位 4.32s),与 883c75c 台账逐项一致;CTRL2=PASS(coverage 1.0/Bas tail_med 0.1105/ATE 0.144/spike 0.46%+34.6×),一致。`analysis/t3_wa_gate_selftest.json` 留档。
+
+**口径裁决(数据驱动,防宽判也防误伤,已入工具头注)**:
+1. ①Bas 不用朴素 max<1.0:CTRL2(判 PASS 的对照)有 2 帧恢复型瞬态 1.402 → 三重口径=超限占比≤1%+最长持续段≤3 帧+末段(10s)中位<1.0;R_CAN 死亡时 Bas=2.53 仍在爬升,靠占比轴捕获。
+2. ③尖峰不用绝对 >1e3 入判:CTRL2 滑窗中位 init_cost=2116、9 帧 >1e4 仍判好 → 用 T2 v4.1 已定 10×滚动中位倍率口径(spike_rate≤1% 且 max_ratio≤50);绝对值计数/最大值仅报告。W-A 书面"无>1e3 尖峰"的机制本意=杀"78→7068→16871 循环"型相对尖峰。
+3. ⓪存活=odom 流跨度/袋总时长(play.log Duration 提取):双侧 vins_alive 均=1 实证"进程活≠全程发布",R_CAN 早死=输出停流型。
+4. 周期性:AC 排除 lag<2s 相邻平滑平凡解 + 尖峰间隔中位/CV 双报;R_CAN iv_med=4.32s = 台账"循环"节律实据(AC 因序列短 None 属诚实报空)。
+
+@T2:W-A0 手工口径对账可直接用本件;W-A1 起矩阵/在线复验批跑用 `--csv`;任何阈值改动须重跑 `--selftest` 并把两侧数字记入台账。

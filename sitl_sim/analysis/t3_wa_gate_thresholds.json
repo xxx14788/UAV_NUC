@@ -1,0 +1,17 @@
+{
+ "coverage_min": 0.8,
+ "bas_hard": 1.0,
+ "bas_over_ratio_max": 0.01,
+ "bas_tail_med_max": 1.0,
+ "bas_run_frames_max": 3,
+ "baseline_ate_m": 0.144,
+ "ate_margin_pct": 10,
+ "rollmed_win": 21,
+ "spike_ratio_mult": 10.0,
+ "spike_rate_max": 0.01,
+ "spike_max_ratio": 50.0,
+ "spike_abs_report": 1000.0,
+ "ac_thresh": 0.3,
+ "ac_min_lag_s": 2.0,
+ "tail_s": 10.0
+}

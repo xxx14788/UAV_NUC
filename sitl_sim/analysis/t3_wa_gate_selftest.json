@@ -1,0 +1,95 @@
+{
+ "pass": true,
+ "cells": [
+  {
+   "cell": "R_CAN_flight",
+   "ok": true,
+   "line": "R_CAN_flight: FAIL [survival✗ cov=0.085 | bas✗ peak=2.5345 over=0.0278 run=1 tail=0.3609 | ate✗ 1.564/0.1584 | spike✗ rate=0.0556 maxratio=215.1 abs>1e3=15 max=45430.4 period=Nones iv_med=4.32s]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "ate ~ 1.564",
+     "got": 1.564,
+     "pass": true
+    },
+    {
+     "check": "t_star ~ 11.0",
+     "got": 11.0,
+     "pass": true
+    },
+    {
+     "check": "bas_peak_ge >= 2.0",
+     "got": 2.5345,
+     "pass": true
+    },
+    {
+     "check": "spike_abs_max_ge >= 16000.0",
+     "got": 45430.4,
+     "pass": true
+    },
+    {
+     "check": "spike_abs_max_le <= 46000.0",
+     "got": 45430.4,
+     "pass": true
+    },
+    {
+     "check": "spike_max_ratio_ge >= 100.0",
+     "got": 215.1,
+     "pass": true
+    },
+    {
+     "check": "spike_rate_ge >= 0.02",
+     "got": 0.0556,
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "CTRL2_t2v3_route_112652",
+   "ok": true,
+   "line": "CTRL2_t2v3_route_112652: PASS [survival✓ cov=1.0 | bas✓ peak=1.4016 over=0.0012 run=2 tail=0.1105 | ate✓ 0.144/0.1584 | spike✓ rate=0.0046 maxratio=34.6 abs>1e3=1010 max=53199.8 period=1.9s iv_med=5.94s]",
+   "checks": [
+    {
+     "check": "verdict==PASS",
+     "got": "PASS",
+     "pass": true
+    },
+    {
+     "check": "ate ~ 0.144",
+     "got": 0.144,
+     "pass": true
+    },
+    {
+     "check": "bas_tail_med ~ 0.11",
+     "got": 0.1105,
+     "pass": true
+    },
+    {
+     "check": "spike_rate_le <= 0.01",
+     "got": 0.0046,
+     "pass": true
+    },
+    {
+     "check": "spike_max_ratio_le <= 50.0",
+     "got": 34.6,
+     "pass": true
+    },
+    {
+     "check": "coverage_ge >= 0.8",
+     "got": 1.0,
+     "pass": true
+    },
+    {
+     "check": "diag_n_ge >= 1500",
+     "got": 1723,
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;CTRL2 ATE 0.144/Bas 0.11 稳/滑窗 cost 收敛"
+}
