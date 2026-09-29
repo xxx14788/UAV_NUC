@@ -74,7 +74,7 @@ fast_relocalization: 1
 pose_graph_save_path: "/home/uav/vins_output/pose_graph/"
 
 #unsynchronization parameters
-estimate_extrinsic: 1    # T2-W4: 在线外参从初值优化（ext:2 无先验自标定在 20Hz 弱激励下发散, E01 vs E03/E20 重放实证）    # 在线估计外参（2026-09-26：手推外参下运动即崩，先让算法自标定）
+estimate_extrinsic: 0    # T3-F1 2026-09-29: freeze extrinsic (D2 matrix: ext1 opens est on first motion, tic drifts to 0.135/0.006 vs truth 0.12/0.05/-0.02 while Bas climbs -> 471m jump @X1final_101627 clean stream; ext0+exact = C4 lightest. Exact prior per D3/T2-R4).
 estimate_td: 0                      # T2-W4: td 在线估计在机动段发散到 -190s（E03×bag-B 实测）,关闭后固定 td=0                      # 在线估计相机-IMU 时延（仿真也可能有小的传输延迟）
 td: 0.00
 
