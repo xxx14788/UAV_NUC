@@ -106,6 +106,16 @@ def main():
                 t_star = odom[i][0]
     rep["t_star_s"] = round(t_star - t0, 1) if t_star else None
     rep["frame_jumps"] = jumps
+    # 回放域发布侧震颤感知:单调性 + 平滑(3 帧滑动均值)后跳变
+    # (T3-X 2026-09-29: 回放 odom 19Hz 撕裂读 ±0.17m 会把 raw jumps 打爆,平滑后才是估计器真跳变)
+    back = sum(1 for i in range(1, len(odom)) if odom[i][0] < odom[i-1][0] - 1e-6)
+    rep["stamp_back_jumps"] = back
+    sm = []
+    for i in range(len(odom)):
+        lo, hi = max(0, i-1), min(len(odom), i+2)
+        sm.append(tuple(sum(odom[j][k] for j in range(lo, hi)) / (hi-lo) for k in (1, 2, 3)))
+    sm_jumps = sum(1 for i in range(1, len(sm)) if math.sqrt(sum((sm[i][k]-sm[i-1][k])**2 for k in range(3))) > JUMP_M)
+    rep["frame_jumps_smoothed"] = sm_jumps
 
     # ATE:t*(或末段)后 60s
     if ts_t:
