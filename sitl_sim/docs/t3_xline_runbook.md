@@ -56,7 +56,7 @@
 | B | 避障 min_dist | >0.349m(harness 既有口径) |
 | C | poscmd 频率 | ≥50Hz |
 | D | auto_disarm | =1(到位后自动降落解散) |
-| J0 | 帧跳变 | forensics_v2 `frame_jumps_raw_odom`=0 且 `frame_jumps_smoothed_odom`=0;**锚差>0.5m 一律 FAIL 定性,不做锚点技巧**(红线 2) |
+| J0 | 帧跳变 | forensics_v2 `frame_jumps_raw_odom`=0 且 `frame_jumps_smoothed_odom`≤10(**Y1.4 好轮校准**:ground 0/hover 1/route-PASS 7,坏轮 422-686,取 10=好轮 1.4× 上界;**锚差>0.5m 一律 FAIL 定性,不做锚点技巧**(红线 2)兜底) |
 | P0 | 污染嫌疑 | forensics_v2 poisoning_suspect 为空(imu_hdr/clock 回退>1000 即判废) |
 
 信息项(登记不判):p95、EKF2 口径到位、track_med、Bas/Bgs 尾段、悬停窗 |v| 峰。

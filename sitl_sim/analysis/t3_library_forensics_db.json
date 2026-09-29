@@ -8,6 +8,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.4,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "t_poscmd_first@0.3s (Δ=0.1s)",
+  "t_takeoff_s": 13.3,
+  "t_poscmd_first_s": 0.3,
+  "n_goals": 15,
   "Bas峰": 1.084,
   "Bas中位": 0.1897,
   "Bgs峰": 0.05186,
@@ -33,7 +37,7 @@
   "DB判决": "判废-双流污染|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL1_022847/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:27"
+  "扫描时刻": "2026-09-30T02:42:41"
  },
  {
   "轮名": "run_E2FAIL2_023440",
@@ -44,6 +48,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 7.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "goal@10.0s (Δ=-2.9s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 14,
   "Bas峰": 1.2067,
   "Bas中位": 0.1117,
   "Bgs峰": 0.26026,
@@ -69,7 +77,7 @@
   "DB判决": "FAIL-劣化|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL2_023440/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:28"
+  "扫描时刻": "2026-09-30T02:42:42"
  },
  {
   "轮名": "run_E2FAIL3_024009",
@@ -79,7 +87,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL3_024009",
-  "扫描时刻": "2026-09-30T02:24:28"
+  "扫描时刻": "2026-09-30T02:42:42"
  },
  {
   "轮名": "run_E2FAIL4_024211",
@@ -90,6 +98,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6209,
   "Bas中位": 0.2281,
   "Bgs峰": 0.01538,
@@ -115,7 +127,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL4_024211/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:30"
+  "扫描时刻": "2026-09-30T02:42:45"
  },
  {
   "轮名": "run_E2FAIL5_024737",
@@ -125,7 +137,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL5_024737",
-  "扫描时刻": "2026-09-30T02:24:30"
+  "扫描时刻": "2026-09-30T02:42:45"
  },
  {
   "轮名": "run_WD1_024016",
@@ -135,7 +147,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_WD1_024016",
-  "扫描时刻": "2026-09-30T02:24:30"
+  "扫描时刻": "2026-09-30T02:42:45"
  },
  {
   "轮名": "run_WD1b_032925",
@@ -146,6 +158,10 @@
   "形态": "爆散",
   "t*_s": 10.0,
   "分叉类型": "仅prop跳变(odom已停/未对齐)",
+  "最近事件": "goal@9.3s (Δ=0.7s)",
+  "t_takeoff_s": 3.6,
+  "t_poscmd_first_s": null,
+  "n_goals": 15,
   "Bas峰": 0.7265,
   "Bas中位": 0.7123,
   "Bgs峰": 1.17504,
@@ -171,7 +187,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_WD1b_032925/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:34"
+  "扫描时刻": "2026-09-30T02:42:48"
  },
  {
   "轮名": "run_WD1b_033751",
@@ -182,6 +198,10 @@
   "形态": "爆散",
   "t*_s": 4.4,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "t_takeoff(armed)@0.0s (Δ=4.4s)",
+  "t_takeoff_s": 0.0,
+  "t_poscmd_first_s": 17.8,
+  "n_goals": 14,
   "Bas峰": 3.5724,
   "Bas中位": 0.2135,
   "Bgs峰": 0.00222,
@@ -207,7 +227,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=ENV",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_WD1b_033751/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:36"
+  "扫描时刻": "2026-09-30T02:42:50"
  },
  {
   "轮名": "run_X1_000718",
@@ -217,7 +237,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_000718",
-  "扫描时刻": "2026-09-30T02:24:36"
+  "扫描时刻": "2026-09-30T02:42:50"
  },
  {
   "轮名": "run_X1_000947",
@@ -228,6 +248,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -253,7 +277,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_000947/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:38"
+  "扫描时刻": "2026-09-30T02:42:53"
  },
  {
   "轮名": "run_X1_001817",
@@ -264,6 +288,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 6.7,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.5s (Δ=3.2s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": 20.2,
+  "n_goals": 15,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -289,7 +317,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_001817/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:46"
+  "扫描时刻": "2026-09-30T02:43:01"
  },
  {
   "轮名": "run_X1_002244",
@@ -299,7 +327,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_002244",
-  "扫描时刻": "2026-09-30T02:24:46"
+  "扫描时刻": "2026-09-30T02:43:01"
  },
  {
   "轮名": "run_X1_002443",
@@ -310,6 +338,10 @@
   "形态": "爆散",
   "t*_s": 6.7,
   "分叉类型": "仅prop跳变(odom已停/未对齐)",
+  "最近事件": "t_takeoff@3.5s (Δ=3.2s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 14,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -335,7 +367,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_002443/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:51"
+  "扫描时刻": "2026-09-30T02:43:05"
  },
  {
   "轮名": "run_X1_002831",
@@ -346,6 +378,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 6.8,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.4s (Δ=3.4s)",
+  "t_takeoff_s": 3.4,
+  "t_poscmd_first_s": 20.2,
+  "n_goals": 15,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -371,7 +407,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_002831/flight.bag",
-  "扫描时刻": "2026-09-30T02:24:59"
+  "扫描时刻": "2026-09-30T02:43:13"
  },
  {
   "轮名": "run_X1_223836",
@@ -381,7 +417,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_223836",
-  "扫描时刻": "2026-09-30T02:24:59"
+  "扫描时刻": "2026-09-30T02:43:13"
  },
  {
   "轮名": "run_X1_225059",
@@ -391,7 +427,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_225059",
-  "扫描时刻": "2026-09-30T02:24:59"
+  "扫描时刻": "2026-09-30T02:43:13"
  },
  {
   "轮名": "run_X1_225612",
@@ -401,7 +437,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_225612",
-  "扫描时刻": "2026-09-30T02:24:59"
+  "扫描时刻": "2026-09-30T02:43:13"
  },
  {
   "轮名": "run_X1_231835",
@@ -411,7 +447,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_231835",
-  "扫描时刻": "2026-09-30T02:24:59"
+  "扫描时刻": "2026-09-30T02:43:13"
  },
  {
   "轮名": "run_X1_232055",
@@ -422,6 +458,10 @@
   "形态": "爆散",
   "t*_s": 6.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.5s (Δ=3.4s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": 20.3,
+  "n_goals": 14,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -447,7 +487,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_232055/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:03"
+  "扫描时刻": "2026-09-30T02:43:17"
  },
  {
   "轮名": "run_X1_233210",
@@ -458,6 +498,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 6.8,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.6s (Δ=3.2s)",
+  "t_takeoff_s": 3.6,
+  "t_poscmd_first_s": null,
+  "n_goals": 15,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -483,7 +527,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_233210/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:08"
+  "扫描时刻": "2026-09-30T02:43:23"
  },
  {
   "轮名": "run_X1_234437",
@@ -494,6 +538,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 7.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.6s (Δ=3.5s)",
+  "t_takeoff_s": 3.6,
+  "t_poscmd_first_s": 20.4,
+  "n_goals": 14,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -519,7 +567,7 @@
   "DB判决": "FAIL-劣化|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_234437/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:13"
+  "扫描时刻": "2026-09-30T02:43:27"
  },
  {
   "轮名": "run_X1_235025",
@@ -530,6 +578,10 @@
   "形态": "爆散",
   "t*_s": 6.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.5s (Δ=3.4s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 14,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -555,7 +607,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=FAIL",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1_235025/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:19"
+  "扫描时刻": "2026-09-30T02:43:34"
  },
  {
   "轮名": "run_X1final_043355",
@@ -566,6 +618,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.0,
   "分叉类型": "prop先病(传播域:IMU积分/偏置/外参-偏置耦合)",
+  "最近事件": "t_takeoff@0.7s (Δ=-0.7s)",
+  "t_takeoff_s": 0.7,
+  "t_poscmd_first_s": 8.1,
+  "n_goals": 14,
   "Bas峰": 0.8228,
   "Bas中位": 0.1456,
   "Bgs峰": 0.00104,
@@ -591,7 +647,7 @@
   "DB判决": "判废-双流污染",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_043355/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:28"
+  "扫描时刻": "2026-09-30T02:43:44"
  },
  {
   "轮名": "run_X1final_101627",
@@ -602,6 +658,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 30.3,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "goal@31.0s (Δ=-0.7s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": 20.4,
+  "n_goals": 15,
   "Bas峰": 1.0044,
   "Bas中位": 0.0998,
   "Bgs峰": 0.01958,
@@ -627,7 +687,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_101627/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:36"
+  "扫描时刻": "2026-09-30T02:43:52"
  },
  {
   "轮名": "run_X1final_104445",
@@ -637,7 +697,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_104445",
-  "扫描时刻": "2026-09-30T02:25:36"
+  "扫描时刻": "2026-09-30T02:43:52"
  },
  {
   "轮名": "run_X1final_104720",
@@ -648,6 +708,10 @@
   "形态": "爆散",
   "t*_s": 6.7,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "t_takeoff@3.5s (Δ=3.2s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 14,
   "Bas峰": 2.9806,
   "Bas中位": 0.3401,
   "Bgs峰": 0.31898,
@@ -673,7 +737,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=ENV",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_104720/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:42"
+  "扫描时刻": "2026-09-30T02:43:59"
  },
  {
   "轮名": "run_X1final_105449",
@@ -684,6 +748,10 @@
   "形态": "爆散",
   "t*_s": 7.9,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "t_takeoff@3.6s (Δ=4.3s)",
+  "t_takeoff_s": 3.6,
+  "t_poscmd_first_s": null,
+  "n_goals": 14,
   "Bas峰": 2.6065,
   "Bas中位": 0.6974,
   "Bgs峰": 0.01467,
@@ -709,7 +777,7 @@
   "DB判决": "FAIL-发散(爆散)|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_105449/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:45"
+  "扫描时刻": "2026-09-30T02:44:03"
  },
  {
   "轮名": "run_X1final_172424",
@@ -720,6 +788,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 6.7,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "goal@9.2s (Δ=-2.5s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 15,
   "Bas峰": 2.6489,
   "Bas中位": 0.3251,
   "Bgs峰": 0.99643,
@@ -745,7 +817,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_172424/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:52"
+  "扫描时刻": "2026-09-30T02:44:09"
  },
  {
   "轮名": "run_X1final_173345",
@@ -756,6 +828,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 15.7,
   "分叉类型": "仅prop跳变(odom已停/未对齐)",
+  "最近事件": "goal@14.5s (Δ=1.2s)",
+  "t_takeoff_s": 3.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 17,
   "Bas峰": 3.3662,
   "Bas中位": 0.1531,
   "Bgs峰": 0.23833,
@@ -781,7 +857,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1final_173345/flight.bag",
-  "扫描时刻": "2026-09-30T02:25:57"
+  "扫描时刻": "2026-09-30T02:44:19"
  },
  {
   "轮名": "run_X1img2_020706",
@@ -792,6 +868,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 22.0,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "goal@22.1s (Δ=-0.1s)",
+  "t_takeoff_s": 3.9,
+  "t_poscmd_first_s": null,
+  "n_goals": 15,
   "Bas峰": 0.2097,
   "Bas中位": 0.1038,
   "Bgs峰": 0.01014,
@@ -817,7 +897,7 @@
   "DB判决": "判废-双流污染|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1img2_020706/flight.bag",
-  "扫描时刻": "2026-09-30T02:26:15"
+  "扫描时刻": "2026-09-30T02:44:39"
  },
  {
   "轮名": "run_X1img_015950",
@@ -828,6 +908,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 6.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@3.6s (Δ=3.3s)",
+  "t_takeoff_s": 3.6,
+  "t_poscmd_first_s": 20.2,
+  "n_goals": 16,
   "Bas峰": 1.8925,
   "Bas中位": 0.2176,
   "Bgs峰": 0.49462,
@@ -853,7 +937,7 @@
   "DB判决": "FAIL-数值溢出|RESULT=FAIL",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/vins_smoke_runs/run_X1img_015950/flight.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:57"
  },
  {
   "轮名": "E01_baseline_t2_A_173156",
@@ -864,6 +948,10 @@
   "形态": "爆散",
   "t*_s": 31.3,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -889,7 +977,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:57"
  },
  {
   "轮名": "E01_baseline_t2_B_175551",
@@ -900,6 +988,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -925,7 +1017,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:57"
  },
  {
   "轮名": "E01_baseline_t2_B_shift",
@@ -935,7 +1027,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:57"
  },
  {
   "轮名": "E01_baseline_t2_C_175659",
@@ -946,6 +1038,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -971,7 +1067,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E01_baseline_t2_C_shift",
@@ -981,7 +1077,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E01_baseline_t2_D_175728",
@@ -992,6 +1088,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1017,7 +1117,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E01_baseline_t2_E_175807",
@@ -1028,6 +1128,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1053,7 +1157,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E01_baseline_t2_E_shift",
@@ -1063,7 +1167,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E01_baseline_t2_selftest",
@@ -1074,6 +1178,10 @@
   "形态": "爆散",
   "t*_s": 1.1,
   "分叉类型": "prop先病(传播域:IMU积分/偏置/外参-偏置耦合)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1099,7 +1207,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E01_baseline_t2_selftest/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_A_173156",
@@ -1110,6 +1218,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1135,7 +1247,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_B_175551",
@@ -1146,6 +1258,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1171,7 +1287,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_B_shift",
@@ -1181,7 +1297,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:34"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_C_175659",
@@ -1192,6 +1308,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1217,7 +1337,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:35"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_D_175728",
@@ -1228,6 +1348,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1253,7 +1377,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:35"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E02_ext0_zfix_t2_E_175807",
@@ -1264,6 +1388,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1289,7 +1417,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E02_ext0_zfix_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:35"
+  "扫描时刻": "2026-09-30T02:44:58"
  },
  {
   "轮名": "E03_ext1_t2_A_173156",
@@ -1300,6 +1428,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 29.4,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1325,7 +1457,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:35"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_B_175551",
@@ -1336,6 +1468,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1361,7 +1497,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_B_shift",
@@ -1371,7 +1507,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_C_175659",
@@ -1382,6 +1518,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1407,7 +1547,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_C_shift",
@@ -1417,7 +1557,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_D_175728",
@@ -1428,6 +1568,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1453,7 +1597,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_E_175807",
@@ -1464,6 +1608,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1489,7 +1637,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E03_ext1_t2_E_shift",
@@ -1499,7 +1647,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E03_ext1_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_A_173156",
@@ -1509,7 +1657,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_B_175551",
@@ -1520,6 +1668,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1545,7 +1697,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_B_shift",
@@ -1555,7 +1707,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_C_175659",
@@ -1566,6 +1718,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1591,7 +1747,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_C_shift",
@@ -1601,7 +1757,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_D_175728",
@@ -1612,6 +1768,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1637,7 +1797,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04_mono_left_t2_E_175807",
@@ -1648,6 +1808,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1673,7 +1837,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04_mono_left_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04b_mono_left_ext1_t2_A_173156",
@@ -1683,7 +1847,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04b_mono_left_ext1_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E04b_mono_left_ext1_t2_C_shift",
@@ -1693,7 +1857,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E04b_mono_left_ext1_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_A_173156",
@@ -1703,7 +1867,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_B_175551",
@@ -1714,6 +1878,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1739,7 +1907,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_B_shift",
@@ -1749,7 +1917,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_C_175659",
@@ -1760,6 +1928,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1785,7 +1957,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_C_shift",
@@ -1795,7 +1967,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_D_175728",
@@ -1806,6 +1978,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1831,7 +2007,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05_mono_right_t2_E_175807",
@@ -1842,6 +2018,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1867,7 +2047,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05_mono_right_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05b_mono_right_ext1_t2_A_173156",
@@ -1877,7 +2057,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05b_mono_right_ext1_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E05b_mono_right_ext1_t2_C_shift",
@@ -1887,7 +2067,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E05b_mono_right_ext1_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E06_td_off_t2_A_173156",
@@ -1898,6 +2078,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 9.8,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1923,7 +2107,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:44:59"
  },
  {
   "轮名": "E06_td_off_t2_B_175551",
@@ -1934,6 +2118,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -1959,7 +2147,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_B_shift",
@@ -1969,7 +2157,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_C_175659",
@@ -1980,6 +2168,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2005,7 +2197,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_C_shift",
@@ -2015,7 +2207,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:36"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_D_175728",
@@ -2026,6 +2218,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2051,7 +2247,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_E_175807",
@@ -2062,6 +2258,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2087,7 +2287,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E06_td_off_t2_E_shift",
@@ -2097,7 +2297,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E06_td_off_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+20ms_t2_B_shift",
@@ -2107,7 +2307,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+20ms_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+20ms_t2_C_shift",
@@ -2117,7 +2317,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+20ms_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+20ms_t2_E_shift",
@@ -2127,7 +2327,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+20ms_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+40ms_t2_B_shift",
@@ -2137,7 +2337,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+40ms_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+40ms_t2_C_shift",
@@ -2147,7 +2347,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+40ms_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_+40ms_t2_E_shift",
@@ -2157,7 +2357,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_+40ms_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-20ms_t2_B_shift",
@@ -2167,7 +2367,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-20ms_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-20ms_t2_C_shift",
@@ -2177,7 +2377,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-20ms_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-20ms_t2_E_shift",
@@ -2187,7 +2387,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-20ms_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-40ms_t2_B_shift",
@@ -2197,7 +2397,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-40ms_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-40ms_t2_C_shift",
@@ -2207,7 +2407,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-40ms_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E07_td_-40ms_t2_E_shift",
@@ -2217,7 +2417,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E07_td_-40ms_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E08_feat_dense_t2_B_175551",
@@ -2228,6 +2428,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2253,7 +2457,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E08_feat_dense_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E08_feat_dense_t2_C_175659",
@@ -2264,6 +2468,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2289,7 +2497,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E08_feat_dense_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E08_feat_dense_t2_E_175807",
@@ -2300,6 +2508,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2325,7 +2537,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E08_feat_dense_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:00"
  },
  {
   "轮名": "E09_robust_t2_B_175551",
@@ -2336,6 +2548,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2361,7 +2577,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E09_robust_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E09_robust_t2_C_175659",
@@ -2372,6 +2588,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2397,7 +2617,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E09_robust_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E09_robust_t2_E_175807",
@@ -2408,6 +2628,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2433,7 +2657,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E09_robust_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E10_solver_t2_B_175551",
@@ -2444,6 +2668,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2469,7 +2697,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E10_solver_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E10_solver_t2_C_175659",
@@ -2480,6 +2708,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2505,7 +2737,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E10_solver_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E10_solver_t2_E_175807",
@@ -2516,6 +2748,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2541,7 +2777,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E10_solver_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:37"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E11_kf_dense_t2_B_175551",
@@ -2552,6 +2788,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 0.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2577,7 +2817,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E11_kf_dense_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E11_kf_dense_t2_C_175659",
@@ -2588,6 +2828,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2613,7 +2857,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E11_kf_dense_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E11_kf_dense_t2_E_175807",
@@ -2624,6 +2868,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -2649,7 +2897,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E11_kf_dense_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_xm003_t2_A_173156",
@@ -2659,7 +2907,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_xm003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_xm003_t2_B_shift",
@@ -2669,7 +2917,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_xm003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_xp003_t2_A_173156",
@@ -2679,7 +2927,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_xp003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_xp003_t2_B_shift",
@@ -2689,7 +2937,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_xp003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_ym003_t2_A_173156",
@@ -2699,7 +2947,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_ym003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_ym003_t2_B_shift",
@@ -2709,7 +2957,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_ym003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_yp003_t2_A_173156",
@@ -2719,7 +2967,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_yp003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_yp003_t2_B_shift",
@@ -2729,7 +2977,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_yp003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_zm003_t2_A_173156",
@@ -2739,7 +2987,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_zm003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_zm003_t2_B_shift",
@@ -2749,7 +2997,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_zm003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_zp003_t2_A_173156",
@@ -2759,7 +3007,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_zp003_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E12_t_zp003_t2_B_shift",
@@ -2769,7 +3017,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E12_t_zp003_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_xm2deg_t2_A_173156",
@@ -2779,7 +3027,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_xm2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_xm2deg_t2_B_shift",
@@ -2789,7 +3037,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_xm2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_xp2deg_t2_A_173156",
@@ -2799,7 +3047,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_xp2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_xp2deg_t2_B_shift",
@@ -2809,7 +3057,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_xp2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_ym2deg_t2_A_173156",
@@ -2819,7 +3067,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_ym2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_ym2deg_t2_B_shift",
@@ -2829,7 +3077,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_ym2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_yp2deg_t2_A_173156",
@@ -2839,7 +3087,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_yp2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_yp2deg_t2_B_shift",
@@ -2849,7 +3097,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_yp2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_zm2deg_t2_A_173156",
@@ -2859,7 +3107,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_zm2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_zm2deg_t2_B_shift",
@@ -2869,7 +3117,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_zm2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_zp2deg_t2_A_173156",
@@ -2879,7 +3127,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_zp2deg_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E13_R_zp2deg_t2_B_shift",
@@ -2889,7 +3137,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E13_R_zp2deg_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr001_t2_C_shift",
@@ -2899,7 +3147,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr001_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr004_t2_C_shift",
@@ -2909,7 +3157,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr004_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr010_t2_B_shift",
@@ -2919,7 +3167,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr010_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr010_t2_C_shift",
@@ -2929,7 +3177,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr010_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr010_t2_E_shift",
@@ -2939,7 +3187,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr010_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc005_gyr020_t2_C_shift",
@@ -2949,7 +3197,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc005_gyr020_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc020_gyr001_t2_C_shift",
@@ -2959,7 +3207,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc020_gyr001_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc020_gyr004_t2_C_shift",
@@ -2969,7 +3217,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc020_gyr004_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc020_gyr010_t2_C_shift",
@@ -2979,7 +3227,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc020_gyr010_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc020_gyr020_t2_C_shift",
@@ -2989,7 +3237,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc020_gyr020_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr001_t2_C_shift",
@@ -2999,7 +3247,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr001_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr004_t2_C_shift",
@@ -3009,7 +3257,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr004_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr010_t2_C_shift",
@@ -3019,7 +3267,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr010_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr020_t2_B_shift",
@@ -3029,7 +3277,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr020_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr020_t2_C_shift",
@@ -3039,7 +3287,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr020_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc050_gyr020_t2_E_shift",
@@ -3049,7 +3297,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc050_gyr020_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr001_t2_C_shift",
@@ -3059,7 +3307,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr001_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr004_t2_C_shift",
@@ -3069,7 +3317,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr004_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr010_t2_C_shift",
@@ -3079,7 +3327,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr010_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr020_t2_B_shift",
@@ -3089,7 +3337,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr020_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr020_t2_C_shift",
@@ -3099,7 +3347,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr020_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc100_gyr020_t2_E_shift",
@@ -3109,7 +3357,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc100_gyr020_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr001_t2_C_shift",
@@ -3119,7 +3367,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr001_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr004_t2_C_shift",
@@ -3129,7 +3377,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr004_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr010_t2_B_shift",
@@ -3139,7 +3387,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr010_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr010_t2_C_shift",
@@ -3149,7 +3397,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr010_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr010_t2_E_shift",
@@ -3159,7 +3407,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr010_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr020_t2_B_shift",
@@ -3169,7 +3417,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr020_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr020_t2_C_shift",
@@ -3179,7 +3427,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr020_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E15_acc200_gyr020_t2_E_shift",
@@ -3189,7 +3437,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E15_acc200_gyr020_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt150_md15_t2_C_shift",
@@ -3199,7 +3447,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt150_md15_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt150_md20_t2_C_shift",
@@ -3209,7 +3457,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt150_md20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt150_md30_t2_C_shift",
@@ -3219,7 +3467,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt150_md30_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt200_md15_t2_C_shift",
@@ -3229,7 +3477,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt200_md15_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt200_md20_t2_C_shift",
@@ -3239,7 +3487,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt200_md20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt200_md30_t2_C_shift",
@@ -3249,7 +3497,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt200_md30_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt250_md15_t2_C_shift",
@@ -3259,7 +3507,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt250_md15_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt250_md20_t2_C_shift",
@@ -3269,7 +3517,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt250_md20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt250_md30_t2_C_shift",
@@ -3279,7 +3527,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt250_md30_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt300_md15_t2_C_shift",
@@ -3289,7 +3537,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt300_md15_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt300_md20_t2_C_shift",
@@ -3299,7 +3547,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt300_md20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E16_cnt300_md30_t2_C_shift",
@@ -3309,7 +3557,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E16_cnt300_md30_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st040_kp05_t2_C_shift",
@@ -3319,7 +3567,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st040_kp05_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st040_kp10_t2_C_shift",
@@ -3329,7 +3577,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st040_kp10_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st040_kp20_t2_C_shift",
@@ -3339,7 +3587,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st040_kp20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st060_kp05_t2_C_shift",
@@ -3349,7 +3597,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st060_kp05_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st060_kp10_t2_C_shift",
@@ -3359,7 +3607,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st060_kp10_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st060_kp20_t2_C_shift",
@@ -3369,7 +3617,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st060_kp20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st080_kp05_t2_C_shift",
@@ -3379,7 +3627,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st080_kp05_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st080_kp10_t2_C_shift",
@@ -3389,7 +3637,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st080_kp10_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E17_st080_kp20_t2_C_shift",
@@ -3399,7 +3647,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E17_st080_kp20_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E18_60hz320_t2_A_60hz320",
@@ -3409,7 +3657,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E18_60hz320_t2_A_60hz320",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E18_60hz320_t2_C_60hz320",
@@ -3419,7 +3667,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E18_60hz320_t2_C_60hz320",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E18_halfres_t2_C_half",
@@ -3429,7 +3677,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E18_halfres_t2_C_half",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E20REG_t2_A_173156",
@@ -3440,6 +3688,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 29.4,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3465,7 +3717,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20REG_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E20TEST_t2_B_175551",
@@ -3476,6 +3728,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3501,7 +3757,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20TEST_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:01"
  },
  {
   "轮名": "E20_ext1_td0_t2_A_173156",
@@ -3512,6 +3768,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 29.4,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3537,7 +3797,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_A_60hz640",
@@ -3547,7 +3807,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_A_60hz640",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_A_clean",
@@ -3557,7 +3817,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_A_clean",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_B_175551",
@@ -3568,6 +3828,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3593,7 +3857,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_B_175551/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_B_shift",
@@ -3603,7 +3867,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_C_175659",
@@ -3614,6 +3878,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3639,7 +3907,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_C_175659/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_C_60hz640",
@@ -3649,7 +3917,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_C_60hz640",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_C_dec2",
@@ -3659,7 +3927,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_C_dec2",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_C_shift",
@@ -3669,7 +3937,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_D_175728",
@@ -3680,6 +3948,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3705,7 +3977,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_D_175728/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_E_175807",
@@ -3716,6 +3988,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3741,7 +4017,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_E_175807/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E20_ext1_td0_t2_E_shift",
@@ -3751,7 +4027,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E20_ext1_td0_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E21_combo_md15_st080_t2_A_173156",
@@ -3761,7 +4037,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E21_combo_md15_st080_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E21_combo_md15_st080_t2_B_shift",
@@ -3771,7 +4047,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E21_combo_md15_st080_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E21_combo_md15_st080_t2_C_shift",
@@ -3781,7 +4057,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E21_combo_md15_st080_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "E21_combo_md15_st080_t2_E_shift",
@@ -3791,7 +4067,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/E21_combo_md15_st080_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:26:38"
+  "扫描时刻": "2026-09-30T02:45:02"
  },
  {
   "轮名": "P1BS2_p1b_shifted2",
@@ -3802,6 +4078,10 @@
   "形态": "爆散",
   "t*_s": 25.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3827,7 +4107,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/P1BS2_p1b_shifted2/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:39"
+  "扫描时刻": "2026-09-30T02:45:03"
  },
  {
   "轮名": "P1BS_p1b_shifted",
@@ -3838,6 +4118,10 @@
   "形态": "爆散",
   "t*_s": 5.8,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3863,7 +4147,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/P1BS_p1b_shifted/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:40"
+  "扫描时刻": "2026-09-30T02:45:03"
  },
  {
   "轮名": "P1B_t2w5_p1_210129",
@@ -3874,6 +4158,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -3899,7 +4187,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/P1B_t2w5_p1_210129/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:40"
+  "扫描时刻": "2026-09-30T02:45:03"
  },
  {
   "轮名": "R14B_E23_t2_A_173156",
@@ -3910,6 +4198,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 31.3,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.5022,
   "Bas中位": 0.2852,
   "Bgs峰": 0.00756,
@@ -3935,7 +4227,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14B_E23_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:40"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14B_E23_t2_B_shift",
@@ -3946,6 +4238,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 30.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6368,
   "Bas中位": 0.1147,
   "Bgs峰": 0.00233,
@@ -3971,7 +4267,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14B_E23_t2_B_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:40"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14B_E23_t2_C_shift",
@@ -3982,6 +4278,10 @@
   "形态": "爆散",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6956,
   "Bas中位": 0.0359,
   "Bgs峰": 0.03019,
@@ -4007,7 +4307,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14B_E23_t2_C_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14C_E20_t2_C_shift",
@@ -4018,6 +4318,10 @@
   "形态": "爆散",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6933,
   "Bas中位": 0.0381,
   "Bgs峰": 0.03046,
@@ -4043,7 +4347,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14C_E20_t2_C_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14_E20_t2v3_route_215016",
@@ -4054,6 +4358,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.3794,
   "Bas中位": 0.1869,
   "Bgs峰": 0.00244,
@@ -4079,7 +4387,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E20_t2v3_route_215016/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14_E22_t2_A_173156",
@@ -4090,6 +4398,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 31.2,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.4046,
   "Bas中位": 0.2555,
   "Bgs峰": 0.00731,
@@ -4115,7 +4427,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E22_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:04"
  },
  {
   "轮名": "R14_E22_t2_B_shift",
@@ -4126,6 +4438,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 30.3,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6368,
   "Bas中位": 0.1251,
   "Bgs峰": 0.00233,
@@ -4151,7 +4467,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E22_t2_B_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E22_t2_C_shift",
@@ -4162,6 +4478,10 @@
   "形态": "爆散",
   "t*_s": 1.5,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.1804,
   "Bas中位": 0.0606,
   "Bgs峰": 0.00836,
@@ -4187,7 +4507,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E22_t2_C_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:41"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E22_t2v3_route_215016",
@@ -4198,6 +4518,10 @@
   "形态": "爆散",
   "t*_s": 29.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.362,
   "Bas中位": 0.1354,
   "Bgs峰": 0.0026,
@@ -4223,7 +4547,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E22_t2v3_route_215016/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:42"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E23_t2_A_173156",
@@ -4234,6 +4558,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -4259,7 +4587,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E23_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:42"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E23_t2_B_shift",
@@ -4270,6 +4598,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.0536,
   "Bas中位": 0.014,
   "Bgs峰": 0.00233,
@@ -4295,7 +4627,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E23_t2_B_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:42"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E23_t2_C_shift",
@@ -4306,6 +4638,10 @@
   "形态": "爆散",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.6956,
   "Bas中位": 0.0359,
   "Bgs峰": 0.03019,
@@ -4331,7 +4667,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E23_t2_C_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:42"
+  "扫描时刻": "2026-09-30T02:45:05"
  },
  {
   "轮名": "R14_E23_t2v3_route_215016",
@@ -4342,6 +4678,10 @@
   "形态": "爆散",
   "t*_s": 29.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.362,
   "Bas中位": 0.0123,
   "Bgs峰": 0.0026,
@@ -4367,7 +4707,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R14_E23_t2v3_route_215016/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:43"
+  "扫描时刻": "2026-09-30T02:45:06"
  },
  {
   "轮名": "R15E20_t2_A_173156",
@@ -4378,6 +4718,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 29.4,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 2.1501,
   "Bas中位": 0.0487,
   "Bgs峰": 0.04759,
@@ -4403,7 +4747,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R15E20_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:43"
+  "扫描时刻": "2026-09-30T02:45:06"
  },
  {
   "轮名": "R2DET1_t2_C_033818_shift",
@@ -4414,6 +4758,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8496,
   "Bas中位": 0.2203,
   "Bgs峰": 0.00329,
@@ -4439,7 +4787,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R2DET1_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:43"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R2DET2_t2_C_033818_shift",
@@ -4450,6 +4798,10 @@
   "形态": "爆散",
   "t*_s": 5.8,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.7413,
   "Bas中位": 0.1247,
   "Bgs峰": 0.00289,
@@ -4475,7 +4827,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R2DET2_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:43"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R2DET3_t2_C_033818_shift",
@@ -4486,6 +4838,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8496,
   "Bas中位": 0.2203,
   "Bgs峰": 0.00329,
@@ -4511,7 +4867,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R2DET3_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:43"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R2DS1_t2_C_033818_shift",
@@ -4522,6 +4878,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8496,
   "Bas中位": 0.2203,
   "Bgs峰": 0.00329,
@@ -4547,7 +4907,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R2DS1_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R2DS2_t2_C_033818_shift",
@@ -4558,6 +4918,10 @@
   "形态": "爆散",
   "t*_s": 5.8,
   "分叉类型": "odom先病(优化器窗口解先毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.7413,
   "Bas中位": 0.1247,
   "Bgs峰": 0.00289,
@@ -4583,7 +4947,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R2DS2_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R33F_t2_C_033818_shift",
@@ -4594,6 +4958,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.7795,
   "Bas中位": 0.2429,
   "Bgs峰": 0.00249,
@@ -4619,7 +4987,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33F_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R33G_t2_C_033818_shift",
@@ -4630,6 +4998,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.8746,
   "Bas中位": 0.163,
   "Bgs峰": 0.00275,
@@ -4655,7 +5027,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33G_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:07"
  },
  {
   "轮名": "R33H_t2_C_033818_shift",
@@ -4666,6 +5038,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8496,
   "Bas中位": 0.2203,
   "Bgs峰": 0.00329,
@@ -4691,7 +5067,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33H_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33I_t2_C_033818_shift",
@@ -4702,6 +5078,10 @@
   "形态": "爆散",
   "t*_s": 3.6,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.7647,
   "Bas中位": 0.1644,
   "Bgs峰": 0.00255,
@@ -4727,7 +5107,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33I_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33N_t2_C_031448",
@@ -4738,6 +5118,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.0,
   "Bas中位": 0.0,
   "Bgs峰": 0.0,
@@ -4763,7 +5147,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33N_t2_C_031448/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33N_t2_C_032526",
@@ -4774,6 +5158,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.0,
   "Bas中位": 0.0,
   "Bgs峰": 0.0,
@@ -4799,7 +5187,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33N_t2_C_032526/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33S2_t2_C_032526_shift",
@@ -4810,6 +5198,10 @@
   "形态": "爆散",
   "t*_s": 12.3,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.9573,
   "Bas中位": 0.6669,
   "Bgs峰": 0.00291,
@@ -4835,7 +5227,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33S2_t2_C_032526_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33S_t2_C_032526_shift",
@@ -4846,6 +5238,10 @@
   "形态": "爆散",
   "t*_s": 12.3,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.0236,
   "Bas中位": 0.8338,
   "Bgs峰": 0.00301,
@@ -4871,7 +5267,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33S_t2_C_032526_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:44"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33_t2_A_173156",
@@ -4882,6 +5278,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 29.4,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 2.1501,
   "Bas中位": 0.0487,
   "Bgs峰": 0.04759,
@@ -4907,7 +5307,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:45"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33_t2_B_shift",
@@ -4918,6 +5318,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 30.2,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.778,
   "Bas中位": 0.0351,
   "Bgs峰": 0.00273,
@@ -4943,7 +5347,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33_t2_B_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:45"
+  "扫描时刻": "2026-09-30T02:45:08"
  },
  {
   "轮名": "R33_t2_C_shift",
@@ -4954,6 +5358,10 @@
   "形态": "爆散",
   "t*_s": 0.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.4571,
   "Bas中位": 0.0235,
   "Bgs峰": 0.03046,
@@ -4979,7 +5387,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33_t2_C_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:45"
+  "扫描时刻": "2026-09-30T02:45:09"
  },
  {
   "轮名": "R33_t2v3_route_215016",
@@ -4990,6 +5398,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 29.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8241,
   "Bas中位": 0.4183,
   "Bgs峰": 0.3381,
@@ -5015,7 +5427,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R33_t2v3_route_215016/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:47"
+  "扫描时刻": "2026-09-30T02:45:11"
  },
  {
   "轮名": "R4A25_t2_A_173156",
@@ -5026,6 +5438,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 6.3,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.443,
   "Bas中位": 0.0587,
   "Bgs峰": 0.00206,
@@ -5051,7 +5467,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R4A25_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:48"
+  "扫描时刻": "2026-09-30T02:45:11"
  },
  {
   "轮名": "R4A30_t2_A_173156",
@@ -5062,6 +5478,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 0.2,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 0.8075,
   "Bas中位": 0.5638,
   "Bgs峰": 0.00547,
@@ -5087,7 +5507,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R4A30_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:48"
+  "扫描时刻": "2026-09-30T02:45:11"
  },
  {
   "轮名": "R4A35_t2_A_173156",
@@ -5098,6 +5518,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.3732,
   "Bas中位": 0.6212,
   "Bgs峰": 0.00955,
@@ -5123,7 +5547,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R4A35_t2_A_173156/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:48"
+  "扫描时刻": "2026-09-30T02:45:11"
  },
  {
   "轮名": "R4C18_t2_C_033818_shift",
@@ -5134,6 +5558,10 @@
   "形态": "爆散",
   "t*_s": 6.7,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": 1.976,
   "Bas中位": 0.5329,
   "Bgs峰": 0.00583,
@@ -5159,7 +5587,7 @@
   "DB判决": "FAIL-发散(爆散)",
   "缺失原因": "",
   "证据路径": "/home/uav/sitl_sim/t2_results/R4C18_t2_C_033818_shift/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:48"
+  "扫描时刻": "2026-09-30T02:45:11"
  },
  {
   "轮名": "R5REP_t2v3_route_103935",
@@ -5167,7 +5595,7 @@
   "DB判决": "SCAN-ERROR",
   "缺失原因": "analyze 异常: ROSBagFormatException('expected \"op\" field in record')",
   "证据路径": "/home/uav/sitl_sim/t2_results/R5REP_t2v3_route_103935/vins_out.bag",
-  "扫描时刻": "2026-09-30T02:26:48"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "R6_u5v2",
@@ -5177,7 +5605,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/R6_u5v2",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1DBG_t2_B_175551",
@@ -5187,7 +5615,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1DBG_t2_B_175551",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FINAL_t2_A_173156",
@@ -5197,7 +5625,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FINAL_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FIX_t2_A_173156",
@@ -5207,7 +5635,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FIX_t2_A_173156",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FIX_t2_B_shift",
@@ -5217,7 +5645,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FIX_t2_B_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FIX_t2_C_shift",
@@ -5227,7 +5655,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FIX_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FIX_t2_D_shift",
@@ -5237,7 +5665,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FIX_t2_D_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U1FIX_t2_E_shift",
@@ -5247,7 +5675,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U1FIX_t2_E_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U4AD_E21_t2_AD_concat",
@@ -5257,7 +5685,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U4AD_E21_t2_AD_concat",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U4AD_t2_AD_concat",
@@ -5267,7 +5695,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U4AD_t2_AD_concat",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U7P1B_t2w5_p1b_shift",
@@ -5277,7 +5705,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U7P1B_t2w5_p1b_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "U9P1B_OFF_t2w5_p1_093114",
@@ -5287,7 +5715,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/U9P1B_OFF_t2w5_p1_093114",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_012315",
@@ -5297,7 +5725,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_012315",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_012315_r1_t2_C_shift",
@@ -5307,7 +5735,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_012315_r1_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_012315_r2_t2_C_shift",
@@ -5317,7 +5745,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_012315_r2_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_012315_r3_t2_C_shift",
@@ -5327,7 +5755,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_012315_r3_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_035234",
@@ -5337,7 +5765,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_035234",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_035234_r1_t2_C_shift",
@@ -5347,7 +5775,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_035234_r1_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_035234_r2_t2_C_shift",
@@ -5357,7 +5785,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_035234_r2_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "det_t2_C_shift_035234_r3_t2_C_shift",
@@ -5367,7 +5795,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/det_t2_C_shift_035234_r3_t2_C_shift",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "w1",
@@ -5377,7 +5805,7 @@
   "DB判决": "无袋",
   "缺失原因": "目录无 flight.bag/vins_out.bag(以无袋行入账)",
   "证据路径": "/home/uav/sitl_sim/t2_results/w1",
-  "扫描时刻": "2026-09-30T02:28:40"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "flight_2026-09-23_212510",
@@ -5388,6 +5816,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 10.9,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5413,7 +5845,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-23_212510.bag",
-  "扫描时刻": "2026-09-30T02:28:41"
+  "扫描时刻": "2026-09-30T02:45:12"
  },
  {
   "轮名": "flight_2026-09-23_214433",
@@ -5424,6 +5856,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 5.8,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5449,7 +5885,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-23_214433.bag",
-  "扫描时刻": "2026-09-30T02:28:41"
+  "扫描时刻": "2026-09-30T02:45:13"
  },
  {
   "轮名": "flight_2026-09-23_221002",
@@ -5460,6 +5896,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 4.7,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5485,7 +5925,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-23_221002.bag",
-  "扫描时刻": "2026-09-30T02:28:42"
+  "扫描时刻": "2026-09-30T02:45:13"
  },
  {
   "轮名": "flight_2026-09-26_175942",
@@ -5496,6 +5936,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 100.9,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5521,7 +5965,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_175942.bag",
-  "扫描时刻": "2026-09-30T02:28:43"
+  "扫描时刻": "2026-09-30T02:45:14"
  },
  {
   "轮名": "flight_2026-09-26_190237",
@@ -5532,6 +5976,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 85.6,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5557,7 +6005,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_190237.bag",
-  "扫描时刻": "2026-09-30T02:28:50"
+  "扫描时刻": "2026-09-30T02:45:21"
  },
  {
   "轮名": "flight_2026-09-26_194757",
@@ -5568,6 +6016,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 12.6,
+  "t_poscmd_first_s": 53.6,
+  "n_goals": 3,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5593,7 +6045,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_194757.bag",
-  "扫描时刻": "2026-09-30T02:28:54"
+  "扫描时刻": "2026-09-30T02:45:25"
  },
  {
   "轮名": "flight_2026-09-26_195352",
@@ -5604,6 +6056,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 97.9,
+  "t_poscmd_first_s": 0.0,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5629,7 +6085,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_195352.bag",
-  "扫描时刻": "2026-09-30T02:29:01"
+  "扫描时刻": "2026-09-30T02:45:31"
  },
  {
   "轮名": "flight_2026-09-26_195352.orig",
@@ -5637,7 +6093,7 @@
   "DB判决": "SCAN-ERROR",
   "缺失原因": "analyze 异常: ROSBagUnindexedException('Unindexed bag')",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_195352.orig.bag",
-  "扫描时刻": "2026-09-30T02:29:01"
+  "扫描时刻": "2026-09-30T02:45:31"
  },
  {
   "轮名": "flight_2026-09-26_202121",
@@ -5648,6 +6104,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 5.1,
+  "t_poscmd_first_s": 33.1,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5673,7 +6133,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_202121.bag",
-  "扫描时刻": "2026-09-30T02:29:07"
+  "扫描时刻": "2026-09-30T02:45:38"
  },
  {
   "轮名": "flight_2026-09-26_203339",
@@ -5684,6 +6144,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 406.4,
+  "t_poscmd_first_s": 0.0,
+  "n_goals": 9,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5709,7 +6173,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_203339.bag",
-  "扫描时刻": "2026-09-30T02:29:23"
+  "扫描时刻": "2026-09-30T02:45:52"
  },
  {
   "轮名": "flight_2026-09-26_204338",
@@ -5720,6 +6184,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 5.2,
+  "t_poscmd_first_s": 43.3,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5745,7 +6213,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_204338.bag",
-  "扫描时刻": "2026-09-30T02:29:29"
+  "扫描时刻": "2026-09-30T02:45:58"
  },
  {
   "轮名": "flight_2026-09-26_205156",
@@ -5756,6 +6224,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 172.2,
+  "t_poscmd_first_s": 0.0,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5781,7 +6253,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_205156.bag",
-  "扫描时刻": "2026-09-30T02:29:46"
+  "扫描时刻": "2026-09-30T02:46:13"
  },
  {
   "轮名": "flight_2026-09-26_205817",
@@ -5792,6 +6264,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 4.2,
+  "t_poscmd_first_s": 551.4,
+  "n_goals": 3,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5817,7 +6293,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_205817.bag",
-  "扫描时刻": "2026-09-30T02:29:56"
+  "扫描时刻": "2026-09-30T02:46:23"
  },
  {
   "轮名": "flight_2026-09-26_220814",
@@ -5828,6 +6304,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 273.3,
+  "t_poscmd_first_s": 384.0,
+  "n_goals": 9,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5853,7 +6333,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_220814.bag",
-  "扫描时刻": "2026-09-30T02:31:39"
+  "扫描时刻": "2026-09-30T02:48:17"
  },
  {
   "轮名": "flight_2026-09-26_222034",
@@ -5864,6 +6344,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 273.3,
+  "t_poscmd_first_s": 384.0,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5889,7 +6373,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_222034.bag",
-  "扫描时刻": "2026-09-30T02:33:09"
+  "扫描时刻": "2026-09-30T02:49:32"
  },
  {
   "轮名": "flight_2026-09-26_224815",
@@ -5900,6 +6384,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 273.3,
+  "t_poscmd_first_s": 384.0,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5925,7 +6413,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_224815.bag",
-  "扫描时刻": "2026-09-30T02:33:48"
+  "扫描时刻": "2026-09-30T02:50:17"
  },
  {
   "轮名": "flight_2026-09-26_230126",
@@ -5936,6 +6424,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 276.8,
+  "t_poscmd_first_s": 384.0,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5961,7 +6453,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_230126.bag",
-  "扫描时刻": "2026-09-30T02:34:04"
+  "扫描时刻": "2026-09-30T02:50:36"
  },
  {
   "轮名": "flight_2026-09-26_230801",
@@ -5972,6 +6464,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": 4.2,
+  "t_poscmd_first_s": 111.4,
+  "n_goals": 6,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -5997,7 +6493,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/flight_2026-09-26_230801.bag",
-  "扫描时刻": "2026-09-30T02:34:15"
+  "扫描时刻": "2026-09-30T02:50:50"
  },
  {
   "轮名": "t2v3_ground_202520",
@@ -6008,6 +6504,10 @@
   "形态": "无帧跳变(慢劣化或未发散)",
   "t*_s": null,
   "分叉类型": "",
+  "最近事件": "",
+  "t_takeoff_s": null,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -6033,7 +6533,7 @@
   "DB判决": "健康-无帧跳变",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/t2v3_ground_202520.bag",
-  "扫描时刻": "2026-09-30T02:34:18"
+  "扫描时刻": "2026-09-30T02:50:54"
  },
  {
   "轮名": "t2v3_hover_203248",
@@ -6044,6 +6544,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 31.1,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@27.5s (Δ=3.6s)",
+  "t_takeoff_s": 27.5,
+  "t_poscmd_first_s": null,
+  "n_goals": 0,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -6069,7 +6573,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/t2v3_hover_203248.bag",
-  "扫描时刻": "2026-09-30T02:34:27"
+  "扫描时刻": "2026-09-30T02:51:06"
  },
  {
   "轮名": "t2v3_route_112652",
@@ -6080,6 +6584,10 @@
   "形态": "小跳/渐进劣化",
   "t*_s": 76.1,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "goal@76.3s (Δ=-0.2s)",
+  "t_takeoff_s": 26.5,
+  "t_poscmd_first_s": 68.4,
+  "n_goals": 98,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -6105,7 +6613,7 @@
   "DB判决": "FAIL-劣化",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/t2v3_route_112652.bag",
-  "扫描时刻": "2026-09-30T02:34:33"
+  "扫描时刻": "2026-09-30T02:51:23"
  },
  {
   "轮名": "t2v3_route_215016",
@@ -6116,6 +6624,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 29.9,
   "分叉类型": "同时跳变(共同上游:优化器解毒化传播)",
+  "最近事件": "t_takeoff@26.7s (Δ=3.2s)",
+  "t_takeoff_s": 26.7,
+  "t_poscmd_first_s": null,
+  "n_goals": 97,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -6141,7 +6653,7 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/t2v3_route_215016.bag",
-  "扫描时刻": "2026-09-30T02:35:16"
+  "扫描时刻": "2026-09-30T02:52:07"
  },
  {
   "轮名": "t2v3_w2b_121141",
@@ -6152,6 +6664,10 @@
   "形态": "数值溢出型(含 extreme/非有限帧)",
   "t*_s": 41.8,
   "分叉类型": "仅odom跳变(传播解尚稳:窗口解单侧毒)",
+  "最近事件": "t_takeoff(armed)@38.1s (Δ=3.7s)",
+  "t_takeoff_s": 38.1,
+  "t_poscmd_first_s": null,
+  "n_goals": 3,
   "Bas峰": null,
   "Bas中位": null,
   "Bgs峰": null,
@@ -6177,6 +6693,6 @@
   "DB判决": "FAIL-数值溢出",
   "缺失原因": "T2diag(无日志或旧二进制无插桩)",
   "证据路径": "/home/uav/sitl_sim/bags/t2v3_w2b_121141.bag",
-  "扫描时刻": "2026-09-30T02:35:23"
+  "扫描时刻": "2026-09-30T02:52:16"
  }
 ]
