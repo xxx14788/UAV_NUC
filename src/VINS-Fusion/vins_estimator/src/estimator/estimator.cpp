@@ -485,6 +485,8 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     ROS_DEBUG("Solving %d", frame_count);
     ROS_DEBUG("number of feature: %d", f_manager.getFeatureCount());
     Headers[frame_count] = header;
+    // T2-WA1: stamp header time for [T2depth] census dumps (covers all triangulate calls + slide)
+    f_manager.t2_cur_t = header;
 
     ImageFrame imageframe(image, header);
     imageframe.pre_integration = tmp_pre_integration;

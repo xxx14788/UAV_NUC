@@ -314,12 +314,65 @@ void FeatureManager::initFramePoseByPnP(int frameCnt, Vector3d Ps[], Matrix3d Rs
     }
 }
 
+
+// T2-WA1: SVD second-solution depth for a (stereo) feature - cross-check data
+// source for the depth-domain gate design (stereo solution vs multi-frame SVD).
+static bool t2SvdDepth(const FeaturePerId &fp, int frameCnt, Vector3d Ps[], Matrix3d Rs[],
+                       Vector3d tic[], Matrix3d ric[], double &depth_out)
+{
+    if (fp.feature_per_frame.size() < 2) return false;
+    if (fp.start_frame + (int)fp.feature_per_frame.size() - 1 > frameCnt) return false;
+    int imu_i = fp.start_frame, imu_j = imu_i - 1;
+    Eigen::MatrixXd A(2 * fp.feature_per_frame.size(), 4);
+    int idx = 0;
+    Eigen::Vector3d t0 = Ps[imu_i] + Rs[imu_i] * tic[0];
+    Eigen::Matrix3d R0 = Rs[imu_i] * ric[0];
+    for (auto &fr : fp.feature_per_frame)
+    {
+        imu_j++;
+        Eigen::Vector3d t1 = Ps[imu_j] + Rs[imu_j] * tic[0];
+        Eigen::Matrix3d R1 = Rs[imu_j] * ric[0];
+        Eigen::Vector3d t = R0.transpose() * (t1 - t0);
+        Eigen::Matrix3d R = R0.transpose() * R1;
+        Eigen::Matrix<double, 3, 4> P;
+        P.leftCols<3>() = R.transpose();
+        P.rightCols<1>() = -R.transpose() * t;
+        Eigen::Vector3d f = fr.point.normalized();
+        A.row(idx++) = f[0] * P.row(2) - f[2] * P.row(0);
+        A.row(idx++) = f[1] * P.row(2) - f[2] * P.row(1);
+    }
+    Eigen::Vector4d V = Eigen::JacobiSVD<Eigen::MatrixXd>(A, Eigen::ComputeThinV).matrixV().rightCols<1>();
+    if (std::fabs(V[3]) < 1e-12) return false;
+    double d = V[2] / V[3];
+    if (!(d > 0) || !std::isfinite(d)) return false;
+    depth_out = d;
+    return true;
+}
+
 void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 {
     for (auto &it_per_id : feature)
     {
         if (it_per_id.estimated_depth > 0)
+        {
+            // T2-WA1 xcross: periodic stereo-vs-SVD dual-solution dump (census data source)
+            if (it_per_id.feature_per_frame.size() >= 2 &&
+                it_per_id.feature_per_frame[0].is_stereo &&
+                frameCnt - it_per_id.t2_xcheck_frame >= 5)
+            {
+                double d2 = -1.0;
+                if (t2SvdDepth(it_per_id, frameCnt, Ps, Rs, tic, ric, d2) && d2 > 0)
+                {
+                    double mx = std::max(it_per_id.estimated_depth, d2);
+                    double rel = (mx > 1e-9) ? std::fabs(it_per_id.estimated_depth - d2) / mx : 0.0;
+                    printf("[T2xcross] t=%.4f id=%d est=%.4f svd=%.4f rel=%.4f track=%d sf=%d\n",
+                           t2_cur_t, it_per_id.feature_id, it_per_id.estimated_depth, d2, rel,
+                           (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame);
+                    it_per_id.t2_xcheck_frame = frameCnt;
+                }
+            }
             continue;
+        }
 
         if(STEREO && it_per_id.feature_per_frame[0].is_stereo)
         {
@@ -349,6 +402,17 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             Eigen::Vector3d localPoint;
             localPoint = leftPose.leftCols<3>() * point3d + leftPose.rightCols<1>();
             double depth = localPoint.z();
+            // T2-WA1 census dump: stereo branch
+            {
+                double d2 = -1.0;
+                t2SvdDepth(it_per_id, frameCnt, Ps, Rs, tic, ric, d2);
+                printf("[T2depth] t=%.4f id=%d src=stereo u=%.1f v=%.1f depth=%.4f depth2=%.4f track=%d sf=%d flag=%s\n",
+                       t2_cur_t, it_per_id.feature_id,
+                       it_per_id.feature_per_frame[0].uv.x(), it_per_id.feature_per_frame[0].uv.y(),
+                       (depth > 0) ? depth : INIT_DEPTH, d2,
+                       (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
+                       (depth > 0) ? "ok" : "init_neg");
+            }
             if (depth > 0)
                 it_per_id.estimated_depth = depth;
             else
@@ -384,6 +448,13 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             Eigen::Vector3d localPoint;
             localPoint = leftPose.leftCols<3>() * point3d + leftPose.rightCols<1>();
             double depth = localPoint.z();
+            // T2-WA1 census dump: two-frame motion branch (no right obs -> no cross-solution)
+            printf("[T2depth] t=%.4f id=%d src=motion2 u=%.1f v=%.1f depth=%.4f depth2=-1.0000 track=%d sf=%d flag=%s\n",
+                   t2_cur_t, it_per_id.feature_id,
+                   it_per_id.feature_per_frame[0].uv.x(), it_per_id.feature_per_frame[0].uv.y(),
+                   (depth > 0) ? depth : INIT_DEPTH,
+                   (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
+                   (depth > 0) ? "ok" : "init_neg");
             if (depth > 0)
                 it_per_id.estimated_depth = depth;
             else
@@ -437,6 +508,14 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
         it_per_id.estimated_depth = svd_method;
         //it_per_id->estimated_depth = INIT_DEPTH;
 
+        // T2-WA1 census dump: multi-frame SVD branch (INIT_DEPTH replace at <0.1 exposed)
+        printf("[T2depth] t=%.4f id=%d src=svd u=%.1f v=%.1f depth=%.4f depth2=-1.0000 track=%d sf=%d flag=%s\n",
+               t2_cur_t, it_per_id.feature_id,
+               it_per_id.feature_per_frame[0].uv.x(), it_per_id.feature_per_frame[0].uv.y(),
+               (it_per_id.estimated_depth < 0.1) ? INIT_DEPTH : it_per_id.estimated_depth,
+               (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
+               (it_per_id.estimated_depth < 0.1) ? "init_low" : "ok");
+
         if (it_per_id.estimated_depth < 0.1)
         {
             it_per_id.estimated_depth = INIT_DEPTH;
@@ -486,6 +565,12 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
                 Eigen::Vector3d w_pts_i = marg_R * pts_i + marg_P;
                 Eigen::Vector3d pts_j = new_R.transpose() * (w_pts_i - new_P);
                 double dep_j = pts_j(2);
+                // T2-WA1 census dump: depth transfer on slide - only INIT_DEPTH replacements
+                // (ok-shift is routine transfer, ~1/3 of log volume, no analytic value)
+                if (!(dep_j > 0))
+                    printf("[T2depth] t=%.4f id=%d src=shift u=-1 v=-1 depth=%.4f depth2=-1.0000 track=%d sf=0 flag=%s\n",
+                           t2_cur_t, it->feature_id, INIT_DEPTH,
+                           (int)it->feature_per_frame.size(), "init_neg");
                 if (dep_j > 0)
                     it->estimated_depth = dep_j;
                 else

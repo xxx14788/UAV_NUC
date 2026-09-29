@@ -67,6 +67,7 @@ class FeaturePerId
     int used_num;
     double estimated_depth;
     int solve_flag; // 0 haven't solve yet; 1 solve succ; 2 solve fail;
+    int t2_xcheck_frame = -100;  // T2-WA1 xcross: last frame this feature's stereo-vs-SVD dual-solution was dumped
 
     FeaturePerId(int _feature_id, int _start_frame)
         : feature_id(_feature_id), start_frame(_start_frame),
@@ -107,6 +108,7 @@ class FeatureManager
     double last_average_parallax;
     int new_feature_num;
     int long_track_num;
+    double t2_cur_t = 0.0;  // T2-WA1: current frame stamp for [T2depth] dumps (set by Estimator::solve)
 
   private:
     double compensatedParallax2(const FeaturePerId &it_per_id, int frame_count);
