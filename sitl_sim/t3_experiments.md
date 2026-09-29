@@ -729,3 +729,14 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 4. 周期性:AC 排除 lag<2s 相邻平滑平凡解 + 尖峰间隔中位/CV 双报;R_CAN iv_med=4.32s = 台账"循环"节律实据(AC 因序列短 None 属诚实报空)。
 
 @T2:W-A0 手工口径对账可直接用本件;W-A1 起矩阵/在线复验批跑用 `--csv`;任何阈值改动须重跑 `--selftest` 并把两侧数字记入台账。
+
+## T3 v7.2 Y1.2:forensics 工具升级(溢出安全+双流检测+字段字典)(2026-09-30 夜)
+
+`analysis/vins_divergence_forensics.py` 升级三件:
+1. **溢出安全几何**:3D 距离/包络全部改 math.dist/hypot(内部无中间平方),1e160 级坐标不再 OverflowError;非有限帧(nan/inf)丢弃计数,|坐标|>1e6 计 extreme 帧钳位入几何统计——043355 轮 102m 跳变+数值溢出实证修复。
+2. **双流检测入默认输出**:各流 bag-ts 回退统计 + IMU **header 戳**回退 + **/clock** 回退专列(043355 型污染签名,回退>1000 帧即判决行注记"双流污染嫌疑")。
+3. **forensics.json 字段字典入头注**(新增 stream_health/clock_health/imu.hdr_regression_*/verdict.poisoning_suspect;字段只加不删)。
+
+**自测对账(双侧通过)**:run_X1final_043355(溢出轮)= 数值溢出型形态,零异常,hdr_reg=**16135**/ck_reg=**5371** 与 09-29 判废登记精确一致;run_X1_232055(标准爆散轮)= 爆散 t*=6.9s,流健康全零回退。旧版输出保留为 forensics.json,新版写 forensics_v2.*(A/B 可对照)。
+
+@T1/T2:后续轮法证一律用 v2 口径(带污染嫌疑自动标注);X 线 runbook(Y1.5)将引用。
