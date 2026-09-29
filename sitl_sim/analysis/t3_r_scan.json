@@ -1,0 +1,82 @@
+{
+ "layers": {
+  "L_cur": [
+   {
+    "src": "t2v3_route_112652.bag:imu_propagate",
+    "note": "T2 W1.3 PASS 轮(canonical 在线,当前栈唯一健康在线样本)",
+    "n_frames": 37112,
+    "dual_publisher": false,
+    "stamp_regected": 14916,
+    "r_p50": 0.00013,
+    "r_p99": 0.01236,
+    "r_p999": 0.02509,
+    "r_max": 0.03977
+   },
+   {
+    "src": "t2v3_route_112652.bag:odometry",
+    "note": "同轮优化器流",
+    "n_frames": 1734,
+    "dual_publisher": false,
+    "stamp_regected": 0,
+    "r_p50": 0.00115,
+    "r_p99": 0.09811,
+    "r_p999": 0.26196,
+    "r_max": 0.26634
+   },
+   {
+    "src": "vins_out.bag:odometry",
+    "note": "canonical×route 回放(883c75c PASS-substance)",
+    "n_frames": 3458,
+    "dual_publisher": true,
+    "stamp_regected": 8,
+    "r_p50": 0.17302,
+    "r_p99": 0.23132,
+    "r_p999": 1.01489,
+    "r_max": 1.34529
+   }
+  ],
+  "L_pre": [
+   {
+    "src": "t2v3_hover_203248.bag:imu_propagate",
+    "note": "旧观测层悬停(D3 预算分解用袋)",
+    "n_frames": 17290,
+    "dual_publisher": false,
+    "stamp_regected": 7991,
+    "r_p50": 0.0,
+    "r_p99": 0.00781,
+    "r_p999": 0.02709,
+    "r_max": 0.23543
+   },
+   {
+    "src": "t2v3_ground_202520.bag:imu_propagate",
+    "note": "旧观测层地面",
+    "n_frames": 5660,
+    "dual_publisher": false,
+    "stamp_regected": 3,
+    "r_p50": 0.0,
+    "r_p99": 0.00291,
+    "r_p999": 0.00778,
+    "r_max": 0.01116
+   },
+   {
+    "src": "flight.bag:imu_propagate",
+    "note": "canonical 在线但 VINS 瞬态发散(速度爬坡轮,换代证据)",
+    "n_frames": 16706,
+    "dual_publisher": false,
+    "stamp_regected": 3891,
+    "r_p50": 0.0,
+    "r_p99": 1.14637,
+    "r_p999": 1.47645,
+    "r_max": 1.69764
+   }
+  ]
+ },
+ "threshold_recommendation": {
+  "basis": "L_cur 健康 p999=0.26196 ×3 裕度,夹在 C07 带 [0.02,0.10]",
+  "r_gate_m": 0.1,
+  "samples": [
+   "t2v3_route_112652.bag:imu_propagate",
+   "t2v3_route_112652.bag:odometry"
+  ]
+ }
+}
