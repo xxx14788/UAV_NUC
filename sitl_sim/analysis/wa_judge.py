@@ -21,9 +21,9 @@ def judge(d):
         m = re.search(r"\[T2slv\].*init_cost=([\d.eE+-]+)", line)
         if m: costs.append(float(m.group(1)))
         if "[T2fail]" in line: fails += 1
-        m = re.search(r"\[T2gate\].*rej=(\d+).*init_replace=(\d+)", line)
+        m = re.search(r"\[T2gate\] t=[\d.]+ tri=(\d+) rej=(\d+) xrej=(\d+) init_replace=(\d+)", line)
         if m:
-            gates += int(m.group(1))
+            gates += int(m.group(2))
         if "[T2depth]" in line and "init_neg" in line: depth_neg += 1
     n = len(bas)
     r["n_diag"] = n
