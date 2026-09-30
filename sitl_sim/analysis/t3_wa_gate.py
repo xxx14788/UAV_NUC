@@ -513,12 +513,14 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
         diag, slv1, slv0 = parse_vins_log(vlog)
     odom, truth, bag_span = read_online_bag(os.path.join(run_dir, "flight.bag"))
     surv = online_survival_stats(diag, odom, bag_span, th)
-    # Bas 三重口径(复用回放判据块逻辑,在线日志同格式)
+    # Bas 三重口径(复用回放判据块逻辑,在线日志同格式);track_med=特征数(X7 逐轮表/runbook §2)
     bas = [b for _, b, _, _ in diag]
     bgs = [g for _, _, g, _ in diag]
+    track = [tk for _, _, _, tk in diag]
     bas_stat = {"n": len(bas), "peak": round(max(bas), 4) if bas else None,
                 "tail_med": None, "over_ratio": None, "longest_run_frames": 0,
-                "bgs_peak": round(max(bgs), 5) if bgs else None}
+                "bgs_peak": round(max(bgs), 5) if bgs else None,
+                "track_med": statistics.median(track) if track else None}
     if diag:
         t_end = diag[-1][0]
         tail = sorted(b for t, b, _, _ in diag if t >= t_end - th["tail_s"])
@@ -880,7 +882,7 @@ def main():
                 if newf:
                     w.writerow(["dir", "verdict", "four", "j0_jump", "fj_raw", "fj_smj",
                                 "j0_rev", "env_sig", "t1d1", "vins_pass", "reboot_n",
-                                "gaps", "coverage", "bas_peak", "bgs_peak",
+                                "gaps", "coverage", "bas_peak", "bgs_peak", "track_med",
                                 "spike_rate", "ate_rmse", "morph", "t_star"])
                 for r in rows:
                     x, v = r.get("xline", {}), r.get("vins", {})
@@ -892,6 +894,7 @@ def main():
                                 v.get("reboot_n"), v.get("odom_gaps_gt"),
                                 v.get("coverage"), v.get("bas", {}).get("peak"),
                                 v.get("bas", {}).get("bgs_peak"),
+                                v.get("bas", {}).get("track_med"),
                                 v.get("spikes", {}).get("spike_rate"),
                                 v.get("ate", {}).get("ate_rmse_m"),
                                 r.get("forensics", {}).get("morph"),
