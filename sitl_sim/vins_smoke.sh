@@ -10,13 +10,14 @@
 source /opt/ros/noetic/setup.bash          # 先 source 再 set -u(V3 教训)
 source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会覆盖掉 ws 包路径(X1轮1教训)
 set -u
-WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0
+WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
   --leg2)  HASL2=1; L2X="$2"; L2Y="$3"; L2Z="$4"; shift 4;;
   --tag)   TAG="$2"; shift 2;;
   --budget) BUDGET="$2"; shift 2;;
+  --probecheck) PROBECHECK=1; shift;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -77,6 +78,9 @@ ok=0; for i in $(seq 1 30); do sleep 2
 [ $ok = 1 ] || { LOG "FATAL mavros 未连"; exit 1; }
 rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 2>/dev/null; sleep 2
 LOG "mavros up + 511@4000us(仓库标准 632e0ee:4ms网格量化,~223Hz;5000us实际=125Hz量化伪影)"
+# T1 P0-A.1 (2026-10-01): E2 stderr probes (E2uls/E2clamp/E2gap) default-on EVERY round
+# (v8.0: 此后一切飞行轮默认带探针,跳变机制数据); env gate = estimator.cpp a5cd330 form
+export REANCHOR_DEBUG=1
 nohup roslaunch "$HOME/catkin_ws/src/launch/sim_vins.launch" > "$EV/simvins.log" 2>&1 &
 sleep 3
 LOG "sim_vins up, 等 VINS init(wall-clock 300s, 30s 心跳取证)"
@@ -95,6 +99,15 @@ while [ $(( $(date +%s) - T0G )) -lt 300 ]; do
 done
 [ $ok = 1 ] || { LOG "FATAL 300s 内 VINS 未 init"; exit 1; }
 LOG "VINS init 完成 (+$(( $(date +%s) - T0G ))s)"
+if [ "$PROBECHECK" = "1" ]; then
+  E2ULS=$(grep -c "E2uls" "$EV/simvins.log" 2>/dev/null || true); E2ULS=${E2ULS:-0}
+  E2CLAMP=$(grep -c "E2clamp" "$EV/simvins.log" 2>/dev/null || true); E2CLAMP=${E2CLAMP:-0}
+  E2GAP=$(grep -c "E2gap" "$EV/simvins.log" 2>/dev/null || true); E2GAP=${E2GAP:-0}
+  LOG "PROBECHECK: E2uls=$E2ULS E2clamp=$E2CLAMP E2gap=$E2GAP (init-only round, no takeoff)"
+  grep -m 3 "E2uls" "$EV/simvins.log" 2>/dev/null || true
+  if [ "$E2ULS" -ge 1 ]; then LOG "PROBECHECK PASS: probe chain transmits (E2uls lines in simvins.log)"; exit 0
+  else LOG "PROBECHECK FAIL: VINS init but zero E2uls lines - probe chain broken"; exit 1; fi
+fi
 if ! python3 "$HOME/catkin_ws/sitl_sim/analysis/t2_preflight_check.py" 10 > "$EV/preflight.txt" 2>&1; then
   REDS=$(grep -c '红' "$EV/preflight.txt" || true); REDS=${REDS:-0}
   IMU_RED=$(grep -c 'IMU 频率.*>200' "$EV/preflight.txt" || true); IMU_RED=${IMU_RED:-0}

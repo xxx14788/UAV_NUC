@@ -9,12 +9,13 @@
 
 #include "estimator.h"
 
-// T2-E2CLAMP-PLACEHOLDER: T1 in-flight debug flag used at :1983/:2046/:2052 lacks a declaration;
-// minimal neutral placeholder (always false) to unblock shared-tree builds. T1: replace with your real switch.
-static bool reanchor_dbg = false;
+// T1-E2: one-shot env read (stderr forensics; see audit doc E2_writepoint_audit.md)
+// P0-A.1 2026-10-01: restored from a5cd330 (c7d901d placeholder swap had neutralized the probe chain)
+static const bool reanchor_dbg = (getenv("REANCHOR_DEBUG") != nullptr);
 #include "../utility/visualization.h"
 #include "../factor/initial_bias_factor.h"  // T2-WA7G
 #include <cstdio>
+#include <cstdlib>  // T1-E2: REANCHOR_DEBUG env gate
 
 Estimator::Estimator(): f_manager{Rs}
 {
