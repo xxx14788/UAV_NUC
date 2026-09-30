@@ -813,3 +813,17 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 ## T3 v7.2 续:Y4 全库回归门执行器就位(2026-09-30 午)
 
 `analysis/t3_y4_regression.py`:DB 驱动素材队列(污染轮自动剔除=P0 纪律)+t3_replay 串行队列(私有 master 11313,单机一路红线)+t3_wa_gate 逐袋判决+汇总 CSV+W-P1..P7 预言勾销表(`--prophecy`)。**dry-run 实测:18 袋队列**(X 族 15 历史失败袋[含 WD1b/E2FAIL 悬停形态,从严口径]+CTRL2/hover 双基线;W2 借用域 `--with-w2` 显式开启),预估 74min 串行。**T2 三判据绿灯后动作压缩为:`python3 t3_y4_regression.py --cfg <T2修复版配置目录>` 一条命令**;任何漏网→登记+回挖+通知 T2,X 线不启动(Y4 纪律内置)。E7 双频移植:库内 125/223Hz 两代袋场景混杂(ground 静止 vs route 飞行),纯读不可判频率归因,正式 E7(同袋双频回放)挂错峰窗——如实登记。
+
+## 等待池① t3_wa_gate 在线轴增补（2026-10-01 02:3x，C-6 欠账清偿；X 线判读器就位）
+
+判据器双模式定型（回放模式零改动，selftest R_CAN/CTRL2 双侧复验 PASS=零回归）：
+
+- **--online 在线判决模式**（输入=vins_smoke_runs/run_* 目录）两层结构：
+  - xline gate 层＝四指标（读 RESULT.txt 权威，不重算保判读一致）＋J0 锚差（<0.5m）＋**J0 修订口径**（forensics frame_jumps raw==0 且 smj≤10）＋ENV-FAIL 硬证据；j0_jump>0.5 且 vins 域健康 → **T1-D1-domain 标注**（不计 5/5、入回挖清单，任务书 X4 条款机械化）
+  - vins 域层＝**零 failure 零 reboot**（T2diag t 回退>30s 计 reboot＋odom 断流>3s 计 gap；T2 U3 达标门的机器口径）＋Bas 三重口径（同回放阈值）＋ATE 出生点对齐（仅报告）＋尖峰
+  - forensics_v2 自动取/生成（DEFAULT_TOPICS 无图像＝安全）；带图轮 bag 只 read_messages 过滤读（红线 4）
+- **selftest 双侧 PASS**：WAOL5R（verdict FAIL+T1D1 标注；vins_ok：bas_pk 0.9808 vs T2 台账 0.981、bgs 0.00132、reboot=0/gaps=0/cov=1.0——与 T2 22:33 通告逐项吻合）＋X1_232055（FAIL 侧：fj_raw 624/smj 632/ATE 367m/morph=爆散）
+- **批量彩排 39 历史轮全跑通零崩溃**：8 轮 T1D1 标注与 T2 C 线在线结论吻合（WAOL1/3/4/5R=健康+跳变域，WAOL2 老栈=bad）；E3_210246 vins_bad（bas 1.1871）＝T1「E3 四指标 FAIL 归 T2 域 goal 瞬态」的独立交叉印证
+- **工具坑入账**：ENV 三签名之 "Connection closed by client" 系正常 cleanup 杀 px4 的产物（事后扫描必命中，WAOL5R/X1_232055 双实证）→ENV-FAIL 硬证据仅认 ENVDEAD 文件（轮中活体检查写入）＋RESULT.txt 当场判定（round_result 在 cleanup 前跑的时序优势）；字符串签名降级为仅报告
+- 阈值表新增 online_ 五键（DEFAULT_THRESH 内，不动回放键，外置 json 沿用）
+- 产出：analysis/t3_wa_gate.py（+~240 行在线块）/t3_wa_gate_online_selftest.json/39 轮 wa_gate_online.json（各轮目录内）

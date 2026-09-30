@@ -1,0 +1,95 @@
+{
+ "pass": true,
+ "cells": [
+  {
+   "cell": "run_WAOL5R_222234",
+   "ok": true,
+   "line": "run_WAOL5R_222234: FAIL [four=0/1/1/0 j0jump=2.448 j0rev=False(raw=57,smj=43) env=sitl.log:Connection-closed(normal-cleanup-artifact?) T1D1 | vins=✓ reboot=0 gaps=0 cov=1.0 bas_pk=0.9808 bgs_pk=0.00132 ate=1.8859 morph=数值溢出型(含 extreme/非有限帧)]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "four_arrive ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "j0_jump ref=2.448",
+     "got": 2.448,
+     "pass": true
+    },
+    {
+     "check": "t1d1_domain ref=True",
+     "got": true,
+     "pass": true
+    },
+    {
+     "check": "reboot_n ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "odom_gaps ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "bas_peak ref=0.981",
+     "got": 0.9808,
+     "pass": true
+    },
+    {
+     "check": "bgs_peak_le ref=0.01",
+     "got": 0.00132,
+     "pass": true
+    },
+    {
+     "check": "vins_pass ref=True",
+     "got": true,
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "run_X1_232055",
+   "ok": true,
+   "line": "run_X1_232055: FAIL [four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "fj_raw_ge ref=100",
+     "got": 624,
+     "pass": true
+    },
+    {
+     "check": "fj_smj_ge ref=100",
+     "got": 632,
+     "pass": true
+    },
+    {
+     "check": "j0_rev_pass ref=False",
+     "got": false,
+     "pass": true
+    },
+    {
+     "check": "morph_diverged ref=True",
+     "got": "爆散",
+     "pass": true
+    },
+    {
+     "check": "vins_pass ref=False",
+     "got": false,
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "note": "在线轴对账:WAOL5R=T2 22:33 通告数字(Bas 0.981/314.5s 零failure);X1_232055=forensics_v2.json 实测(raw624/smj632/爆散)"
+}
