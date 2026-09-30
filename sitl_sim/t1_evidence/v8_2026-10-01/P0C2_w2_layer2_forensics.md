@@ -44,3 +44,19 @@
 - PX4 v1.14 vehicle_control_mode flag 语义源码核对（offboard 姿态模式下 pos_en=1 是否
   表示"级联在环"还是"能力位"——L2-H1/H2 归属的开关性判别，0锁源码读）；
 - ulog 内 vehicle_command/offboard_control_mode 序列提取（L2-H3，0锁）。
+
+## 5. 勘误补遗（夜1 收口时自查，02:5x）
+
+v7 夜 E1-E1 三合一考古（t1_evidence/v7_2026-09-30/E1_E1_threeway_archaeology_verdict.md，1f57437）
+**已证 t2v3_flight.sh 的 w2* 分支不启动 px4ctrl**——flyer 直控 PX4 位置环（OFFBOARD 位置设定点），
+反馈=EKF2(GPS+baro+mag)，px4ctrl/EV/VINS 均不在 w2 控制环内。本报告写作时未先读该判定，特此勘误：
+
+- **L2-H2 作废**（其前提"px4ctrl 在环消费 imu_propagate"错误）；px4ctrl 链路证据（att_sp@20Hz）
+  应归 PX4 自身位置级联下游，非 px4ctrl。
+- F-G（offboard 级联全使能）与 v7 结论**互相印证**（flyer 位置 offboard ⟹ pos/vel/att 全开）；
+  traj_sp@5Hz=flyer 场景设定点，lp_sp@10Hz=位置控制器输出。
+- L2-H1 升为层2 唯一主候选，但其 F-D 子证据（EKF2 z 背离 GT）需对 v7"EKF2 没骗位置环/GT-local
+  恒差=出生点"口径复核——本报告的范围对比法不能区分常值偏置与真发散（出生点对齐红线 9 同族
+  判读坑，自认）。复核路径=创新时间线级（estimator_innovation baro/gps vpos）非范围级。
+- 结论净变化：W2 层2 改写与 v7 考古**完全收敛**（PX4 内部域：flyer 位置环×EKF2 反馈），本报告
+  净增值=参数/率面实值（F-B/F-H/F-I）+EV 拒收时间线（F-E）+ulog 轴向/UTC 命名口径。
