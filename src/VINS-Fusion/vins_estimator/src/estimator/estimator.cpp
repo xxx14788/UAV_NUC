@@ -8,9 +8,12 @@
  *******************************************************/
 
 #include "estimator.h"
+
+// T2-E2CLAMP-PLACEHOLDER: T1 in-flight debug flag used at :1983/:2046/:2052 lacks a declaration;
+// minimal neutral placeholder (always false) to unblock shared-tree builds. T1: replace with your real switch.
+static bool reanchor_dbg = false;
 #include "../utility/visualization.h"
 #include <cstdio>
-#include <cstdlib>  // T1-E2: REANCHOR_DEBUG env gate
 
 Estimator::Estimator(): f_manager{Rs}
 {
@@ -197,9 +200,6 @@ void Estimator::inputImage(double t, const cv::Mat &_img, const cv::Mat &_img1)
     }
     
 }
-
-// T1-E2: one-shot env read (stderr forensics; see audit doc E2_writepoint_audit.md)
-static const bool reanchor_dbg = (getenv("REANCHOR_DEBUG") != nullptr);
 
 void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vector3d &angularVelocity)
 {
@@ -700,11 +700,13 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
         set<int> removeIndex;
         outliersRejection(removeIndex);
         // T2-R1.5/R3 插桩:每帧状态轨迹(printf+fflush 防 nohup stdout 缓冲吞行)
-        printf("[T2diag] t=%.4f P=[%.4f %.4f %.4f] V=[%.4f %.4f %.4f] |Bas|=%.6f |Bgs|=%.7f tic0=[%.4f %.4f %.4f] tic1=[%.4f %.4f %.4f] td=%.5f track=%d\n",
+        printf("[T2diag] t=%.4f P=[%.4f %.4f %.4f] V=[%.4f %.4f %.4f] |Bas|=%.6f |Bgs|=%.7f Bas=[%.6f %.6f %.6f] Bgs=[%.7f %.7f %.7f] tic0=[%.4f %.4f %.4f] tic1=[%.4f %.4f %.4f] td=%.5f track=%d\n",
                Headers[WINDOW_SIZE],
                Ps[WINDOW_SIZE].x(), Ps[WINDOW_SIZE].y(), Ps[WINDOW_SIZE].z(),
                Vs[WINDOW_SIZE].x(), Vs[WINDOW_SIZE].y(), Vs[WINDOW_SIZE].z(),
                Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm(),
+               Bas[WINDOW_SIZE].x(), Bas[WINDOW_SIZE].y(), Bas[WINDOW_SIZE].z(),
+               Bgs[WINDOW_SIZE].x(), Bgs[WINDOW_SIZE].y(), Bgs[WINDOW_SIZE].z(),
                tic[0].x(), tic[0].y(), tic[0].z(),
                tic[1].x(), tic[1].y(), tic[1].z(),
                td, f_manager.last_track_num);
@@ -1194,7 +1196,11 @@ void Estimator::optimization()
     ceres::Problem problem;
     ceres::LossFunction *loss_function;
     //loss_function = NULL;
-    loss_function = new ceres::HuberLoss(1.0);
+    // T2-WA6G: vision loss kernel switch (absent key = Huber 1.0 = upstream)
+    if (T2_VISION_LOSS == 1)
+        loss_function = new ceres::CauchyLoss(T2_CAUCHY_DELTA / 1.5);
+    else
+        loss_function = new ceres::HuberLoss(1.0);
     //loss_function = new ceres::CauchyLoss(1.0 / FOCAL_LENGTH);
     //ceres::LossFunction* loss_function = new ceres::HuberLoss(1.0);
     for (int i = 0; i < frame_count + 1; i++)
@@ -1227,12 +1233,27 @@ void Estimator::optimization()
     if (!ESTIMATE_TD || Vs[0].norm() < 0.2)
         problem.SetParameterBlockConstant(para_Td[0]);
 
+    // T2-WA2G: per-factor-type block registry for cost decomposition ([T2cost])
+    std::vector<std::pair<const ceres::CostFunction *, int>> t2_reg_f;
+    std::vector<std::vector<double *>> t2_reg_p;
+    auto t2_reg = [&](const ceres::CostFunction *f, int ty, std::initializer_list<double *> ps)
+    {
+        t2_reg_f.emplace_back(f, ty);
+        t2_reg_p.emplace_back(ps);
+    };
     if (last_marginalization_info && last_marginalization_info->valid)
     {
         // construct new marginlization_factor
         MarginalizationFactor *marginalization_factor = new MarginalizationFactor(last_marginalization_info);
         problem.AddResidualBlock(marginalization_factor, NULL,
                                  last_marginalization_parameter_blocks);
+        if (T2_COST_TRACE)
+        {
+            std::vector<double *> pv(last_marginalization_parameter_blocks.begin(),
+                                     last_marginalization_parameter_blocks.end());
+            t2_reg_f.emplace_back(marginalization_factor, 0);
+            t2_reg_p.push_back(std::move(pv));
+        }
     }
     if(USE_IMU)
     {
@@ -1243,18 +1264,83 @@ void Estimator::optimization()
                 continue;
             IMUFactor* imu_factor = new IMUFactor(pre_integrations[j]);
             problem.AddResidualBlock(imu_factor, NULL, para_Pose[i], para_SpeedBias[i], para_Pose[j], para_SpeedBias[j]);
+            if (T2_COST_TRACE)
+                t2_reg(imu_factor, 1, {para_Pose[i], para_SpeedBias[i], para_Pose[j], para_SpeedBias[j]});
         }
     }
 
     int f_m_cnt = 0;
     int feature_index = -1;
+    // T2-WA4G: chi2-rejected track ids (also honored by the marginalization loop below)
+    std::set<int> t2_chi2_rejected;
+    int t2_chi2_total = 0;
     for (auto &it_per_id : f_manager.feature)
     {
         it_per_id.used_num = it_per_id.feature_per_frame.size();
         if (it_per_id.used_num < 4)
             continue;
- 
+
         ++feature_index;
+
+        // T2-WA4G: chi-square pre-gate - reproj residual e^Te (FOCAL/1.5 weighted) vs chi2(2dof,conf)*m*n_obs
+        if (T2_CHI2_GATE)
+        {
+            t2_chi2_total++;
+            double chi2_sum = 0.0; int n_obs = 0;
+            int ci = it_per_id.start_frame, cj = ci - 1;
+            Vector3d pts_i_c = it_per_id.feature_per_frame[0].point;
+            for (auto &fr : it_per_id.feature_per_frame)
+            {
+                cj++;
+                Vector3d pts_j_c = fr.point;
+                if (ci != cj)
+                {
+                    ProjectionTwoFrameOneCamFactor fc(pts_i_c, pts_j_c,
+                        it_per_id.feature_per_frame[0].velocity, fr.velocity,
+                        it_per_id.feature_per_frame[0].cur_td, fr.cur_td);
+                    double res[2];
+                    const double *prms[5] = {para_Pose[ci], para_Pose[cj], para_Ex_Pose[0],
+                                             para_Feature[feature_index], para_Td[0]};
+                    double *jac_null[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};
+                    if (fc.Evaluate(prms, res, jac_null))
+                    { chi2_sum += res[0]*res[0] + res[1]*res[1]; n_obs++; }
+                }
+                if (STEREO && fr.is_stereo)
+                {
+                    Vector3d pts_jr = fr.pointRight;
+                    if (ci != cj)
+                    {
+                        ProjectionTwoFrameTwoCamFactor fc(pts_i_c, pts_jr,
+                            it_per_id.feature_per_frame[0].velocity, fr.velocityRight,
+                            it_per_id.feature_per_frame[0].cur_td, fr.cur_td);
+                        double res[2];
+                        const double *prms[6] = {para_Pose[ci], para_Pose[cj], para_Ex_Pose[0], para_Ex_Pose[1],
+                                                 para_Feature[feature_index], para_Td[0]};
+                        double *jac_null[6] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+                        if (fc.Evaluate(prms, res, jac_null))
+                        { chi2_sum += res[0]*res[0] + res[1]*res[1]; n_obs++; }
+                    }
+                    else
+                    {
+                        ProjectionOneFrameTwoCamFactor fc(pts_i_c, pts_jr,
+                            it_per_id.feature_per_frame[0].velocity, fr.velocityRight,
+                            it_per_id.feature_per_frame[0].cur_td, fr.cur_td);
+                        double res[2];
+                        const double *prms[4] = {para_Ex_Pose[0], para_Ex_Pose[1],
+                                                 para_Feature[feature_index], para_Td[0]};
+                        double *jac_null[4] = {nullptr, nullptr, nullptr, nullptr};
+                        if (fc.Evaluate(prms, res, jac_null))
+                        { chi2_sum += res[0]*res[0] + res[1]*res[1]; n_obs++; }
+                    }
+                }
+            }
+            double chi2_2dof = (T2_CHI2_CONF >= 0.99) ? 9.210 : 5.991;
+            if (n_obs > 0 && chi2_sum > T2_CHI2_M * n_obs * chi2_2dof)
+            {
+                t2_chi2_rejected.insert(feature_index);
+                continue;
+            }
+        }
 
         int imu_i = it_per_id.start_frame, imu_j = imu_i - 1;
         
@@ -1269,6 +1355,8 @@ void Estimator::optimization()
                 ProjectionTwoFrameOneCamFactor *f_td = new ProjectionTwoFrameOneCamFactor(pts_i, pts_j, it_per_id.feature_per_frame[0].velocity, it_per_frame.velocity,
                                                                  it_per_id.feature_per_frame[0].cur_td, it_per_frame.cur_td);
                 problem.AddResidualBlock(f_td, loss_function, para_Pose[imu_i], para_Pose[imu_j], para_Ex_Pose[0], para_Feature[feature_index], para_Td[0]);
+                if (T2_COST_TRACE)
+                    t2_reg(f_td, 2, {para_Pose[imu_i], para_Pose[imu_j], para_Ex_Pose[0], para_Feature[feature_index], para_Td[0]});
             }
 
             if(STEREO && it_per_frame.is_stereo)
@@ -1279,12 +1367,16 @@ void Estimator::optimization()
                     ProjectionTwoFrameTwoCamFactor *f = new ProjectionTwoFrameTwoCamFactor(pts_i, pts_j_right, it_per_id.feature_per_frame[0].velocity, it_per_frame.velocityRight,
                                                                  it_per_id.feature_per_frame[0].cur_td, it_per_frame.cur_td);
                     problem.AddResidualBlock(f, loss_function, para_Pose[imu_i], para_Pose[imu_j], para_Ex_Pose[0], para_Ex_Pose[1], para_Feature[feature_index], para_Td[0]);
+                    if (T2_COST_TRACE)
+                        t2_reg(f, 2, {para_Pose[imu_i], para_Pose[imu_j], para_Ex_Pose[0], para_Ex_Pose[1], para_Feature[feature_index], para_Td[0]});
                 }
                 else
                 {
                     ProjectionOneFrameTwoCamFactor *f = new ProjectionOneFrameTwoCamFactor(pts_i, pts_j_right, it_per_id.feature_per_frame[0].velocity, it_per_frame.velocityRight,
                                                                  it_per_id.feature_per_frame[0].cur_td, it_per_frame.cur_td);
                     problem.AddResidualBlock(f, loss_function, para_Ex_Pose[0], para_Ex_Pose[1], para_Feature[feature_index], para_Td[0]);
+                    if (T2_COST_TRACE)
+                        t2_reg(f, 2, {para_Ex_Pose[0], para_Ex_Pose[1], para_Feature[feature_index], para_Td[0]});
                 }
                
             }
@@ -1293,6 +1385,13 @@ void Estimator::optimization()
     }
 
     ROS_DEBUG("visual measurement count: %d", f_m_cnt);
+    // T2-WA4G: per-frame chi2 gate stats (T2frame schema)
+    if (T2_CHI2_GATE)
+    {
+        printf("[T2chi2] t=%.4f total=%d rej=%lu m=%.1f conf=%.2f\n",
+               Headers[frame_count], t2_chi2_total,
+               (unsigned long)t2_chi2_rejected.size(), T2_CHI2_M, T2_CHI2_CONF);
+    }
     //printf("prepare for ceres: %f \n", t_prepare.toc());
 
     // T2-R3.3: 视觉饥饿窗(last_track_num<20,同 init 门槛)冻结外参优化自由度——
@@ -1342,6 +1441,32 @@ void Estimator::optimization()
            static_cast<int>(summary.iterations.size()),
            static_cast<int>(summary.termination_type), t_solver.toc());
     fflush(stdout);
+    // T2-WA2G: per-factor-type cost decomposition on the FINAL solution ([T2cost])
+    double t2_cost_prior = -1.0, t2_cost_imu = -1.0, t2_cost_vis = -1.0;
+    int t2_nb_prior = 0, t2_nb_imu = 0, t2_nb_vis = 0;
+    if (T2_COST_TRACE && t2_reg_f.size() > 0)
+    {
+        double c[3] = {0, 0, 0}; int n[3] = {0, 0, 0};
+        for (size_t k = 0; k < t2_reg_f.size(); k++)
+        {
+            int ty = t2_reg_f[k].second;
+            if (ty < 0 || ty > 2) continue;
+            int nr = t2_reg_f[k].first->num_residuals();
+            std::vector<double> res(std::max(nr, 1));
+            std::vector<const double *> pp(t2_reg_p[k].begin(), t2_reg_p[k].end());
+            std::vector<double *> jac_null(t2_reg_p[k].size(), nullptr);
+            if (t2_reg_f[k].first->Evaluate(pp.data(), res.data(), jac_null.data()))
+            {
+                double s2 = 0;
+                for (int r = 0; r < nr; r++) s2 += res[r] * res[r];
+                c[ty] += 0.5 * s2; n[ty]++;
+            }
+        }
+        t2_cost_prior = c[0]; t2_cost_imu = c[1]; t2_cost_vis = c[2];
+        t2_nb_prior = n[0]; t2_nb_imu = n[1]; t2_nb_vis = n[2];
+        printf("[T2cost] t=%.4f tot=%.6g prior=%.6g imu=%.6g vis=%.6g prior_n=%d imu_n=%d vis_n=%d\n",
+               Headers[frame_count], c[0] + c[1] + c[2], c[0], c[1], c[2], n[0], n[1], n[2]);
+    }
     ROS_DEBUG("Iterations : %d", static_cast<int>(summary.iterations.size()));
     //printf("solver costs: %f \n", t_solver.toc());
 
@@ -1350,14 +1475,52 @@ void Estimator::optimization()
 
     if(frame_count < WINDOW_SIZE)
         return;
-    
+
+    // T2-WA2G: prior health gate - break the polluted-prior carry chain.
+    // triggers: init_cost spike | inter-frame ||dBAS|| | prior share of [T2cost];
+    // cooldown-limited; strategies 1=drop prior+skip this marg, 2=re-marg without
+    // old prior, 3=keep prior+skip this marg (frozen prior).
+    bool t2_marg_skip = false, t2_drop_prior_only = false;
+    if (T2_PRIOR_GATE && solver_flag == NON_LINEAR)
+    {
+        t2_solve_seq++;
+        double dbas = (Bas[WINDOW_SIZE] - t2_prev_bas).norm();
+        t2_prev_bas = Bas[WINDOW_SIZE];
+        bool trig_cost = summary.initial_cost > T2_PRIOR_COST_THR;
+        bool trig_bas = dbas > T2_PRIOR_DBAS_THR;
+        bool trig_share = (t2_cost_prior >= 0) &&
+                          (t2_cost_prior > T2_PRIOR_SHARE_THR * (t2_cost_prior + t2_cost_imu + t2_cost_vis));
+        if ((trig_cost || trig_bas || trig_share) &&
+            t2_solve_seq - t2_prior_gate_last > T2_PRIOR_COOLDOWN)
+        {
+            t2_prior_gate_last = t2_solve_seq;
+            printf("[T2WA2G] t=%.4f TRIG seq=%ld cost=%.4g dbas=%.4f strategy=%d\n",
+                   Headers[frame_count], t2_solve_seq, summary.initial_cost, dbas, T2_PRIOR_STRATEGY);
+            fflush(stdout);
+            if (T2_PRIOR_STRATEGY == 1)
+            {
+                if (last_marginalization_info) { delete last_marginalization_info; last_marginalization_info = nullptr; }
+                t2_marg_skip = true;
+            }
+            else if (T2_PRIOR_STRATEGY == 2)
+            {
+                if (last_marginalization_info) { delete last_marginalization_info; last_marginalization_info = nullptr; }
+                t2_drop_prior_only = true;
+            }
+            else
+            {
+                t2_marg_skip = true;
+            }
+        }
+    }
+
     TicToc t_whole_marginalization;
-    if (marginalization_flag == MARGIN_OLD)
+    if (marginalization_flag == MARGIN_OLD && !t2_marg_skip)
     {
         MarginalizationInfo *marginalization_info = new MarginalizationInfo();
         vector2double();
 
-        if (last_marginalization_info && last_marginalization_info->valid)
+        if (last_marginalization_info && last_marginalization_info->valid && !t2_drop_prior_only)
         {
             vector<int> drop_set;
             for (int i = 0; i < static_cast<int>(last_marginalization_parameter_blocks.size()); i++)
@@ -1395,6 +1558,8 @@ void Estimator::optimization()
                     continue;
 
                 ++feature_index;
+                if (t2_chi2_rejected.count(feature_index))
+                    continue;  // T2-WA4G: chi2-rejected tracks stay out of the prior too
 
                 int imu_i = it_per_id.start_frame, imu_j = imu_i - 1;
                 if (imu_i != 0)
@@ -1469,7 +1634,7 @@ void Estimator::optimization()
         last_marginalization_parameter_blocks = parameter_blocks;
         
     }
-    else
+    else if (!t2_marg_skip)  // T2-WA2G: skip covers BOTH marginalization branches
     {
         if (last_marginalization_info &&
             std::count(std::begin(last_marginalization_parameter_blocks), std::end(last_marginalization_parameter_blocks), para_Pose[WINDOW_SIZE - 1]))

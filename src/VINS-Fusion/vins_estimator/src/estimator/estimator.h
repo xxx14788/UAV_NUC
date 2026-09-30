@@ -134,6 +134,9 @@ class Estimator
     double Headers[(WINDOW_SIZE + 1)];
 
     IntegrationBase *pre_integrations[(WINDOW_SIZE + 1)];
+    // T2-WA2G: prior-health-gate state
+    Eigen::Vector3d t2_prev_bas{0, 0, 0};
+    long t2_solve_seq = 0, t2_prior_gate_last = -1000;
     Vector3d acc_0, gyr_0;
 
     vector<double> dt_buf[(WINDOW_SIZE + 1)];
