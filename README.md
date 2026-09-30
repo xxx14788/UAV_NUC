@@ -87,6 +87,7 @@ VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
 ## 3
 - **config/sim_stereo/sim_stereo_imu_config.yaml: gyr_w 0.001→0.0001**(2026-09-30 T2-WA C 线终审):原仓库 fast_drone_250.yaml 值 0.0001 恢复;旧值 0.001 系 10× 超设(来源不明),为在线域 Bgs 吸水根因(WAOL1/3 Bgs 1.2-1.3 两轮复现@旧值;WAOL5R 裸栈+新值 obstacles 在线全程 314.5s 零 failure);回放域对该轴中性(B0 矩阵两值逐位同)。附:T2-WA 线全部防线已 rosparam 开关化(t2_* 键族,absent key=旧行为,默认全关,详见 docs/t2_experiments.md W-A 章)
 - **VINS-Fusion/vins_estimator/src/estimator/parameters.h: FOCAL_LENGTH 460.0→467.7427**(2026-10-01 T2-U7):与 sim_stereo yaml fx 对齐(SDF hfov=1.2 推算,T4-J3 E1 实测;旧值系上游默认=1.7% 编译期常量偏差);作用点=投影因子信息矩阵(estimator.cpp sqrt_info=FOCAL/1.5)+关键帧视差归一化;实机域影响=视觉权重 1.7% 级有界(实机 fx 与两值本就异值,以 yaml 为准的机制不变)
+- **U7 回退(2026-10-01 03:2x,同夜)**:FOCAL 修后首个在线轮 run_WC2OBS1_030927 于 t=72.1s 数值爆炸(|P|=663m/|Bas|=0.075 小偏置签名,异于历史 Bas 先爆形态);单变量纪律下验收矩阵必须跑 WAOL5R 凭据栈(cf0384),U7 重应用需专属在线验证。首信号数据点保留,不定罪(样本=1)
 . 实机链路（2026-06 已按实际硬件标定）
 
 入口 `src/launch/full_vins_px4.launch`，按序拉起：
