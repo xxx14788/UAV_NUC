@@ -83,3 +83,38 @@ runbook CF-1 勘误（848×480=能力口径, 驱动实读 infra/depth 均 640×4
 - grad_med P50=0.0 双袋一致（平坦区梯度严格 0）。
 - **γ 帧间方法边界登记**: X1img2 γ_pair P90=2.105 系 goal 型轮视角剧变伪影（med_gray 87→178 为内容变化, 非增益变化; p_sat=0 渲染无削顶佐证）——γ 帧间统计仅在近静止段纯净, 曝光常数结论不受影响（X1img 恒 1.0+渲染管线无曝光模型）。
 - 证据: vision_inputs/X1img2_j3/（149 帧双目+manifest）; metrics_X1img2_sim.json。
+
+## J-R 批次（2026-10-01 夜, 任务书 v4.0 T4 执行）
+
+- **J-R1 runbook 位置环架构行**: §1 表补行+§6 卡点5闭环（F2 分支 B 裁决, 双 yaml false 同构本地核对,
+  凭据 t1_evidence/v7_2026-09-30/F2_closure.md）→ commit 0775211。
+- **J-R2 P3 差距决策包**: docs/p3_gap_decision_pack.md（b53324a+勘误 ea68579）——阻断 3（外参实测
+  标定/地面 init 纪律/瞬态 W-C2 硬前置）/高 4（慢漂双层/重锚尖峰/EV 启用三选一/FOV fx 迁移）/中 4
+  （IR σ̂ 缺口=首飞自产解锁/Allen 重标/yaw 慢漂/INIT_DEPTH）+用户决策 4 问（EV 口径/到位门统计化/
+  首飞包络/素材清单）+X7 并入钩（T3 出稿后并入, 责任 T4）。勘误: B3 采信 T1 v8.0 W2 层2改写
+  （"EKF2-EV 失稳"命题对象不存在, EV_CTRL=0 实锤）; **runbook §4「EV 失流劣化 w2b z 飙」行机制
+  描述待 T1/T2 联合勘误**（T4 标记不代改）。
+- **J-R3 素材管线吞吐预演**: docs/t4_jr3_pipeline_dryrun.md（本文档提交链随行）。
+  ①排队器 j3_extract_queue.py 入库（df 门 25G+rosbag 双 0 空窗+manifest 断点续跑+串行; 自检
+  done/fail/续跑三态实测过）; ②特征重放 j3_replay_features.sh（私有 master 11314, canonical 冻结
+  口径=e2_debug_smooth.yaml+devel vins_node）+判读 j3_feature_density.py（offset/density 双模式）
+  入库; **袋1 X1img_015950 dry-run 实跑**: features.bag 4.4M（2001 云+3993 odom, 覆盖 207s）,
+  108,995 点, 每云点数 P50=45/P90=90/max=154（供给率 0.30@max_cnt=150）, 三区密度=障碍区 40.0%
+  465.3 点/m²(面)/1247.1 点/m³(体), 地面带 137.9 点/m², 空域 1573.9 点/m³——**标注 dry-run 非正式
+  判读**（素材 2 轮<5 轮门槛, 仅工具/阈值校准）; 分母口径修正=全量外接框被远点污染(139×139m 失真)
+  →P1-P99 修剪框为默认。③磁盘预案: 65G 来袭不可整体共存(56G<65G+20G), 滚动管线+分波排程
+  （W1 六轮波谷 26G/W2 七轮 21G 贴水位→W2 前必须腾挪）+删除纪律四条+X4 保全范围裁决钩。
+  **X1img2 补跑挂起**: 唤醒=T2-WC2 飞行窗结束+rosbag 双 0; 带 Y4 黑名单 caveat（禁作 VINS 回放
+  判决源, 图像侧/重放校准可用）。
+- **等待池③ J2 阈值口径准备**: docs/t4_j2_threshold_prep.md——参数锚点全 repo 实证（max_cnt=150/
+  quality 0.01 硬编码/min_dist=30/F_THRESHOLD=1.0px 系 F-RANSAC 非角点质量/三配置 freq=10 两域
+  同口径）+指标 M1-M6 三域划界+产额分位标定协议+文献锚点（二级）。
+- **等待池⑤ 六维敏感性分析**: runbook §6.1（1172beb）——逐维量级×余量计算, 先爆排序=噪声(#1,
+  0→1.16-3.0σ̂ 六维最大跳变) > 运动模糊-近距(#2, 7.7px 余量 2×) > 深度(#3) > 纹理(#4, 供给率
+  0.30 余量 1.5×) > 视场(#5 纪律型) > 曝光(#6 锁曝光即坍缩); 前三维共因=sim 正源缺失, 首飞素材
+  自产共同解锁。
+- **工具链坑位（本夜实锤, 供后续 T4 执行者）**: ①`set -u` 在 ROS setup.bash source 前会杀脚本
+  （setup 内未绑定变量）→先 source 后 set -u; ②rosbag 探测 `pgrep -x` 探不到 python 包装进程、
+  `pgrep -f` 会被外层含"rosbag"字样的包装命令自命中毒计数 → 用 `ps -eo comm=|grep -cx rosbag`;
+  ③重定向手滑 `>/`（根目录）静默废掉 roscore; ④ssh 后台+管道会让退出码/输出双双失真 → 远端
+  落日志文件+REMOTE_RC 显式回传; ⑤非交互 ssh 无 ROS 环境 → bash -c 显式 source。
