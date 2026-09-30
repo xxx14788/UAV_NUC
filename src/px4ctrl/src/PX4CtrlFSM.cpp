@@ -354,6 +354,11 @@ void PX4CtrlFSM::process()
 	else
 	{
 		debug_msg = controller.calculateControl(des, odom_data, imu_data, u);
+		// T1-P0D.2 (C10-X2 channel B): odom pipeline delay @feed + staleness @consume, ms
+		debug_msg.odom_delay_ms =
+		    (odom_data.rcv_stamp - odom_data.msg.header.stamp).toSec() * 1000.0;
+		debug_msg.odom_staleness_ms =
+		    (now_time - odom_data.rcv_stamp).toSec() * 1000.0;
 		debug_msg.header.stamp = now_time;
 		debug_pub.publish(debug_msg);
 	}

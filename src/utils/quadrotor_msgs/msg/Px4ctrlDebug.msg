@@ -31,3 +31,9 @@ float64 fb_rate_x
 float64 fb_rate_y
 float64 fb_rate_z
 
+# T1-P0D.2 (2026-10-01, C10-X2 channel B): odom latency/staleness instrumentation, unit ms.
+# odom_delay_ms = odom rcv_stamp - odom msg.header.stamp (feed-time pipeline delay, factor 1.1);
+# odom_staleness_ms = now - rcv_stamp at debug-publish (consumption staleness, factor 1.4).
+# Filled in FSM debug path only (idle else-branch): idle/spin-up blind zone per C10 r3 caveat.
+float64 odom_delay_ms
+float64 odom_staleness_ms
