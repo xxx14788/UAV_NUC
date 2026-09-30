@@ -842,3 +842,13 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 - **④ Z1.2 gtest 常规化方案**（docs/t3_z12_gtest_routinization_plan.md）：实读盘点=odom_sanity_v2 12 TEST 在库未接 CMakeLists（仅 v1+attitude+fsm 已接）；三步常规化（一行注册→catkin_make 三件套→run_tests_px4ctrl+catkin_test_results，含 run_tests 吞退出码坑）；catkin 窗协调=与 T1-F3 通道 B 合并窗+15min 异议+避让权序；生产接线（enabled_v2 默认 false/v1 逐位不变）与测试接线分离可先行。
 - **⑤ E7 双频对照脚本**（t3_e7_dualrate.{py,sh}）：prepare（223→125Hz 网格最近邻抽取，单变量=仅 IMU 网格变）/run（串行两遍 t3_replay 私有 master+pgrep 单路回放守卫）/judge（r=运动学梯形残差同 t3_r_scan 口径+vel 分位；漂移<20%=可移植；acc 差分统计→重标系数原料）；selftest 三件 PASS（网格 223→125.0Hz 精确/r 恒等式+单故障注入/漂移算术）。窗口纪律就位，待 T2 U2 队列间隙或 STATUS 协调。
 - **⑥ 新轮入账一键件**（t3_xline_intake.sh）：轮落盘→wa_gate 在线判决+CSV 行+台账模板行（人审默认/--auto-ledger 可选）+figs 再生提示；端到端实测 run_WAOL5R 全通。legs 全库重扫留 X4 判定时统一跑（IO 保护）。
+
+## Y4 独立判决与双签（2026-10-01 02:47-03:00；提交 5f33fdb+脚本修正）
+
+- **触发**：T2 U2 产出就绪（02:4x 通告 @T3，t3_results/Y4* 7 目录+t2_u2_freeze.txt 冻结凭据）。
+- **判决**：t3_wa_gate 四轴批量（7/7 与 T2 自判逐项吻合）。关键数字：CTRL2 同窗 [76.7,136.7] ATE=0.144 与历史逐位一致（**栈零劣化实证**）；hover 0.043 首基线；w2b Bas over 19.5%；p1b 僵尸 cov 0.105+ATE None(pairs=1)；173345 Bas 2.511 failure@38.8s 复现；X1img 零 failure cov 0.906 ATE 0.100。
+- **W-P 勾销**：不可验 17 条（canonical 裸栈按构造）+已勾销 3 条（P-A1-4 饥饿线/X1img track_med 43 低于 60 线留 U3 复核；P-A1-5 不劣化；P-C-4 W2B ΔBg 11%→0.9% 降一个量级=gyr_w 修复回放域可见效果）。
+- **ATE None 四层根因**（任务书顺带件）：①eval.json 物理缺失主因（--recompute-eval 补齐）②早死/僵尸轮正确 None ③配对窗 0.05s 健康 ④**新机制：撕裂抖动漂移 t*（76.7↔29.8）→漂移 ATE 窗（0.144↔0.228）——回放 ATE 绝对值不可跨轮比，同窗强制**（红线 11 补充机制）。
+- **双基线不劣化确认 ✓**（Y4 验收项）；双签 docs/t2_wa_fullregression.md §5（T3 侧 03:05）。
+- **Y4 脚本修正**（T2 两点）：+bag_has_images 无图袋剔除（dry-run 实证 6 袋剔除与 T2 U2 排除清单吻合）；--with-w2 glob 扩 t2v3_w2b（补录教训吸收）。
+- **解锁门进度**：②U2 双签 hereby 达成；剩①=T2 U3 六轮在线矩阵+U4 通告。

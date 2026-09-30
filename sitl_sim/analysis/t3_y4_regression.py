@@ -9,12 +9,15 @@
   C. W2 五场景袋(借用域):默认排除,--with-w2 显式开启(需 T2 同意,任务书原文)
 回放:t3_replay.sh 串行队列(私有 master 11313,单机一路重回放红线;轮间等待+RESULT 落盘)
 判决:t3_wa_gate 四轴;汇总 CSV+预言表 W-P1..P7 勾销表(docs/t3_wa_fullregression.md 骨架)
-纪律:任何历史失败形态漏网→登记+回挖+通知 T2,X 线不启动(任务书 Y4 原文)。
+纪律:回放结论只入机理账不作 gate(v7.4 双口径裁定,红线 11);历史形态漏网→登记+通告 T2。
 
 用法:
   t3_y4_regression.py --dry-run              # 只列队列+预估时长(现在可用)
   t3_y4_regression.py --cfg <T2修复版配置目录> [--port 11313] [--with-w2]
   t3_y4_regression.py --prophecy             # 对已跑完的 Y4 目录出预言勾销表
+注(T2-U2 02:4x 两修正点已吸收):①无图袋(无 vins_cam_* 话题)物理不可回放,队列
+  构建期图像话题检查剔除(历史判读维持 DB 在线原判);②--with-w2 glob 扩 t2v3_w2b
+  (P-C-4 引用的 W2B 袋,2026-10-01 补录教训:漏袋=穷尽纪律违规)。
 """
 import argparse
 import csv
@@ -39,8 +42,18 @@ def load_db():
         return json.load(f)
 
 
+def bag_has_images(bag):
+    """图像话题存在检查(vins_cam_*;无图袋物理不可回放,T2-U2 实证 14 袋)。"""
+    try:
+        out = subprocess.run(["rosbag", "info", "--yaml", bag],
+                             capture_output=True, text=True, timeout=120).stdout
+        return "vins_cam" in out
+    except Exception:
+        return False
+
+
 def build_queue(with_w2=False):
-    """[(tag, bag, note)] — DB 驱动;去重;污染轮剔除。"""
+    """[(tag, bag, note)] — DB 驱动;去重;污染轮剔除;无图袋剔除。"""
     q = []
     seen = set()
     for r in load_db():
@@ -55,6 +68,9 @@ def build_queue(with_w2=False):
         if not os.path.exists(bag) or r["轮名"] in seen:
             continue
         seen.add(r["轮名"])
+        if not bag_has_images(bag):
+            print(f"[y4] 剔除无图袋 {r['轮名']}(物理不可回放,DB 在线原判维持)", file=sys.stderr)
+            continue
         q.append((f"Y4_{r['轮名'][4:]}", bag, f"DB:{v.split('|')[0]}"))
     # 双基线
     for tag, bag, note in (
@@ -66,8 +82,10 @@ def build_queue(with_w2=False):
             q.append((tag, bag, note))
     if with_w2:
         for name in sorted(os.listdir(BAGS)):
-            if name.startswith("t2w5_") and name.endswith(".bag"):
-                q.append((f"Y4W_{name[:-4]}", os.path.join(BAGS, name), "W2 借用域(T2 已同意)"))
+            if ((name.startswith("t2w5_") or name.startswith("t2v3_w2b"))
+                    and name.endswith(".bag")):
+                q.append((f"Y4W_{name[:-4]}", os.path.join(BAGS, name),
+                          "W2 借用域(T2 已同意;glob 含 t2v3_w2b=T2-U2 补录教训)"))
     return q
 
 
