@@ -66,6 +66,7 @@ extern double T2_REPROP_BA_THR, T2_REPROP_BG_THR;
 extern int T2_BIAS_GUARD;
 extern double T2_BAS_SOFT, T2_BGS_SOFT, T2_BIAS_WEIGHT;
 extern int T2_BIAS_ANCHOR;
+extern double T2_OUTLIER_PX;
 extern int ROW, COL;
 extern int NUM_OF_CAM;
 extern int STEREO;

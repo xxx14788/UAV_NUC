@@ -1990,7 +1990,11 @@ void Estimator::outliersRejection(set<int> &removeIndex)
             }
         }
         double ave_err = err / errCnt;
-        if(ave_err * FOCAL_LENGTH > 3)
+        // T2-WA8: native outlier threshold parametrized (upstream hard 3px; note this
+        // is a track AVERAGE so poisoned observations get diluted in long tracks)
+        double t2_px_thr = 3.0;
+        if (T2_OUTLIER_PX > 0) t2_px_thr = T2_OUTLIER_PX;
+        if(ave_err * FOCAL_LENGTH > t2_px_thr)
             removeIndex.insert(it_per_id.feature_id);
 
     }
