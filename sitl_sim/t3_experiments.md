@@ -827,3 +827,11 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 - **工具坑入账**：ENV 三签名之 "Connection closed by client" 系正常 cleanup 杀 px4 的产物（事后扫描必命中，WAOL5R/X1_232055 双实证）→ENV-FAIL 硬证据仅认 ENVDEAD 文件（轮中活体检查写入）＋RESULT.txt 当场判定（round_result 在 cleanup 前跑的时序优势）；字符串签名降级为仅报告
 - 阈值表新增 online_ 五键（DEFAULT_THRESH 内，不动回放键，外置 json 沿用）
 - 产出：analysis/t3_wa_gate.py（+~240 行在线块）/t3_wa_gate_online_selftest.json/39 轮 wa_gate_online.json（各轮目录内）
+
+## 等待池② X7 验收报告骨架预搭（2026-10-01 02:5x；提交 62a9651+bd6be05 已推）
+
+- `docs/t3_xline_acceptance_report.md` SKELETON v0：9 章节全落位（口径/解锁凭据/X1'/X2-X3 逐轮表/X4+tag 前置/统计 CI/sim2real 声明/残余风险 R1-R6/图表再生），数字槽全部 [DATA:*] 标记**零预填**（防跳步），成稿检查单 5 项附尾。残余风险表 R1-R6 从已知事实预填（EV 未启用/Z1.2 未接线/环境脆弱/慢漂泄漏 6.0m/2.45m 跳变修复中）。
+- `analysis/t3_xline_report_figs.py`：fig1（逐轮判决面板）/fig4（帧跳双口径分布）文本版即刻可用；fig2（ATE 时间线）/fig3（Bas/Bgs 时间线）/fig5（track_med 分布）/fig6（X5 通过率地图）规格占位回填期实现；selftest PASS（合成 2 行管线）；端到端实测 39 历史轮 CSV→figs 全通（fig5 WAOL 系 track_med 76-150）。
+- 配套：t3_wa_gate 在线版补 track_med 字段+CSV 列（特征数=X7 逐轮表/runbook §2 口径），在线/回放双 selftest 复验 PASS。
+- 顺件：响应 T1-P0D 请求，vins_smoke.sh 录制清单加 /mavros/imu/data（bd6be05，item-7 桥对齐解锁；叠加在 T1 d55c710 探针默认开之上，bash -n 过）。
+- 环境注记：T1 活跃中（4f5e0f3 通道 A 延迟账+d55c710 P0-A.1 探针修复验证 PASS=**T2 U3 硬前置已清障**）；T2 A2 审计文件出现（docs/t2_a2_xtdrone_audit.md）。
