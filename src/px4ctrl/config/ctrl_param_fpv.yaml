@@ -7,7 +7,11 @@ gra         : 9.81
 pose_solver : 1     # 0:From ZhepeiWang (drag & less singular) 1:From ZhepeiWang, 2:From rotor-drag    
 ctrl_freq_max   : 100.0
 use_bodyrate_ctrl: false
-use_px4_position_ctrl: true  # true: send PositionTarget, PX4 runs pos/vel PID. false: send AttitudeTarget, px4ctrl runs pos/vel PID
+use_px4_position_ctrl: false  # true: send PositionTarget, PX4 runs pos/vel PID. false: send AttitudeTarget, px4ctrl runs pos/vel PID
+# T1-F2 2026-09-30: USER RULING branch B -- the true value was import-source mistake/legacy
+# (key absent upstream; private mod author unknown). Position loop stays onboard px4ctrl
+# (upstream architecture); SITL/real-machine isomorphism restored. Real-machine param change
+# explicitly approved by user pre-first-flight. Evidence: sitl_sim/t1_evidence/v7_2026-09-30/F2_conflict1_branch_verdict.md
 max_manual_vel: 1.0
 max_angle: 25  # Attitude angle limit in degree. A negative value means no limit.
 low_voltage: 13.2 # 4S battery
