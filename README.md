@@ -84,7 +84,9 @@ VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
 - 新增 `sitl_sim/`：SITL 全流程脚本 + 环境快照（见 §4）
 - `VINS-Fusion/support_files/paper/` 下的 VINS-Mono pdf 文件名含冒号（Windows 无法检出），已改为 `-` 连接（2026-09-26）
 
-## 3. 实机链路（2026-06 已按实际硬件标定）
+## 3
+- **config/sim_stereo/sim_stereo_imu_config.yaml: gyr_w 0.001→0.0001**(2026-09-30 T2-WA C 线终审):原仓库 fast_drone_250.yaml 值 0.0001 恢复;旧值 0.001 系 10× 超设(来源不明),为在线域 Bgs 吸水根因(WAOL1/3 Bgs 1.2-1.3 两轮复现@旧值;WAOL5R 裸栈+新值 obstacles 在线全程 314.5s 零 failure);回放域对该轴中性(B0 矩阵两值逐位同)。附:T2-WA 线全部防线已 rosparam 开关化(t2_* 键族,absent key=旧行为,默认全关,详见 docs/t2_experiments.md W-A 章)
+. 实机链路（2026-06 已按实际硬件标定）
 
 入口 `src/launch/full_vins_px4.launch`，按序拉起：
 
