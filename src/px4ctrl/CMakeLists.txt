@@ -59,6 +59,9 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_odom_sanity
     test/test_odom_sanity.cpp)
   target_link_libraries(test_odom_sanity ${catkin_LIBRARIES})
+  catkin_add_gtest(test_fsm_decision
+    test/test_fsm_decision.cpp)
+  target_link_libraries(test_fsm_decision ${catkin_LIBRARIES})
 
   # T3-Z1.2: odom sanity gate v2 design-stage gtest (odom_sanity_v2.h, UNWIRED;
   # injection matrix per C07-E3 + direction-6 augmented cells)
