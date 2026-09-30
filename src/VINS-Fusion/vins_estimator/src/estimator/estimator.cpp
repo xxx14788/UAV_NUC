@@ -1488,7 +1488,11 @@ void Estimator::optimization()
         t2_prev_bas = Bas[WINDOW_SIZE];
         bool trig_cost = summary.initial_cost > T2_PRIOR_COST_THR;
         bool trig_bas = dbas > T2_PRIOR_DBAS_THR;
+        // T2-WA2G fix: share trigger needs a cost floor - low-cost windows have
+        // few visual constraints so prior share is naturally high (phase3 c_a2a4
+        // 329m regression: share fired at cost=73 destroying healthy priors)
         bool trig_share = (t2_cost_prior >= 0) &&
+                          (summary.initial_cost > T2_PRIOR_COST_THR) &&
                           (t2_cost_prior > T2_PRIOR_SHARE_THR * (t2_cost_prior + t2_cost_imu + t2_cost_vis));
         if ((trig_cost || trig_bas || trig_share) &&
             t2_solve_seq - t2_prior_gate_last > T2_PRIOR_COOLDOWN)
