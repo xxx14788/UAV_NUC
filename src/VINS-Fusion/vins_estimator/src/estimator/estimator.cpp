@@ -13,6 +13,7 @@
 // minimal neutral placeholder (always false) to unblock shared-tree builds. T1: replace with your real switch.
 static bool reanchor_dbg = false;
 #include "../utility/visualization.h"
+#include "../factor/initial_bias_factor.h"  // T2-WA7G
 #include <cstdio>
 
 Estimator::Estimator(): f_manager{Rs}
@@ -1241,6 +1242,37 @@ void Estimator::optimization()
         t2_reg_f.emplace_back(f, ty);
         t2_reg_p.emplace_back(ps);
     };
+    // T2-WA7G: graded bias soft-constraint - when last-solved bias exceeds soft
+    // threshold, pin every window frame's SpeedBias with a weak prior at the
+    // TRIGGER-TIME snapshot (online WAOL1: Bgs sink 1.2 while track healthy =
+    // residual-transfer third form; bias weakly observable per WB4)
+    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR &&
+        (Bas[WINDOW_SIZE].norm() > T2_BAS_SOFT || Bgs[WINDOW_SIZE].norm() > T2_BGS_SOFT) &&
+        t2_guard_last_ba.norm() < 1e-12)  // engage once per episode; snapshot at engage
+    {
+        t2_guard_last_ba = Bas[WINDOW_SIZE];
+        t2_guard_last_bg = Bgs[WINDOW_SIZE];
+        printf("[T2guard] t=%.4f ENGAGE Bas=%.4f Bgs=%.5f w=%.1f\n",
+               Headers[frame_count], Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm(), T2_BIAS_WEIGHT);
+        fflush(stdout);
+    }
+    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_last_ba.norm() > 1e-12)
+    {
+        for (int k = 0; k <= frame_count; k++)
+        {
+            InitialBiasFactor *bf = new InitialBiasFactor(t2_guard_last_ba, t2_guard_last_bg, T2_BIAS_WEIGHT);
+            problem.AddResidualBlock(bf, NULL, para_SpeedBias[k]);
+        }
+    }
+    // release when bias back under half-threshold (episode end)
+    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_last_ba.norm() > 1e-12 &&
+        Bas[WINDOW_SIZE].norm() < 0.5 * T2_BAS_SOFT && Bgs[WINDOW_SIZE].norm() < 0.5 * T2_BGS_SOFT)
+    {
+        printf("[T2guard] t=%.4f RELEASE Bas=%.4f Bgs=%.5f\n",
+               Headers[frame_count], Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm());
+        t2_guard_last_ba.setZero();
+        t2_guard_last_bg.setZero();
+    }
     if (last_marginalization_info && last_marginalization_info->valid)
     {
         // construct new marginlization_factor

@@ -137,6 +137,9 @@ class Estimator
     // T2-WA2G: prior-health-gate state
     Eigen::Vector3d t2_prev_bas{0, 0, 0};
     long t2_solve_seq = 0, t2_prior_gate_last = -1000;
+    // T2-WA7G: bias-guard episode state (zero = inactive)
+    Eigen::Vector3d t2_guard_last_ba{0, 0, 0};
+    Eigen::Vector3d t2_guard_last_bg{0, 0, 0};
     Vector3d acc_0, gyr_0;
 
     vector<double> dt_buf[(WINDOW_SIZE + 1)];

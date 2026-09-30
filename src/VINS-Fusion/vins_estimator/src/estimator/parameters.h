@@ -62,6 +62,9 @@ extern int T2_PRIOR_COOLDOWN, T2_PRIOR_STRATEGY, T2_COST_TRACE;
 // T2-WA3G
 extern int T2_REPROPAGATE;
 extern double T2_REPROP_BA_THR, T2_REPROP_BG_THR;
+// T2-WA7G
+extern int T2_BIAS_GUARD;
+extern double T2_BAS_SOFT, T2_BGS_SOFT, T2_BIAS_WEIGHT;
 extern int ROW, COL;
 extern int NUM_OF_CAM;
 extern int STEREO;

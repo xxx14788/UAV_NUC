@@ -27,6 +27,13 @@ class InitialBiasFactor : public ceres::SizedCostFunction<6, 9>
     	init_Bg = _Bg;
     	sqrt_info = 1.0 / (0.001) * Eigen::Matrix<double, 6, 6>::Identity();
     }
+    // T2-WA7: weighted constructor for graded bias soft-constraint (default ctor unchanged)
+    InitialBiasFactor(const Eigen::Vector3d &_Ba, const Eigen::Vector3d &_Bg, double weight)
+    {
+        init_Ba = _Ba;
+        init_Bg = _Bg;
+        sqrt_info = weight * Eigen::Matrix<double, 6, 6>::Identity();
+    }
     virtual bool Evaluate(double const *const *parameters, double *residuals, double **jacobians) const
     {
     	Eigen::Vector3d Ba(parameters[0][3], parameters[0][4], parameters[0][5]);
