@@ -23,12 +23,16 @@ while IFS=';' read -r CELL BAG KV; do
   if [ ! -d "$CFG" ]; then
     cp -r "$CAN_SRC" "$CFG"
     python3 - "$CFG/sim_stereo_imu_config.yaml" "$KV" << 'PY'
-import sys
+import sys, re
 p, kv = sys.argv[1], sys.argv[2]
 s = open(p).read()
+# strip keys we are about to override (FileStorage keeps FIRST occurrence,
+# so appending alone is silently ignored for keys already in canonical yaml)
+s = re.sub(r"(?m)^t2_cost_trace\s*:.*\n", "", s)
 s += "\n# T2 matrix cell overrides\n"
 for pair in kv.split(","):
     k, v = pair.strip().split(":", 1)
+    s = re.sub(r"(?m)^%s\s*:.*\n" % re.escape(k), "", s)
     s += "%s: %s\n" % (k, v)
 s += "t2_cost_trace: 1\n"
 open(p, "w").write(s)
