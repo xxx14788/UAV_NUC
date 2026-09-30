@@ -1,0 +1,218 @@
+{
+ "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_18_17.ulg",
+ "tag": "w2e",
+ "t0": 1564000,
+ "dur_s": 87.2,
+ "params": {
+  "SYS_HAS_MAG": 1,
+  "MPC_XY_VEL_MAX": 12.0,
+  "MPC_XY_P": 0.949999988079071,
+  "MPC_XY_VEL_P_ACC": 1.7999999523162842,
+  "MPC_Z_VEL_MAX_UP": 3.0,
+  "MPC_THR_HOVER": 0.5,
+  "MPC_TILTMAX_AIR": 45.0,
+  "EKF2_EV_DELAY": 0.0,
+  "EKF2_GPS_CTRL": 7,
+  "EKF2_PREDICT_US": 10000,
+  "EKF2_DELAY_MAX": 200.0,
+  "EKF2_EV_QMIN": 0,
+  "EKF2_MAG_TYPE": 0,
+  "EKF2_HGT_REF": 1,
+  "COM_RCL_EXCEPT": 0,
+  "MPC_XY_CRUISE": 5.0,
+  "MC_ROLLRATE_MAX": 220.0,
+  "MC_PITCHRATE_MAX": 220.0,
+  "_ev_related": {
+   "EKF2_EVA_NOISE": 0.10000000149011612,
+   "EKF2_EVP_GATE": 5.0,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_GATE": 3.0,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_EV_CTRL": 0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_NOISE_MD": 0,
+   "EKF2_EV_POS_X": 0.0,
+   "EKF2_EV_POS_Y": 0.0,
+   "EKF2_EV_POS_Z": 0.0,
+   "EKF2_EV_QMIN": 0
+  }
+ },
+ "events": {
+  "vo_supply": {
+   "n": 703,
+   "rate_hz": 9.1,
+   "dt_p50": 104.0,
+   "dt_p95": 144.0,
+   "cov_nonzero": null
+  },
+  "ev_fusion_max_flags": {
+   "fields": [
+    "timestamp",
+    "timestamp_sample",
+    "position[0]",
+    "position[1]",
+    "position[2]",
+    "q[0]",
+    "q[1]",
+    "q[2]",
+    "q[3]",
+    "velocity[0]",
+    "velocity[1]",
+    "velocity[2]"
+   ]
+  },
+  "vehicle_status": {
+   "arming_state": [
+    [
+     0.0,
+     "1"
+    ],
+    [
+     51.0,
+     "2"
+    ],
+    [
+     86.34,
+     "1"
+    ]
+   ],
+   "nav_state": [
+    [
+     0.0,
+     "4"
+    ],
+    [
+     51.0,
+     "14"
+    ],
+    [
+     70.72,
+     "18"
+    ],
+    [
+     86.34,
+     "14"
+    ]
+   ],
+   "failsafe": [
+    [
+     0.0,
+     "0"
+    ]
+   ]
+  },
+  "vehicle_control_mode": {
+   "flag_control_offboard_enabled": [
+    [
+     0.0,
+     "0"
+    ],
+    [
+     51.0,
+     "1"
+    ],
+    [
+     70.72,
+     "0"
+    ],
+    [
+     86.34,
+     "1"
+    ]
+   ],
+   "flag_control_position_enabled": [
+    [
+     0.0,
+     "1"
+    ]
+   ],
+   "flag_control_velocity_enabled": [
+    [
+     0.0,
+     "1"
+    ]
+   ],
+   "flag_control_altitude_enabled": [
+    [
+     0.0,
+     "1"
+    ]
+   ],
+   "flag_control_attitude_enabled": [
+    [
+     0.0,
+     "1"
+    ]
+   ],
+   "flag_control_rates_enabled": [
+    [
+     0.0,
+     "1"
+    ]
+   ]
+  },
+  "vehicle_land_detected": {
+   "landed": [
+    [
+     0.0,
+     "1"
+    ],
+    [
+     52.49,
+     "0"
+    ],
+    [
+     83.89,
+     "1"
+    ]
+   ]
+  },
+  "lp_rate": {
+   "n": 10746,
+   "dt_p50": 8.0,
+   "dt_p95": 8.0
+  },
+  "gt_lp": {
+   "n": 4327,
+   "rate_hz": 49.6,
+   "dt_p50": 20.0,
+   "x_range": [
+    -0.06,
+    0.06
+   ],
+   "y_range": [
+    -0.27,
+    0.03
+   ],
+   "z_max": 0.73,
+   "xy_max_abs": 0.27
+  },
+  "att_sp": {
+   "n": 1708,
+   "rate_hz": 19.9,
+   "dt_p50": 48.0
+  },
+  "traj_sp": {
+   "n": 424,
+   "rate_hz": 5.0,
+   "dt_p50": 200.0
+  },
+  "lp_sp": {
+   "n": 854,
+   "rate_hz": 9.9,
+   "dt_p50": 100.0
+  },
+  "manual": {
+   "n": 1
+  },
+  "innov_ratio_over1": {
+   "timestamp_sample": 88640000.0,
+   "gps_hpos[0]": 1098644193280.0,
+   "gps_hpos[1]": 36196089856.0,
+   "ev_vpos": 156.58,
+   "mag_field[2]": 2.83,
+   "gravity[2]": 63.62
+  }
+ },
+ "params_n_total": 876
+}

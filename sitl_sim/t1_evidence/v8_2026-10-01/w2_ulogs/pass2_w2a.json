@@ -1,0 +1,79 @@
+{
+ "tag": "w2a",
+ "ev_gps_params": {
+  "EKF2_EVA_NOISE": 0.10000000149011612,
+  "EKF2_EVP_GATE": 5.0,
+  "EKF2_EVP_NOISE": 0.10000000149011612,
+  "EKF2_EVV_GATE": 3.0,
+  "EKF2_EVV_NOISE": 0.10000000149011612,
+  "EKF2_EV_CTRL": 0,
+  "EKF2_EV_DELAY": 0.0,
+  "EKF2_EV_NOISE_MD": 0,
+  "EKF2_EV_POS_X": 0.0,
+  "EKF2_EV_POS_Y": 0.0,
+  "EKF2_EV_POS_Z": 0.0,
+  "EKF2_EV_QMIN": 0,
+  "EKF2_GPS_CHECK": 2047,
+  "EKF2_GPS_CTRL": 7,
+  "EKF2_GPS_DELAY": 10.0,
+  "EKF2_GPS_MODE": 0,
+  "EKF2_GPS_POS_X": 0.0,
+  "EKF2_GPS_POS_Y": 0.0,
+  "EKF2_GPS_POS_Z": 0.0,
+  "EKF2_GPS_P_GATE": 5.0,
+  "EKF2_GPS_P_NOISE": 0.5,
+  "EKF2_GPS_V_GATE": 5.0,
+  "EKF2_GPS_V_NOISE": 0.30000001192092896,
+  "EKF2_GPS_YAW_OFF": 0.0,
+  "SYS_HAS_MAG": 1
+ },
+ "sensor_gps": {
+  "n": 82,
+  "fix_type_max": 3,
+  "satellites_max": 10,
+  "alt_range": null
+ },
+ "ekf2_lp_range_40s": {
+  "x": [
+   -0.07,
+   0.09
+  ],
+  "y": [
+   -0.11,
+   0.1
+  ],
+  "z": [
+   -1.81,
+   2.02
+  ]
+ },
+ "px4_lp_range_40s": {
+  "x": [
+   -0.07,
+   0.09
+  ],
+  "y": [
+   -0.11,
+   0.1
+  ],
+  "z": [
+   -1.81,
+   2.02
+  ]
+ },
+ "gt_lp_range_40s": {
+  "x": [
+   -0.08,
+   0.12
+  ],
+  "y": [
+   -0.18,
+   0.15
+  ],
+  "z": [
+   -1.14,
+   0.73
+  ]
+ },
+ "ev_ratio_timeline": "none"
+}

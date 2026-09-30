@@ -1,0 +1,32 @@
+{
+ "tag": "w2c",
+ "flight_window_ctrl_segments": [
+  {
+   "t": [
+    0.0,
+    30.0
+   ],
+   "nav_pos_vel_att": [
+    "14",
+    "1",
+    "1",
+    "1"
+   ]
+  }
+ ],
+ "traj_sp_fields_40s": {
+  "yaw": {
+   "nan_pct": 0.0,
+   "range": [
+    1.55,
+    2.03
+   ]
+  }
+ },
+ "att_sp_range_40s": {
+  "thrust_body[2]": [
+   -1.0,
+   -0.0
+  ]
+ }
+}
