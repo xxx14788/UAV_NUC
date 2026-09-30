@@ -133,7 +133,7 @@ IMG_TOPICS=""
 BAG="$EV/flight.bag"
 nohup rosbag record -O "$BAG" \
   /vins_estimator/imu_propagate /vins_estimator/odometry /vins_estimator/feature_pts \
-  /mavros/imu/data_raw /mavros/local_position/odom /mavros/state \
+  /mavros/imu/data /mavros/imu/data_raw /mavros/local_position/odom /mavros/state \
   /mavros/setpoint_raw/attitude /debugPx4ctrl/fsm_state /debugPx4ctrl \
   /gazebo/model_states /px4ctrl/takeoff_land /position_cmd /move_base_simple/goal /clock \
   $IMG_TOPICS \
