@@ -20,7 +20,7 @@
 
 using namespace std;
 
-const double FOCAL_LENGTH = 460.0;
+const double FOCAL_LENGTH = 467.7427;  // T2-U7: align with sim_stereo yaml fx (SDF hfov=1.2), T4-J3 E1 measured; was upstream default 460.0 (1.7% const bias)
 const int WINDOW_SIZE = 10;
 const int NUM_OF_F = 1000;
 //#define UNIT_SPHERE_ERROR
