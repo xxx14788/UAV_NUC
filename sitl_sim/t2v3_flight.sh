@@ -5,6 +5,7 @@
 #   route  航线轮(W1.3): 全五件套,goal(3,-2,1)→原点(0,0,1),双口径到位
 #   w2a..w2e 鲁棒场景(W2): sim_vins 链路(EKF2 EV 融合闭环) + A-E 激励 flyer
 # 域配方: use_sim_time=true 在 mavros 前(U6);preflight 五项门;bag 双口径全录。
+export REANCHOR_DEBUG=1  # T2-U3 W-C2 ground 轮探针必开(T1 d55c710 链,vins_smoke.sh 默认已带,本脚本 W1 时代早于探针)
 source /opt/ros/noetic/setup.bash
 source "$HOME/catkin_ws/devel/setup.bash"
 set -u
@@ -12,7 +13,10 @@ MODE="${1:?ground|hover|route|w2a..w2e}"
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
 
 # ---------- 锁与清场 ----------
-[ "$(readlink $HOME/sitl_sim/SITL.lock 2>/dev/null)" = "T2" ] || { LOG "FATAL 未持锁"; exit 1; }
+case "$(readlink $HOME/sitl_sim/SITL.lock 2>/dev/null)" in
+  T2-*) : ;;
+  *) LOG "FATAL 未持锁($(readlink $HOME/sitl_sim/SITL.lock 2>/dev/null))"; exit 1 ;;
+esac  # T2-R5: 适配 sitl_lock.sh 新 target 格式(同 t2_w2_run.sh 修复)
 A=$(pgrep -xc px4 2>/dev/null || true); A=${A:-0}
 B=$(pgrep -xc gzserver 2>/dev/null || true); B=${B:-0}
 [ "$A" = "0" ] && [ "$B" = "0" ] || { LOG "FATAL SITL 未清($A/$B)"; exit 1; }
@@ -33,7 +37,7 @@ nohup bash $HOME/catkin_ws/sitl_sim/02_start_mavros.sh > $HOME/sitl_sim/t2v3_mav
 ok=0; for i in $(seq 1 30); do sleep 2
   rostopic echo -n1 /mavros/state/connected 2>/dev/null | grep -q True && { ok=1; break; }; done
 [ $ok = 1 ] || { LOG "FATAL mavros 未连"; exit 1; }
-rosrun mavros mavcmd long 511 105 5000 0 0 0 0 0 2>/dev/null
+rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 2>/dev/null
 sleep 2
 LOG "mavros up, IMU 提频"
 
@@ -139,7 +143,7 @@ EOF
     timeout 30 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null 2>&1
     sleep 12 ;;
   w2*)
-    PROF=${MODE#w2}
+    PROF=$(echo ${MODE#w2} | tr a-z A-Z)  # T2-R5: flyer 只认大写(附录坑7复发再修)
     LOG "W2 场景 $PROF: 静置补 10s 后启动 flyer"
     sleep 10
     timeout 200 python3 $HOME/sitl_sim/t2_offboard_fly.py "$PROF" > $HOME/sitl_sim/t2v3_flyer_${PROF}.log 2>&1
