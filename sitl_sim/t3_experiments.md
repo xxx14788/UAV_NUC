@@ -852,3 +852,10 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 - **双基线不劣化确认 ✓**（Y4 验收项）；双签 docs/t2_wa_fullregression.md §5（T3 侧 03:05）。
 - **Y4 脚本修正**（T2 两点）：+bag_has_images 无图袋剔除（dry-run 实证 6 袋剔除与 T2 U2 排除清单吻合）；--with-w2 glob 扩 t2v3_w2b（补录教训吸收）。
 - **解锁门进度**：②U2 双签 hereby 达成；剩①=T2 U3 六轮在线矩阵+U4 通告。
+
+## 会话收口（2026-10-01 03:5x；X 线门①未达规范等待登记）
+
+- **X 线解锁链终态（本会话观察）**：门②U2 双签达成（我 03:05 签，T2 确认）；门①U3 矩阵轮 1R failure@134.8s（新形态：P_x 翻号→40m/s 跑飞，前端健康/Bas 0.74 稳，异于历史 Bas 爆）→六轮 6/6 不可达，T2 如实挂账不掷凑数轮；U3R1REP 离线复现成功（爆炸在数据里非在线域）；T2 转回挖（U3R1_M2OFF 矩阵变体在跑）。X 线今晚不解锁。
+- **E7 状态**：prepare 已完成（e7_ctrl2_125hz.bag 6G：IMU 21557 kept/15556 dropped=121Hz≈125 目标，其余话题 113805 全拷）；run 两遍回放让位 T2 回挖窗（单机一路红线），随时可跑（t3_e7_dualrate.sh run <tag> <bag223> <CFG>；CFG=canonical 当前 HEAD 栈）。
+- **X 线冲刺预检已备**：runbook v7.4-R2 §0 六项中——工具自测四件全绿（03:15 实跑：wa_gate online/replay+forensics+library 四 PASS，library 子命令为位置参数）；U7 新栈（bccc962 FOCAL 467.7+gtest 22/22）将作为 X 线栈代；磁盘预算评估已发（df 47G 现值/T2 删 215016 释放 23G/T4 提帧确认后我域可清 ~23G）。
+- **轮 1R 判读补充（轻量，未跑完整判决器避 IO 冲突）**：RESULT.txt 显示真值机体物理近达 1.288m（ARRIVE_WATCH min_truth 0.749）而 VINS 估计域跑飞（锚差 369.8m/p95 跟踪 327m）——爆炸在估计域、控制域未失稳；材料 run_WC2OBS1_032005 在档，X 线判决器随时可出完整画像。
