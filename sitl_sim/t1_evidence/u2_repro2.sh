@@ -30,7 +30,7 @@ import socket
 def alive(name):
     try:
         code, _, uri = m.lookupNode('/probe', name)
-        host, port = uri.split('//')[1].split(':')
+        host, port = uri.split("//")[1].rstrip("/").split(":")
         s = socket.socket(); s.settimeout(0.3)
         s.connect((host, int(port))); s.close(); return True
     except Exception:
