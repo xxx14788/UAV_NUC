@@ -460,6 +460,15 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             leftPose.rightCols<1>() = -R0.transpose() * t0;
 
             imu_i++;
+            // T2-WA9: minimum-baseline gate on two-frame MOTION triangulation -
+            // at hover the inter-frame baseline is ~zero so the "depth" solved is
+            // pure noise (poison-window forensics: burst t=27 = motion2 batch on
+            // tracks whose stereo match failed; upstream assumes motion excitation
+            // and never checks this - real D435 starts VINS after takeoff so the
+            // blind spot never fired there)
+            if (T2_MOTION2_MIN_BASE > 0.0 &&
+                (Ps[imu_i] - Ps[imu_i - 1]).norm() < T2_MOTION2_MIN_BASE)
+                continue;
             Eigen::Matrix<double, 3, 4> rightPose;
             Eigen::Vector3d t1 = Ps[imu_i] + Rs[imu_i] * tic[0];
             Eigen::Matrix3d R1 = Rs[imu_i] * ric[0];
