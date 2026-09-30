@@ -140,6 +140,7 @@ class Estimator
     // T2-WA7G: bias-guard episode state (zero = inactive)
     Eigen::Vector3d t2_guard_last_ba{0, 0, 0};
     Eigen::Vector3d t2_guard_last_bg{0, 0, 0};
+    bool t2_guard_engaged = false;
     Vector3d acc_0, gyr_0;
 
     vector<double> dt_buf[(WINDOW_SIZE + 1)];

@@ -28,6 +28,7 @@ double T2_REPROP_BA_THR = 0.10, T2_REPROP_BG_THR = 0.01;
 // T2-WA7G globals
 int T2_BIAS_GUARD = 0;
 double T2_BAS_SOFT = 1.0, T2_BGS_SOFT = 0.5, T2_BIAS_WEIGHT = 50.0;
+int T2_BIAS_ANCHOR = 0;
 double MIN_PARALLAX;
 double ACC_N, ACC_W;
 double GYR_N, GYR_W;
@@ -182,6 +183,8 @@ void readParameters(std::string config_file)
         T2_BGS_SOFT = (double)fsSettings["t2_bgs_soft"];
     if (!fsSettings["t2_bias_weight"].empty())
         T2_BIAS_WEIGHT = (double)fsSettings["t2_bias_weight"];
+    if (!fsSettings["t2_bias_anchor"].empty())
+        T2_BIAS_ANCHOR = (int)fsSettings["t2_bias_anchor"];
     // T2-WA3G knobs
     if (!fsSettings["t2_repropagate"].empty())
         T2_REPROPAGATE = (int)fsSettings["t2_repropagate"];

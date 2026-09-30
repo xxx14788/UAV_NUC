@@ -1250,13 +1250,24 @@ void Estimator::optimization()
         (Bas[WINDOW_SIZE].norm() > T2_BAS_SOFT || Bgs[WINDOW_SIZE].norm() > T2_BGS_SOFT) &&
         t2_guard_last_ba.norm() < 1e-12)  // engage once per episode; snapshot at engage
     {
-        t2_guard_last_ba = Bas[WINDOW_SIZE];
-        t2_guard_last_bg = Bgs[WINDOW_SIZE];
+        t2_guard_engaged = true;
+        // T2-WA7: anchor=0 pins to ZERO (sim-domain bias truth; snapshot-at-engage
+        // legalizes the poisoned value - phase7 wa7_only froze Bas at 1.30 forever)
+        if (T2_BIAS_ANCHOR == 0)
+        {
+            t2_guard_last_ba.setZero();
+            t2_guard_last_bg.setZero();
+        }
+        else
+        {
+            t2_guard_last_ba = Bas[WINDOW_SIZE];
+            t2_guard_last_bg = Bgs[WINDOW_SIZE];
+        }
         printf("[T2guard] t=%.4f ENGAGE Bas=%.4f Bgs=%.5f w=%.1f\n",
                Headers[frame_count], Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm(), T2_BIAS_WEIGHT);
         fflush(stdout);
     }
-    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_last_ba.norm() > 1e-12)
+    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_engaged)
     {
         for (int k = 0; k <= frame_count; k++)
         {
@@ -1265,11 +1276,12 @@ void Estimator::optimization()
         }
     }
     // release when bias back under half-threshold (episode end)
-    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_last_ba.norm() > 1e-12 &&
+    if (T2_BIAS_GUARD && solver_flag == NON_LINEAR && t2_guard_engaged &&
         Bas[WINDOW_SIZE].norm() < 0.5 * T2_BAS_SOFT && Bgs[WINDOW_SIZE].norm() < 0.5 * T2_BGS_SOFT)
     {
         printf("[T2guard] t=%.4f RELEASE Bas=%.4f Bgs=%.5f\n",
                Headers[frame_count], Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm());
+        t2_guard_engaged = false;
         t2_guard_last_ba.setZero();
         t2_guard_last_bg.setZero();
     }
