@@ -835,3 +835,10 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 - 配套：t3_wa_gate 在线版补 track_med 字段+CSV 列（特征数=X7 逐轮表/runbook §2 口径），在线/回放双 selftest 复验 PASS。
 - 顺件：响应 T1-P0D 请求，vins_smoke.sh 录制清单加 /mavros/imu/data（bd6be05，item-7 桥对齐解锁；叠加在 T1 d55c710 探针默认开之上，bash -n 过）。
 - 环境注记：T1 活跃中（4f5e0f3 通道 A 延迟账+d55c710 P0-A.1 探针修复验证 PASS=**T2 U3 硬前置已清障**）；T2 A2 审计文件出现（docs/t2_a2_xtdrone_audit.md）。
+
+## 等待池③④⑤⑥连报（2026-10-01 03:0x；提交 90a5602/271f580/4ab9c2f 已推）
+
+- **③ runbook 彩排 v7.4-R2**：零上下文走查 8 缺口全回填——解锁门改 U4+U2 双签口径（回放不作 gate 红线 11）；工具自测 3→4 件（+--online --selftest）；新增 §0.7 probecheck 预检（T1 d55c710 能力吸收）；§1 出图纪律反转（全带图+df>15G+T4 先提帧后清理+袋保全）；§2 一行全判决为主判入口；§5 新增 T1-D1 跳变域行（wa_gate t1d1 自动标注）；§6 tag 前置+T1-E2 修复落地；§8 袋保全协议。引用命令 NUC 实存全验。
+- **④ Z1.2 gtest 常规化方案**（docs/t3_z12_gtest_routinization_plan.md）：实读盘点=odom_sanity_v2 12 TEST 在库未接 CMakeLists（仅 v1+attitude+fsm 已接）；三步常规化（一行注册→catkin_make 三件套→run_tests_px4ctrl+catkin_test_results，含 run_tests 吞退出码坑）；catkin 窗协调=与 T1-F3 通道 B 合并窗+15min 异议+避让权序；生产接线（enabled_v2 默认 false/v1 逐位不变）与测试接线分离可先行。
+- **⑤ E7 双频对照脚本**（t3_e7_dualrate.{py,sh}）：prepare（223→125Hz 网格最近邻抽取，单变量=仅 IMU 网格变）/run（串行两遍 t3_replay 私有 master+pgrep 单路回放守卫）/judge（r=运动学梯形残差同 t3_r_scan 口径+vel 分位；漂移<20%=可移植；acc 差分统计→重标系数原料）；selftest 三件 PASS（网格 223→125.0Hz 精确/r 恒等式+单故障注入/漂移算术）。窗口纪律就位，待 T2 U2 队列间隙或 STATUS 协调。
+- **⑥ 新轮入账一键件**（t3_xline_intake.sh）：轮落盘→wa_gate 在线判决+CSV 行+台账模板行（人审默认/--auto-ledger 可选）+figs 再生提示；端到端实测 run_WAOL5R 全通。legs 全库重扫留 X4 判定时统一跑（IO 保护）。
