@@ -65,7 +65,8 @@ def main():
     zoff = pairs[0][2][2]
     z = np.array([p[2][2] - zoff for p in pairs])
     fly = z > 0.3
-    if fly.any():
+    flew = bool(fly.any())   # T2-A4(2026-10-01): GT z 交叉核验——地面袋 fly.any()=False 时旧行为把整袋误报为飞行窗
+    if flew:
         tf0 = ts_[fly][0]
         tf1 = ts_[fly][-1]
     else:
@@ -78,6 +79,7 @@ def main():
         "align_offset": [round(x, 3) for x in off],
         "flight_window_rel": [round(tf0 - t0, 1), round(tf1 - t0, 1)],
         "fly_duration": round(tf1 - tf0, 1),
+        "flew": flew,   # False=全程 fallback 窗(未起飞),flight 段指标语义=全程
         "err_max_all": round(float(err.max()), 3),
         "err_max_flight": round(float(err[fsel].max()), 3),
         "rmse_flight": round(float(np.sqrt((err[fsel] ** 2).mean())), 3),
