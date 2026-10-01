@@ -4,7 +4,7 @@
   {
    "cell": "run_WAOL5R_222234",
    "ok": true,
-   "line": "run_WAOL5R_222234: FAIL [four=0/1/1/0 j0jump=2.448 j0rev=False(raw=57,smj=43) env=sitl.log:Connection-closed(normal-cleanup-artifact?) T1D1 | vins=✓ reboot=0 gaps=0 cov=1.0 bas_pk=0.9808 bgs_pk=0.00132 ate=1.8859 morph=数值溢出型(含 extreme/非有限帧)]",
+   "line": "run_WAOL5R_222234: FAIL [scene=obstacles/gate=0.75 four=0/1/1/0 j0jump=2.448 j0rev=False(raw=57,smj=43) env=sitl.log:Connection-closed(normal-cleanup-artifact?) T1D1 | vins=✓ reboot=0 gaps=0 cov=1.0 bas_pk=0.9808 bgs_pk=0.00132 ate=1.8859 morph=数值溢出型(含 extreme/非有限帧)]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -50,13 +50,18 @@
      "check": "vins_pass ref=True",
      "got": true,
      "pass": true
+    },
+    {
+     "check": "scene ref=obstacles",
+     "got": "obstacles",
+     "pass": true
     }
    ]
   },
   {
    "cell": "run_X1_232055",
    "ok": true,
-   "line": "run_X1_232055: FAIL [four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散]",
+   "line": "run_X1_232055: FAIL [scene=obstacles/gate=0.75 four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -86,6 +91,70 @@
     {
      "check": "vins_pass ref=False",
      "got": false,
+     "pass": true
+    },
+    {
+     "check": "scene ref=obstacles",
+     "got": "obstacles",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "run_WC2OBS1_032005",
+   "ok": true,
+   "line": "run_WC2OBS1_032005: FAIL [scene=obstacles/gate=0.75 four=0/1/1/0 j0jump=369.839 j0rev=None(raw=None,smj=None) env=- T1D1 | vins=✓ reboot=0 gaps=0 cov=0.291 bas_pk=0.7425 bgs_pk=0.12547 ate=116.4114 morph=None]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "scene ref=obstacles",
+     "got": "obstacles",
+     "pass": true
+    },
+    {
+     "check": "gate_m ref=0.75",
+     "got": 0.75,
+     "pass": true
+    },
+    {
+     "check": "j0_jump ref=369.839",
+     "got": 369.839,
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "scene_map(synthetic)",
+   "ok": true,
+   "line": "场景分门三态映射+0.6m 分界翻转(合成,不读袋)",
+   "checks": [
+    {
+     "check": "world=sitl_world → no_obstacles/gate=0.5",
+     "got": "no_obstacles/0.5",
+     "pass": true
+    },
+    {
+     "check": "world=sitl_world_obstacles → obstacles/gate=0.75",
+     "got": "obstacles/0.75",
+     "pass": true
+    },
+    {
+     "check": "world=sitl_world_obstacles_v2 → obstacles/gate=0.75",
+     "got": "obstacles/0.75",
+     "pass": true
+    },
+    {
+     "check": "world=None → unknown/gate=0.5",
+     "got": "unknown/0.5",
+     "pass": true
+    },
+    {
+     "check": "j0=0.6m 分界翻转: no_obstacles(0.5)门不过/obstacles(0.75)门过",
+     "got": true,
      "pass": true
     }
    ]

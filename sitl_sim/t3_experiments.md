@@ -859,3 +859,54 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 - **E7 状态**：prepare 已完成（e7_ctrl2_125hz.bag 6G：IMU 21557 kept/15556 dropped=121Hz≈125 目标，其余话题 113805 全拷）；run 两遍回放让位 T2 回挖窗（单机一路红线），随时可跑（t3_e7_dualrate.sh run <tag> <bag223> <CFG>；CFG=canonical 当前 HEAD 栈）。
 - **X 线冲刺预检已备**：runbook v7.4-R2 §0 六项中——工具自测四件全绿（03:15 实跑：wa_gate online/replay+forensics+library 四 PASS，library 子命令为位置参数）；U7 新栈（bccc962 FOCAL 467.7+gtest 22/22）将作为 X 线栈代；磁盘预算评估已发（df 47G 现值/T2 删 215016 释放 23G/T4 提帧确认后我域可清 ~23G）。
 - **轮 1R 判读补充（轻量，未跑完整判决器避 IO 冲突）**：RESULT.txt 显示真值机体物理近达 1.288m（ARRIVE_WATCH min_truth 0.749）而 VINS 估计域跑飞（锚差 369.8m/p95 跟踪 327m）——爆炸在估计域、控制域未失稳；材料 run_WC2OBS1_032005 在档，X 线判决器随时可出完整画像。
+
+## E7 双频移植对比收口 + 等待池②③（2026-10-01 18:15-18:5x；v8.0 单元 1+等待池②③）
+
+**E7 判决：NOT-PORTABLE——r/Bas 类判据跨频不可移植；vel 类可移植（<8%）；acc 差分重标系数≈0.85。**
+
+### 执行与栈代
+
+- 窗口：T2 16:56 R1 收口点名"回放窗已释放，E7 可起跑"+任务书 v8.0 单元 1 授权；18:15 预告（5min 异议窗，T2 18:20 v7.2 通告主动让位）；18:19 起跑，约 25min 收口，机器归还（全程 pgrep 单路回放守卫有效）。
+- 栈代：HEAD 04d7686 + vins_node md5 `cf038477d160917a28e8cc14b6bffca6`（=凭据栈 cf0384 实读）；两遍同栈串行，私有 master 11313。
+- 素材：`t2v3_route_112652.bag`（223 原生域）+ `e7_ctrl2_125hz.bag`（03:06 prepare，manifest src 配对，实测 121Hz≈125 目标）。降采样袋以**硬链接**挂到脚本期望名 `t2v3_route_112652_125hz.bag` 复用——不能用符号链接：t3_replay.sh 内 `readlink -f` 会解析 symlink 致输出目录名与 judge 期望分叉。
+
+### judge 数字（e7_dualrate.csv；两 dir 各 e7_dualrate.json）
+
+| 轴 | 分位 | 223 值 | 125 值 | 漂移 | 20% 判定 |
+|---|---|---|---|---|---|
+| odom | r_p50 | 0.1025 | 0.1236 | 20.6% | 贴线超 |
+| odom | r_p95 | 0.1270 | 0.1881 | 48.2% | 超 2.4× |
+| odom | r_p999 | 0.3171 | 0.3467 | 9.3% | 过 |
+| odom | v_p50/95/999 | — | — | 4.3/0.7/1.3% | 全过 |
+| prop | r_p50 | 0.0618 | 0.00095 | 98.5% | 超（口径失效） |
+| prop | v_p95 | 0.5576 | 0.5705 | 2.3% | 过 |
+
+- prop 轴 r_p50 漂移 98.5% 的机制：imu_propagate 流的运动学梯形恒等式残差对发布间隔高度敏感（非平移不变口径），125Hz 侧相邻样本 dt 加大后恒等式近似度反而变高——**r 类判据在 prop 流上跨频本就无意义**，可移植性结论以 odom 轴为准。
+- acc 差分重标系数（源袋级 accstats）：p50 16.296→13.778（系数 0.846）；p95 39.33→33.39（0.849）；max 6833.5 两袋同值（共同尖峰主导，不构成重标口径）。
+- **wa_gate 四指标层第二实证**：125Hz 下 Bas over_ratio 0→21.9%、最长连续超限 372 帧、peak 1.59（tail_med 0.108 反而健康）——IMU 率降→Bias 可观测性劣化，acc/Bias 类判据跨频不可移植的独立证据。
+- 形态登记：iv_med（slv phase1 间隔中位）6.8s→50.4s（×7.4，滑窗节拍变化）；ATE pass1=0.223/pass2=0.192（复放撕裂抖动窗第三、四实例，红线 11：同袋同栈 ATE∈{0.144(老,袋失),0.223,0.227}）。
+- 两遍 vins_node 收尾 `Aborted (core dumped)`＝析构期 `terminate called without an active exception`（vins.log 健康跑满至 196.98s，末行 Bas≈0.11 稳，alive=1）——**输出完好，非中途崩**；判读收尾崩/中途崩看 vins.log 跑满与否。
+
+### 结论落点（X 线输入）
+
+- **X 线验收矩阵与 X5 参数扫固定 223Hz 凭据栈域**（runbook v7.4-R2 现行即如此，511@4000us 仓库标准）；125Hz 域判据门无移植基础，未来若 125Hz 栈需验收须独立定标（acc 类按 ≈0.85 系数重标 + Bas 门重校 + r 类阈值重扫）。
+- 附产：E7 pass1 输出（同袋同栈复放，ATE 0.223）复用为**回放轴 selftest 的 CTRL2 数据源**——老 CTRL2 目录（判 PASS/ATE 0.144）vins_out.bag 已于 9-30 清理中遗失、coverage 断源；不伪造恢复历史目录，改用今晚复放实例并注记抖动窗（verdict=FAIL 属窗抖动形态非质量劣化，Bas/尖峰/覆盖轴全健康；回放轴 PASS 侧校准职责由在线轴 WAOL5R vins 域承担）。
+
+### 等待池② wa_gate 场景分门落地（用户 10-01 裁决：无障碍 0.5m / obstacles 系含 v2 0.75m）
+
+- 新增 `scene_of_run()`：正源=run 目录 round.log 的 `SITL up (world)` 行；world 含 `obstacles` → 0.75 门，其余→0.5；round.log 缺失→unknown 保守默认 0.5（source 字段留审计痕）。
+- `judge_online_dir` 的 xline_pass/t1d1/failed 三处硬编码 0.5 全部改场景门；一行判决与 wa_gate_online.json 增 scene/world/gate_m 字段。
+- 新阈值键 `scene_gate_default_m/scene_gate_obstacles_m/scene_obstacles_kw`（defaults 打底+旧 json update 兼容，无需迁移）。
+- **双侧 selftest 全绿**（回放轴 3 cell+在线轴 4 cell，两侧 json 均重写）：在线轴新增 WC2OBS1_032005（obstacles 侧真实轮，`skip_forensics` 避免重读 13.5G 袋）与 scene_map 合成 cell（三态映射+0.6m 分界翻转：no_obstacles 门不过/obstacles 门过）；回放轴 CTRL2 cell 换 E7 pass1 数据源+新增 e7b125 cell（Bas over 21.9% 跨频劣化活校准）。
+- 历史无翻转声明：现存在线 run 场景 100%=obstacles（W-A/X1/WC2 系全在 sitl_world_obstacles 跑），j0_jump 值域（0.1 级 vs 2.4/369）两端远离 0.5/0.75 分界——场景门为前向口径，无历史判决翻转。发现登记：no_obstacles 侧（route/ground 系）无真实在线轮，X 线 X2①③ 将是首批。
+
+### 等待池③ 录制清单 setpoint_raw 双话题（答 T1 12:44 请求/T2 v7.1 C-5）
+
+- vins_smoke.sh record 清单增 `/mavros/setpoint_raw/local`（`attitude` 原已在；`/mavros/imu/data` 原已在）——T1 F-G 判别（px4ctrl 在环 vs flyer 直控的 setpoint 消费面）双话题证据自此齐备。
+- **双副本同步+md5 对齐**（仓库副本 ~/catkin_ws/sitl_sim/vins_smoke.sh + 运行副本 ~/sitl_sim/vins_smoke.sh）——T2 03:2x 探针副本分叉坑的同款防御，本轮实跑轮起即生效。
+
+### 工具坑（方法论账追加）
+
+1. setsid 非交互 shell 无 bashrc 预热：`set -u` 下 source ROS 环境连环爆（ROS_DISTRO→ROS_MASTER_URI→…）→ 正确姿势=wrapper 先无 -u source 全环境再 exec 目标脚本（本轮 e7_wrap.sh，零目标脚本改动）。
+2. 非交互 ssh 的 python3 无 rosbag 模块：read_online_bag/eval 类工具须先 source ROS 环境，否则 subprocess 静默失败（check=False 吞错）呈现 eval=None 假象。
+3. t3_replay 收尾 `Aborted (core dumped)` 判读：析构崩溃 vs 中途崩的分界=vins.log 是否跑满袋长+alive 标志（X1img2 的 18.2s 段错误是中途崩，本轮 196.98s 收尾崩）。

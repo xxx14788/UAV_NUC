@@ -49,33 +49,33 @@
    ]
   },
   {
-   "cell": "CTRL2_t2v3_route_112652",
+   "cell": "e7_e7a223_t2v3_route_112652",
    "ok": true,
-   "line": "CTRL2_t2v3_route_112652: PASS [survival✓ cov=1.0 | bas✓ peak=1.4016 over=0.0012 run=2 tail=0.1105 | ate✓ 0.144/0.1584 | spike✓ rate=0.0046 maxratio=34.6 abs>1e3=1010 max=53199.8 period=1.9s iv_med=5.94s]",
+   "line": "e7_e7a223_t2v3_route_112652: FAIL [survival✓ cov=1.0 | bas✓ peak=0.9506 over=0.0 run=0 tail=0.1135 | ate✗ 0.223/0.1584 | spike✓ rate=0.0041 maxratio=33.3 abs>1e3=1027 max=46608.1 period=1.9s iv_med=6.8s]",
    "checks": [
     {
-     "check": "verdict==PASS",
-     "got": "PASS",
+     "check": "verdict==FAIL",
+     "got": "FAIL",
      "pass": true
     },
     {
-     "check": "ate ~ 0.144",
-     "got": 0.144,
+     "check": "ate ~ 0.223",
+     "got": 0.223,
      "pass": true
     },
     {
      "check": "bas_tail_med ~ 0.11",
-     "got": 0.1105,
+     "got": 0.1135,
      "pass": true
     },
     {
      "check": "spike_rate_le <= 0.01",
-     "got": 0.0046,
+     "got": 0.0041,
      "pass": true
     },
     {
      "check": "spike_max_ratio_le <= 50.0",
-     "got": 34.6,
+     "got": 33.3,
      "pass": true
     },
     {
@@ -89,7 +89,39 @@
      "pass": true
     }
    ]
+  },
+  {
+   "cell": "e7_e7b125_t2v3_route_112652_125hz",
+   "ok": true,
+   "line": "e7_e7b125_t2v3_route_112652_125hz: FAIL [survival✓ cov=1.0 | bas✗ peak=1.5909 over=0.2194 run=372 tail=0.1082 | ate✗ 0.192/0.1584 | spike✓ rate=0.0029 maxratio=37.4 abs>1e3=987 max=42373.6 period=1.9s iv_med=50.37s]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "ate ~ 0.192",
+     "got": 0.192,
+     "pass": true
+    },
+    {
+     "check": "bas_over_ge >= 0.2",
+     "got": 0.2194,
+     "pass": true
+    },
+    {
+     "check": "spike_rate_le <= 0.01",
+     "got": 0.0029,
+     "pass": true
+    },
+    {
+     "check": "coverage_ge >= 0.8",
+     "got": 1.0,
+     "pass": true
+    }
+   ]
   }
  ],
- "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;CTRL2 ATE 0.144/Bas 0.11 稳/滑窗 cost 收敛"
+ "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;CTRL2 复放(E7 pass1)ATE 0.223(撕裂抖动窗,老目录 0.144 袋失)/Bas 0.11 稳/滑窗 cost 收敛;e7b125=125Hz Bas over 21.9% 跨频不可移植活校准"
 }

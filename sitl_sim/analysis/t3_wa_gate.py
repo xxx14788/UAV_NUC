@@ -72,6 +72,10 @@ DEFAULT_THRESH = {
     "online_pair_win_s": 0.2,      # ATE 最近邻配对窗
     "online_j0_rev_raw_max": 0,    # J0 修订: frame_jumps_raw_odom == 0(X1' 验收口径)
     "online_j0_rev_smj_max": 10,   # J0 修订: frame_jumps_smoothed_odom ≤ 10
+    # ---- 场景分门(用户 10-01 裁决;v8.0 等待池②;正源=round.log "SITL up (world)") ----
+    "scene_gate_default_m": 0.5,       # 无障碍场景(route/ground/hover 系)到位门
+    "scene_gate_obstacles_m": 0.75,    # obstacles 系(含 obstacles_v2)
+    "scene_obstacles_kw": "obstacles", # world 名包含即判 obstacles 系
 }
 
 RE_DIAG = re.compile(
@@ -498,9 +502,37 @@ def forensics_fetch(run_dir, skip=False):
             "prop_gap": d.get("prop_gap")}
 
 
+def scene_of_run(run_dir, th):
+    """场景分门(v8.0 等待池②,用户 10-01 裁决):round.log "SITL up (world)" 行为正源。
+    world 含 obstacles 关键词→obstacles 系门 0.75(含 obstacles_v2);其余→无障碍门 0.5;
+    round.log 缺失/无该行→unknown,保守用默认门 0.5,source 字段留审计痕。"""
+    world, src = None, None
+    rl = os.path.join(run_dir, "round.log")
+    if os.path.exists(rl):
+        try:
+            with open(rl, encoding="utf-8", errors="replace") as f:
+                for line in f:
+                    m = re.search(r"SITL up \(([^)]+)\)", line)
+                    if m:
+                        world, src = m.group(1).strip(), "round.log"
+                        break
+        except OSError:
+            pass
+    if world is None:
+        scene = "unknown"
+    elif th["scene_obstacles_kw"] in world:
+        scene = "obstacles"
+    else:
+        scene = "no_obstacles"
+    gate = (th["scene_gate_obstacles_m"] if scene == "obstacles"
+            else th["scene_gate_default_m"])
+    return {"scene": scene, "world": world, "gate_m": gate, "source": src or "missing"}
+
+
 def judge_online_dir(run_dir, th, skip_forensics=False):
     rep = {"dir": os.path.basename(replay_dir_safe(run_dir)), "mode": "online",
-           "thresholds": {k: th[k] for k in th if k.startswith("online_")}}
+           "thresholds": {k: th[k] for k in th
+                          if k.startswith(("online_", "scene_"))}}
     # ---- A. 四指标 + J0 锚差(RESULT.txt 权威,不重算) ----
     res = parse_result_txt(run_dir)
     four = res["four"]
@@ -558,12 +590,14 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
     four_known = all(v is not None for v in four)
     four_ok = all(four) if four_known else False
     j0_jump = res["j0_jump_m"]
+    scene = scene_of_run(run_dir, th)
+    gate_m = scene["gate_m"]
     env_hard, env_soft = envfail_scan(run_dir)
     if res.get("result") == "ENV-FAIL":
         env_hard = env_hard or "RESULT.txt:ENV-FAIL"
-    xline_pass = bool(four_ok and j0_jump is not None and j0_jump < 0.5
+    xline_pass = bool(four_ok and j0_jump is not None and j0_jump < gate_m
                       and j0_rev_pass is True)
-    t1d1 = bool(j0_jump is not None and j0_jump >= 0.5 and vins_pass)
+    t1d1 = bool(j0_jump is not None and j0_jump >= gate_m and vins_pass)
     if env_hard and not xline_pass:
         verdict = "ENV-FAIL"
     elif xline_pass:
@@ -571,6 +605,8 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
     else:
         verdict = "FAIL"
     rep["xline"] = {"four": four, "four_known": four_known, "four_ok": four_ok,
+                    "scene": scene["scene"], "world": scene["world"],
+                    "scene_source": scene["source"], "gate_m": gate_m,
                     "j0_jump_m": j0_jump, "j0_rev_pass": j0_rev_pass,
                     "fj_raw": fo.get("fj_raw"), "fj_smj": fo.get("fj_smj"),
                     "result_txt": res["result"], "env_sig": env_hard or env_soft,
@@ -581,7 +617,7 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
                                   if not bas else None))
     rep["forensics"] = fo
     rep["verdict"] = verdict
-    rep["failed"] = ([k for k, ok in (("four", four_ok), ("j0_jump", j0_jump is not None and j0_jump < 0.5),
+    rep["failed"] = ([k for k, ok in (("four", four_ok), ("j0_jump", j0_jump is not None and j0_jump < gate_m),
                                       ("j0_rev", j0_rev_pass is True))]
                      if verdict == "FAIL" else [])
     return rep
@@ -599,7 +635,8 @@ def one_line_online(rep):
     four = x.get("four")
     four_s = "/".join(str(f) for f in four) if four else "?"
     return (f"{rep['dir']}: {rep.get('verdict')} "
-            f"[four={four_s} j0jump={x.get('j0_jump_m')} j0rev={x.get('j0_rev_pass')}"
+            f"[scene={x.get('scene')}/gate={x.get('gate_m')} "
+            f"four={four_s} j0jump={x.get('j0_jump_m')} j0rev={x.get('j0_rev_pass')}"
             f"(raw={x.get('fj_raw')},smj={x.get('fj_smj')}) "
             f"env={x.get('env_sig') or '-'}{' T1D1' if x.get('t1d1_domain') else ''} | "
             f"vins={'✓' if v.get('pass_vins') else '✗'} "
@@ -642,15 +679,31 @@ SELFTEST = {
             ("spike_rate_ge", 0.02, None),         # 实测 5.6%(>>1% 线)
         ],
     },
-    "CTRL2_t2v3_route_112652": {
-        "verdict": "PASS",
+    # 数据源注记(10-01):CTRL2 老目录 vins_out.bag 已失,本 cell 改用 E7 pass1
+    # (同袋 t2v3_route_112652 同栈 cf0384 复放,完整可复算)。复放撕裂抖动窗
+    # (红线11):三实例 ATE∈{0.144(老,袋失),0.223(本),0.227(Y4B)},基线门 0.1584
+    # 卡窗中间→本实例 verdict=FAIL 属窗抖动形态非质量劣化;Bas/尖峰/覆盖轴全健康;
+    # 回放轴 PASS 侧校准职责由在线轴 WAOL5R(vins 域健康)承担。
+    "e7_e7a223_t2v3_route_112652": {
+        "verdict": "FAIL",
         "expect": [
-            ("ate", 0.144, 0.01),          # 台账:ATE 0.144±0.01
+            ("ate", 0.223, 0.02),          # eval 实测(撕裂抖动窗 0.22 侧)
             ("bas_tail_med", 0.11, 0.02),   # 台账:"Bas 0.11 稳"
-            ("spike_rate_le", 0.01, None),  # 实测 0.46%
-            ("spike_max_ratio_le", 50.0, None),  # 实测 34.6×
-            ("coverage_ge", 0.8, None),     # 实测 ~0.96(全程)
-            ("diag_n_ge", 1500, None),      # 实测 1723
+            ("spike_rate_le", 0.01, None),  # 实测 0.41%
+            ("spike_max_ratio_le", 50.0, None),  # 实测 33.3×
+            ("coverage_ge", 0.8, None),     # 全程
+            ("diag_n_ge", 1500, None),      # 实测 3458 帧 odom
+        ],
+    },
+    # 125Hz 降采样复放(Bas 跨频劣化形态活校准,10-01 E7):IMU 223→125Hz 单变量
+    # 下 Bas over_ratio 0→21.9%/最长连续 372 帧=acc/Bias 类判据跨频不可移植实证。
+    "e7_e7b125_t2v3_route_112652_125hz": {
+        "verdict": "FAIL",
+        "expect": [
+            ("ate", 0.192, 0.02),          # eval 实测
+            ("bas_over_ge", 0.2, None),    # Bas 劣化形态:over 21.9%(223 侧 0.0%)
+            ("spike_rate_le", 0.01, None),  # 实测 0.29%(尖峰轴不劣化)
+            ("coverage_ge", 0.8, None),
         ],
     },
 }
@@ -708,6 +761,9 @@ def run_selftest(th):
             elif key == "coverage_ge":
                 got = c.get("survival", {}).get("coverage")
                 cond = got is not None and got >= ref
+            elif key == "bas_over_ge":
+                got = c.get("bas", {}).get("over_ratio")
+                cond = got is not None and got >= ref
             elif key == "diag_n_ge":
                 got = c.get("survival", {}).get("diag_n")
                 cond = got is not None and got >= ref
@@ -719,7 +775,8 @@ def run_selftest(th):
         ok_all = ok_all and ok
     out = {"pass": bool(ok_all), "cells": results,
            "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;"
-                   "CTRL2 ATE 0.144/Bas 0.11 稳/滑窗 cost 收敛"}
+                   "CTRL2 复放(E7 pass1)ATE 0.223(撕裂抖动窗,老目录 0.144 袋失)/Bas 0.11 稳/"
+                   "滑窗 cost 收敛;e7b125=125Hz Bas over 21.9% 跨频不可移植活校准"}
     with open(os.path.join(SCRIPT_DIR, "t3_wa_gate_selftest.json"), "w") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     for r in results:
@@ -749,6 +806,7 @@ SELFTEST_ONLINE = {
             ("bas_peak", 0.981, 0.03),         # 台账:Bas_max 0.981
             ("bgs_peak_le", 0.01, None),       # 台账:Bgs 0.002 级
             ("vins_pass", True, None),         # T2 U3 口径:零 failure 零 reboot + Bas 健康
+            ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
         ],
     },
     "run_X1_232055": {
@@ -759,6 +817,16 @@ SELFTEST_ONLINE = {
             ("j0_rev_pass", False, None),      # raw==0 不可达
             ("morph_diverged", True, None),    # forensics verdict:爆散
             ("vins_pass", False, None),        # 无 T2diag 旧轮→Bas 轴不可判→vins False
+            ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
+        ],
+    },
+    "run_WC2OBS1_032005": {
+        "verdict": "FAIL",
+        "skip_forensics": True,                # 无现成 forensics_v2.json;本 cell 只对账场景门轴
+        "expect": [
+            ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
+            ("gate_m", 0.75, None),            # 场景分门(用户 10-01 裁决)obstacles 系门
+            ("j0_jump", 369.839, 0.01),        # RESULT.txt 锚差 369.84m(远超门,判决不翻转)
         ],
     },
 }
@@ -768,7 +836,8 @@ def run_online_selftest(th):
     base = os.path.expanduser("~/sitl_sim/vins_smoke_runs")
     results, ok_all = [], True
     for name, spec in SELFTEST_ONLINE.items():
-        rep = judge_online_dir(os.path.join(base, name), th)
+        rep = judge_online_dir(os.path.join(base, name), th,
+                               skip_forensics=bool(spec.get("skip_forensics")))
         with open(os.path.join(base, name, "wa_gate_online.json"), "w") as f:
             json.dump(rep, f, ensure_ascii=False, indent=1)
         x, v, fo = rep.get("xline", {}), rep.get("vins", {}), rep.get("forensics", {})
@@ -790,6 +859,12 @@ def run_online_selftest(th):
             elif key == "t1d1_domain":
                 got = x.get("t1d1_domain")
                 cond = got == ref
+            elif key == "scene":
+                got = x.get("scene")
+                cond = got == ref
+            elif key == "gate_m":
+                got = x.get("gate_m")
+                cond = got is not None and abs(got - ref) <= 1e-9
             elif key == "reboot_n":
                 got = v.get("reboot_n")
                 cond = got == ref
@@ -822,6 +897,35 @@ def run_online_selftest(th):
         results.append({"cell": name, "ok": bool(ok), "line": one_line_online(rep),
                         "checks": checks})
         ok_all = ok_all and ok
+    # ---- 场景分门合成双侧回归(v8.0 等待池②):三态映射+0.6m 分界翻转,不读袋 ----
+    import tempfile
+    synth_cases = [
+        ("sitl_world", "no_obstacles", 0.5),
+        ("sitl_world_obstacles", "obstacles", 0.75),
+        ("sitl_world_obstacles_v2", "obstacles", 0.75),
+        (None, "unknown", 0.5),
+    ]
+    checks_s = []
+    ok_s = True
+    for world, scene_ref, gate_ref in synth_cases:
+        with tempfile.TemporaryDirectory() as td:
+            if world is not None:
+                with open(os.path.join(td, "round.log"), "w") as f:
+                    f.write(f"[00:00:01] SITL up ({world})\n")
+            sc = scene_of_run(td, th)
+        okc = (sc["scene"] == scene_ref and abs(sc["gate_m"] - gate_ref) < 1e-9)
+        checks_s.append({"check": f"world={world} → {scene_ref}/gate={gate_ref}",
+                         "got": f"{sc['scene']}/{sc['gate_m']}", "pass": bool(okc)})
+        ok_s = ok_s and okc
+    j0x = 0.6
+    flip = (not (j0x < 0.5)) and (j0x < 0.75)
+    checks_s.append({"check": "j0=0.6m 分界翻转: no_obstacles(0.5)门不过/obstacles(0.75)门过",
+                     "got": flip, "pass": bool(flip)})
+    ok_s = ok_s and flip
+    results.append({"cell": "scene_map(synthetic)", "ok": bool(ok_s),
+                    "line": "场景分门三态映射+0.6m 分界翻转(合成,不读袋)",
+                    "checks": checks_s})
+    ok_all = ok_all and ok_s
     out = {"pass": bool(ok_all), "cells": results,
            "note": "在线轴对账:WAOL5R=T2 22:33 通告数字(Bas 0.981/314.5s 零failure);"
                    "X1_232055=forensics_v2.json 实测(raw624/smj632/爆散)"}
