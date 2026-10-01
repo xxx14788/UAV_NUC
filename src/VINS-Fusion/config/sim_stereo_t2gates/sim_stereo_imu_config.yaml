@@ -88,5 +88,5 @@ reanchor_smooth_frames: 15
 gyr_w: 0.0001  # T2-WA C-line FINAL (2026-09-30): upstream Fast-Drone-250 value restored. Was 0.001 (10x overset, origin unknown) - online Bgs sink 1.2-1.3 x2 (WAOL1/3) at 0.001; WAOL5R (bare stack + this value): 314.5s FULL survival, zero failure, Bas_max 0.981. Replay domain blind to this axis (B0 matrix: bit-identical at both values). Single-variable: online 2-round evidence + replay neutrality
 
 # T2 online arms (2026-10-02): R2F disparity screen + R3F cost gate
-t2_min_disparity: 2.0
+t2_min_disparity: 0.0  # R2F gate HARMFUL on U3PO bag (G5 41m vs G5b 11.7m canonical) - pulled from online arms per FM-3; death-bag verdict non-adjudicable (replay nondeterminism)
 t2_cost_gate: 1
