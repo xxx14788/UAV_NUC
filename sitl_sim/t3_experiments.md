@@ -910,3 +910,17 @@ X线状态:X1' 未绿,X2/X3/X4/tag 全部挂起等上述根因修复。
 1. setsid 非交互 shell 无 bashrc 预热：`set -u` 下 source ROS 环境连环爆（ROS_DISTRO→ROS_MASTER_URI→…）→ 正确姿势=wrapper 先无 -u source 全环境再 exec 目标脚本（本轮 e7_wrap.sh，零目标脚本改动）。
 2. 非交互 ssh 的 python3 无 rosbag 模块：read_online_bag/eval 类工具须先 source ROS 环境，否则 subprocess 静默失败（check=False 吞错）呈现 eval=None 假象。
 3. t3_replay 收尾 `Aborted (core dumped)` 判读：析构崩溃 vs 中途崩的分界=vins.log 是否跑满袋长+alive 标志（X1img2 的 18.2s 段错误是中途崩，本轮 196.98s 收尾崩）。
+
+### 等待池④：轮 1R（WC2OBS1_032005）完整在线判决画像（2026-10-01 18:37；v8.0 等待池④，可选项机器空闲即清）
+
+`t3_wa_gate.py --online run_WC2OBS1_032005`（含 forensics 生成，13.5G 袋单读）：
+
+```
+FAIL [scene=obstacles/gate=0.75 four=0/1/1/0 j0jump=369.839 j0rev=False(raw=512,smj=684)
+      env=- T1D1 | vins=✓ reboot=0 gaps=0 cov=0.291 bas_pk=0.7425 bgs_pk=0.12547
+      ate=116.4114 morph=数值溢出型(含 extreme/非有限帧)]
+```
+
+- 判读要点：四指标到位 0/J0 锚差 369.84m/J0 修订 raw=512·smj=684（双双超门）；vins 域层反而全绿（零 reboot 零断流，Bas peak 0.743<1.0，cov 0.291 系爆炸后 odom 停流截断）；forensics 形态=数值溢出型。
+- 该组合（vins 域健康+数值溢出+帧跳海量）=T2 03:3x 定性的"前端健康+偏置稳定+后端状态跑飞（P_x 翻号）"之 T3 机器口径画像，供 T2 R2 回挖与 X 线判读对照；wa_gate_online.json 已落 run 目录（gate 直读格式）。
+- T1D1 域标注按门径生效（j0>门且 vins 健康→标 T1-D1-domain 不计 5/5，入回挖）。
