@@ -120,3 +120,32 @@ runbook CF-1 勘误（848×480=能力口径, 驱动实读 infra/depth 均 640×4
   `pgrep -f` 会被外层含"rosbag"字样的包装命令自命中毒计数 → 用 `ps -eo comm=|grep -cx rosbag`;
   ③重定向手滑 `>/`（根目录）静默废掉 roscore; ④ssh 后台+管道会让退出码/输出双双失真 → 远端
   落日志文件+REMOTE_RC 显式回传; ⑤非交互 ssh 无 ROS 环境 → bash -c 显式 source。
+
+## W-0 跨线提帧回执（2026-10-01 下午, 任务书 v4.1/v5.0 T4 执行）
+
+- **WC2 两轮全链（提帧→特征重放→三区密度→σ̂ 年代门, 全部 dry-run 口径非正式判读, 2 轮<5 轮门槛）**:
+  - 轮1 run_WC2OBS1_030927: manifest=vision_inputs/WC2OBS1_030927_j3/manifest.json（139 帧条目/
+    72 主帧, t25.86-402.1s）; features.bag=vision_inputs/jr3_replay_WC2OBS1_030927/features.bag
+    （odometry 900+point_cloud 454）; 密度表=vision_inputs/metrics_WC2OBS1_030927_density.json
+    （非空云 393/454=86.6% 供给率, 34061 点, 每云点数 p50=97/p90=141/max=156, 覆盖 43.7s; 三区
+    obstacle 159.34 点/m³·59.46 点/m²面 | ground 17.45 点/m²(564.61m²) | air 0.67 点/m³(27607m³),
+    分母=P1-P99 修剪框默认口径）; metrics=vision_inputs/metrics_WC2OBS1_030927.json。重放 t=71.87s
+    复现爆炸（insane states |P|=391 reboot→failure detection, track=66/|Bas|=0.178 前端健康）,
+    云止于 ~72s/袋 376s——与 U3R1REP"爆炸在数据里"互证。
+  - 轮1R run_WC2OBS1_032005: manifest=vision_inputs/WC2OBS1_032005_j3/manifest.json（73 主帧）;
+    features.bag=vision_inputs/jr3_replay_WC2OBS1_032005/features.bag（2,107,784B, odom 2036+非空
+    云 609）; 密度表=vision_inputs/metrics_WC2OBS1_032005_density.json（36037 点, 每云点数
+    p50=51/p90=128/max=157, 覆盖 102.0s; obstacle 117.11 点/m³·43.70 点/m²面; **ground 0.26 点/m²
+    与 air ~0 点/m³ 分母被跑飞段云污染**——P1-P99 修剪框失效（107129.58m²/3.21e8m³ vs 轮1
+    564.61m²/27607m³）, 不可直接判读, 工具口径未改如实登记）; metrics=vision_inputs/
+    metrics_WC2OBS1_032005.json。重放 [T2fail] t=128.5120（|Bas|=2.772 爆, track=60）→failure
+    detection, play 放完全袋 375.7s——轮1R 在线 134.8s 爆的离线复现。
+  - **σ̂ 年代门验收步（两袋均 canonical 时代, 预期非零）**: 轮1 d12_sigma_p25 p50=1.02899（n=67,
+    p10-p90=1.02447-1.03438）; 轮1R p50=1.02978（n=66, p10-p90=1.02125-1.03403）——两袋均非零=
+    噪声注入在, 年代门过, 无「年代门异常」登记。
+  - 密度 world-boxes 无既有调用先例: 取 worlds_fix/sitl_north.world 三盒（box_A=4.51,-0.52,0.9+
+    size 1,1,1.8 与 j3_feature_density.py docstring 示例一致）, shift 各袋 offset 实测（轮1
+    [1.0142,0.9668,0.1012] / 轮1R [1.0094,0.9812,0.1036], 出生点先验 1.01,0.98,0.104 吻合）。
+- **X1final_173345 提帧（W-0②, 仅提帧无重放无判读）**: manifest=vision_inputs/X1final_173345_j3/
+  manifest.json（140 帧条目, 3 段×12 帧×双目 pairs, t26.24-171.852s, 17.4s done=1 fail=0）;
+  帧目录=vision_inputs/X1final_173345_j3（沿用 <run标识>_j3 命名约定）。回执 @T3: 清三袋前置齐备。
