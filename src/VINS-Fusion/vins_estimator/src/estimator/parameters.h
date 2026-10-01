@@ -20,7 +20,7 @@
 
 using namespace std;
 
-const double FOCAL_LENGTH = 460.0;  // T2-U7 applied then REVERTED same night: first online round after fix (run_WC2OBS1_030927) exploded at t=72.1s (P 663m, small-bias signature, unlike historical Bas-first form); one-variable discipline - acceptance matrix must run on WAOL5R-credential stack (cf0384). U7 re-apply requires its own dedicated online verification.
+const double FOCAL_LENGTH = 467.7427;  // T2-U7 RE-APPLY (2026-10-01 20:06): carrier exonerated by R2 verdict carrier_input_domain (9-cell falsification, 04d1a73) - stack-difference variable excluded; re-apply per taskbook v7.2 unlock clause. Online verification round prereg = t2_results/R2_dissect/prereg_u7_online.md (U7OL1/U7OL2).
 const int WINDOW_SIZE = 10;
 const int NUM_OF_F = 1000;
 //#define UNIT_SPHERE_ERROR
