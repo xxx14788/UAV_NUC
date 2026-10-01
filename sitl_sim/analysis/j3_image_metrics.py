@@ -7,6 +7,9 @@
   曝光  p_sat=P(I<=2)+P(I>=253)、直方图动态范围 p99-p1、中位亮度、帧间 γ(配对帧)
   纹理  gFT(0.01,30,150) 角点数(VINS 参数复刻)、梯度幅值 P50、梯度方向直方图
         集中度 maxbin 占比(重复纹理鉴别, R16 反噬预警)
+  供给  M1 supply_frac = gFT 角点数/max_cnt=150 配额归一(与特征云侧 P50/max_cnt 同口径,
+        v5.0-W3 增量); M2 grid4x4_occupancy_frac = 4×4 网格占用格数/16
+        (VINS GRID_COL×GRID_ROW=4×4 复刻, 角点空间分布正源)
   噪声  D12 平坦区帧间差分 sigma_hat = sqrt(Var(dI)/2)（平坦 patch=16x16 块
         梯度幅值最低 25% 分位集合）
   模糊  梯度方向能量各向同性度 = 方向能量最大 bin / 平均 bin（sinc² 塌缩检测,
@@ -99,6 +102,16 @@ def frame_metrics(gray, gray_prev=None):
     # 纹理: VINS 参数复刻角点 + 梯度统计 + 方向集中度
     corners = cv2.goodFeaturesToTrack(gray, FT_MAXCNT, FT_QUALITY, FT_MINDIST)
     m['corners_gFT'] = 0 if corners is None else int(len(corners))
+    # 供给: M1 配额归一 + M2 4×4 网格占用(VINS GRID_COL×GRID_ROW=4×4)
+    if corners is not None and len(corners):
+        m['supply_frac'] = float(len(corners)) / FT_MAXCNT
+        h, w = gray.shape
+        cells = {(min(int(y) * 4 // h, 3), min(int(x) * 4 // w, 3))
+                 for x, y in corners.reshape(-1, 2)}
+        m['grid4x4_occupancy_frac'] = float(len(cells)) / 16.0
+    else:
+        m['supply_frac'] = 0.0
+        m['grid4x4_occupancy_frac'] = 0.0
     m['grad_med'] = float(np.median(mag))
     ang = np.arctan2(gy, gx)  # [-pi,pi]
     e = mag[mag > 1e-3]
@@ -204,6 +217,8 @@ def main():
             'hist_range_p1_p99': agg('hist_range_p1_p99'),
             'med_gray': agg('med_gray'),
             'corners_gFT': agg('corners_gFT'),
+            'supply_frac': agg('supply_frac'),
+            'grid4x4_occupancy_frac': agg('grid4x4_occupancy_frac'),
             'grad_med': agg('grad_med'),
             'grad_dir_maxbin_frac': agg('grad_dir_maxbin_frac'),
             'grad_dir_entropy_norm': agg('grad_dir_entropy_norm'),
