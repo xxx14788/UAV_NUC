@@ -1,0 +1,51 @@
+# X 线操作卡 v1.0（T3 v8.3 单元 2.4；一页/轮，X 线冲刺窗专用）
+
+> 前提：X 线已解锁（T2 U4 通告点名 @T3，STATUS 尾查验）。判据冻结=docs/xline_prereg_v1.md。
+> runbook v7.4-R2 权威；本卡=其执行序列化。凭据栈分水岭 285278cc。
+
+## 0. 每轮通用前置（P0，缺一不飞）
+```
+1. tail -5 ~/sitl_sim/STATUS.md            # T2/T4 无未决异议指向本线
+2. df -h / | tail -1                       # >15G 硬线；<20G 禁新轮
+3. md5sum ~/catkin_ws/devel/lib/vins/vins_node   # ==285278cc 记台账
+4. bash ~/sitl_sim/sitl_lock.sh acquire T3-X4 <tag>   # 锁 v2；权序 T3-X4 最高
+5. pgrep -af 'gzserver|px4|rosmaster|vins|ego|px4ctrl' | head  # 清场核验（残留=死锁接管流程）
+6. cd ~/sitl_sim && git -C ~/catkin_ws status --short | head -3  # 树净（或仅本线产物）
+```
+
+## 1. 发射（按位形查 prereg §1 表；防默认吃 7,-4）
+```
+bash ~/sitl_sim/vins_smoke.sh --tag <TAG> [--goal X Y Z] [--leg2 X Y Z] [--world W] 
+# 轮中盯：EV/sitl.log（ENV 签名）、arrive_watch*.txt、BUDGET 倒计时
+```
+
+## 2. 轮毕判读流水（顺序执行，产物三件）
+```
+1. cat  $EV/RESULT.txt | head -12           # vins_smoke 内置 round_result 已跑
+2. python3 ~/catkin_ws/sitl_sim/analysis/t3_wa_gate.py --online $EV | tee $EV/wa_online.txt
+3. df -h / | tail -1                        # 记入台账行
+```
+台账行格式（t3_experiments.md X 线节）：
+`| <tag> | <四指标位 0101> | arrive_min=… | j0=… fj=…/… | vins域=… | df=…G | md5=285278cc |`
+
+## 3. 分支处置
+- **ENV-FAIL**（三签名）：记 ENVDEAD 证据 → 允许 1 次重试（同位形）→ 重试轮入 5/5 分母。
+- **j0_jump≥0.5 且 vins 域健康**：标 `T1-D1-domain`，不计 5/5，登回挖清单 @T1。
+- **同型 FAIL×2**：触发 prereg §4 回挖分支（冻结素材→分型→工具链→报告），不放宽不重跑。
+- **poscmd 0 Hz / traj_id 冻结**：跑 t3_r3_planner_domain.py 出四门+段表（planner 域签名）。
+
+## 4. X4 打 tag sitl-v0.4 检查单（5/5 达成后）
+```
+1. 台账 X 线节五轮行齐+附件（RESULT/wa_online/flight.bag）在档
+2. tail STATUS：T2 尾无未决异议（时戳记录）
+3. T1 跳变前置：落地凭据或重估销案通告（K-2 二者其一，时戳记录）
+4. git status 净 → git tag sitl-v0.4 && git push UAV_NUC sitl-v0.4
+5. STATUS 通告 @全体（tag 凭据+五轮一行表）
+```
+
+## 5. X5 窗口（X4 全绿后；设计稿=xline_x5_grid_design_v1.md）
+- 优先级 1 起（E/S×8m×两 world）；紧凑模式；每 6 轮查 df；汇总 xline_x5_passmap.csv。
+
+## 6. 中断恢复
+- 轮中死亡：Aborted core 按 T3 红线 29 判读（不急判 ENV）；bag 保全；锁不释放直到判读完。
+- NUC 不可达：nuc-ts 路径（Tailscale）+ STATUS 远端 date 为准；重连后先查锁与半开轮。
