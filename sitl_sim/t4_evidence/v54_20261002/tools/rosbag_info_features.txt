@@ -1,0 +1,49 @@
+== jr3_replay_U3PG_210307
+duration:    45.1s
+messages:    1285
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      853 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud   432 msgs    : sensor_msgs/PointCloud
+size_B=1164355
+== jr3_replay_U3PO_211438
+duration:    5:59s (359s)
+messages:    10552
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      7031 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud   3521 msgs    : sensor_msgs/PointCloud
+size_B=10397110
+== jr3_replay_U3PR2_213717
+duration:    10:13s (613s)
+messages:    18218
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      12142 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud    6076 msgs    : sensor_msgs/PointCloud
+size_B=19261341
+== jr3_replay_WC2OBS1_030927
+duration:    46.1s
+messages:    1354
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      900 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud   454 msgs    : sensor_msgs/PointCloud
+size_B=1164385
+== jr3_replay_WC2OBS1_032005
+duration:    1:49s (109s)
+messages:    3029
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      2036 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud    993 msgs    : sensor_msgs/PointCloud
+size_B=2107784
+== jr3_replay_X1img_015950
+duration:    3:27s (207s)
+messages:    5994
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      3993 msgs    : nav_msgs/Odometry      (2 connections)
+             /vins_estimator/point_cloud   2001 msgs    : sensor_msgs/PointCloud
+size_B=4574990
+== jr3_replay_X1img2_020706
+duration:    18.2s
+messages:    187
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /vins_estimator/odometry      177 msgs    : nav_msgs/Odometry     
+             /vins_estimator/point_cloud    10 msgs    : sensor_msgs/PointCloud
+size_B=154336

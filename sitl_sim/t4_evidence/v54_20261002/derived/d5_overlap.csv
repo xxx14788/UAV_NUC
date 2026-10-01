@@ -1,0 +1,7 @@
+﻿bag,pool_tag,src_json,K_bins,n_bins_high,win_lo_s,win_hi_s,win_len_s,n_bins_in_win,n_bins_high_in_win,high_time_in_win_s,coverage_frac,high_time_total_s,union_time_s,jaccard,time_mapping_note
+U3PG_210307,主池,raw/vision_inputs/fbres_U3PG_210307.json:stereo,36,20,55,64,9,4,3,1.7840,0.198222,23.2960,30.5120,0.058469,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json
+U3PO_211438,主池,raw/vision_inputs/fbres_U3PO_211438.json:stereo,37,31,55,64,9,2,0,0.0000,0.000000,294.7040,303.7040,0.000000,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json
+U3PR2_213717,主池,raw/vision_inputs/fbres_U3PR2_213717.json:stereo,36,32,55,64,9,2,2,9.0000,1.000000,540.1720,540.1720,0.016661,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json
+U3PR1_212450,扩展池,raw/vision_inputs/fbres_U3PR1_212450.json:stereo,36,33,55,64,9,2,0,0.0000,0.000000,600.0760,609.0760,0.000000,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json
+U3PH_210708,扩展池,raw/vision_inputs/fbres_U3PH_210708.json:stereo,36,1,55,64,9,2,0,0.0000,0.000000,0.0120,9.0120,0.000000,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json
+X1final_173345,扩展池,raw/vision_inputs/fbres_X1final_173345.json:stereo,35,2,55,64,9,3,0,0.0000,0.000000,8.8640,17.8640,0.000000,inferred: equal-split of manifest left-frame t_rec sequence; bin edges not recorded in fbres json

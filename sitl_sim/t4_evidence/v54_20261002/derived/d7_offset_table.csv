@@ -1,0 +1,155 @@
+﻿row_id,row_type,bag_or_group,pool,side,metric,unit,value,n,n_unit,flight_era,replay_stack,stack_basis,source_file,source_field,notes
+1,data,X1img_015950,主池,features_云(重放),cloud_points_p50,点/云,45.0,1991,非空云,注入前代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_X1img_015950_density.json,per_msg_points.p50,dry_run=True; 前代对照袋; 对j13_supply_pooled.json per_round.X1img_015950 逐位一致
+2,data,X1img_015950,主池,features_云(重放),cloud_points_p90,点/云,90.0,1991,非空云,注入前代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_X1img_015950_density.json,per_msg_points.p90,dry_run=True; 前代对照袋; 对j13_supply_pooled.json per_round.X1img_015950 逐位一致
+3,data,X1img_015950,主池,features_云(重放),cloud_points_max,点/云,154,1991,非空云,注入前代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_X1img_015950_density.json,per_msg_points.max,dry_run=True; 前代对照袋; 对j13_supply_pooled.json per_round.X1img_015950 逐位一致
+4,data,X1img_015950,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.3,1991,非空云,注入前代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_X1img_015950_density.json,per_msg_points.p50/150,dry_run=True; 前代对照袋
+5,data,WC2OBS1_030927,主池,features_云(重放),cloud_points_p50,点/云,97.0,393,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_030927_density.json,per_msg_points.p50,爆止窗43.7s(verdicts L134); 对j13_supply_pooled.json per_round.WC2OBS1_030927 逐位一致
+6,data,WC2OBS1_030927,主池,features_云(重放),cloud_points_p90,点/云,141.0,393,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_030927_density.json,per_msg_points.p90,爆止窗43.7s(verdicts L134); 对j13_supply_pooled.json per_round.WC2OBS1_030927 逐位一致
+7,data,WC2OBS1_030927,主池,features_云(重放),cloud_points_max,点/云,156,393,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_030927_density.json,per_msg_points.max,爆止窗43.7s(verdicts L134); 对j13_supply_pooled.json per_round.WC2OBS1_030927 逐位一致
+8,data,WC2OBS1_030927,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.6467,393,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_030927_density.json,per_msg_points.p50/150,爆止窗43.7s(verdicts L134)
+9,data,WC2OBS1_032005,主池,features_云(重放),cloud_points_p50,点/云,51.0,609,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_032005_density.json,per_msg_points.p50,爆止窗102.0s(verdicts L141); 对j13_supply_pooled.json per_round.WC2OBS1_032005 逐位一致
+10,data,WC2OBS1_032005,主池,features_云(重放),cloud_points_p90,点/云,128.0,609,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_032005_density.json,per_msg_points.p90,爆止窗102.0s(verdicts L141); 对j13_supply_pooled.json per_round.WC2OBS1_032005 逐位一致
+11,data,WC2OBS1_032005,主池,features_云(重放),cloud_points_max,点/云,157,609,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_032005_density.json,per_msg_points.max,爆止窗102.0s(verdicts L141); 对j13_supply_pooled.json per_round.WC2OBS1_032005 逐位一致
+12,data,WC2OBS1_032005,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.34,609,非空云,注入代,cf0384代,"raw/docs/t4_verdicts_v2.md L172(分水岭前栈,cf0384代)",raw/vision_inputs/metrics_WC2OBS1_032005_density.json,per_msg_points.p50/150,爆止窗102.0s(verdicts L141)
+13,data,U3PG_210307,主池,features_云(重放),cloud_points_p50,点/云,83.0,422,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PG_210307_density.json,per_msg_points.p50,全程44.0s(verdicts L187); 对j13_supply_pooled.json per_round.U3PG_210307 逐位一致
+14,data,U3PG_210307,主池,features_云(重放),cloud_points_p90,点/云,119.0,422,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PG_210307_density.json,per_msg_points.p90,全程44.0s(verdicts L187); 对j13_supply_pooled.json per_round.U3PG_210307 逐位一致
+15,data,U3PG_210307,主池,features_云(重放),cloud_points_max,点/云,132,422,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PG_210307_density.json,per_msg_points.max,全程44.0s(verdicts L187); 对j13_supply_pooled.json per_round.U3PG_210307 逐位一致
+16,data,U3PG_210307,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.5533,422,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PG_210307_density.json,per_msg_points.p50/150,全程44.0s(verdicts L187)
+17,data,U3PO_211438,主池,features_云(重放),cloud_points_p50,点/云,119.0,3469,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PO_211438_density.json,per_msg_points.p50,全程359.0s(verdicts L191); 对j13_supply_pooled.json per_round.U3PO_211438 逐位一致
+18,data,U3PO_211438,主池,features_云(重放),cloud_points_p90,点/云,133.0,3469,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PO_211438_density.json,per_msg_points.p90,全程359.0s(verdicts L191); 对j13_supply_pooled.json per_round.U3PO_211438 逐位一致
+19,data,U3PO_211438,主池,features_云(重放),cloud_points_max,点/云,159,3469,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PO_211438_density.json,per_msg_points.max,全程359.0s(verdicts L191); 对j13_supply_pooled.json per_round.U3PO_211438 逐位一致
+20,data,U3PO_211438,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.7933,3469,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PO_211438_density.json,per_msg_points.p50/150,全程359.0s(verdicts L191)
+21,data,U3PR2_213717,主池,features_云(重放),cloud_points_p50,点/云,130.0,6066,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PR2_213717_density.json,per_msg_points.p50,全程612.9s(verdicts L196); 对j13_supply_pooled.json per_round.U3PR2_213717 逐位一致
+22,data,U3PR2_213717,主池,features_云(重放),cloud_points_p90,点/云,149.0,6066,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PR2_213717_density.json,per_msg_points.p90,全程612.9s(verdicts L196); 对j13_supply_pooled.json per_round.U3PR2_213717 逐位一致
+23,data,U3PR2_213717,主池,features_云(重放),cloud_points_max,点/云,167,6066,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PR2_213717_density.json,per_msg_points.max,全程612.9s(verdicts L196); 对j13_supply_pooled.json per_round.U3PR2_213717 逐位一致
+24,data,U3PR2_213717,主池,features_云(重放),supply_p50_norm,比值(p50/max_cnt150),0.8667,6066,非空云,注入代,285278cc,raw/docs/t4_verdicts_v2.md L172+L183(全285278cc栈),raw/vision_inputs/metrics_U3PR2_213717_density.json,per_msg_points.p50/150,全程612.9s(verdicts L196)
+25,data,GROUP_注入代池(5轮),跨池混合,features_云(重放),cloud_points_P10/P25/P50/P75/P90,点/云,82/115/127/133/141,10959,非空云,注入代,跨栈混合,raw/docs/t4_verdicts_v2.md L172+L228,raw/vision_inputs/j13_supply_pooled.json,"pooled_inj_era_only.{10,25,50,75,90},n,rounds",rounds=U3PG/U3PO/U3PR2/WC2x2; 与verdicts L208、anchors.json density_cloud_points_p25_p50_p90一致
+26,data,GROUP_全池(6轮),跨池混合,features_云(重放),cloud_points_P50,点/云,124.0,12950,非空云,前代+注入代混池,跨栈混合,raw/docs/t4_verdicts_v2.md L172+L228,raw/vision_inputs/j13_supply_pooled.json,"pooled.50,n",verdicts L216: 仅存档不作判读依据
+27,data,X1img_015950,主池,image_帧(离线),corners_gFT,见数据字典§1,37.0,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.corners_gFT.p50(+.n),
+28,data,X1img_015950,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,0.0,67,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.d12_sigma_p25.p50(+.n),
+29,data,X1img_015950,主池,image_帧(离线),grad_med,见数据字典§1,0.0,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.grad_med.p50(+.n),
+30,data,X1img_015950,主池,image_帧(离线),med_gray,见数据字典§1,39.0,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.med_gray.p50(+.n),
+31,data,X1img_015950,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,139.0,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.hist_range_p1_p99.p50(+.n),
+32,data,X1img_015950,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.8694739291565055,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.grad_dir_entropy_norm.p50(+.n),
+33,data,X1img_015950,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.20041103661060333,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+34,data,X1img_015950,主池,image_帧(离线),p_sat,见数据字典§1,0.0,72,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.p_sat.p50(+.n),
+35,data,X1img_015950,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,67,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json,metrics.gamma_pair.p50(+.n),
+36,data,X1img2_020706,扩展池,image_帧(离线),corners_gFT,见数据字典§1,87.0,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.corners_gFT.p50(+.n),扩展池
+37,data,X1img2_020706,扩展池,image_帧(离线),d12_sigma_p25,见数据字典§1,0.0,68,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.d12_sigma_p25.p50(+.n),扩展池
+38,data,X1img2_020706,扩展池,image_帧(离线),grad_med,见数据字典§1,0.0,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.grad_med.p50(+.n),扩展池
+39,data,X1img2_020706,扩展池,image_帧(离线),med_gray,见数据字典§1,87.0,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.med_gray.p50(+.n),扩展池
+40,data,X1img2_020706,扩展池,image_帧(离线),hist_range_p1_p99,见数据字典§1,139.0,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.hist_range_p1_p99.p50(+.n),扩展池
+41,data,X1img2_020706,扩展池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.8427970430460721,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.grad_dir_entropy_norm.p50(+.n),扩展池
+42,data,X1img2_020706,扩展池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.27093276381492615,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.grad_dir_maxbin_frac.p50(+.n),扩展池
+43,data,X1img2_020706,扩展池,image_帧(离线),p_sat,见数据字典§1,0.0,79,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.p_sat.p50(+.n),扩展池
+44,data,X1img2_020706,扩展池,image_帧(离线),gamma_pair,见数据字典§1,1.0,75,主帧,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img2_sim.json,metrics.gamma_pair.p50(+.n),扩展池
+45,data,WC2OBS1_030927,主池,image_帧(离线),corners_gFT,见数据字典§1,102.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.corners_gFT.p50(+.n),
+46,data,WC2OBS1_030927,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.0289948230251014,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.d12_sigma_p25.p50(+.n),
+47,data,WC2OBS1_030927,主池,image_帧(离线),grad_med,见数据字典§1,7.6157732009887695,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.grad_med.p50(+.n),
+48,data,WC2OBS1_030927,主池,image_帧(离线),med_gray,见数据字典§1,175.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.med_gray.p50(+.n),
+49,data,WC2OBS1_030927,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,148.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.hist_range_p1_p99.p50(+.n),
+50,data,WC2OBS1_030927,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.8474680026320187,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.grad_dir_entropy_norm.p50(+.n),
+51,data,WC2OBS1_030927,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.23158327490091324,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+52,data,WC2OBS1_030927,主池,image_帧(离线),p_sat,见数据字典§1,6.510416666666667e-06,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.p_sat.p50(+.n),
+53,data,WC2OBS1_030927,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_030927.json,metrics.gamma_pair.p50(+.n),
+54,data,WC2OBS1_032005,主池,image_帧(离线),corners_gFT,见数据字典§1,130.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.corners_gFT.p50(+.n),
+55,data,WC2OBS1_032005,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.0297822525958304,66,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.d12_sigma_p25.p50(+.n),
+56,data,WC2OBS1_032005,主池,image_帧(离线),grad_med,见数据字典§1,8.246211051940918,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.grad_med.p50(+.n),
+57,data,WC2OBS1_032005,主池,image_帧(离线),med_gray,见数据字典§1,175.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.med_gray.p50(+.n),
+58,data,WC2OBS1_032005,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,149.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.hist_range_p1_p99.p50(+.n),
+59,data,WC2OBS1_032005,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.7878507735709815,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.grad_dir_entropy_norm.p50(+.n),
+60,data,WC2OBS1_032005,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.2801031172275543,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+61,data,WC2OBS1_032005,主池,image_帧(离线),p_sat,见数据字典§1,1.6276041666666666e-05,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.p_sat.p50(+.n),
+62,data,WC2OBS1_032005,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_WC2OBS1_032005.json,metrics.gamma_pair.p50(+.n),
+63,data,U3PG_210307,主池,image_帧(离线),corners_gFT,见数据字典§1,90.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.corners_gFT.p50(+.n),
+64,data,U3PG_210307,主池,image_帧(离线),supply_frac(w3),见数据字典§1,0.6,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.supply_frac.p50(+.n),W3增量M1
+65,data,U3PG_210307,主池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,0.625,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.grid4x4_occupancy_frac.p50(+.n),W3增量M2
+66,data,U3PG_210307,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.0307763703116568,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.d12_sigma_p25.p50(+.n),
+67,data,U3PG_210307,主池,image_帧(离线),grad_med,见数据字典§1,8.246211051940918,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.grad_med.p50(+.n),
+68,data,U3PG_210307,主池,image_帧(离线),med_gray,见数据字典§1,83.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.med_gray.p50(+.n),
+69,data,U3PG_210307,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,149.0,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.hist_range_p1_p99.p50(+.n),
+70,data,U3PG_210307,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.8245592953036963,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.grad_dir_entropy_norm.p50(+.n),
+71,data,U3PG_210307,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.24621905386447906,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+72,data,U3PG_210307,主池,image_帧(离线),p_sat,见数据字典§1,1.6276041666666666e-05,73,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.p_sat.p50(+.n),
+73,data,U3PG_210307,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,69,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PG_210307.json,metrics.gamma_pair.p50(+.n),
+74,data,U3PO_211438,主池,image_帧(离线),corners_gFT,见数据字典§1,121.0,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.corners_gFT.p50(+.n),
+75,data,U3PO_211438,主池,image_帧(离线),supply_frac(w3),见数据字典§1,0.8066666666666666,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.supply_frac.p50(+.n),W3增量M1
+76,data,U3PO_211438,主池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,0.75,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.grid4x4_occupancy_frac.p50(+.n),W3增量M2
+77,data,U3PO_211438,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.0289058088810463,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.d12_sigma_p25.p50(+.n),
+78,data,U3PO_211438,主池,image_帧(离线),grad_med,见数据字典§1,8.485280990600586,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.grad_med.p50(+.n),
+79,data,U3PO_211438,主池,image_帧(离线),med_gray,见数据字典§1,155.0,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.med_gray.p50(+.n),
+80,data,U3PO_211438,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,152.0,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.hist_range_p1_p99.p50(+.n),
+81,data,U3PO_211438,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.7805351104231932,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.grad_dir_entropy_norm.p50(+.n),
+82,data,U3PO_211438,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.2786908447742462,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+83,data,U3PO_211438,主池,image_帧(离线),p_sat,见数据字典§1,2.604166666666667e-05,74,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.p_sat.p50(+.n),
+84,data,U3PO_211438,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,69,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PO_211438.json,metrics.gamma_pair.p50(+.n),
+85,data,U3PH_210708,扩展池,image_帧(离线),corners_gFT,见数据字典§1,150.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.corners_gFT.p50(+.n),扩展池
+86,data,U3PH_210708,扩展池,image_帧(离线),supply_frac(w3),见数据字典§1,1.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.supply_frac.p50(+.n),扩展池W3增量M1
+87,data,U3PH_210708,扩展池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,1.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.grid4x4_occupancy_frac.p50(+.n),扩展池W3增量M2
+88,data,U3PH_210708,扩展池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.0218521544611117,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.d12_sigma_p25.p50(+.n),扩展池
+89,data,U3PH_210708,扩展池,image_帧(离线),grad_med,见数据字典§1,4.4721360206604,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.grad_med.p50(+.n),扩展池
+90,data,U3PH_210708,扩展池,image_帧(离线),med_gray,见数据字典§1,178.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.med_gray.p50(+.n),扩展池
+91,data,U3PH_210708,扩展池,image_帧(离线),hist_range_p1_p99,见数据字典§1,4.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.hist_range_p1_p99.p50(+.n),扩展池
+92,data,U3PH_210708,扩展池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.990955337719119,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.grad_dir_entropy_norm.p50(+.n),扩展池
+93,data,U3PH_210708,扩展池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.07968121021986008,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.grad_dir_maxbin_frac.p50(+.n),扩展池
+94,data,U3PH_210708,扩展池,image_帧(离线),p_sat,见数据字典§1,0.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.p_sat.p50(+.n),扩展池
+95,data,U3PH_210708,扩展池,image_帧(离线),gamma_pair,见数据字典§1,1.0,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PH_210708.json,metrics.gamma_pair.p50(+.n),扩展池
+96,data,U3PR1_212450,扩展池,image_帧(离线),corners_gFT,见数据字典§1,126.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.corners_gFT.p50(+.n),扩展池
+97,data,U3PR1_212450,扩展池,image_帧(离线),supply_frac(w3),见数据字典§1,0.84,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.supply_frac.p50(+.n),扩展池W3增量M1
+98,data,U3PR1_212450,扩展池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,0.9375,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.grid4x4_occupancy_frac.p50(+.n),扩展池W3增量M2
+99,data,U3PR1_212450,扩展池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.031113123631259,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.d12_sigma_p25.p50(+.n),扩展池
+100,data,U3PR1_212450,扩展池,image_帧(离线),grad_med,见数据字典§1,8.246211051940918,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.grad_med.p50(+.n),扩展池
+101,data,U3PR1_212450,扩展池,image_帧(离线),med_gray,见数据字典§1,167.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.med_gray.p50(+.n),扩展池
+102,data,U3PR1_212450,扩展池,image_帧(离线),hist_range_p1_p99,见数据字典§1,148.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.hist_range_p1_p99.p50(+.n),扩展池
+103,data,U3PR1_212450,扩展池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.7898062968490234,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.grad_dir_entropy_norm.p50(+.n),扩展池
+104,data,U3PR1_212450,扩展池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.2758895307779312,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.grad_dir_maxbin_frac.p50(+.n),扩展池
+105,data,U3PR1_212450,扩展池,image_帧(离线),p_sat,见数据字典§1,1.6276041666666666e-05,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.p_sat.p50(+.n),扩展池
+106,data,U3PR1_212450,扩展池,image_帧(离线),gamma_pair,见数据字典§1,1.0,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR1_212450.json,metrics.gamma_pair.p50(+.n),扩展池
+107,data,U3PR2_213717,主池,image_帧(离线),corners_gFT,见数据字典§1,71.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.corners_gFT.p50(+.n),
+108,data,U3PR2_213717,主池,image_帧(离线),supply_frac(w3),见数据字典§1,0.47333333333333333,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.supply_frac.p50(+.n),W3增量M1
+109,data,U3PR2_213717,主池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,0.6875,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.grid4x4_occupancy_frac.p50(+.n),W3增量M2
+110,data,U3PR2_213717,主池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.030091568317052,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.d12_sigma_p25.p50(+.n),
+111,data,U3PR2_213717,主池,image_帧(离线),grad_med,见数据字典§1,8.485280990600586,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.grad_med.p50(+.n),
+112,data,U3PR2_213717,主池,image_帧(离线),med_gray,见数据字典§1,80.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.med_gray.p50(+.n),
+113,data,U3PR2_213717,主池,image_帧(离线),hist_range_p1_p99,见数据字典§1,154.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.hist_range_p1_p99.p50(+.n),
+114,data,U3PR2_213717,主池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.8289919907065484,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.grad_dir_entropy_norm.p50(+.n),
+115,data,U3PR2_213717,主池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.25259293615818024,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.grad_dir_maxbin_frac.p50(+.n),
+116,data,U3PR2_213717,主池,image_帧(离线),p_sat,见数据字典§1,9.765625e-06,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.p_sat.p50(+.n),
+117,data,U3PR2_213717,主池,image_帧(离线),gamma_pair,见数据字典§1,1.0,67,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_U3PR2_213717.json,metrics.gamma_pair.p50(+.n),
+118,data,X1final_173345,扩展池,image_帧(离线),corners_gFT,见数据字典§1,143.5,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.corners_gFT.p50(+.n),扩展池
+119,data,X1final_173345,扩展池,image_帧(离线),supply_frac(w3),见数据字典§1,0.9566666666666667,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.supply_frac.p50(+.n),扩展池W3增量M1
+120,data,X1final_173345,扩展池,image_帧(离线),grid4x4_occupancy_frac(w3),见数据字典§1,1.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.grid4x4_occupancy_frac.p50(+.n),扩展池W3增量M2
+121,data,X1final_173345,扩展池,image_帧(离线),d12_sigma_p25,见数据字典§1,1.022704785206487,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.d12_sigma_p25.p50(+.n),扩展池
+122,data,X1final_173345,扩展池,image_帧(离线),grad_med,见数据字典§1,5.099019527435303,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.grad_med.p50(+.n),扩展池
+123,data,X1final_173345,扩展池,image_帧(离线),med_gray,见数据字典§1,44.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.med_gray.p50(+.n),扩展池
+124,data,X1final_173345,扩展池,image_帧(离线),hist_range_p1_p99,见数据字典§1,61.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.hist_range_p1_p99.p50(+.n),扩展池
+125,data,X1final_173345,扩展池,image_帧(离线),grad_dir_entropy_norm,见数据字典§1,0.9471631067534029,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.grad_dir_entropy_norm.p50(+.n),扩展池
+126,data,X1final_173345,扩展池,image_帧(离线),grad_dir_maxbin_frac,见数据字典§1,0.15466740727424622,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.grad_dir_maxbin_frac.p50(+.n),扩展池
+127,data,X1final_173345,扩展池,image_帧(离线),p_sat,见数据字典§1,0.0,72,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.p_sat.p50(+.n),扩展池
+128,data,X1final_173345,扩展池,image_帧(离线),gamma_pair,见数据字典§1,1.0,68,主帧,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1final_173345.json,metrics.gamma_pair.p50(+.n),扩展池
+129,data,X1img_015950,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,0.0192,1293,点对,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/fb_X1img_sim.json,stereo_pool.p50,
+130,data,X1img_015950,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0163,1233,点对,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/fb_X1img_sim.json,temporal_pool.p50,
+131,data,X1img2_020706,扩展池,fb_帧(离线LK复刻),stereo_pool_p50,px,0.0232,1622,点对,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_X1img2_020706.json,stereo_pool.p50,扩展池
+132,data,X1img2_020706,扩展池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0011,1454,点对,注入前代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_X1img2_020706.json,temporal_pool.p50,扩展池
+133,data,WC2OBS1_030927,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,10.8425,2754,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_WC2OBS1_030927.json,stereo_pool.p50,
+134,data,WC2OBS1_030927,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,22.9188,2423,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_WC2OBS1_030927.json,temporal_pool.p50,
+135,data,WC2OBS1_032005,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,27.0106,3117,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_WC2OBS1_032005.json,stereo_pool.p50,
+136,data,WC2OBS1_032005,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0149,3747,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_WC2OBS1_032005.json,temporal_pool.p50,
+137,data,U3PG_210307,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,43.1275,2517,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PG_210307.json,stereo_pool.p50,
+138,data,U3PG_210307,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0019,3275,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PG_210307.json,temporal_pool.p50,
+139,data,U3PO_211438,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,26.0,3519,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PO_211438.json,stereo_pool.p50,
+140,data,U3PO_211438,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,15.8334,3260,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PO_211438.json,temporal_pool.p50,
+141,data,U3PH_210708,扩展池,fb_帧(离线LK复刻),stereo_pool_p50,px,0.5632,4056,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PH_210708.json,stereo_pool.p50,扩展池
+142,data,U3PH_210708,扩展池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.5964,3820,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PH_210708.json,temporal_pool.p50,扩展池
+143,data,U3PR1_212450,扩展池,fb_帧(离线LK复刻),stereo_pool_p50,px,35.6581,3172,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PR1_212450.json,stereo_pool.p50,扩展池
+144,data,U3PR1_212450,扩展池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0056,3998,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PR1_212450.json,temporal_pool.p50,扩展池
+145,data,U3PR2_213717,主池,fb_帧(离线LK复刻),stereo_pool_p50,px,44.4405,2054,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PR2_213717.json,stereo_pool.p50,
+146,data,U3PR2_213717,主池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.0146,2229,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_U3PR2_213717.json,temporal_pool.p50,
+147,data,X1final_173345,扩展池,fb_帧(离线LK复刻),stereo_pool_p50,px,2.0471,3770,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_X1final_173345.json,stereo_pool.p50,扩展池
+148,data,X1final_173345,扩展池,fb_帧(离线LK复刻),temporal_pool_p50,px,0.2844,3984,点对,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/fbres_X1final_173345.json,temporal_pool.p50,扩展池
+149,group_offset,G1_年代效应_特征云P50,跨池混合,features_云(重放),pre45->inj127,点/云,82.0,1991,前代云|注入代云=10959,前代vs注入代,cf0384代vs跨栈混合,raw/docs/t4_verdicts_v2.md L172/L213-214,raw/vision_inputs/j13_supply_pooled.json,per_round.X1img_015950.p50 -> pooled_inj_era_only.50,"Δ=+82.0点(+182.22%,2.8222x); 归一0.300->0.847; 文标+112%算术核验不符; 端点45/127/n均复现"
+150,group_offset,G2_跨栈_注入代_特征云P50,跨池混合,features_云(重放),cf0384轮中位74->285278cc轮中位119,点/云,45.0,1002,cf0384云|285278cc云=9957,注入代(两侧同),cf0384代vs285278cc,raw/docs/t4_verdicts_v2.md L172/L183,raw/vision_inputs/j13_supply_pooled.json,"per_round.{WC2x2} vs per_round.{PG,PO,PR2}",+60.8%; 归一+0.300; 混杂=场景(WC2观测路线x2 vs PG地面/PO障碍/PR2路线2)+覆盖窗(爆止43.7/102.0s vs 全程44.0/359.0/612.9s); 轮数2vs3
+151,group_offset,G3_同栈年代对照_cf0384,跨池混合,features_云(重放),X1img45->WC2对轮中位74,点/云,29.0,1991,X1img云|WC2对云=1002,前代vs注入代,cf0384代(栈恒定),raw/docs/t4_verdicts_v2.md L172,raw/vision_inputs/j13_supply_pooled.json,per_round.X1img vs per_round.{WC2x2},+64.4%; 同栈内年代对照; WC2对=爆止窗2轮
+152,group_offset,G4_年代效应_图像sigma_P25,跨池混合,image_帧(离线),X1img/X1img2=0.0 -> 注入代8袋1.02185-1.03111,灰阶σ,1.02185,67,X1img主帧(σ̂入统计); 注入代66-68/袋,前代vs注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json + 8注入代metrics,metrics.d12_sigma_p25.p50,"X1img2同0.0(n=68,扩展池); 8袋全表与verdicts L218-220逐一吻合"
+153,group_offset,G5_年代效应_图像corners,跨池混合,image_帧(离线),X1img37 -> 注入代8袋p50域71-150,角点/帧,34.0,72,X1img主帧; 注入代72-74/袋,前代vs注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/metrics_X1img_sim.json + 8注入代metrics,metrics.corners_gFT.p50,六袋表71/90/121/126/143.5/150与verdicts L216逐一吻合; +34为对域下界(+113对上界)
+154,group_offset,G6_J2v1表重算,跨池混合,image_帧(离线),10指标xP10/P50/P90重算vs在册表,-,0.0,8,注入代袋级p50,注入代,不适用,帧离线面不经重放栈,raw/vision_inputs/j2_threshold_table_v1.json,threshold_table_v1.*,9/10指标|diff|<=5e-5(舍入); p_sat重算P50=1.30e-05 vs 表0 = data_dictionary L36已登记之截断显示

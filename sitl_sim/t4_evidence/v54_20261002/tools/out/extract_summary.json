@@ -1,0 +1,212 @@
+[
+ {
+  "name": "U3PG_210307",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_U3PG_210307/features.bag",
+  "bag_duration_s": 45.08205,
+  "bag_start": 1790869066.7857847,
+  "bag_end": 1790869111.8678343,
+  "n_odom": 853,
+  "n_pc": 432,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 13.072,
+  "last_odom_t": 58.14,
+  "first_pc_t": 13.072,
+  "last_pc_t": 58.14,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PG_210307_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PG_210307_pc.csv"
+ },
+ {
+  "name": "U3PO_211438",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_U3PO_211438/features.bag",
+  "bag_duration_s": 359.981248,
+  "bag_start": 1790869154.9528422,
+  "bag_end": 1790869514.9340901,
+  "n_odom": 7031,
+  "n_pc": 3521,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 25.316,
+  "last_odom_t": 385.284,
+  "first_pc_t": 25.28,
+  "last_pc_t": 385.284,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PO_211438_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PO_211438_pc.csv"
+ },
+ {
+  "name": "U3PR2_213717",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_U3PR2_213717/features.bag",
+  "bag_duration_s": 613.922814,
+  "bag_start": 1790869563.201193,
+  "bag_end": 1790870177.1240075,
+  "n_odom": 12142,
+  "n_pc": 6076,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 18.728,
+  "last_odom_t": 632.644,
+  "first_pc_t": 18.728,
+  "last_pc_t": 632.644,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PR2_213717_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_U3PR2_213717_pc.csv"
+ },
+ {
+  "name": "WC2OBS1_030927",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_WC2OBS1_030927/features.bag",
+  "bag_duration_s": 46.135911,
+  "bag_start": 1790835623.1879244,
+  "bag_end": 1790835669.3238356,
+  "n_odom": 900,
+  "n_pc": 454,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 25.82,
+  "last_odom_t": 71.94,
+  "first_pc_t": 25.872,
+  "last_pc_t": 71.772,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_WC2OBS1_030927_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_WC2OBS1_030927_pc.csv"
+ },
+ {
+  "name": "WC2OBS1_032005",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_WC2OBS1_032005/features.bag",
+  "bag_duration_s": 109.342928,
+  "bag_start": 1790836483.3618824,
+  "bag_end": 1790836592.7048109,
+  "n_odom": 2036,
+  "n_pc": 993,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 25.348,
+  "last_odom_t": 134.712,
+  "first_pc_t": 25.348,
+  "last_pc_t": 128.412,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_WC2OBS1_032005_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_WC2OBS1_032005_pc.csv"
+ },
+ {
+  "name": "X1img_015950",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_X1img_015950/features.bag",
+  "bag_duration_s": 207.823443,
+  "bag_start": 1790795159.4464235,
+  "bag_end": 1790795367.2698667,
+  "n_odom": 3993,
+  "n_pc": 2001,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 27.18,
+  "last_odom_t": 234.984,
+  "first_pc_t": 27.228,
+  "last_pc_t": 234.92,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_X1img_015950_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_X1img_015950_pc.csv"
+ },
+ {
+  "name": "X1img2_020706",
+  "bag": "/home/uav/sitl_sim/vision_inputs/jr3_replay_X1img2_020706/features.bag",
+  "bag_duration_s": 18.169162,
+  "bag_start": 1790795987.8349032,
+  "bag_end": 1790796006.0040655,
+  "n_odom": 177,
+  "n_pc": 10,
+  "n_other_msgs": 0,
+  "other_topics": {},
+  "odom_frame_mismatch": 0,
+  "pc_frame_mismatch": 0,
+  "odom_probe": {
+   "type": "nav_msgs/Odometry",
+   "frame_id": "world",
+   "child_frame_id": "world"
+  },
+  "pc_probe": {
+   "type": "sensor_msgs/PointCloud",
+   "frame_id": "world",
+   "first_msg_n_points": 0,
+   "point_class": null
+  },
+  "first_odom_t": 25.32,
+  "last_odom_t": 43.664,
+  "first_pc_t": 25.8,
+  "last_pc_t": 27.6,
+  "odom_csv": "/tmp/t4_v54_tools/out/jr3_replay_X1img2_020706_odom.csv",
+  "pc_csv": "/tmp/t4_v54_tools/out/jr3_replay_X1img2_020706_pc.csv"
+ }
+]

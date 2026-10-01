@@ -1,0 +1,100 @@
+{
+ "rows": 30,
+ "pairs": 91,
+ "nperm": 1999,
+ "seed": 20261002,
+ "th": 0.8,
+ "edges": [
+  [
+   "m1_supply_p50",
+   "m2_grid_p50",
+   0.8652,
+   0.813,
+   24
+  ],
+  [
+   "m1_supply_p50",
+   "dens_ground_per_m2_bag",
+   -0.8401,
+   -0.6995,
+   15
+  ],
+  [
+   "m2_grid_p50",
+   "dens_air_per_m3_bag",
+   -0.8477,
+   -0.7112,
+   15
+  ],
+  [
+   "m3_gradmed_p50",
+   "pc_supply_p50norm",
+   0.907,
+   0.824,
+   11
+  ],
+  [
+   "m4_dirbin_p50",
+   "pc_supply_p50norm",
+   0.8128,
+   0.8103,
+   11
+  ],
+  [
+   "pc_supply_p50norm",
+   "fb_stereo_p90_bag",
+   0.9744,
+   0.9219,
+   11
+  ]
+ ],
+ "clusters": {
+  "m1_supply_p50|m2_grid_p50|dens_ground_per_m2_bag|dens_air_per_m3_bag": 4,
+  "m3_gradmed_p50|m4_dirbin_p50|pc_supply_p50norm|fb_stereo_p90_bag": 4,
+  "gamma_pair_p50": 1,
+  "pc_nonempty_rate": 1,
+  "pc_pub_hz": 1,
+  "sigma_p25_p50_bag": 1,
+  "fb_temporal_p90_bag": 1,
+  "dens_obstacle_per_m3_bag": 1
+ },
+ "registry": [
+  "X1img_015950: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "X1img_015950: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "X1img_015950 seg2: 云率缺失门控 n_pc=241 cov=0.27 (窗[209.83,301.14]s, 回放pc范围[27.23,234.92]s)",
+  "X1img_015950: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "WC2OBS1_030927 seg0: 云率缺失门控 n_pc=454 cov=0.37 (窗[25.86,151.25]s, 回放pc范围[25.87,71.77]s)",
+  "WC2OBS1_030927 seg1: 云率缺失门控 n_pc=0 cov=-0.63 (窗[151.29,276.65]s, 回放pc范围[25.87,71.77]s)",
+  "WC2OBS1_030927 seg2: 云率缺失门控 n_pc=0 cov=-1.63 (窗[276.69,402.10]s, 回放pc范围[25.87,71.77]s)",
+  "WC2OBS1_032005 seg0: 云率缺失门控 n_pc=992 cov=0.82 (窗[25.37,150.56]s, 回放pc范围[25.35,128.41]s)",
+  "WC2OBS1_032005 seg1: 云率缺失门控 n_pc=0 cov=-0.18 (窗[150.63,275.82]s, 回放pc范围[25.35,128.41]s)",
+  "WC2OBS1_032005 seg2: 云率缺失门控 n_pc=0 cov=-1.18 (窗[275.84,401.06]s, 回放pc范围[25.35,128.41]s)",
+  "X1img2_020706 seg0: 云率缺失门控 n_pc=9 cov=0.05 (窗[25.39,74.53]s, 回放pc范围[25.32,27.74]s)",
+  "X1img2_020706: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "X1img2_020706: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "X1img2_020706 seg1: 云率缺失门控 n_pc=0 cov=-0.95 (窗[74.57,123.68]s, 回放pc范围[25.32,27.74]s)",
+  "X1img2_020706: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "X1img2_020706: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "X1img2_020706 seg2: 云率缺失门控 n_pc=0 cov=-1.95 (窗[123.71,172.83]s, 回放pc范围[25.32,27.74]s)",
+  "X1img2_020706: metrics json 无 supply_frac/grid4x4_occupancy_frac (W3 面未跑) → M1/M2 全段缺失",
+  "X1img2_020706: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PH_210708: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PH_210708: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PH_210708: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PH_210708: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PH_210708: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PH_210708: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PR1_212450: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PR1_212450: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PR1_212450: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PR1_212450: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "U3PR1_212450: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "U3PR1_212450: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "X1final_173345: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "X1final_173345: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "X1final_173345: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "X1final_173345: 无 density json (features.bag 缺或未补) → 三区密度缺失",
+  "X1final_173345: 无 pc.csv (features.bag 缺/袋已删类 N-A) → 云侧三率缺失",
+  "X1final_173345: 无 density json (features.bag 缺或未补) → 三区密度缺失"
+ ]
+}
