@@ -20,7 +20,7 @@ def dbox(p, b):
     cx,cy,z0,sx,sy,sz = b
     dx = max(abs(p[0]-cx)-sx/2, 0.0); dy = max(abs(p[1]-cy)-sy/2, 0.0)
     dz = max(max(z0-p[2], p[2]-(z0+sz)), 0.0)
-    return math.sqrt(dx*dx+dy*dy+dz*dz)
+    return math.hypot(dx,dy,dz)
 prop, truth, cmd, armed, goals = [], [], [], [], []
 with rosbag.Bag(bag,'r') as b:
     for topic, msg, t in b.read_messages():
@@ -65,7 +65,7 @@ if prop and truth:
     a_post = (tg[1]-tp[1], tg[2]-tp[2], tg[3]-tp[3])
 jump = 99.9
 if a_pre and a_post:
-    jump = math.sqrt(sum((x-y)**2 for x,y in zip(a_pre, a_post)))
+    jump = math.hypot(*(x-y for x,y in zip(a_pre, a_post)))
 print('anchor(goal+5s窗): (%.3f, %.3f, %.3f) | 帧稳定性 |pre-post|=%.3f m%s'
       % (a[0], a[1], a[2], jump, '  <-- VINS 帧中途跳变!' if jump > 0.5 else ''))
 t2_start = None
@@ -78,7 +78,7 @@ def leg_min(pts, goal, ts_from, ts_to, anchored=True):
     tx, ty, tz = (goal[0]+a[0], goal[1]+a[1], goal[2]+a[2]) if anchored else goal
     sel = [p for p in pts if ts_from <= p[0] <= ts_to]
     if not sel: return -1
-    return min(math.sqrt((p[1]-tx)**2+(p[2]-ty)**2+(p[3]-tz)**2) for p in sel)
+    return min(math.hypot(p[1]-tx,p[2]-ty,p[3]-tz) for p in sel)
 t_end = truth[-1][0] if truth else prop[-1][0]
 g1_ts = next((g[0] for g in goals if abs(g[1]-gx)<0.01 and abs(g[2]-gy)<0.01 and abs(g[3]-gz)<0.01), prop[0][0])
 w1_to = t2_start if t2_start else t_end
@@ -91,7 +91,7 @@ dev = []; ts_prop = [p[0] for p in prop]
 for c in cmd:
     j = bisect.bisect_left(ts_prop, c[0])
     if 0 < j < len(prop):
-        p = prop[j]; dev.append(math.sqrt((c[1]-p[1])**2+(c[2]-p[2])**2+(c[3]-p[3])**2))
+        p = prop[j]; dev.append(math.hypot(c[1]-p[1],c[2]-p[2],c[3]-p[3]))
 dev.sort(); p95 = dev[int(0.95*len(dev))] if dev else -1
 disarm_ok = (not armed[-1]) if armed else False
 GATE = 0.75 if 'obstacles' in world else 0.5   # 到位场景门(正源=world 参数)
