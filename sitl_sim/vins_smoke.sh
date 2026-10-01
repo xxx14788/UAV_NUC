@@ -178,13 +178,16 @@ gx, gy, gz, budget = sys.argv[1], sys.argv[2], sys.argv[3], float(sys.argv[4])
 gx, gy, gz = float(gx), float(gy), float(gz)
 rospy.init_node('vsmoke_arrive', disable_signals=True)
 st = {'anchor': None, 'p0': None, 'min_t': 1e9, 'min_v': 1e9,
-      'last': None, 'ok_since': None, 'arrived': False}
+      'last': None, 'ok_since': None, 'arrived': False,
+      'n_odom': 0, 'n_truth': 0}  # V8-DEF-1: sample counters for diagnostics
 def odom_cb(m):
+    st['n_odom'] += 1  # V8-DEF-1
     p = m.pose.pose.position
     if st['p0'] is None: st['p0'] = (p.x, p.y, p.z)
     d = math.sqrt((p.x-gx)**2 + (p.y-gy)**2 + (p.z-gz)**2)
     st['min_v'] = min(st['min_v'], d)
 def truth_cb(m):
+    st['n_truth'] += 1  # V8-DEF-1
     try: i = m.name.index('iris_stereo_vins')
     except ValueError: return
     p = m.pose[i].position
@@ -207,8 +210,16 @@ r = rospy.Rate(10)
 while time.monotonic() < t_end and not st['arrived'] and not rospy.is_shutdown():
     try: r.sleep()
     except Exception: time.sleep(0.1)
-print(('ARRIVED_TRUTH min_d=%.3f' % st['min_t']) if st['arrived']
-      else ('TIMEOUT min_truth=%.3f last=%.3f min_vins=%.3f' % (st['min_t'], st['last'] or -1, st['min_v'])))
+# V8-DEF-1: triage the zero-sample cases (E-4 window root cause: VINS stopped streaming post-burst)
+if st['n_odom'] == 0:
+    print('NO_ODOM n_odom=0 n_truth=%d (VINS imu_propagate never flowed; anchor impossible)' % st['n_truth'])
+elif st['n_truth'] == 0 or st['anchor'] is None:
+    print('NO_GT n_odom=%d n_truth=%d (model_states or anchor unavailable)' % (st['n_odom'], st['n_truth']))
+elif st['arrived']:
+    print('ARRIVED_TRUTH min_d=%.3f n_odom=%d n_truth=%d' % (st['min_t'], st['n_odom'], st['n_truth']))
+else:
+    print('TIMEOUT min_truth=%.3f last=%.3f min_vins=%.3f n_odom=%d n_truth=%d' % (
+        st['min_t'], st['last'] or -1, st['min_v'], st['n_odom'], st['n_truth']))
 PYEOF
   tail -2 "$EV/arrive_watch${WTAG}.txt"
 }
