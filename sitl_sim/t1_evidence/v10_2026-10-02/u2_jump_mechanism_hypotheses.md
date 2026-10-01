@@ -85,3 +85,7 @@
 ## 5. 交付
 - 本文件 + u2_r1_event_window.md + u2_r2_event_window.md 入 t1_evidence/v10_2026-10-02/
 - @T2 一份：本文件 cp 至 t2_results/R2_dissect/（其 R2F 验证轮判读面引用 §3 判别口径）
+
+## 6. 探针覆盖面声明（2026-10-02 02:4x 补，P1-1b 首袋副产品）
+U3PH compact 袋三分解（p11b_U3PH_compact.json）实测：fail 轮 13.65s 处 imu_propagate 已虚报 7-25m，而 E2uls 探针 32s 前全程 |dP|<0.02 健康——**E2uls（ULS 写回差）对匀漂族（H-S4 型）盲**：优化解与传播链一致地一起漂时不触发写回差，仅在状态突变（H-S1/S2 尖峰族）时报。
+⟹ 判读纪律：探针零事件 ≠ 健康证；匀漂监测必须配 bag 级绝对位置流（p11b 类判读器/RESULT 帧跳口径）。A.4 重估的计数面同理=双计数（Bgs 分流）+ 绝对位置对照缺一不可。

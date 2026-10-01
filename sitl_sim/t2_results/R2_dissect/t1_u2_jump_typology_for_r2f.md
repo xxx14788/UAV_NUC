@@ -85,3 +85,8 @@
 ## 5. 交付
 - 本文件 + u2_r1_event_window.md + u2_r2_event_window.md 入 t1_evidence/v10_2026-10-02/
 - @T2 一份：本文件 cp 至 t2_results/R2_dissect/（其 R2F 验证轮判读面引用 §3 判别口径）
+
+
+## 6. 探针覆盖面声明（02:4x 补）
+E2uls 探针对匀漂族（H-S4）盲（U3PH compact 实测：13.65s 已虚报 7-25m 而探针 32s 前健康）。A.4 重估=双分流计数+绝对位置对照缺一不可。
+
