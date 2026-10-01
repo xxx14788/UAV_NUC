@@ -65,3 +65,33 @@ awk '/T2gate/{t=-1;tri=-1;rej=-1;init=-1;for(i=1;i<=NF;i++){if($i~/^t=/)t=substr
 # vis_n 坍塌
 awk '/T2cost/{t=-1;vn=-1;for(i=1;i<=NF;i++){if($i~/^t=/)t=substr($i,3)+0;if($i~/^vis_n=/)vn=substr($i,7)+0}if(t>0){b=int(t/10)*10;V[b]+=vn;N[b]++}}END{for(k in V)printf "%ds vis_n/f=%.1f\n",k,V[k]/N[k]}' <vins.log> | sort -n
 ```
+
+## 增补章:failureDetection 源码取证 + 上游对照 + P/V 挂点裁定(2026-10-02 01:5x,任务书单元2)
+
+### 1. 现行实现全文取证(estimator.cpp:1134-1206,T2-W4 版)
+| 检查项 | 量域/条件 | 触发动作 | 状态 |
+|---|---|---|---|
+| insane states(有限性+量域) | !Ps/Vs/Rs.allFinite() 或 |P|>1e3 或 |V|>50 | return true→reboot(clearState+重 init) | **本项目 T2-W4 新增**(2026-09-27) |
+| little feature | last_track_num<2 | 仅 ROS_INFO(return true 被注释) | 上游注释保留 |
+| Bas 量域 | |Bas|>2.5 | return true | 活(上游同款) |
+| Bgs 量域 | |Bgs|>1.0 | return true | 活(上游同款) |
+| extrinsic | tic(0)>1 | **整块注释** | 上游注释保留 |
+| 平移跳变 | (P-last_P).norm()>5 | 打印+return 注释 | 上游注释保留 |
+| z 跳变 | |ΔP.z|>1 | 打印+return 注释 | 上游注释保留 |
+| 旋转跳变 | delta_angle>50° | 打印+return 注释 | 上游注释保留 |
+调用点:estimator.cpp:725(每图像帧 solve 尾,~10Hz 节奏);触发打印 [T2fail] 快照(P/V/Bas/Bgs/tic/td/track,T2-R1.5 插桩)。
+复位逻辑:failureDetection true→Estimator::clearState()→solver_flag=INITIAL→滑窗/特征/偏置全清→重新 initialStructure(软重启,进程不死)。
+配套发布端防线:estimator.cpp:245(latest_P<1e3/|V|<50 有界性门,125Hz 外送前,T2-v3 W1.3);E2 clamp 钳制(T1-E2 C03-A4,dt 域断裂时 hold 发布)。
+
+### 2. 上游 v1.17 对照(git diff 视角;remote=github.com HKUST-Aerial-Robotics/VINS-Fusion master)
+- 上游 failureDetection **首行 `return false;` 使全函数成死代码**(全部检查不可达)——本项目 T2-W4 移除该行并新增 insane states 检查;Bas/Bgs 检查上游原样(本项目可达);little feature/extrinsic/jump×3 上游即注释,本项目保持注释=**无未登记的本地改动残留**(对照结论:干净)。
+- 上游 jump 检查(P>5/Δz>1/角度>50)被注释的历史语义=单帧跳变易误杀(上游有意保留打印不触发)——与本项目 R3 实测互证:跳变≠失败(重锚/优化 jump 正常存在,健康轮 E2uls dP 毫米级-米级均活)。
+
+### 3. P/V 量域检查挂点裁定(R3 取证驱动,喂单元4)
+- **量域门判死**:R3 实测健康轮 U3PO v_max(尖峰口径)=21.17 vs 病轮 PR1=17.0/PR2=6.6——重叠无判别力;|P| 门与 route 真航程(百米级)冲突;降阈值必误杀健康轮。上游注释的 jump 挂点同理不取。
+- **改挂 cost 门(推荐)**:T2slv init_cost>10×滚动基线(100 帧 p50)持续 N=5 帧→failureDetection 新增返回路径(挂在 Bas 检查后、little feature 前,与既有结构同型);R3 实证:route 急冻形态 cost 65→643@t=50.0s 精确起点,量域异常(冻结/零 fail)全程未现——cost 门早于任何可观测状态异常。
+- 次选挂点:Bas 平台门(|Bas| 逐位不变持续 M=100 帧→梯度死寂信号;R3 病轮 Bas 冻结 28s 先于爆窗,健康轮冻结率 3.7%)。两门都属"估计器自一致性"类,无需真值。
+- 预注册阈值注记:N/M 与 10× 从 U3PO/U3PG 健康轮 cost/Bas 分位取(单元4 附计算过程);防误杀条款=门触发仅当 solver_flag==NON_LINEAR 且非 init 后首 100 帧。
+
+### 4. 与 R2F 的关系
+R2F(视差门)在观测入环前(fm.cpp),本节门在解算后(estimator.cpp)——前后两道独立防线,R2 载体(视觉坍塌)归 R2F,R3 载体(在线 IMU/状态域,cost×10 型)归本节 cost 门;两门默认全关=逐位不变,判别格各自独立跑。

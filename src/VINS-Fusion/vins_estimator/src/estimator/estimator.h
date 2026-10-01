@@ -188,6 +188,9 @@ class Estimator
     Eigen::Vector3d latest_P, latest_V, latest_Ba, latest_Bg, latest_acc_0, latest_gyr_0;
     Eigen::Quaterniond latest_Q;
     ReanchorSmoother reanchor_smoother;   // T1-D1: publish-side smooth reanchor (kernel untouched)
+    // T2-R3F: cost-surge gate state (unit4) - short-window median streak
+    std::deque<double> t2_cost_hist;
+    int t2_cost_streak = 0;
     PropagateGuard propagate_guard;       // T1-E2: dt-clamp hold / gap-skip counters (C03 A3/A4)
 
     bool initFirstPoseFlag;

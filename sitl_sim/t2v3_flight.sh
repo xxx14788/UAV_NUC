@@ -42,7 +42,7 @@ sleep 2
 LOG "mavros up, IMU 提频"
 
 # ---------- 装配 ----------
-nohup roslaunch $HOME/catkin_ws/src/launch/sim_vins.launch > $HOME/sitl_sim/t2v3_simvins_${MODE}.log 2>&1 &
+nohup roslaunch $HOME/catkin_ws/src/launch/${VINS_LAUNCH:-sim_vins.launch} > $HOME/sitl_sim/t2v3_simvins_${MODE}.log 2>&1 &
 sleep 3
 case "$MODE" in
   hover|route)
@@ -64,6 +64,19 @@ BAG=$HOME/sitl_sim/bags/t2v3_${MODE}_$(date +%H%M%S).bag
 LOG "bag: $BAG"
 FEATURE_TOPICS=""
 rostopic list 2>/dev/null | grep -q "/vins_estimator/feature_pts" && FEATURE_TOPICS="/vins_estimator/feature_pts"
+if [ "${RECORD_COMPACT:-0}" = "1" ]; then
+  # T2-U3pp compact arm (prereg da2534e6): images dropped, disk economy
+  nohup rosbag record -O "$BAG" \
+  /mavros/imu/data_raw /mavros/local_position/odom /mavros/local_position/pose \
+  /mavros/state /mavros/vision_pose/pose /vins_estimator/odometry \
+  /vins_estimator/imu_propagate $FEATURE_TOPICS /position_cmd /move_base_simple/goal \
+  /gazebo/model_states /px4ctrl/takeoff_land \
+  > $HOME/sitl_sim/t2v3_record_${MODE}.log 2>&1 &
+  REC_PID=$!
+  sleep 3
+  SKIP_FULL_REC=1
+fi
+if [ "${SKIP_FULL_REC:-0}" != "1" ]; then
 nohup rosbag record -O "$BAG" \
   /iris_stereo_vins/vins_cam_left/image_raw /iris_stereo_vins/vins_cam_right/image_raw \
   /mavros/imu/data_raw /mavros/local_position/odom /mavros/local_position/pose \
@@ -73,6 +86,7 @@ nohup rosbag record -O "$BAG" \
   > $HOME/sitl_sim/t2v3_record_${MODE}.log 2>&1 &
 REC_PID=$!
 sleep 3
+fi
 
 LOG "静置 20s (VINS init 窗口)"
 sleep 20

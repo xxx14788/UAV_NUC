@@ -109,6 +109,7 @@ class FeatureManager
     int new_feature_num;
     int long_track_num;
     double t2_cur_t = 0.0;  // T2-WA1: current frame stamp for [T2depth] dumps (set by Estimator::solve)
+    int t2_near_supply_last = 0;  // T2-R2F: prev-frame near-feature supply (starvation guard memory)
 
   private:
     double compensatedParallax2(const FeaturePerId &it_per_id, int frame_count);

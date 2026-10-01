@@ -30,6 +30,12 @@ int T2_BIAS_GUARD = 0;
 double T2_BAS_SOFT = 1.0, T2_BGS_SOFT = 0.5, T2_BIAS_WEIGHT = 50.0;
 double T2_OUTLIER_PX = 0;  // T2-WA8: 0=legacy 3px hard
 double T2_MOTION2_MIN_BASE = 0.0;  // T2-WA9: min inter-frame baseline (m) for motion2 triangulation, 0=off
+double T2_MIN_DISPARITY = 0.0;     // T2-R2F: stereo disparity floor (px), 0=off=legacy bit-identical
+int T2_FARDROP_MIN_NEAR = 30;    // T2-R2F: starvation guard: far-drop only while near supply >= this
+int T2_COST_GATE = 0;            // T2-R3F: cost-surge gate, 0=off=legacy bit-identical
+double T2_COST_RATIO = 10.0;     // T2-R3F: surge ratio vs short-window median
+int T2_COST_N = 5;               // T2-R3F: consecutive-frame streak to fire (anti single-frame)
+int T2_COST_BASE_WIN = 20;       // T2-R3F: short median window (frames) - sees acute surges, not scene drift
 int T2_BIAS_ANCHOR = 0;
 double MIN_PARALLAX;
 double ACC_N, ACC_W;
@@ -147,6 +153,18 @@ void readParameters(std::string config_file)
         T2_DEPTH_MAX = (double)fsSettings["t2_depth_max"];
     if (!fsSettings["t2_xcheck_tol"].empty())
         T2_XCHECK_TOL = (double)fsSettings["t2_xcheck_tol"];
+    if (!fsSettings["t2_min_disparity"].empty())
+        T2_MIN_DISPARITY = (double)fsSettings["t2_min_disparity"];
+    if (!fsSettings["t2_fardrop_min_near"].empty())
+        T2_FARDROP_MIN_NEAR = (int)fsSettings["t2_fardrop_min_near"];
+    if (!fsSettings["t2_cost_gate"].empty())
+        T2_COST_GATE = (int)fsSettings["t2_cost_gate"];
+    if (!fsSettings["t2_cost_ratio"].empty())
+        T2_COST_RATIO = (double)fsSettings["t2_cost_ratio"];
+    if (!fsSettings["t2_cost_n"].empty())
+        T2_COST_N = (int)fsSettings["t2_cost_n"];
+    if (!fsSettings["t2_cost_base_win"].empty())
+        T2_COST_BASE_WIN = (int)fsSettings["t2_cost_base_win"];
     printf("T2_DEPTH_GATE: %d min=%.3f max=%.3f xcheck_tol=%.2f\n",
            T2_DEPTH_GATE, T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL);
     // T2-WA23456G knobs (absent = legacy)

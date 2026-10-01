@@ -68,6 +68,16 @@ extern double T2_BAS_SOFT, T2_BGS_SOFT, T2_BIAS_WEIGHT;
 extern int T2_BIAS_ANCHOR;
 extern double T2_OUTLIER_PX;
 extern double T2_MOTION2_MIN_BASE;
+
+// T2-R2F: disparity observability screen (px, via FOCAL_LENGTH macro; 0 = off =
+// bit-identical legacy). fardrop_min_near = starvation guard floor.
+extern double T2_MIN_DISPARITY;
+extern int T2_FARDROP_MIN_NEAR;
+// T2-R3F: solver cost-surge gate (unit4; 0 = off = bit-identical legacy)
+extern int T2_COST_GATE;
+extern double T2_COST_RATIO;
+extern int T2_COST_N;
+extern int T2_COST_BASE_WIN;
 extern int ROW, COL;
 extern int NUM_OF_CAM;
 extern int STEREO;

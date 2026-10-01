@@ -1159,6 +1159,20 @@ bool Estimator::failureDetection()
         ROS_INFO(" big IMU gyr bias estimation %f", Bgs[WINDOW_SIZE].norm());
         return true;
     }
+    // T2-R3F (unit4): cost-surge gate. R3 forensics proved range checks have
+    // no discriminative power on the route acute-burst-freeze form (healthy
+    // v_max 21.2 > sick 6.6; all four checks in-band for 600+ s of poisoned
+    // output) while init_cost x10 at the precise onset is the earliest
+    // self-consistent symptom. Thresholds data-driven: W=20/N=5/R=10 zero-fire
+    // on U3PO/U3PG/U3PH, fire t=48.6s on route burst (=onset 48.7s).
+    if (T2_COST_GATE && solver_flag == NON_LINEAR &&
+        (int)t2_cost_hist.size() >= T2_COST_BASE_WIN &&
+        t2_cost_streak >= T2_COST_N)
+    {
+        ROS_WARN("cost gate: streak=%d over %.1fx short-window median, reboot",
+                 t2_cost_streak, T2_COST_RATIO);
+        return true;
+    }
     /*
     if (tic(0) > 1)
     {
@@ -1485,6 +1499,26 @@ void Estimator::optimization()
            summary.initial_cost, summary.final_cost,
            static_cast<int>(summary.iterations.size()),
            static_cast<int>(summary.termination_type), t_solver.toc());
+    // T2-R3F (unit4): cost-surge streak feed. Short median window (default 20
+    // frames) catches ACUTE surges (R3 route: 65->643 x10 at burst onset
+    // t=50.0s, healthy rounds zero-fire) while ignoring scene-level cost
+    // drift (U3PO healthy 118->2730 slow climb). Gate itself lives in
+    // failureDetection(); default t2_cost_gate=0 keeps this inert.
+    if (T2_COST_GATE && solver_flag == NON_LINEAR)
+    {
+        if ((int)t2_cost_hist.size() >= T2_COST_BASE_WIN)
+        {
+            std::vector<double> hs(t2_cost_hist.begin(), t2_cost_hist.end());
+            std::nth_element(hs.begin(), hs.begin() + hs.size() / 2, hs.end());
+            if (summary.initial_cost > T2_COST_RATIO * hs[hs.size() / 2])
+                t2_cost_streak++;
+            else
+                t2_cost_streak = 0;
+        }
+        t2_cost_hist.push_back(summary.initial_cost);
+        if ((int)t2_cost_hist.size() > T2_COST_BASE_WIN)
+            t2_cost_hist.pop_front();
+    }
     fflush(stdout);
     // T2-WA2G: per-factor-type cost decomposition on the FINAL solution ([T2cost])
     double t2_cost_prior = -1.0, t2_cost_imu = -1.0, t2_cost_vis = -1.0;

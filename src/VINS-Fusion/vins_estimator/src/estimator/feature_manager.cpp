@@ -356,6 +356,8 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
     // when gate on; absent config key = gate off = upstream behavior bit-identical)
     std::set<int> t2_gate_reject;
     int t2_stat_tri = 0, t2_stat_rej = 0, t2_stat_xrej = 0, t2_stat_init = 0;
+    // T2-R2F: far_drop counters + starvation-guard supply (near = disp/shift >= gate)
+    int t2_stat_fardrop = 0, t2_stat_fardrop_starved = 0, t2_near_supply_cur = 0;
     for (auto &it_per_id : feature)
     {
         if (it_per_id.estimated_depth > 0)
@@ -422,6 +424,29 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                        (depth > 0) ? depth : INIT_DEPTH, d2,
                        (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
                        (depth > 0) ? "ok" : "init_neg");
+            }
+            // T2-R2F: disparity observability screen (fixface mech-1). 0.1m baseline:
+            // rel depth unc ~ sigma_B/disp; R2 junk band at stereo p75>24m (disp <~2px).
+            // Suppresses the MEASUREMENT (no estimated_depth write -> est never admits
+            // it) while last-frame near supply >= fardrop_min_near (starvation guard).
+            if (T2_MIN_DISPARITY > 0)
+            {
+                double t2_disp_px = fabs(point0.x() - point1.x()) * FOCAL_LENGTH;
+                if (t2_disp_px < T2_MIN_DISPARITY)
+                {
+                    if (t2_near_supply_last >= T2_FARDROP_MIN_NEAR)
+                    {
+                        t2_stat_fardrop++;
+                        printf("[T2depth] t=%.4f id=%d src=stereo u=%.1f v=%.1f depth=%.4f depth2=-1.0000 track=%d sf=%d flag=far_drop\n",
+                               t2_cur_t, it_per_id.feature_id,
+                               it_per_id.feature_per_frame[0].uv.x(), it_per_id.feature_per_frame[0].uv.y(),
+                               depth, (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame);
+                        continue;
+                    }
+                    t2_stat_fardrop_starved++;
+                }
+                else
+                    t2_near_supply_cur++;
             }
             // T2-WA1G: stereo branch gate - out-of-range depth rejects the track
             // (replaces the silent INIT_DEPTH pseudo-depth path when gate on)
@@ -490,6 +515,28 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                    (depth > 0) ? depth : INIT_DEPTH,
                    (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame,
                    (depth > 0) ? "ok" : "init_neg");
+            // T2-R2F: same observability screen, motion2 source - inter-frame
+            // pixel shift plays the disparity role (small shift = unobservable
+            // depth; complements metric T2_MOTION2_MIN_BASE gate).
+            if (T2_MIN_DISPARITY > 0)
+            {
+                double t2_shift_px = (point1 - point0).norm() * FOCAL_LENGTH;
+                if (t2_shift_px < T2_MIN_DISPARITY)
+                {
+                    if (t2_near_supply_last >= T2_FARDROP_MIN_NEAR)
+                    {
+                        t2_stat_fardrop++;
+                        printf("[T2depth] t=%.4f id=%d src=motion2 u=%.1f v=%.1f depth=%.4f depth2=-1.0000 track=%d sf=%d flag=far_drop\n",
+                               t2_cur_t, it_per_id.feature_id,
+                               it_per_id.feature_per_frame[0].uv.x(), it_per_id.feature_per_frame[0].uv.y(),
+                               depth, (int)it_per_id.feature_per_frame.size(), it_per_id.start_frame);
+                        continue;
+                    }
+                    t2_stat_fardrop_starved++;
+                }
+                else
+                    t2_near_supply_cur++;
+            }
             // T2-WA1G: two-frame motion branch gate (same policy as stereo)
             if (T2_DEPTH_GATE)
             {
@@ -600,6 +647,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
     }
     printf("[T2gate] t=%.4f tri=%d rej=%d xrej=%d init_replace=%d gate=%d\n",
            t2_cur_t, t2_stat_tri, t2_stat_rej, t2_stat_xrej, t2_stat_init, T2_DEPTH_GATE);
+    t2_near_supply_last = t2_near_supply_cur;  // T2-R2F: supply memory for next frame
 }
 
 void FeatureManager::removeOutlier(set<int> &outlierIndex)
