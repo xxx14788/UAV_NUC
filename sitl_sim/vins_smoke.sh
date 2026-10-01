@@ -21,6 +21,14 @@ while [ $# -gt 0 ]; do case "$1" in
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
+
+# -- dual-copy deploy guard (T1 2026-10-01; probe-copy-fork case d55c710 lesson) --
+# repo copy = source of truth; runtime copy must md5-match repo at launch, else refuse to run.
+_REPO_SH="$HOME/catkin_ws/sitl_sim/vins_smoke.sh"
+if [ -f "$_REPO_SH" ] && [ "$(md5sum "$_REPO_SH" | cut -d' ' -f1)" != "$(md5sum "$0" | cut -d' ' -f1)" ]; then
+  LOG "FATAL dual-copy fork: runtime($0) != repo($_REPO_SH); REFUSING. fix: cp repo -> runtime then retry"
+  exit 3
+fi
 L="$HOME/sitl_sim"
 EV="$L/vins_smoke_runs/run_${TAG}_$(date +%H%M%S)"
 mkdir -p "$EV"
