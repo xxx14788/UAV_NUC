@@ -79,7 +79,7 @@
 ## 6. 视觉六维 sim-vs-实机差距基线（T4-J3, 2026-09-30, C09 dossier E8 交付）
 
 > 数字正源=docs/t4_j3_e1e2_evidence.md; 判读纪律: 分位数+CI+n, 禁单帧结论;
-> **2026-10-02 正源增补（T4 v5.4 单元 4）**: 注入代正源=verdicts v2 §U3′/J2 节 + vision_inputs/j2_threshold_table_v1.json（8 注入代袋级 p50 跨袋口径）; E3③ σ 复验/E6 纹理正源=已完成入账; E5 深度分区正源=T2 census（n_init_replace 口径, 防双做, T4 判读文只引用不重做）; E4 双峰判据已预注册=docs/t4_e4_bimodal_prereg.md（commit 682dc3a）, 判决随 v5.4 数据包出。
+> **2026-10-02 正源增补（T4 v5.4 单元 4）**: 注入代正源=verdicts v2 §U3′/J2 节 + vision_inputs/j2_threshold_table_v1.json（8 注入代袋级 p50 跨袋口径）; E3③ σ 复验/E6 纹理正源=已完成入账; E5 深度分区正源=T2 census（n_init_replace 口径, 防双做, T4 判读文只引用不重做）; E4 判据预注册=docs/t4_e4_bimodal_prereg.md（682dc3a），**判决已出=verdicts v2 §v5.4.3**（预注册合取不成立：主导形态=高位主体 4/6 袋，X1final 单袋两簇分离，U3PH 低位健康；PR1/PR2 实录勘误为高位主体型；粒度=箱级,帧级复核解锁=PNG 重取+逐帧输出）。
 > **CF-8 注记**: 凡引代位/离线数据的影响行, 在线闭环可能放大（I03 机制）。
 > 素材边界: 实机侧=官方样张代位（pre-production, color/depth 流, **infra 双目四公开源全阴→IR 域挂账**）;
 > sim 侧=X1img_015950（**σ̂ 直筛=0.0 实锤注入前袋**, M4 调和注记 C12-EXP2 步骤 0 读数两簇共用）。
