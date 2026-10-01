@@ -117,6 +117,10 @@ end_state.final_drift_prop_truth_m，--leg2 轮不重启 ATE 用锚差漂移替�
   fig3 Bas/Bgs 时间线；fig4 帧跳变双口径分布；fig5 特征数（track_med）分布；
   fig6 X5 场景-通过率地图
 - [DATA: 各 fig 插入+生成命令行记录]
+  【预填·管线活性凭据 2026-10-02】历史 47 轮 dry-run 全链通：
+  `t3_wa_gate.py --online --csv xline_hist_wagate_dryrun.csv run_*`（47 轮判读 47 非 PASS=历史
+  基线符合预期）→ `t3_xline_report_figs.py --csv … --out-dir docs/figs_dryrun`（fig1/fig4 产出；
+  fig2/3/5/6 依赖 X 线轮回填数据，生成器已标注回填期）。产物在 sitl_sim/docs/figs_dryrun/。
 
 ## 附：骨架→成稿检查单
 

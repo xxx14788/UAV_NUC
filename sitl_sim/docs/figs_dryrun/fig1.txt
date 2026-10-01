@@ -1,0 +1,50 @@
+fig1(文本版) X 线逐轮判决面板
+dir                          verdict   four      j0jump  fjraw  fjsmj reboot  t1d1    ate
+run_E2FAIL1_022847           FAIL      0/1/1/0    0.002   1306   1332      0     0 343.4335
+run_E2FAIL2_023440           ENV-FAIL  0/1/0/1    0.077      4      5      0     0 0.0905
+run_E2FAIL3_024009           FAIL      None/None/None/None                            0     0       
+run_E2FAIL4_024211           FAIL      None/None/None/None              0      0      0     0 0.0003
+run_E2FAIL5_024737           FAIL      None/None/None/None                            0     0       
+run_E2PROBE_022152           FAIL      None/None/None/None                            0     0       
+run_E3_202044                FAIL      None/None/None/None            147    164      0     0 7.7061
+run_E3_210246                FAIL      0/1/1/0     1.92     49     73      0     0 1.8207
+run_E4_GOFF_D10_192513       FAIL      None/None/None/None                            0     0       
+run_E4_GOFF_D10_193039       FAIL      0/1/0/0   25.481      1      0      0     1 0.0175
+run_E4_GOFF_D10_R2_194927    FAIL      0/1/0/0    8.711      5      5      0     0 0.3018
+run_U3PH_210708              FAIL      None/1/0/0 140.623                    0     0       
+run_U3PO_211438              FAIL      None/1/1/0   2.603     33     54      0     0 2.0382
+run_U7OL1_195920             FAIL      0/1/1/0  609.775    362    360      0     0 203.1576
+run_U7OL2_202043             FAIL      0/1/1/0    0.392      9      1      0     0 0.3661
+run_V8_PROBECHECK_205100     FAIL      None/None/None/None                            0     0       
+run_WAOL1_142557             FAIL      0/1/0/1    8.656      1      0      0     1 0.0358
+run_WAOL2_214142             FAIL      0/1/1/0  376.184    780    757      0     0 145.0123
+run_WAOL3_215120             FAIL      0/1/0/0   54.156      1      1      0     1  0.043
+run_WAOL4_220117             ENV-FAIL  0/1/1/0  805.901    359    369      0     1 290.856
+run_WAOL5_221128             FAIL      None/None/None/None                            0     0       
+run_WAOL5R_222234            FAIL      0/1/1/0    2.448     57     43      0     1 1.8859
+run_WC2OBS1_030927           FAIL      0/1/1/0  917.758     67     80      0     0 5.0534
+run_WC2OBS1_032005           FAIL      0/1/1/0  369.839    512    684      0     1 116.4114
+run_WD1_024016               FAIL      None/None/None/None                            0     0       
+run_WD1b_032925              FAIL      0/1/0/1   17.285      0      0      0     1 0.0077
+run_WD1b_033751              ENV-FAIL  0/1/1/0  271.982      5     10      0     1 0.1613
+run_X1_000718                FAIL      None/None/None/None                            0     0       
+run_X1_000947                FAIL      None/None/None/None              0      0      0     0  0.005
+run_X1_001817                FAIL      0/1/1/0  287.625    233    225      0     0 96.3349
+run_X1_002244                FAIL      None/None/None/None                            0     0       
+run_X1_002443                FAIL      0/1/0/1  117.333      0      0      0     0 0.0106
+run_X1_002831                FAIL      0/1/1/0  861.118    280    294      0     0 25.7226
+run_X1_223836                FAIL      None/None/None/None                            0     0       
+run_X1_225059                FAIL      None/None/None/None                            0     0       
+run_X1_225612                FAIL      None/None/None/None                            0     0       
+run_X1_231835                FAIL      None/None/None/None                            0     0       
+run_X1_232055                FAIL      0/1/1/1             624    632      0     0 367.2475
+run_X1_233210                FAIL      0/1/0/0               3      4      0     0 0.2129
+run_X1_234437                FAIL      0/1/1/0              12     12      0     0 2.6187
+run_X1_235025                FAIL      0/1/0/0   86.817      2      7      0     0 0.5315
+run_X1final_043355           FAIL      None/None/None/None 102.704    277    293      0     0 10.9662
+run_X1final_101627           FAIL      0/1/1/0  471.179    719    727      0     1 249.2359
+run_X1final_104445           FAIL      None/None/None/None                            0     0       
+run_X1final_104720           ENV-FAIL  0/1/0/0   57.484      3      2      0     1 0.0735
+run_X1final_105449           FAIL      0/1/0/1  890.535      1      1      0     0 0.0763
+run_X1final_172424           FAIL      0/1/0/0    6.042     27     37      0     0 10.0417
+小计: 47 轮 / PASS 0 / T1-D1 域 10 / vins 域健康 19
