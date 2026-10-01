@@ -28,8 +28,10 @@
 输出: <dir>/wa_gate.json(回放) / <dir>/wa_gate_online.json(在线) + stdout 一行判决;
       --csv 追加一行汇总(矩阵批用)
 在线判决模式(总设计师 10-01 口径:在线为主判)两层:
-  xline  gate 层 = 四指标(round_result.sh RESULT.txt,不重算保判读一致)
-          + J0 锚差(<0.5m) + J0 修订口径(forensics frame_jumps raw==0 且 smj≤10)
+  xline  gate 层 = 四指标(round_result.sh RESULT.txt,不重算保判读一致;
+          到位指标含场景分门——正源在 round_result.sh,wa_gate 继承读值)
+          + J0 锚差(<0.5m 恒门,用户 10-01 口径"锚差>0.5 一律 FAIL"不分场景)
+          + J0 修订口径(forensics frame_jumps raw==0 且 smj≤10)
           + ENV-FAIL 三签名; j0_jump>0.5 且 vins 域健康 → 标 T1-D1-domain(不计 5/5,入回挖)
   vins  域层  = 零 failure 零 reboot(T2diag t 回退计数 + odom 断流>gap 阈计数)
           + Bas 三重口径(同回放) + ATE 出生点对齐(仅报告) + 尖峰(同回放)
@@ -72,7 +74,10 @@ DEFAULT_THRESH = {
     "online_pair_win_s": 0.2,      # ATE 最近邻配对窗
     "online_j0_rev_raw_max": 0,    # J0 修订: frame_jumps_raw_odom == 0(X1' 验收口径)
     "online_j0_rev_smj_max": 10,   # J0 修订: frame_jumps_smoothed_odom ≤ 10
-    # ---- 场景分门(用户 10-01 裁决;v8.0 等待池②;正源=round.log "SITL up (world)") ----
+    # ---- 场景分门(用户 10-01 裁决;v8.0 等待池②) ----
+    # 判定正源=round_result.sh 到位指标(world 参数在握,到位门 0.5/0.75);wa_gate 侧
+    # 仅报告 scene/gate_m 供审计(four 继承 RESULT.txt 不重算);J0 锚差门恒 0.5
+    # (口径"锚差>0.5m 一律 FAIL"不分场景);场景正源=round.log "SITL up (world)" 行
     "scene_gate_default_m": 0.5,       # 无障碍场景(route/ground/hover 系)到位门
     "scene_gate_obstacles_m": 0.75,    # obstacles 系(含 obstacles_v2)
     "scene_obstacles_kw": "obstacles", # world 名包含即判 obstacles 系
@@ -595,9 +600,9 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
     env_hard, env_soft = envfail_scan(run_dir)
     if res.get("result") == "ENV-FAIL":
         env_hard = env_hard or "RESULT.txt:ENV-FAIL"
-    xline_pass = bool(four_ok and j0_jump is not None and j0_jump < gate_m
+    xline_pass = bool(four_ok and j0_jump is not None and j0_jump < 0.5
                       and j0_rev_pass is True)
-    t1d1 = bool(j0_jump is not None and j0_jump >= gate_m and vins_pass)
+    t1d1 = bool(j0_jump is not None and j0_jump >= 0.5 and vins_pass)
     if env_hard and not xline_pass:
         verdict = "ENV-FAIL"
     elif xline_pass:
@@ -606,7 +611,9 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
         verdict = "FAIL"
     rep["xline"] = {"four": four, "four_known": four_known, "four_ok": four_ok,
                     "scene": scene["scene"], "world": scene["world"],
-                    "scene_source": scene["source"], "gate_m": gate_m,
+                    "scene_source": scene["source"],
+                    "gate_m": gate_m,  # 到位场景门(审计报告;判定在 round_result.sh;J0 门恒 0.5)
+                    "j0_gate_m": 0.5,
                     "j0_jump_m": j0_jump, "j0_rev_pass": j0_rev_pass,
                     "fj_raw": fo.get("fj_raw"), "fj_smj": fo.get("fj_smj"),
                     "result_txt": res["result"], "env_sig": env_hard or env_soft,
@@ -617,7 +624,7 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
                                   if not bas else None))
     rep["forensics"] = fo
     rep["verdict"] = verdict
-    rep["failed"] = ([k for k, ok in (("four", four_ok), ("j0_jump", j0_jump is not None and j0_jump < gate_m),
+    rep["failed"] = ([k for k, ok in (("four", four_ok), ("j0_jump", j0_jump is not None and j0_jump < 0.5),
                                       ("j0_rev", j0_rev_pass is True))]
                      if verdict == "FAIL" else [])
     return rep
@@ -635,7 +642,7 @@ def one_line_online(rep):
     four = x.get("four")
     four_s = "/".join(str(f) for f in four) if four else "?"
     return (f"{rep['dir']}: {rep.get('verdict')} "
-            f"[scene={x.get('scene')}/gate={x.get('gate_m')} "
+            f"[scene={x.get('scene')}/arrive_gate={x.get('gate_m')} "
             f"four={four_s} j0jump={x.get('j0_jump_m')} j0rev={x.get('j0_rev_pass')}"
             f"(raw={x.get('fj_raw')},smj={x.get('fj_smj')}) "
             f"env={x.get('env_sig') or '-'}{' T1D1' if x.get('t1d1_domain') else ''} | "
@@ -917,13 +924,17 @@ def run_online_selftest(th):
         checks_s.append({"check": f"world={world} → {scene_ref}/gate={gate_ref}",
                          "got": f"{sc['scene']}/{sc['gate_m']}", "pass": bool(okc)})
         ok_s = ok_s and okc
-    j0x = 0.6
-    flip = (not (j0x < 0.5)) and (j0x < 0.75)
-    checks_s.append({"check": "j0=0.6m 分界翻转: no_obstacles(0.5)门不过/obstacles(0.75)门过",
-                     "got": flip, "pass": bool(flip)})
-    ok_s = ok_s and flip
+    # 双门语义(用户 10-01 口径):J0 锚差门恒 0.5(一律 FAIL);到位门分场景(round_result 语义)
+    j0x, dtx = 0.6, 0.6
+    j0_const = j0x >= 0.5                      # j0=0.6 在两场景下恒 FAIL(不分门)
+    arrive_flip = (not (dtx < 0.5)) and (dtx < 0.75)  # 到位 0.6: no_obstacles 不过/obstacles 过
+    checks_s.append({"check": "J0 锚差门恒 0.5: j0=0.6 两场景一律 FAIL",
+                     "got": j0_const, "pass": bool(j0_const)})
+    checks_s.append({"check": "到位门场景分门(round_result 语义): dt=0.6 no_obstacles 不过/obstacles 过",
+                     "got": arrive_flip, "pass": bool(arrive_flip)})
+    ok_s = ok_s and j0_const and arrive_flip
     results.append({"cell": "scene_map(synthetic)", "ok": bool(ok_s),
-                    "line": "场景分门三态映射+0.6m 分界翻转(合成,不读袋)",
+                    "line": "场景三态映射+双门语义(J0 恒 0.5/到位分门,合成,不读袋)",
                     "checks": checks_s})
     ok_all = ok_all and ok_s
     out = {"pass": bool(ok_all), "cells": results,

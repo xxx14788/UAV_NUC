@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # round_result.sh — VINS 链路轮次四指标 RESULT(真值+VINS双口径,两段式按goal切窗)
+# 到位门场景分门(用户 10-01 裁决,2026-10-01 落地): world 含 obstacles→0.75m,否则 0.5m;
+# J0 锚差跳变门(>0.5 一律 FAIL)与避障/频率/降落门不变。
 # 用法: round_result.sh <bag> <gx> <gy> <gz> <world> <evdir> <arr1> <arr2> <hasl2> <l2x> <l2y> <l2z>
 source /opt/ros/noetic/setup.bash
 source "$HOME/catkin_ws/devel/setup.bash"
@@ -92,16 +94,17 @@ for c in cmd:
         p = prop[j]; dev.append(math.sqrt((c[1]-p[1])**2+(c[2]-p[2])**2+(c[3]-p[3])**2))
 dev.sort(); p95 = dev[int(0.95*len(dev))] if dev else -1
 disarm_ok = (not armed[-1]) if armed else False
-ok = [dt1 < 0.5, mind > 0.349, hz >= 50, disarm_ok]
+GATE = 0.75 if 'obstacles' in world else 0.5   # 到位场景门(正源=world 参数)
+ok = [dt1 < GATE, mind > 0.349, hz >= 50, disarm_ok]
 if jump > 0.5:
     ok[0] = 0
     print('判据: VINS 帧跳变(%.2fm)>0.5m → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)' % jump)
-print('leg1 到位(真值) min=%.3f m (<0.5)->%d | leg1(VINS自报) min=%.3f m' % (dt1, ok[0], dv1))
+print('leg1 到位(真值) min=%.3f m (<%.2f,场景门 world=%s)->%d | leg1(VINS自报) min=%.3f m' % (dt1, GATE, world, ok[0], dv1))
 if hasl2 and t2_start:
     dt2 = leg_min(truth, (l2x,l2y,l2z), t2_start, t_end)
     dv2 = leg_min(prop, (l2x,l2y,l2z), t2_start, t_end, anchored=False)
-    ok[0] = ok[0] and (dt2 < 0.5)
-    print('leg2 到位(真值) min=%.3f m (<0.5,与leg1合并判)->%d | leg2(VINS自报) min=%.3f m' % (dt2, dt2 < 0.5, dv2))
+    ok[0] = ok[0] and (dt2 < GATE)
+    print('leg2 到位(真值) min=%.3f m (<%.2f,与leg1合并判)->%d | leg2(VINS自报) min=%.3f m' % (dt2, GATE, dt2 < GATE, dv2))
 print('避障 min_dist=%.3f m (>0.349)->%d' % (mind, ok[1]))
 print('poscmd %.1f Hz (>=50)->%d' % (hz, ok[2]))
 print('auto_disarm->%d' % ok[3])
