@@ -28,3 +28,7 @@
 - SITL 锁:本轮占锁前 STATUS 预告 15min 异议窗(任务书单元4 条款);与 T1 X 线冲刺互斥(T1 已声明等 U4 通告,顺序=T2 在线轮→U4 通告→T1 X 线)。
 - 每轮间 pgrep CLEAN+锁活性验。
 - 轮序:A5(回归最快出)→A4→A3→A2→A1(基线先于门臂,形态预期锚定)。
+
+## 修正记录(2026-10-02 03:0x,判别格终局后、在线轮起飞前)
+- gates 臂配置变更:t2gates config 撤 t2_min_disparity(=0.0,G5 实锤 U3PO 袋有害 41m vs G5b 11.7m,FM-③ 处置),**保留 t2_cost_gate=1**——在线轮检验对象=R3F cost 门(R3 载体,唯一有数据支撑的门);判据 1 的 far_drop 门活性项对 gates 臂不再适用(预期 far_drop=0 为正确行为),改为核 banner"T2_COST_GATE: 1"实读+cost 门触发打印为活性面。
+- 判据 2(cost 门生死)不变,仍为主判据。

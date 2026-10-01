@@ -1,0 +1,110 @@
+[33m[WARN] [1790883521.082017442, 14.084000000]: [px4ctrl] odom sanity gate: enabled=1 max_vel=5.0 max_acc=10.0 max_jump=0.60[0m
+[33m[WARN] [1790883521.085556227, 14.088000000]: You should disable "print_value" if you are in regular usage.[0m
+[33m[WARN] [1790883521.592938168, 14.596000000]: PX4CTRL] Remote controller disabled, be careful![0m
+[33m[WARN] [1790883522.602768918, 15.604000000]: ODOM frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883522.602846686, 15.604000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883524.642770587, 17.636000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883525.662758944, 18.656000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883526.682777930, 19.676000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883527.712770866, 20.696000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883528.732757493, 21.712000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883529.752792580, 22.732000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883530.762739699, 23.740000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883531.792757649, 24.760000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883532.802744065, 25.776000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883533.812773664, 26.780000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883534.822747464, 27.792000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883535.832777485, 28.796000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883536.862771479, 29.816000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883537.862758302, 30.820000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883538.882779112, 31.836000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883539.902732351, 32.860000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883540.922753630, 33.876000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883541.932771757, 34.880000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883542.952751810, 35.896000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883543.972733003, 36.916000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883545.002767407, 37.932000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883546.022816488, 38.952000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883547.032773553, 39.960000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883548.052766579, 40.980000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883549.082740686, 41.996000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883550.082768016, 43.000000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883551.112017571, 44.024000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883552.132022152, 45.040000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883553.162052382, 46.056000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883553.352045335, 46.252000000]: [px4ctrl] odom sanity gate REJECTED frame (v=2): |v|=0.16 |p|=0.11 |dv|ref, total_rejected=1[0m
+[31m[ERROR] [1790883553.682066514, 46.584000000]: [px4ctrl] odom sanity gate REJECTED frame (v=3): |v|=1.60 |p|=0.80 |dv|ref, total_rejected=51[0m
+[31m[ERROR] [1790883553.962066986, 46.860000000]: [px4ctrl] odom sanity gate REJECTED frame (v=2): |v|=1.35 |p|=0.97 |dv|ref, total_rejected=101[0m
+[33m[WARN] [1790883554.182069504, 47.072000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883555.182047973, 48.076000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883555.982069921, 48.876000000]: [px4ctrl] odom sanity gate REJECTED frame (v=2): |v|=3.38 |p|=2.26 |dv|ref, total_rejected=151[0m
+[33m[WARN] [1790883556.202053440, 49.092000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883556.222067804, 49.112000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=5.57 |p|=3.22 |dv|ref, total_rejected=201[0m
+[31m[ERROR] [1790883556.472065810, 49.364000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=6.57 |p|=4.54 |dv|ref, total_rejected=251[0m
+[31m[ERROR] [1790883556.732071552, 49.616000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=8.19 |p|=6.08 |dv|ref, total_rejected=301[0m
+[31m[ERROR] [1790883556.992062925, 49.880000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=10.74 |p|=8.32 |dv|ref, total_rejected=351[0m
+[31m[ERROR] [1790883557.222079163, 50.112000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=11.74 |p|=10.81 |dv|ref, total_rejected=401[0m
+[33m[WARN] [1790883557.222117192, 50.112000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883557.462074085, 50.348000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=13.90 |p|=13.62 |dv|ref, total_rejected=451[0m
+[31m[ERROR] [1790883557.722034350, 50.612000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=18.10 |p|=17.69 |dv|ref, total_rejected=501[0m
+[31m[ERROR] [1790883557.962033745, 50.856000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=21.22 |p|=22.34 |dv|ref, total_rejected=551[0m
+[33m[WARN] [1790883558.232028098, 51.120000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883558.232066852, 51.120000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=24.92 |p|=28.24 |dv|ref, total_rejected=601[0m
+[31m[ERROR] [1790883558.502060570, 51.392000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=28.82 |p|=35.15 |dv|ref, total_rejected=651[0m
+[31m[ERROR] [1790883558.742081190, 51.632000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=32.47 |p|=42.39 |dv|ref, total_rejected=701[0m
+[31m[ERROR] [1790883558.982070991, 51.872000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=35.86 |p|=49.91 |dv|ref, total_rejected=751[0m
+[31m[ERROR] [1790883559.212069502, 52.104000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=39.23 |p|=58.30 |dv|ref, total_rejected=801[0m
+[33m[WARN] [1790883559.242033469, 52.132000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[31m[ERROR] [1790883559.442049437, 52.332000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=42.33 |p|=66.95 |dv|ref, total_rejected=851[0m
+[31m[ERROR] [1790883559.702064023, 52.592000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=45.87 |p|=78.13 |dv|ref, total_rejected=901[0m
+[31m[ERROR] [1790883559.942078289, 52.828000000]: [px4ctrl] odom sanity gate REJECTED frame (v=1): |v|=48.78 |p|=88.50 |dv|ref, total_rejected=951[0m
+[33m[WARN] [1790883560.262045586, 53.152000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883561.272053700, 54.160000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883562.302026936, 55.180000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883563.322077288, 56.196000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883564.322043462, 57.200000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883565.342038574, 58.220000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883566.372044455, 59.240000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883567.382044295, 60.252000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883568.392072850, 61.260000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883569.412017371, 62.272000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883570.442079891, 63.292000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883571.442060306, 64.296000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883572.472061050, 65.312000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883573.472081791, 66.316000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883574.502028385, 67.332000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883575.502069138, 68.340000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883576.522060471, 69.356000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883577.522084625, 70.360000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883578.542031189, 71.380000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883579.562030021, 72.392000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883580.572061046, 73.400000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883581.602864703, 74.420000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883582.622058967, 75.436000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883583.642084338, 76.456000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883584.662039362, 77.476000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883585.672058348, 78.480000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883586.692036322, 79.500000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883587.712049106, 80.520000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883588.732057611, 81.536000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883589.762052824, 82.556000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883590.782078190, 83.572000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883591.792165337, 84.576000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883592.812987459, 85.596000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883593.842040432, 86.616000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883594.862053464, 87.636000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883595.892047061, 88.656000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883596.912057581, 89.676000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883597.932044359, 90.692000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883598.942054874, 91.700000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883599.962071956, 92.720000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883600.982050906, 93.736000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883601.992057439, 94.740000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883603.012065524, 95.760000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883604.042028858, 96.780000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883605.062070663, 97.796000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883606.072067489, 98.800000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883607.092063304, 99.816000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883608.092051102, 100.820000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883609.112056657, 101.832000000]: IMU frequency seems lower than 100Hz, which is too low![0m
+[33m[WARN] [1790883610.142059162, 102.860000000]: IMU frequency seems lower than 100Hz, which is too low![0m
