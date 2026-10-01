@@ -938,3 +938,9 @@ FAIL [scene=obstacles/gate=0.75 four=0/1/1/0 j0jump=369.839 j0rev=False(raw=512,
 **T4 runbook §3 核签**（sim2real_runbook.md 场景分门建议稿，T4 v5.0-W5a）：T3 已核签转正式，三注记=①数值与 wa_gate/round_result 实现逐字一致；②正源分工如上；③书-器差如实标注——建议稿"连续 3s"为实机域判读语，SITL 实现口径=航段窗内 min<门（历史判据，任务书"双口径不变"支持），SITL 若需改连续驻留判据属判据增改须用户另行裁定。
 
 **Z1.2 前置现状登记**：任务书前置"E-4 的 0.5 接线结果"——查 t3_z1_failsafe_design.md 35 行，"0.5 接线分叉"系输出侧防线（max_angle=25° 限幅+thrust 饱和）与 D8/EKF2 消费方式的分叉，**挂 C01 卡点+T1-E1 裁决后一并接线**；T1 P1-2 已把 v2 代码入库（enabled_v2=false，翻转权归 T3-Z1.2）+E-4 首窗已产 EV 域数据（EV_CTRL=15 激活实证/ev_vpos ratio 0.32 门内零超）但 E1/0.5 分叉裁决未见落定——Z1.2 翻转维持等待（双前置之 E-4 侧未闭），@T1：E1 裁决/0.5 接线分叉定案请 STATUS 示下。
+
+## 任务书 v8.1 收口改写（2026-10-01 23:1x-23:4x；Windows 权威 plans/2026-10-01_T3_planner_vision_acceptance_v8.1.md + NUC 备份 ~/sitl_sim/plans_T3_v8.1.md；v8.0 已加弃读横幅并传 plans_T3_v8.0_superseded.md）
+
+- 结构=完成清账 7 项（提交链 5f1bd8a/4d0605e/e7120e0）+外部定案节（T2 R2 载体定案/U7 栈代 285278cc/**U3′ 22:08 收口 4/5 未达门 U4 不通告**/T1 E-4 首窗 P0-A.2 破零/T1 P1-2 v2 flag-off）+工作单元（X 线全部+Z1.2 翻转，全挂卡点无独立可推单元）+**卡点 K-1..K-7 客观在册（只述事实与解锁信号）**+口径两处更必读（分门判定对象=到位门、正源 round_result.sh，J0 锚差门恒 0.5；凭据栈 cf0384→285278cc）+本册增补红线 24-29。
+- **K-5 分门钥匙未决项（23:3x 实证强化）**：vins_smoke.sh:13 默认 `WORLD=sitl_world_obstacles`——X 线五轮仅 X2④ 显式 obstacles_v2，其余按默认全落 obstacles world→**world 名钥匙下 X4 五连飞全部 0.75 门，0.5 门在 X 线矩阵无适用轮**；用户裁决任务族口径（route/ground/hover 系=0.5）与实现在"obstacles world 内任务族轮"上分叉（0.5 vs 0.75）；U3′ 无判读分歧实例（到位值全>0.75）；X4 5/5 为首个可现分歧点。归属待用户/T2 裁定，册内不开处方。
+- 改写过程事实：首版 K 系写于 U3′ 收口信息进视野前，23:20 通告后核对 STATUS 勘误重传（23:28 通告）；NUC 断网窗（≈22:55-23:19，T2 23:33 重启取证=非干净重启/watchdog 本 boot 触发 502 次未自愈，timer 重启后正常）经 nuc-ts（Tailscale 100.65.169.72）备用路径完成同步——双路径冗余入册锁与资源节。
