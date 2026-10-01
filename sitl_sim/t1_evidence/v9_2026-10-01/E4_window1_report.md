@@ -12,7 +12,7 @@
 - E2clamp=0 / E2gap=0：非掉帧/钳制族；正常管线内状态跳变，签名指向 init_replace/负深度注入族（与 T2-R1 解剖链吻合）。
 - 事件击中起飞爬升初段：GT 证实全程 max 离地 0.358m（bag model_states 67733 帧，airborne 窗重算）；VINS |p| 虚报 7.64m/|v| 7.16 m/s（P_x 跑飞早期形态）。
 - **D2 odom 门实战首验**：33.08-36.28s 拒 200+ 帧（v=1/2/3 全谱），AUTO_HOVER(L2)→MANUAL_CTRL(L1) 兜底，px4ctrl 零毒入。
-- E-4 域（EKF2 域）有效数据：**EV_CTRL=15 项目首次真启用**；ev_vpos 融合活性 +（n_active=30108，innov p50=0.13，ratio p50=0.32，门内零超）；**ev_hpos 未排程**（estimator_innovations 无该字段=never scheduled，开放项 E-5 条件臂）；ev_too_fast=0（C-6 ulog 半边闭环）；G-off 臂 EKF2 水平失观测画像：XY 纯推算漂移 p50=350m/max=914m（地面态），z 通道紧（rel p50=0.074，baro+ev_vpos 在融）——J5 的 G-on/G-off z 分列首组数据。
+- E-4 域（EKF2 域）有效数据：**EV_CTRL=15 项目首次真启用**；ev_vpos 融合活性 +（n_active=30108，innov p50=0.13，ratio p50=0.32，门内零超）；~~ev_hpos 未排程（estimator_innovations 无该字段）~~【2026-10-02 勘误：字段实在且 innov 全有限 med0.007-0.010，cs_ev_pos 激活窗 9.3-31.4s 后被 33.2s 爆走毒化熄灭；真根因=vision_pose-only 链 velocity 全 NaN（ev_vel 恒 0）——详见 v10_2026-10-02/u3u4_research_and_ev_hpos_verdict.md §B】；ev_too_fast=0（C-6 ulog 半边闭环）；G-off 臂 EKF2 水平失观测画像：XY 纯推算漂移 p50=350m/max=914m（地面态），z 通道紧（rel p50=0.074，baro+ev_vpos 在融）——J5 的 G-on/G-off z 分列首组数据。
 
 ### 轮 2（重试）= run_E4_GOFF_D10_R2_194927（同配置）
 - VINS 爆走 t=32.38s（|dP|=0.474→0.482，dP=[-0.33,-0.23,+0.24]→[+0.36,+0.29,-0.13] xy 振荡=P_x 翻号族），早于/强于轮 1；探针 222 行；FAIL。
