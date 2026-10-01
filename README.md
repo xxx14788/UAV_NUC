@@ -51,6 +51,7 @@ px4ctrl 的 `~odom` 直供 `/vins_estimator/imu_propagate`；EGO-Planner 用
 | VINS IMU 源 | /mavros/imu/data_raw：511 105 5000→实测 **125Hz**（5000us 被 tick 量化到 8ms）；4000us 档实测 **223Hz** 可达实机级（切换待 T2 域验证） | mavcmd 511 设 200Hz | V4.2 实测 2026-09-28（bag+probe6 双证）：请求间隔被 mavlink tick ~4ms 网格量化；默认档 50Hz（W2）；频域影响在 VINS 域评估 |
 | 相机平移外参 | 模型 0.1m 前置 | D435 实测外参 | sim_stereo 配置已按模型标定（T2 域） |
 | PX4 固件 | px4_sitl v1.17 | fmu 实机版 | R5：SITL 动过的 PX4 参数（MAG_TYPE/SDLOG 等）一律不同步实机 |
+| EKF2 GPS 喂入 | EKF2_GPS_CTRL=7 + SITL GPS(3D/10星)一直融合——EKF2 位置源含 GPS（W2 六轮参数级实锤） | 实机无 GPS：EKF2 不作定位层位置源（纯视觉红线 §0；EV_CTRL=0 位置信息不进控制链） | 红线16/W2 层2 取证（522ade2）；用户 2026-10-01 批准登记；T1-E4 G-off 臂=对该差异的首次显式处置 |
 
 **多会话并行纪律**（2026-09-28，历史事故固化）：
 ① 构建互斥——catkin_make 前在 STATUS 发预告行，等飞轮间隙执行（SITL

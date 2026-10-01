@@ -1,0 +1,865 @@
+{
+ "pass2_w2a": {
+  "skip": "ulg missing: None"
+ },
+ "pass2_w2b": {
+  "skip": "ulg missing: None"
+ },
+ "pass2_w2c": {
+  "skip": "ulg missing: None"
+ },
+ "pass2_w2d2": {
+  "skip": "ulg missing: None"
+ },
+ "pass2_w2e": {
+  "skip": "ulg missing: None"
+ },
+ "pass3_w2a": {
+  "skip": "ulg missing: None"
+ },
+ "pass3_w2b": {
+  "skip": "ulg missing: None"
+ },
+ "pass3_w2c": {
+  "skip": "ulg missing: None"
+ },
+ "pass3_w2d2": {
+  "skip": "ulg missing: None"
+ },
+ "pass3_w2e": {
+  "skip": "ulg missing: None"
+ },
+ "w2a": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_09_48.ulg",
+  "dur_s": 82.7,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": [
+   [
+    0.0,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ]
+  ],
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ],
+   [
+    49.32,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.33,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.42,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.43,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.52,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.53,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.62,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.62,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.72,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.73,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.82,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.83,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.92,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.93,
+    {
+     "command": 400
+    }
+   ],
+   [
+    50.02,
+    {
+     "command": 176
+    }
+   ],
+   [
+    50.03,
+    {
+     "command": 400
+    }
+   ],
+   [
+    75.37,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    75.37,
+    {
+     "command": 1000
+    }
+   ],
+   [
+    75.37,
+    {
+     "command": 1001
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ],
+   [
+    49.33,
+    {
+     "nav_state": 14
+    }
+   ],
+   [
+    75.1,
+    {
+     "nav_state": 5
+    }
+   ]
+  ]
+ },
+ "w2b": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_11_30.ulg",
+  "dur_s": 115.7,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": [
+   [
+    0.0,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ],
+   [
+    11.7,
+    {
+     "position": 0,
+     "velocity": 1,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ],
+   [
+    25.9,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ]
+  ],
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ],
+   [
+    49.2,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.2,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.3,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.3,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.4,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.4,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.5,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.5,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.6,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.6,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.7,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.7,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.8,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.8,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.9,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.9,
+    {
+     "command": 400
+    }
+   ],
+   [
+    50.0,
+    {
+     "command": 176
+    }
+   ],
+   [
+    50.0,
+    {
+     "command": 400
+    }
+   ],
+   [
+    108.29,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    108.29,
+    {
+     "command": 1000
+    }
+   ],
+   [
+    108.29,
+    {
+     "command": 1001
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ],
+   [
+    49.2,
+    {
+     "nav_state": 14
+    }
+   ],
+   [
+    108.03,
+    {
+     "nav_state": 5
+    }
+   ]
+  ]
+ },
+ "w2c": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_13_45.ulg",
+  "dur_s": 86.7,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": [
+   [
+    0.0,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ]
+  ],
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ],
+   [
+    49.17,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.17,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.27,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.27,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.37,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.38,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.47,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.47,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.57,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.58,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.67,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.67,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.77,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.77,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.87,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.88,
+    {
+     "command": 400
+    }
+   ],
+   [
+    49.97,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.97,
+    {
+     "command": 400
+    }
+   ],
+   [
+    50.07,
+    {
+     "command": 176
+    }
+   ],
+   [
+    50.08,
+    {
+     "command": 400
+    }
+   ],
+   [
+    79.42,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    79.42,
+    {
+     "command": 1000
+    }
+   ],
+   [
+    79.42,
+    {
+     "command": 1001
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ],
+   [
+    49.17,
+    {
+     "nav_state": 14
+    }
+   ],
+   [
+    79.16,
+    {
+     "nav_state": 5
+    }
+   ]
+  ]
+ },
+ "w2d1": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_15_31.ulg",
+  "dur_s": 38.6,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": null,
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ]
+  ]
+ },
+ "w2d2": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_16_24.ulg",
+  "dur_s": 93.5,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": [
+   [
+    0.0,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ]
+  ],
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ],
+   [
+    49.02,
+    {
+     "command": 176
+    }
+   ],
+   [
+    49.02,
+    {
+     "command": 400
+    }
+   ],
+   [
+    87.3,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    87.3,
+    {
+     "command": 1000
+    }
+   ],
+   [
+    87.3,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    90.44,
+    {
+     "command": 0
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ],
+   [
+    49.02,
+    {
+     "nav_state": 14
+    }
+   ],
+   [
+    87.05,
+    {
+     "nav_state": 5
+    }
+   ],
+   [
+    92.62,
+    {
+     "nav_state": 14
+    }
+   ]
+  ]
+ },
+ "w2e": {
+  "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-09-29/04_18_17.ulg",
+  "dur_s": 87.2,
+  "params": {
+   "EKF2_EV_CTRL": 0,
+   "EKF2_GPS_CTRL": 7,
+   "EKF2_TAU_POS": 0.25,
+   "EKF2_TAU_VEL": 0.25,
+   "EKF2_EVP_NOISE": 0.10000000149011612,
+   "EKF2_EVV_NOISE": 0.10000000149011612,
+   "EKF2_PREDICT_US": 10000,
+   "EKF2_DELAY_MAX": 200.0,
+   "EKF2_EV_DELAY": 0.0,
+   "EKF2_EV_QMIN": 0,
+   "EKF2_HGT_REF": 1,
+   "EKF2_MAG_TYPE": 0
+  },
+  "missing_keys": [],
+  "ev_too_fast_msgs": [],
+  "offboard_control_mode": [
+   [
+    0.0,
+    {
+     "position": 1,
+     "velocity": 0,
+     "acceleration": 0,
+     "attitude": 0,
+     "body_rate": 0,
+     "thrust_and_torque": 0,
+     "direct_actuator": 0
+    }
+   ]
+  ],
+  "vehicle_command": [
+   [
+    0.0,
+    {
+     "command": 211
+    }
+   ],
+   [
+    51.0,
+    {
+     "command": 176
+    }
+   ],
+   [
+    51.0,
+    {
+     "command": 400
+    }
+   ],
+   [
+    70.7,
+    {
+     "command": 176
+    }
+   ],
+   [
+    70.97,
+    {
+     "command": 1001
+    }
+   ],
+   [
+    70.97,
+    {
+     "command": 1000
+    }
+   ],
+   [
+    70.97,
+    {
+     "command": 1001
+    }
+   ]
+  ],
+  "vehicle_status_nav": [
+   [
+    0.0,
+    {
+     "nav_state": 4
+    }
+   ],
+   [
+    51.0,
+    {
+     "nav_state": 14
+    }
+   ],
+   [
+    70.72,
+    {
+     "nav_state": 18
+    }
+   ],
+   [
+    86.34,
+    {
+     "nav_state": 14
+    }
+   ]
+  ]
+ }
+}
