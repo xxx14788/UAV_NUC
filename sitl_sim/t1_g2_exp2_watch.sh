@@ -33,7 +33,7 @@ collect() {
   fi
   # ① 单探针墙钟 T (600s 超时, 删失/实值分列, 自计匿名注册数)
   local PROBE_LOG="$DIR/probe_t.json"
-  nohup timeout 600 bash -c "$SHELLPY_ROS; python3 - <<'PY'
+  nohup timeout 600 env PROBE_OUT="$PROBE_LOG" bash -c "$SHELLPY_ROS; python3 - <<'PY'
 import json, time, subprocess, os, xmlrpc.client
 t0=time.time(); m=os.environ.get(\"ROS_MASTER_URI\",\"http://localhost:11311\")
 try:
@@ -41,9 +41,9 @@ try:
     c.getUri(\"/t1_exp2_probe\")          # 探针注册语义: 一次 getUri 调用(非常驻节点,不入D(n)计数面)
     c.deleteParam(\"/t1_exp2_probe\",\"/nonexistent_probe_key\")  # 二次往返
     val=time.time()-t0
-    json.dump({\"T_s\":round(val,3),\"censored\":False,\"uri\":m}, open(\"PROBE_LOG\",\"w\")) 
+    json.dump({\"T_s\":round(val,3),\"censored\":False,\"uri\":m}, open(os.environ[\"PROBE_OUT\"],\"w\"))
 except Exception as e:
-    json.dump({\"T_s\":None,\"censored\":True,\"err\":str(e)[:120],\"elapsed\":round(time.time()-t0,1)}, open(\"PROBE_LOG\",\"w\"))
+    json.dump({\"T_s\":None,\"censored\":True,\"err\":str(e)[:120],\"elapsed\":round(time.time()-t0,1)}, open(os.environ[\"PROBE_OUT\"],\"w\"))
 PY" > /dev/null 2>&1 &
   # 等探针收尾(最多 60s 快路径; 慢路径由 600s timeout 兜底, 下轮 boot 读取)
   sleep 45
