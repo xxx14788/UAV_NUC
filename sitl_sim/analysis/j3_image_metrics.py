@@ -18,11 +18,13 @@
 （q90: [X24,X29]@93.2%; median: [X10,X21]@95.7%; 其他 n 按二项精确分布求 90% CI）。
 
 用法: python3 j3_image_metrics.py --frames-dir DIR --out metrics.json
+退出码: 0=有产出; 2=全帧不可读(零可读帧, out JSON 顶层带 error 字段); 3=参数错; 其余非0=未捕获异常(见 stderr).
 """
 import argparse
 import json
 import math
 import os
+import sys
 
 import cv2
 import numpy as np
@@ -158,8 +160,21 @@ def frame_metrics(gray, gray_prev=None):
     return m
 
 
+def _reject_zero_readable(args, why):
+    """C14-FIX-1: 零可读帧时拒绝产出统计(禁 n=0 假绿): stderr ERROR 行
+    + out JSON 顶层 error 字段 + 进程退出码 2."""
+    sys.stderr.write('ERROR: %s: %s, no statistics produced\n'
+                     % (os.path.abspath(args.frames_dir), why))
+    with open(args.out, 'w') as f:
+        json.dump({'error': why,
+                   'frames_dir': os.path.abspath(args.frames_dir)},
+                  f, indent=1, ensure_ascii=False)
+    sys.exit(2)
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.error = lambda msg: (sys.stderr.write('ERROR: %s\n' % msg), sys.exit(3))
     ap.add_argument('--frames-dir', required=True)
     ap.add_argument('--out', required=True)
     args = ap.parse_args()
@@ -174,6 +189,10 @@ def main():
         if img is None:
             continue
         cache[fr['file']] = img
+    if not cache:  # C14-FIX-1: 可读帧数=0 → 拒绝(原实现静默产出全空统计后 exit 0)
+        _reject_zero_readable(
+            args, 'no readable frames (0 of %d manifest frame records readable)'
+            % len(frames))
     for fr in frames:
         if fr['file'] not in cache:
             continue

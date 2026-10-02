@@ -11,6 +11,7 @@
 输出: 两组分布分位数 + D11 CI + 尾部对比 JSON。
 
 用法: python3 j3_fb_residual.py --frames-dir DIR --out fb.json
+退出码: 0=有产出; 2=全帧不可读(零可读帧, out JSON 顶层带 error 字段); 3=参数错; 其余非0=未捕获异常(见 stderr).
 """
 import argparse
 import glob
@@ -18,6 +19,7 @@ import json
 import math
 import os
 import re
+import sys
 
 import cv2
 import numpy as np
@@ -85,8 +87,21 @@ def stats(vals, label):
     return out
 
 
+def _reject_zero_readable(args, why):
+    """C14-FIX-1: 零可读帧时拒绝产出统计(禁 n=0 假绿): stderr ERROR 行
+    + out JSON 顶层 error 字段 + 进程退出码 2."""
+    sys.stderr.write('ERROR: %s: %s, no statistics produced\n'
+                     % (os.path.abspath(args.frames_dir), why))
+    with open(args.out, 'w') as f:
+        json.dump({'error': why,
+                   'frames_dir': os.path.abspath(args.frames_dir)},
+                  f, indent=1, ensure_ascii=False)
+    sys.exit(2)
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.error = lambda msg: (sys.stderr.write('ERROR: %s\n' % msg), sys.exit(3))
     ap.add_argument('--frames-dir', required=True)
     ap.add_argument('--out', required=True)
     args = ap.parse_args()
@@ -111,12 +126,21 @@ def main():
               for p in sorted(glob.glob(os.path.join(args.frames_dir, '*_R*_s*.png')))
               if '_next' not in p]
     nf = min(len(lf), len(rf))
+    if not lf and not rf:  # C14-FIX-1: L/R 声明记录均为零(无可读候选) → 拒绝;
+        # 部分缺失(单侧为空等结构错)不在此列, 仍走下方 assert 原语义
+        _reject_zero_readable(
+            args, 'no readable frames (manifest declares no L/R frame records)')
     assert nf >= 2, 'need >=2 stereo pairs, got L=%d R=%d' % (len(lf), len(rf))
 
     seq_t, seq_s = [], []   # (时序残差), (立体残差)
+    n_readable = 0  # C14-FIX-1: 可读图计数(仅用于全不可读判定, 不改逐帧流程)
     for i in range(nf):
         li = cv2.imread(os.path.join(args.frames_dir, lf[i]['file']), cv2.IMREAD_GRAYSCALE)
         ri = cv2.imread(os.path.join(args.frames_dir, rf[i]['file']), cv2.IMREAD_GRAYSCALE)
+        if li is not None:
+            n_readable += 1
+        if ri is not None:
+            n_readable += 1
         pts = cv2.goodFeaturesToTrack(li, FT_MAXCNT, FT_QUALITY, FT_MINDIST)
         # 立体 FB
         d = fb_residual(li, ri, pts)
@@ -128,6 +152,9 @@ def main():
             d = fb_residual(li, ln, pts)
             if d is not None:
                 seq_t.append(d)
+    if n_readable == 0:  # C14-FIX-1: 可读帧数=0 → 拒绝(原实现静默产出空统计后 exit 0)
+        _reject_zero_readable(
+            args, 'no readable frames (0 of %d frame files readable)' % (2 * nf))
 
     out = {
         'frames_dir': os.path.abspath(args.frames_dir),
