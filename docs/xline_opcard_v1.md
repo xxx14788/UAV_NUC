@@ -49,3 +49,13 @@ bash ~/sitl_sim/vins_smoke.sh --tag <TAG> [--goal X Y Z] [--leg2 X Y Z] [--world
 ## 6. 中断恢复
 - 轮中死亡：Aborted core 按 T3 红线 29 判读（不急判 ENV）；bag 保全；锁不释放直到判读完。
 - NUC 不可达：nuc-ts 路径（Tailscale）+ STATUS 远端 date 为准；重连后先查锁与半开轮。
+
+## 追加走查注记（2026-10-03；池件 P-B：X2④ obstacles_v2 适配面）
+
+- **代码路径走查（三件全绿）**：①round_result.sh `world.endswith("_v2")` → BOX 增 box_D(6.4,-2.0,z0-2.8)
+  /box_E(6.4,0.5,z0-2.8)，避障 min 距离把 D/E 计入 ✓；②场景门钥匙 `obstacles in world` →
+  sitl_world_obstacles_v2 判 obstacles 系 0.75 门（round_result GATE 行与 wa_gate scene_of_run 双侧一致）✓；
+  ③vins_smoke.sh --world 透传 → round.log "SITL up (world)" 行为场景正源 ✓（prereg §5 已列防默认吃障碍 world 坑）。
+- **执行时核对项（并入每轮 P0 六查）**：X2④ 轮毕核对 RESULT.txt 避障行 min_dist 计及 D/E
+  （v2 world 下若 min_dist>3m 量级=box 集未生效，疑 D/E 坐标未加载，停轮排查）；round.log world 行逐字核对
+  sitl_world_obstacles_v2（防 _v2 拼写滑落到默认 world）。
