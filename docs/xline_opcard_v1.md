@@ -85,3 +85,11 @@ README §3（参数差异账）将增/核行：
 4. **git 干净面**：X4 打 tag 前工作树须净——当前在挂的他人 WIP（sitl_sim/analysis/wa_scene_contrast.py/
    t1_evidence e2_debug_replay.log/t1_g2_exp2_watch.sh/VINS-Fusion estimator.{cpp,h}）@各持线清账。
 5. rviz 截图→vision_inputs/（口径同 T4 素材面）；X7 figs 全链再生凭据（--csv+--runs-glob 命令行入 §9）。
+
+- **P-M 对齐核对结论（2026-10-03 02:4x）**：X7 §3 表列 ↔ wa_gate CSV 列逐项对齐——
+  四指标=CSV `four`（斜线串）；到位双口径=RESULT.txt 行（CSV 不带，X7 表从 RESULT.txt/forensics 取）；
+  p95=RESULT.txt 跟踪行；特征数=CSV `track_med`；锚差漂移=forensics `end_state`（legs 面，CSV `t_star`
+  为形态时点非锚差——X7 表该列数据源写 forensics/legs_rescan 勿取 CSV `t_star` 防错位）；
+  fj_raw/smj=CSV 同名列 ✓；判决=CSV `verdict`（v1.1 增 PASS-CONTROLLED 态入计数）+
+  `controlled_state`（在 wa_gate_online.json，CSV 无此列——X7 表受控列从 JSON 取，勿在 CSV 找）。
+  列错位风险=1 处（t_star≠锚差漂移），已在本条钉死。
