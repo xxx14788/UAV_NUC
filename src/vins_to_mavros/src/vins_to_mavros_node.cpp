@@ -3,10 +3,15 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Imu.h>
 #include <deque>
+#include <vins_to_mavros/odom_fill.h>
 #include <vector>
 #include <cmath>
 
 ros::Publisher pose_pub;
+
+// T1 E-5a: publish arm switch (pose=legacy / odom=L-odom); see odom_fill.h
+ros::Publisher odom_pub;
+static vins_to_mavros::PubMode g_pub_mode = vins_to_mavros::PubMode::POSE;
 
 // ---- 健康门控（T2-W4，2026-09-26 翻机事故防线）----
 // 相邻帧位置跳变或隐含速度超阈 → 停止向 /mavros/vision_pose/pose 转发并告警；
@@ -377,6 +382,14 @@ void vins_callback(const nav_msgs::Odometry::ConstPtr& msg)
         return;  // 跳变/爆炸：不转发（EKF2 防线, 第一道）
     if (g_imu && !g_imu->allow(msg))
         return;  // 平滑漂移：不转发（IMU 一致性, 第二道, T2b-U5）
+    // T1 E-5a: arm branch AFTER the shared gates (gates protect both arms)
+    if (g_pub_mode == vins_to_mavros::PubMode::ODOM)
+    {
+        nav_msgs::Odometry out;
+        vins_to_mavros::fill_odom_msg(*msg, out);
+        odom_pub.publish(out);
+        return;
+    }
 
     geometry_msgs::PoseStamped pose;
 
@@ -412,8 +425,23 @@ int main(int argc, char** argv)
     // IMU 缓存(第二道防线, T2b-U5)
     ros::Subscriber imu_sub = nh.subscribe("/mavros/imu/data_raw", 2000, imu_callback);
 
-    // 发布到 MAVROS 的视觉位姿输入
-    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 10);
+    // T1 E-5a: mutually exclusive publish arm (double-feed EKF2 prevention)
+    std::string pub_mode_str;
+    pnh.param<std::string>("pub_mode", pub_mode_str, "pose");
+    bool mode_fell_back = false;
+    g_pub_mode = vins_to_mavros::parse_pub_mode(pub_mode_str, &mode_fell_back);
+    if (g_pub_mode == vins_to_mavros::PubMode::ODOM)
+    {
+        odom_pub = nh.advertise<nav_msgs::Odometry>("/mavros/odometry/out", 10);
+        ROS_WARN("vins_to_mavros: pub_mode=odom (L-odom arm, T1 E-5a) -> /mavros/odometry/out");
+    }
+    else
+    {
+        pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 10);
+        if (mode_fell_back)
+            ROS_WARN("vins_to_mavros: pub_mode '%s' unrecognized, fell back to pose (L-pose legacy)",
+                     pub_mode_str.c_str());
+    }
 
     ros::spin();
     return 0;

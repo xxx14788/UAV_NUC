@@ -116,7 +116,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -206,3 +206,10 @@ include_directories(
 # catkin_add_nosetests(test)
 add_executable(vins_to_mavros_node src/vins_to_mavros_node.cpp)
 target_link_libraries(vins_to_mavros_node ${catkin_LIBRARIES})
+
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(${PROJECT_NAME}-test test/test_odom_fill.cpp)
+  if(TARGET ${PROJECT_NAME}-test)
+    target_link_libraries(${PROJECT_NAME}-test ${catkin_LIBRARIES})
+  endif()
+endif()
