@@ -172,6 +172,18 @@ def _reject_zero_readable(args, why):
     sys.exit(2)
 
 
+def _sanitize(obj):
+    """C14-FIX-2: 递归把非有限值(nan/inf)替换为 None(null), 防止 json.dump
+    以默认 allow_nan=True 落出非法 JSON 字面量 NaN/Infinity."""
+    if isinstance(obj, float) and not math.isfinite(obj):
+        return None
+    if isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    return obj
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.error = lambda msg: (sys.stderr.write('ERROR: %s\n' % msg), sys.exit(3))
@@ -260,11 +272,13 @@ def main():
     if gam:
         out['metrics']['gamma_pair'] = aggregate(gam, [m['seg'] for m in prim if m['file'] in pairs])
 
+    out = _sanitize(out)  # C14-FIX-2: per_frame 等逐字段清洗非有限值 -> null
     with open(args.out, 'w') as f:
-        json.dump(out, f, indent=1, ensure_ascii=False)
+        json.dump(out, f, indent=1, ensure_ascii=False,
+                  allow_nan=False)  # C14-FIX-2 兜底: 再现非有限值直接抛错不写坏文件
     b = {k: {kk: vv for kk, vv in v.items() if kk != 'by_seg_median'}
          for k, v in out['metrics'].items() if isinstance(v, dict)}
-    print(json.dumps(b, indent=1))
+    print(json.dumps(b, indent=1, allow_nan=False))
 
 
 if __name__ == '__main__':
