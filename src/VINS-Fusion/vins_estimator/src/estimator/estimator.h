@@ -58,6 +58,7 @@ class Estimator
 
     // internal
     void clearState();
+
     bool reinit_request{false};  // T2-W4: 初始化质量门请求的完全重启标志
     bool initialStructure();
     bool visualInitialAlign();
@@ -196,3 +197,18 @@ class Estimator
     bool initFirstPoseFlag;
     bool initThreadFlag;
 };
+
+// T2-v8.2 A1-fix (2026-10-03, prereg_a1fix.md): failure-reboot request helper.
+// CONTRACT: MUST NOT acquire any lock. failureDetection fires inside
+// processImage, which runs under processMeasurements' mProcess
+// (estimator.cpp:388); clearState() re-locks mProcess (estimator.cpp:38) so a
+// direct call self-deadlocks the process thread (U3pp A1/A3: odometry dead
+// forever, spinner kept publishing poisoned imu_propagate 8.25s/6.0s). The
+// loop-head consumer (processMeasurements, outside the lock; T2-U1 pattern)
+// owns the actual clearState+setParameter.
+inline void t2_failure_reboot_request(bool &failure_occur, bool &reinit_request)
+{
+    failure_occur = 1;
+    reinit_request = true;
+}
+

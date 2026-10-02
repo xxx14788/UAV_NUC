@@ -123,6 +123,12 @@ void Estimator::setParameter()
         initThreadFlag = true;
         processThread = std::thread(&Estimator::processMeasurements, this);
     }
+    // T2-v8.2 (unit-6 tool debt): one-line gate-config banner. Re-printed on
+    // every reboot (setParameter) = reboot-completion observable marker; also
+    // closes the "gates have no startup banner" verification gap.
+    ROS_WARN("[T2GATECFG] cost_gate=%d ratio=%.1f n=%d win=%d | min_disparity=%.4g fardrop_min_near=%d depth_gate=%d",
+             T2_COST_GATE, T2_COST_RATIO, T2_COST_N, T2_COST_BASE_WIN,
+             T2_MIN_DISPARITY, T2_FARDROP_MIN_NEAR, T2_DEPTH_GATE);
     mProcess.unlock();
 }
 
@@ -734,10 +740,16 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                    td, f_manager.last_track_num);
             fflush(stdout);
             ROS_WARN("failure detection!");
-            failure_occur = 1;
-            clearState();
-            setParameter();
-            ROS_WARN("system reboot!");
+            // T2-v8.2 A1-fix (2026-10-03, prereg_a1fix.md): clearState() locks
+            // mProcess which this path already holds (processMeasurements
+            // estimator.cpp:388 -> processImage) — the previous direct call
+            // self-deadlocked the process thread: odometry stayed silent for
+            // the rest of the run and the spinner thread kept publishing
+            // poisoned imu_propagate (A1: 142m/8.25s; A3: 93m/6.0s, stopped
+            // only by the |V|<50 publish bound / teardown). Route the reboot
+            // through the T2-U1 reinit_request loop-head consumer instead.
+            t2_failure_reboot_request(failure_occur, reinit_request);
+            ROS_WARN("system reboot requested (async via loop-head consumer)");
             return;
         }
 

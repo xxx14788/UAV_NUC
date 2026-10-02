@@ -69,6 +69,8 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_t2_imu_factor test/test_t2_imu_factor.cpp)
   target_include_directories(test_t2_imu_factor PRIVATE src)
   target_link_libraries(test_t2_imu_factor vins_lib)
+  catkin_add_gtest(test_a1_reboot_fix test/test_a1_reboot_fix.cpp)
+  target_include_directories(test_a1_reboot_fix PRIVATE src)
 endif()
 target_link_libraries(vins_node vins_lib) 
 
