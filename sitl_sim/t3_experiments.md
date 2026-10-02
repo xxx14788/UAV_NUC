@@ -1025,3 +1025,7 @@ WC2OBS1 爆散/U3PO 导航 223Hz）p50 8-12ms、p95≤36ms、max 56ms、零帧�
 新增；K-1 按U3pp 3/5 刷新）、**栈代条件性增补①**（T2 fixface 新栈 5dde4d7e/86c5c6a3 在测，
 若 U4 以新栈通告→prereg v1.1 只改栈号）、U3PO 素材注记增补②（双轨异常，消费前读 T4 D 章）。
 本会话提交：22304a2（+v8.4 备份未入 git——sitl_sim/plans 不在库内，与 v8.1 同惯例）。
+
+## 任务书 v8.5 完成清账版落盘（2026-10-02 14:4x；Windows 权威 plans/2026-10-02_T3_planner_vision_acceptance_v8.5.md + NUC 备份 plans_T3_v8.5.md md5 bcd068a5；v8.4 弃读横幅）
+
+- 结构=完成清账六节（A R3 证据包/B X 线预备五件+回归/C U3p 基线/D Z1.2 预写+stampage 基线/E hypot+figs 管线/F 簿记基建，提交链 1ae933d→04de7ba 共 8 笔未推）+剩余待办五项（X 线全链未跑一轮/Z1.2 未接线/X4 袋保全随轮启动/.bak 清理未到条件/持续义务）+卡点客观在册（K-1 按 U3pp 3/5 链况刷新/K-2 K-3 未见/K-7 df 30G vs 需 25-45G+水位线/K-8 WAN 断 14h+ 三代环耗尽两代/④凭据栈条件性 285278cc vs fixface 新栈 5dde4d7e）——只述事实与解锁信号，不开处方（用户 10-02 指示）。
