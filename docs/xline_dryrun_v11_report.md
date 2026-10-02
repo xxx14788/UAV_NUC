@@ -67,3 +67,15 @@ J0 跳 25.56m 恒门强制 FAIL=门间互锁正确；A1/A2 到位 8.12/4.17m FAI
   新增面仅 controlled 块。
 - 判读链调用面（X 线轮沿用，零新参数）：round_result 由 vins_smoke.sh 内置自动跑；
   `python3 analysis/t3_wa_gate.py --online <run_dir>`；figs `t3_xline_report_figs.py --csv …`。
+
+## 增补 S8（2026-10-03 01:5x；池件②合成单测逼出+已修）
+
+- **S8（工具级·重大）到位解析正则陈旧**：RE_RES_ARRIVE 原为场景门前旧格式 `(<0.5)->`，
+现行 round_result（e7120e0 场景门后）输出 `(<0.75,场景门 world=X)->`——新格式轮 four[0] 恒 None
+→four_ok 恒 False→**xline_pass 对任何 X 线轮恒不可达（X 线全轮会被误判 FAIL）**。
+干跑四样本 four=None 即此症状（初报未追到底，合成单测逼出后定罪）。
+- **修复**（红线 24：.bak_regex_20261003 + f0905154→ac1df603）：正则改 `\(<[^)]*\)->` 双兼容。
+- **验证**：在线 selftest 三格全绿（旧格式锚 WAOL5R 仍解析）；合成 SYN_CTRL **PASS-CONTROLLED 
+端到端首通**（counting=True）/SYN_LATE 迟触发反例命中（l1b=False/onset=50.0）；干跑四样本
+判定态零漂移（four 由 None→正确解析 0（到位 0/J0 强制），终判全 FAIL 不变）；U3PO 终判不变。
+- 合成夹具=SYN_CTRL/SYN_LATE（x11_dryrun_v11/，真 rosbag+手写 log，仅测试用不入任何判读正源）。

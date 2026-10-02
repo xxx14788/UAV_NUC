@@ -348,7 +348,7 @@ def judge_dir(replay_dir, src_bag, recompute, th):
 # ================= 在线判决模式(v7.4 等待池①;输入=vins_smoke_runs/run_* 目录) =================
 
 RE_RES_JUMP = re.compile(r"帧稳定性 \|pre-post\|=([\d.]+) m")
-RE_RES_ARRIVE = re.compile(r"leg1 到位\(真值\) min=([\d.-]+) m \(<[^)]*\)->([01])")  # 场景门前旧格式(<0.5)->与场景门新格式(<0.75,场景门 world=X)->双兼容(S8 修复,合成单测逼出)
+RE_RES_ARRIVE = re.compile(r"leg1 到位\(真值\) min=([\d.-]+) m \(<0.5\)->([01])")
 RE_RES_AVOID = re.compile(r"避障 min_dist=([\d.-]+) m \(>0\.349\)->([01])")
 RE_RES_HZ = re.compile(r"poscmd ([\d.]+) Hz \(>=50\)->([01])")
 RE_RES_DISARM = re.compile(r"auto_disarm->([01])")
