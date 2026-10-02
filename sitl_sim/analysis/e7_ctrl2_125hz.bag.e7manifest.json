@@ -1,0 +1,9 @@
+{
+ "src": "/home/uav/sitl_sim/bags/t2v3_route_112652.bag",
+ "out": "/home/uav/sitl_sim/bags/e7_ctrl2_125hz.bag",
+ "imu_topic": "/mavros/imu/data_raw",
+ "target_hz": 125.0,
+ "imu_kept": 21557,
+ "imu_dropped": 15556,
+ "other_msgs": 113805
+}
