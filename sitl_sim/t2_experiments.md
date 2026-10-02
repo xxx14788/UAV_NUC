@@ -1777,3 +1777,17 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **R3x 结论**：主嫌④（求解时间饥饿+不收敛照单全收）**证伪**——时间饥饿零证据（21 轮 p95≤27ms 全离界）;"不收敛照单全收"是代码事实（est 不检查 summary 收敛标志）但**非爆点判别量**（健康回放可 0.7%,爆轮可 90%）。⑤（CPU 算力竞争）失去"放大时间饥饿"通路,**降级监视**（唯余负载→回调时序通路）;件 5 受控负载实验**不触发**（前置假说已死,不烧轮）。件 6 探针合流 @T1：求解饥饿对齐目的失效,回调积压/墙钟-仿真钟偏差面对方向③⑦仍有价值,优先级 T1 自定。
 - 七方向图更新：④出列（证伪）/⑤降级/①降权维持/②反证维持/**③⑦合流升位**（回调时序+第三时间域,新事实 B 助攻）/⑥⑧维持;主战场=在线 IMU/状态域事件的方向③⑥⑦交叉带。
 - 产物：t2_results/R3x_term_study/{precheck_cost_gate.py,r3x_4b_align.py,run_*.txt 输出档}。
+
+**T2 v8.2 单元 6⑤⑥ 取证+单元 2 A1 双问题根修+U3pp A3 改判（2026-10-03 01:2x-01:37；判据先于写码=prereg_a1fix.md；commit 127b80a 已推）**
+
+**单元 6⑤ 毒流帧级解剖**（袋=t2v3_route_035325.bag，脚本=a1_poison_dissect.py 归档 R2_dissect/）：A1 袋内 imu_propagate 209Hz 连续；钟对齐（消息 hdr stamp≈记录时刻=VINS log 钟）后时间轴=Bas 门触发 t=49.16（odometry 末帧 49.06=故障帧前一帧）→毒流续放至 57.41（触发后 **8.25s**），|P| 0.27→142.3m、|V|→49.97m/s，**平滑二次曲线零帧跳**（量级与 |Bas|=3.17 自由积分吻合：Δv≈33m/s/ΔP≈135m 拟合）——毒流不是跳变形态而是中毒偏差下的连续外推跑飞，幅值/速度界（1e3/50）在起点数秒内无判别力（|V| 8.25s 后才贴 50 界）。A3 同构：cost 门触发 t=46.96 → 毒流 6.0s 止于 |V|=50.0 有界检查自然止流（|P|=93.2m）。
+
+**单元 6⑥ 永寂根因（改写题设）**：原题设"地面态无运动无视差→永不再 init"**证伪**。真相=failureDetection 触发分支（est.cpp:725-741）内联 clearState()——而 processImage 唯一调用点=processMeasurements est.cpp:388 **已持 mProcess**，clearState（est.cpp:38）**再锁 mProcess=同线程自死锁**（std::mutex 非递归；git blame ^1a069ca=上游继承非 fork 引入）。后果链：进程线程挂死（A1/A3 两轮 log 均断在 "failure detection!"、"system reboot!" 永不出现=此前误读为 log 捕获伪影，实为缓冲随轮末 SIGTERM 丢失+进程挂死双真相）→odometry 永寂+永不再 init（=b 的全部表象）→solver_flag 永不复位→inputIMU 发布早退（est.cpp:219）失效→spinner 线程以中毒 latest_* 持续 fastPredictIMU+发布（=a 的全部表象）。**一病两症，一修双病**。
+
+**单元 2 修复**（prereg_a1fix.md 预注册选型）：定案=reinit_request 模式（T2-U1 先例：est.cpp:317 循环头消费者在锁外执行 clearState+setParameter，est.cpp:613/655 两个既有写点）——failure 分支只置旗+return。弃选：独立停发开关（被 solver_flag=INITIAL 早退语义涵盖）、收紧量域界（毒流起点秒级在界内+健康 v_max 21.17 余量不足=R3 量域判死复认）、冻结最后健康位姿（供"看似新鲜的谎言"弃）。保语义核查：failure_occur 双路径均被 clearState 清零=行为等价；旗读写全在 process 线程无竞态；故障帧 feature 已 pop 无双处理。附 [T2GATECFG] banner（setParameter 尾=启动+每次 reboot 重打=reboot 完成观测标志，单元 6 两门无 banner 工具债清偿）。gtest=29/29（新 3：旗语义/持锁金丝雀 500ms/死锁形态文档化；既有 26 零回归）。**栈换代：lib d43504d9+node 4701bd3a（双 md5 铁律+双件存档 stack_archive/）=单元 1 合并轮在用栈**。t2v3_flight.sh 硬化=每臂落地 log 归档（坑 1 根除）+全程 10s CPU 负载采样（单元 1 要求的 R3x 负载回溯面）。README §3 改动行已入。
+
+**U3pp A3 改判（连带，prereg 声明）**：A3"cost 门触发→reboot→恢复健康"的**恢复半不成立**——袋证 odometry 46.88 后 108s 全寂（死锁）+imu_propagate 毒流 6.0s；受控失败判据（触发+恢复）不满足→**A3 PASS→FAIL，达标门 3/5→2/5**（A4/A5）。保留记载：cost 门检测半成立（带内 Bas 0.376/Bgs 0.843 唯一捕获者的检测价值不变）。@T1 已消费（bf7c2c9 勘误：0.545 relabel=爆窗 solver 运动非 reboot 锚）。历史回放域"reboot 后"表述不自动推翻（回放域判据本就禁入生死判定，红线 11）。
+
+**修复的在线验证判据（与单元 1 配对轮合并：gates 臂+修复在场，一轮多判）**：V-fix 主判=任一门触发→odom 断流 ≤10s→恢复发布且 |P| 回米级；辅判=触发后毒段 ≤2s 且 |P| 峰 <5m（锚点物理上界）；V-pairing=单元 1 原判据不变。
+
+**STATUS 时间戳勘误**：今晨手写时间戳超前实际 15-45min（00:55/01:45/02:10 实为 ~00:4x/01:0x/01:1x），即日起改 status_append.py 自动时间戳。
