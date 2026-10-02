@@ -79,3 +79,10 @@ J0 跳 25.56m 恒门强制 FAIL=门间互锁正确；A1/A2 到位 8.12/4.17m FAI
 端到端首通**（counting=True）/SYN_LATE 迟触发反例命中（l1b=False/onset=50.0）；干跑四样本
 判定态零漂移（four 由 None→正确解析 0（到位 0/J0 强制），终判全 FAIL 不变）；U3PO 终判不变。
 - 合成夹具=SYN_CTRL/SYN_LATE（x11_dryrun_v11/，真 rosbag+手写 log，仅测试用不入任何判读正源）。
+
+### P-H 注记：U3pp 样本袋 inode 保全语义（2026-10-03 02:3x；登记于判读链手册页）
+
+- 判读链 selftest/干跑的样本袋=A1/A2/A3/A5 四臂紧凑袋（~/sitl_sim/bags/t2v3_{route_035325,route_034144,hover_033842,ground_030355}.bag，域持方=T2）。
+- **保全机制**：x11_dryrun_v11/ 伪 run 目录以硬链接持有 flight.bag——即使原袋被持方按 §8.1 序列删除，inode 经判读链目录仍存活，selftest 可复跑（硬链接语义：任一链接在=数据在）。
+- **对称提醒**：判读链目录因此是"事实保全点"，清理 x11_dryrun_v11 前须确认样本袋原件仍在（或有意放弃 selftest 复现性）；SYN_CTRL/SYN_LATE 为合成件可随时再生（analysis/t3_synth_controlled_test.py）。
+- @T2：若你域未来处置 U3pp 四臂紧凑袋，处置通告请 @T3（判读链样本面，删除前可先复制或知情放弃）。
