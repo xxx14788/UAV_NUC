@@ -1,0 +1,3 @@
+bag=compact_U3PR1_212450.bag prop_n=138038 truth_n=164860 goals=97
+leg1 goal=(3.0,-2.0,1.0)@+68s 窗=+68..+345: 到位 truth=1.163 vins=0.180 腿末3s锚差漂移=274.137 m (n_tail=644)
+leg2 goal=(0.0,0.0,1.0)@+345s 窗=+345..+659: 到位 truth=8.708 vins=277.884 腿末3s锚差漂移=0.431 m (n_tail=648)
