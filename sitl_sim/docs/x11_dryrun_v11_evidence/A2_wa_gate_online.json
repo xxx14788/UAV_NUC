@@ -1,0 +1,118 @@
+{
+ "dir": "A2_route_base",
+ "mode": "online",
+ "thresholds": {
+  "online_reboot_fall_s": 30.0,
+  "online_odom_gap_s": 3.0,
+  "online_pair_win_s": 0.2,
+  "online_j0_rev_raw_max": 0,
+  "online_j0_rev_smj_max": 10,
+  "scene_gate_default_m": 0.5,
+  "scene_gate_obstacles_m": 0.75,
+  "scene_obstacles_kw": "obstacles"
+ },
+ "xline": {
+  "four": [
+   null,
+   1,
+   1,
+   0
+  ],
+  "four_known": false,
+  "four_ok": false,
+  "scene": "obstacles",
+  "world": "sitl_world_obstacles",
+  "scene_source": "round.log",
+  "gate_m": 0.75,
+  "j0_gate_m": 0.5,
+  "j0_jump_m": 364.971,
+  "j0_rev_pass": false,
+  "fj_raw": 629,
+  "fj_smj": 640,
+  "result_txt": "FAIL",
+  "env_sig": null,
+  "env_hard": null,
+  "t1d1_domain": false,
+  "pass": false,
+  "controlled_state": "log-missing",
+  "counting_pass": false
+ },
+ "controlled": {
+  "log_exists": false,
+  "fires_n": 0,
+  "first_fire_t": null,
+  "streak": null,
+  "ratio": null,
+  "faildet_n": 0,
+  "pw_s": 10.0,
+  "diag_after_fire": null,
+  "recover_msgs": null,
+  "post_p95_m": null,
+  "l2a_pass": null,
+  "l2b_pass": null,
+  "jumps_in": 0,
+  "jumps_out": 573,
+  "state": "log-missing",
+  "evidence": [
+   "毒窗外帧跳×573 t=100.56,100.75,102.17,102.34,102.55(无触发钟,全计窗外)",
+   "simvins.log 缺失:触发面不可判(四指标/J0/vins 层口径不变)"
+  ],
+  "onset_t": null,
+  "l1b_pass": null
+ },
+ "vins": {
+  "reboot_n": 0,
+  "odom_gaps_gt": 0,
+  "odom_gap_max_s": 0.2,
+  "odom_n": 1436,
+  "odom_span_s": 145.9,
+  "bag_span_s": 654.8,
+  "coverage": 0.223,
+  "bas": {
+   "n": 0,
+   "peak": null,
+   "tail_med": null,
+   "over_ratio": null,
+   "longest_run_frames": 0,
+   "bgs_peak": null,
+   "track_med": null
+  },
+  "bas_pass": false,
+  "spikes": {
+   "n_phase1": 0,
+   "spike_n": null,
+   "spike_rate": null,
+   "max_ratio": null
+  },
+  "ate": {
+   "ate_rmse_m": 221.5745,
+   "ate_rmse_2ndhalf_m": 313.3537,
+   "n_pairs": 1436,
+   "align_off_m": [
+    1.027,
+    0.964,
+    0.104
+   ],
+   "ate_peak_m": 546.495
+  },
+  "pass_vins": false,
+  "note_vins": "无 T2diag(旧二进制),Bas 轴不可判→vins 判 False"
+ },
+ "forensics": {
+  "available": true,
+  "morph": "爆散",
+  "t_star": 80.4,
+  "divergence_type": "odom先病(优化器窗口解先毒)",
+  "fj_raw": 629,
+  "fj_smj": 640,
+  "fork_t": 81.6,
+  "fork_max_m": 192.92,
+  "prop_gap": null
+ },
+ "verdict": "FAIL",
+ "failed": [
+  "four",
+  "j0_jump",
+  "j0_rev"
+ ]
+}

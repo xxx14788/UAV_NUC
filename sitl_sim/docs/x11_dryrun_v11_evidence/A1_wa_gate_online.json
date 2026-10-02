@@ -1,0 +1,117 @@
+{
+ "dir": "A1_route_gates",
+ "mode": "online",
+ "thresholds": {
+  "online_reboot_fall_s": 30.0,
+  "online_odom_gap_s": 3.0,
+  "online_pair_win_s": 0.2,
+  "online_j0_rev_raw_max": 0,
+  "online_j0_rev_smj_max": 10,
+  "scene_gate_default_m": 0.5,
+  "scene_gate_obstacles_m": 0.75,
+  "scene_obstacles_kw": "obstacles"
+ },
+ "xline": {
+  "four": [
+   null,
+   1,
+   0,
+   0
+  ],
+  "four_known": false,
+  "four_ok": false,
+  "scene": "obstacles",
+  "world": "sitl_world_obstacles",
+  "scene_source": "round.log",
+  "gate_m": 0.75,
+  "j0_gate_m": 0.5,
+  "j0_jump_m": 42.083,
+  "j0_rev_pass": true,
+  "fj_raw": 0,
+  "fj_smj": 0,
+  "result_txt": "FAIL",
+  "env_sig": null,
+  "env_hard": null,
+  "t1d1_domain": true,
+  "pass": false,
+  "controlled_state": "uncontrolled-fail",
+  "counting_pass": false
+ },
+ "controlled": {
+  "log_exists": true,
+  "fires_n": 0,
+  "first_fire_t": null,
+  "streak": null,
+  "ratio": null,
+  "faildet_n": 1,
+  "pw_s": 10.0,
+  "diag_after_fire": null,
+  "recover_msgs": null,
+  "post_p95_m": null,
+  "l2a_pass": null,
+  "l2b_pass": null,
+  "jumps_in": 0,
+  "jumps_out": 0,
+  "state": "uncontrolled-fail",
+  "evidence": [
+   "无 cost 触发+failure detection ×1=未拦截(§2.6-e)"
+  ],
+  "onset_t": null,
+  "l1b_pass": null
+ },
+ "vins": {
+  "reboot_n": 0,
+  "odom_gaps_gt": 0,
+  "odom_gap_max_s": 0.14,
+  "odom_n": 286,
+  "odom_span_s": 29.2,
+  "bag_span_s": 649.5,
+  "coverage": 0.045,
+  "bas": {
+   "n": 371,
+   "peak": 3.1725,
+   "tail_med": 0.4392,
+   "over_ratio": 0.0054,
+   "longest_run_frames": 2,
+   "bgs_peak": 0.24756,
+   "track_med": 140
+  },
+  "bas_pass": true,
+  "spikes": {
+   "n_phase1": 371,
+   "spike_n": 5,
+   "spike_rate": 0.0135,
+   "max_ratio": 34.2
+  },
+  "ate": {
+   "ate_rmse_m": 0.028,
+   "ate_rmse_2ndhalf_m": 0.0332,
+   "n_pairs": 286,
+   "align_off_m": [
+    1.012,
+    0.962,
+    0.106
+   ],
+   "ate_peak_m": 0.059
+  },
+  "pass_vins": true,
+  "note_vins": null
+ },
+ "forensics": {
+  "available": true,
+  "morph": "爆散",
+  "t_star": 32.9,
+  "divergence_type": "仅prop跳变(odom已停/未对齐)",
+  "fj_raw": 0,
+  "fj_smj": 0,
+  "fork_t": null,
+  "fork_max_m": null,
+  "prop_gap": null
+ },
+ "verdict": "FAIL",
+ "failed": [
+  "four",
+  "j0_jump",
+  "j0_rev"
+ ]
+}

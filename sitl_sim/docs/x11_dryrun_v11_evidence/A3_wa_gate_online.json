@@ -1,0 +1,118 @@
+{
+ "dir": "A3_hover_gates",
+ "mode": "online",
+ "thresholds": {
+  "online_reboot_fall_s": 30.0,
+  "online_odom_gap_s": 3.0,
+  "online_pair_win_s": 0.2,
+  "online_j0_rev_raw_max": 0,
+  "online_j0_rev_smj_max": 10,
+  "scene_gate_default_m": 0.5,
+  "scene_gate_obstacles_m": 0.75,
+  "scene_obstacles_kw": "obstacles"
+ },
+ "xline": {
+  "four": [
+   null,
+   1,
+   0,
+   0
+  ],
+  "four_known": false,
+  "four_ok": false,
+  "scene": "obstacles",
+  "world": "sitl_world_obstacles",
+  "scene_source": "round.log",
+  "gate_m": 0.75,
+  "j0_gate_m": 0.5,
+  "j0_jump_m": 25.558,
+  "j0_rev_pass": false,
+  "fj_raw": 5,
+  "fj_smj": 6,
+  "result_txt": "FAIL",
+  "env_sig": null,
+  "env_hard": null,
+  "t1d1_domain": true,
+  "pass": false,
+  "controlled_state": "triggered-no-recovery",
+  "counting_pass": false
+ },
+ "controlled": {
+  "log_exists": true,
+  "fires_n": 1,
+  "first_fire_t": 47.024,
+  "streak": 5,
+  "ratio": 10.0,
+  "faildet_n": 1,
+  "pw_s": 10.0,
+  "diag_after_fire": null,
+  "recover_msgs": 0,
+  "post_p95_m": null,
+  "l2a_pass": false,
+  "l2b_pass": false,
+  "jumps_in": 1,
+  "jumps_out": 0,
+  "state": "triggered-no-recovery",
+  "evidence": [
+   "L2a 复流不足(0<50)",
+   "§2.6-f 触发-无恢复=未受控(reboot 后未证复流/误差)"
+  ],
+  "onset_t": 46.44,
+  "l1b_pass": true
+ },
+ "vins": {
+  "reboot_n": 0,
+  "odom_gaps_gt": 0,
+  "odom_gap_max_s": 0.17,
+  "odom_n": 290,
+  "odom_span_s": 29.9,
+  "bag_span_s": 137.8,
+  "coverage": 0.217,
+  "bas": {
+   "n": 345,
+   "peak": 0.7059,
+   "tail_med": 0.1954,
+   "over_ratio": 0.0,
+   "longest_run_frames": 0,
+   "bgs_peak": 0.84259,
+   "track_med": 139
+  },
+  "bas_pass": true,
+  "spikes": {
+   "n_phase1": 345,
+   "spike_n": 2,
+   "spike_rate": 0.0058,
+   "max_ratio": 16.8
+  },
+  "ate": {
+   "ate_rmse_m": 0.1288,
+   "ate_rmse_2ndhalf_m": 0.1813,
+   "n_pairs": 290,
+   "align_off_m": [
+    1.045,
+    0.972,
+    0.106
+   ],
+   "ate_peak_m": 1.291
+  },
+  "pass_vins": true,
+  "note_vins": null
+ },
+ "forensics": {
+  "available": true,
+  "morph": "爆散",
+  "t_star": 29.5,
+  "divergence_type": "odom先病(优化器窗口解先毒)",
+  "fj_raw": 5,
+  "fj_smj": 6,
+  "fork_t": 29.6,
+  "fork_max_m": 0.66,
+  "prop_gap": null
+ },
+ "verdict": "FAIL",
+ "failed": [
+  "four",
+  "j0_jump",
+  "j0_rev"
+ ]
+}

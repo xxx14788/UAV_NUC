@@ -81,15 +81,6 @@ DEFAULT_THRESH = {
     "scene_gate_default_m": 0.5,       # 无障碍场景(route/ground/hover 系)到位门
     "scene_gate_obstacles_m": 0.75,    # obstacles 系(含 obstacles_v2)
     "scene_obstacles_kw": "obstacles", # world 名包含即判 obstacles 系
-    # ---- 受控失败分层 v1.1(docs/xline_prereg_v1_1.md §2.6;任何改动须重跑 --online --selftest) ----
-    "cf_poison_win_max_s": 10.0,   # 中毒窗上界(自首触发行;窗内帧跳=reboot 对号豁免)
-    "cf_recover_msgs_min": 50,     # L2a odom 复流下限(毒窗后 cf_recover_win_s 窗内条数)
-    "cf_recover_win_s": 10.0,      # L2a 取样窗(求解器流 /vins_estimator/odometry)
-    "cf_post_p95_max_m": 0.5,      # L2b 恢复段误差 p95 上界(恢复段自对齐,非出生对齐)
-    "cf_jump_m": 0.5,              # 帧跳口径 |dP|>0.5(与 J0/forensics 对齐)
-    "cf_jump_dt_s": 0.5,           # 帧跳配对窗(相邻帧 dt 上限)
-    "cf_onset_grace_s": 5.0,       # L1b 起点窗约束(v1.1 §2.6-g):t_fire ≤ t_onset+此值(迟触发不入受控)
-    "cf_onset_err_m": 10.0,        # 起点标记之一:出生对齐 |odom-truth|>此值(T2 急窗口径)
 }
 
 RE_DIAG = re.compile(
@@ -98,10 +89,6 @@ RE_DIAG = re.compile(
 RE_SLV1 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=1 init_cost=([\d.eE+-]+)")
 RE_SLV0 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=0 init_cost=([\d.eE+-]+)")
 RE_DUR = re.compile(r"Duration:\s*[\d.]+\s*/\s*([\d.]+)")
-# ---- 受控失败分层 v1.1(prereg §2.6;L1 触发行与 WARN 头 sim 时刻) ----
-RE_COSTFIRE = re.compile(
-    r"cost gate: streak=(\d+) over ([\d.]+)x short-window median, reboot")
-RE_WARNHDR = re.compile(r"\[\d+\.\d+,\s*(-?\d+\.\d+)\]:")
 
 
 def parse_vins_log(path):
@@ -547,160 +534,6 @@ def scene_of_run(run_dir, th):
     return {"scene": scene, "world": world, "gate_m": gate, "source": src or "missing"}
 
 
-def controlled_failure_layer(run_dir, odom, truth, th):
-    """受控失败分层 v1.1(prereg xline_prereg_v1_1.md §2.6):触发+恢复双证,机器可判签名。
-    L1 触发=simvins.log 行 'cost gate: streak=N over Mx short-window median, reboot'
-       (WARN 头第二字段=sim 时刻,与 flight.bag 时戳同钟——A3 实证 47.024 vs 袋末 46.9);
-    L2a 恢复-复流=毒窗后求解器 odom 流(/vins_estimator/odometry,非 imu_propagate——
-       prop 无视觉自由积分,不作跟踪证据,seam-3)条数下限;
-    L2b 恢复-误差=恢复段自对齐(段首帧对齐;reboot 重锚换系,出生对齐会吞系差)误差
-       p95 上界;[T2diag] 复流仅报告不入判(t2gates 栈 failure 后日志静默,seam-1)。
-    帧跳按毒窗 [tf-1, tf+pw] 内外分账:窗内=reboot 对号豁免,窗外必须 0(§2.6-c)。
-    state∈{controlled, triggered-no-recovery, uncontrolled-fail, clean, log-missing}。"""
-    pw = th["cf_poison_win_max_s"]
-    out = {"log_exists": False, "fires_n": 0, "first_fire_t": None, "streak": None,
-           "ratio": None, "faildet_n": 0, "pw_s": pw,
-           "diag_after_fire": None, "recover_msgs": None, "post_p95_m": None,
-           "l2a_pass": None, "l2b_pass": None,
-           "jumps_in": None, "jumps_out": None, "state": "clean", "evidence": []}
-    vlog = os.path.join(run_dir, "simvins.log")
-    fires = []
-    if os.path.exists(vlog):
-        out["log_exists"] = True
-        fire_seen = False
-        with open(vlog, "r", errors="replace") as f:
-            for line in f:
-                m = RE_COSTFIRE.search(line)
-                if m:
-                    tm = RE_WARNHDR.search(line)
-                    fires.append((float(tm.group(1)) if tm else None,
-                                  int(m.group(1)), float(m.group(2))))
-                    fire_seen = True
-                    continue
-                if "failure detection!" in line:
-                    out["faildet_n"] += 1
-                if fire_seen and out["diag_after_fire"] is not True \
-                        and RE_DIAG.search(line):
-                    out["diag_after_fire"] = True
-    out["fires_n"] = len(fires)
-    if fires:
-        out["first_fire_t"], out["streak"], out["ratio"] = fires[0]
-    odom = odom or []
-    tf = out["first_fire_t"]
-    if odom and tf is not None:
-        win_lo, win_hi = tf - 1.0, tf + pw
-    else:
-        win_lo, win_hi = None, None
-    # 帧跳分账(无触发/无钟时全计窗外=未拦截证据面)
-    jumps_in = jumps_out = 0
-    out_jump_ts = []
-    for i in range(1, len(odom)):
-        dt = odom[i][0] - odom[i - 1][0]
-        if dt > th["cf_jump_dt_s"]:
-            continue
-        if math.dist(odom[i][1:4], odom[i - 1][1:4]) > th["cf_jump_m"]:
-            if win_lo is not None and win_lo <= odom[i][0] <= win_hi:
-                jumps_in += 1
-            else:
-                jumps_out += 1
-                out_jump_ts.append(round(odom[i][0], 2))
-    out["jumps_in"], out["jumps_out"] = jumps_in, jumps_out
-    if out_jump_ts:
-        out["evidence"].append("毒窗外帧跳×%d t=%s" % (len(out_jump_ts),
-                                ",".join(str(t) for t in out_jump_ts[:5]))
-                               + ("(无触发钟,全计窗外)" if tf is None else ""))
-    # L1b 起点窗约束(v1.1 §2.6-g;T2 01:45 预检格输入):t_onset=爆窗首证(首帧跳或
-    # 出生对齐 |odom-truth|>cf_onset_err_m,取更早);迟触发(fire>onset+grace)不入受控。
-    out["onset_t"] = None
-    out["l1b_pass"] = None
-    if tf is not None and odom:
-        onset_cand = []
-        first_jump_t = None
-        for i in range(1, len(odom)):
-            dt = odom[i][0] - odom[i - 1][0]
-            if dt <= th["cf_jump_dt_s"] and \
-                    math.dist(odom[i][1:4], odom[i - 1][1:4]) > th["cf_jump_m"]:
-                first_jump_t = odom[i][0]
-                break
-        if first_jump_t is not None:
-            onset_cand.append(first_jump_t)
-        if truth:
-            ts_t = [r[0] for r in truth]
-            g0 = min(truth, key=lambda r: abs(r[0] - odom[0][0]))
-            off = (g0[1] - odom[0][1], g0[2] - odom[0][2], g0[3] - odom[0][3])
-            for t, x, y, z in odom:
-                j = bisect_left(ts_t, t)
-                best = None
-                for k in (j - 1, j):
-                    if 0 <= k < len(truth) and abs(truth[k][0] - t) <= 0.2:
-                        if best is None or abs(truth[k][0] - t) < abs(truth[best][0] - t):
-                            best = k
-                if best is None:
-                    continue
-                g = truth[best]
-                if math.dist((x + off[0], y + off[1], z + off[2]),
-                             (g[1], g[2], g[3])) > th["cf_onset_err_m"]:
-                    onset_cand.append(t)
-                    break
-        if onset_cand:
-            out["onset_t"] = round(min(onset_cand), 2)
-            out["l1b_pass"] = tf <= min(onset_cand) + th["cf_onset_grace_s"]
-            if out["l1b_pass"] is False:
-                out["evidence"].append(
-                    "L1b 迟触发(fire %.2f > onset %.2f+%.1fs)=§2.6-g 不入受控"
-                    % (tf, out["onset_t"], th["cf_onset_grace_s"]))
-    if tf is not None and odom:
-        seg = [p for p in odom if win_hi <= p[0] <= win_hi + th["cf_recover_win_s"]]
-        out["recover_msgs"] = len(seg)
-        out["l2a_pass"] = len(seg) >= th["cf_recover_msgs_min"]
-        post = [p for p in odom if p[0] > win_hi]
-        if truth and len(post) >= 10:
-            ts_t = [r[0] for r in truth]
-            g0 = min(truth, key=lambda r: abs(r[0] - post[0][0]))
-            off = (g0[1] - post[0][1], g0[2] - post[0][2], g0[3] - post[0][3])
-            errs = []
-            for t, x, y, z in post:
-                j = bisect_left(ts_t, t)
-                best = None
-                for k in (j - 1, j):
-                    if 0 <= k < len(truth) and abs(truth[k][0] - t) <= 0.2:
-                        if best is None or abs(truth[k][0] - t) < abs(truth[best][0] - t):
-                            best = k
-                if best is not None:
-                    g = truth[best]
-                    errs.append(math.dist((x + off[0], y + off[1], z + off[2]),
-                                          (g[1], g[2], g[3])))
-            if errs:
-                errs.sort()
-                out["post_p95_m"] = round(errs[int(0.95 * len(errs))], 4)
-                out["l2b_pass"] = out["post_p95_m"] <= th["cf_post_p95_max_m"]
-        if out["l2b_pass"] is None:
-            out["l2b_pass"] = False
-        if not out["l2a_pass"]:
-            out["evidence"].append("L2a 复流不足(%s<%s)" % (out["recover_msgs"],
-                                   th["cf_recover_msgs_min"]))
-    if not out["log_exists"]:
-        out["state"] = "log-missing"
-        out["evidence"].append("simvins.log 缺失:触发面不可判(四指标/J0/vins 层口径不变)")
-    elif out["fires_n"] == 0:
-        if out["faildet_n"] > 0:
-            out["state"] = "uncontrolled-fail"
-            out["evidence"].append("无 cost 触发+failure detection ×%d=未拦截(§2.6-e)"
-                                   % out["faildet_n"])
-        else:
-            out["state"] = "clean"
-            if jumps_out > 0:
-                out["evidence"].append("无触发但帧跳×%d=冻型/未拦截候选(§2.6-e;终判仍由四指标+J0+vins 层)"
-                                       % jumps_out)
-    else:
-        if out["l2a_pass"] and out["l2b_pass"] and out["l1b_pass"] is not False:
-            out["state"] = "controlled"
-        else:
-            out["state"] = "triggered-no-recovery"
-            out["evidence"].append("§2.6-f 触发-无恢复=未受控(reboot 后未证复流/误差)")
-    return out
-
-
 def judge_online_dir(run_dir, th, skip_forensics=False):
     rep = {"dir": os.path.basename(replay_dir_safe(run_dir)), "mode": "online",
            "thresholds": {k: th[k] for k in th
@@ -751,9 +584,6 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
         sp["spike_rate"] = round(len(spk) / len(costs), 4)
         sp["max_ratio"] = round(max(ratios), 1)
     ate = online_ate_aligned(odom, truth, th["online_pair_win_s"])
-    # ---- C.5 受控失败分层 v1.1(prereg §2.6;触发+恢复双证;改动须重跑 --online --selftest) ----
-    cf = controlled_failure_layer(run_dir, odom, truth, th)
-    controlled = cf["state"] == "controlled"
     # ---- D. 判决组装 ----
     vins_pass = bool(surv["reboot_n"] == 0 and surv["odom_gaps_gt"] == 0 and bas_pass)
     if not bas:
@@ -772,20 +602,11 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
         env_hard = env_hard or "RESULT.txt:ENV-FAIL"
     xline_pass = bool(four_ok and j0_jump is not None and j0_jump < 0.5
                       and j0_rev_pass is True)
-    # 受控失败计数 v1.1(§2.6):受控=与零失败同级计入 5/5;豁免面=VINS 域 fail 计数+
-    # J0 修订 raw==0(毒窗内对号跳变豁免,窗外由 cf.jumps_out==0 保证);smj≤10 全程不豁免;
-    # J0 锚差恒门/到位/避障/频率/disarm/ENV 一律不豁免(用户 10-02 裁定②)
-    cf_smj_ok = (fo.get("fj_smj") is None) or (fo["fj_smj"] <= th["online_j0_rev_smj_max"])
-    counting_pass = bool(xline_pass or (controlled and four_ok
-                         and j0_jump is not None and j0_jump < 0.5
-                         and cf["jumps_out"] == 0 and cf_smj_ok))
     t1d1 = bool(j0_jump is not None and j0_jump >= 0.5 and vins_pass)
     if env_hard and not xline_pass:
         verdict = "ENV-FAIL"
     elif xline_pass:
         verdict = "PASS"
-    elif counting_pass:
-        verdict = "PASS-CONTROLLED"
     else:
         verdict = "FAIL"
     rep["xline"] = {"four": four, "four_known": four_known, "four_ok": four_ok,
@@ -796,9 +617,7 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
                     "j0_jump_m": j0_jump, "j0_rev_pass": j0_rev_pass,
                     "fj_raw": fo.get("fj_raw"), "fj_smj": fo.get("fj_smj"),
                     "result_txt": res["result"], "env_sig": env_hard or env_soft,
-                    "env_hard": env_hard, "t1d1_domain": t1d1, "pass": xline_pass,
-                    "controlled_state": cf["state"], "counting_pass": counting_pass}
-    rep["controlled"] = cf
+                    "env_hard": env_hard, "t1d1_domain": t1d1, "pass": xline_pass}
     rep["vins"] = dict(surv, bas=bas_stat, bas_pass=bas_pass, spikes=sp, ate=ate,
                        pass_vins=vins_pass,
                        note_vins=("无 T2diag(旧二进制),Bas 轴不可判→vins 判 False"
@@ -830,9 +649,7 @@ def one_line_online(rep):
             f"vins={'✓' if v.get('pass_vins') else '✗'} "
             f"reboot={v.get('reboot_n')} gaps={v.get('odom_gaps_gt')} cov={v.get('coverage')} "
             f"bas_pk={b.get('peak')} bgs_pk={b.get('bgs_peak')} "
-            f"ate={v.get('ate', {}).get('ate_rmse_m')} morph={fo.get('morph')} "
-            f"cf={rep.get('controlled', {}).get('state')}"
-            f"{'/counting' if x.get('counting_pass') else ''}]")
+            f"ate={v.get('ate', {}).get('ate_rmse_m')} morph={fo.get('morph')}]")
 
 
 def one_line(rep):
@@ -997,7 +814,6 @@ SELFTEST_ONLINE = {
             ("bgs_peak_le", 0.01, None),       # 台账:Bgs 0.002 级
             ("vins_pass", True, None),         # T2 U3 口径:零 failure 零 reboot + Bas 健康
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
-            ("controlled_state", "clean", None),  # v1.1:零触发零 faildet(log 实测 0/0)
         ],
     },
     "run_X1_232055": {
@@ -1009,7 +825,6 @@ SELFTEST_ONLINE = {
             ("morph_diverged", True, None),    # forensics verdict:爆散
             ("vins_pass", False, None),        # 无 T2diag 旧轮→Bas 轴不可判→vins False
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
-            ("controlled_state", "uncontrolled-fail", None),  # v1.1:无触发+faildet×1(log 实测)
         ],
     },
     "run_WC2OBS1_032005": {
@@ -1085,9 +900,6 @@ def run_online_selftest(th):
                 got = fo.get("morph")
                 cond = got in ("爆散", "跳变(离散大帧跳)", "小跳/渐进劣化",
                                "数值溢出型(含 extreme 帧)")
-            elif key == "controlled_state":
-                got = x.get("controlled_state")
-                cond = got == ref
             ok = chk(f"{key} ref={ref}", cond, got) and ok
         results.append({"cell": name, "ok": bool(ok), "line": one_line_online(rep),
                         "checks": checks})

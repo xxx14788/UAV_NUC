@@ -1,0 +1,3 @@
+fig5(文本版) 特征数 track_med 分布
+  A1_route_gates: 140
+  A3_hover_gates: 139

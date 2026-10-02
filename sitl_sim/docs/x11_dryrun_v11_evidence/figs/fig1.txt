@@ -1,0 +1,11 @@
+fig1(文本版) X 线逐轮判决面板
+dir                          verdict   four      j0jump  fjraw  fjsmj reboot  t1d1    ate
+A3_hover_gates               FAIL      None/1/0/0  25.558      5      6      0     1 0.1288
+A1_route_gates               FAIL      None/1/0/0  42.083      0      0      0     1  0.028
+A2_route_base                FAIL      None/1/1/0 364.971    629    640      0     0 221.5745
+run_U3PO_211438              FAIL      None/1/1/0   2.603     33     54      0     0 2.0382
+A3_hover_gates               FAIL      None/1/0/0  25.558      5      6      0     1 0.1288
+A1_route_gates               FAIL      None/1/0/0  42.083      0      0      0     1  0.028
+A2_route_base                FAIL      None/1/1/0 364.971    629    640      0     0 221.5745
+run_U3PO_211438              FAIL      None/1/1/0   2.603     33     54      0     0 2.0382
+小计: 8 轮 / PASS 0 / T1-D1 域 4 / vins 域健康 4

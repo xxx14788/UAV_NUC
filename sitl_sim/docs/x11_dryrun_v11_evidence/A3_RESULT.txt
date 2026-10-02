@@ -1,0 +1,12 @@
+anchor(goal+5s窗): (1.012, 0.980, 0.104) | 帧稳定性 |pre-post|=25.558 m  <-- VINS 帧中途跳变!
+判据: VINS 帧跳变(25.56m)>0.5m → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)
+leg1 到位(真值) min=0.537 m (<0.75,场景门 world=sitl_world_obstacles)->0 | leg1(VINS自报) min=0.997 m
+避障 min_dist=11.530 m (>0.349)->1
+poscmd 0.0 Hz (>=50)->0
+auto_disarm->0
+跟踪 p95=-1.000 m (cmd-odom, 信息项)
+ARRIVE_WATCH1: -
+ARRIVE_WATCH2: -
+COSTGATE-FIRE n=1 first_t=47.024000000 streak=5 ratio=10.0
+FAILDET n=1
+RESULT=FAIL  (证据: /home/uav/sitl_sim/t3_results/x11_dryrun_v11/A3_hover_gates)

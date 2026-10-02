@@ -1,0 +1,9 @@
+dir,verdict,four,j0_jump,fj_raw,fj_smj,j0_rev,env_sig,t1d1,vins_pass,reboot_n,gaps,coverage,bas_peak,bgs_peak,track_med,spike_rate,ate_rmse,morph,t_star
+A3_hover_gates,FAIL,None/1/0/0,25.558,5,6,False,,1,True,0,0,0.217,0.7059,0.84259,139,0.0058,0.1288,爆散,29.5
+A1_route_gates,FAIL,None/1/0/0,42.083,0,0,True,,1,True,0,0,0.045,3.1725,0.24756,140,0.0135,0.028,爆散,32.9
+A2_route_base,FAIL,None/1/1/0,364.971,629,640,False,,0,False,0,0,0.223,,,,,221.5745,爆散,80.4
+run_U3PO_211438,FAIL,None/1/1/0,2.603,33,54,False,,0,False,0,0,1.0,1.3709,0.01701,125,0.0023,2.0382,爆散,33.9
+A3_hover_gates,FAIL,None/1/0/0,25.558,5,6,False,,1,True,0,0,0.217,0.7059,0.84259,139,0.0058,0.1288,爆散,29.5
+A1_route_gates,FAIL,None/1/0/0,42.083,0,0,True,,1,True,0,0,0.045,3.1725,0.24756,140,0.0135,0.028,爆散,32.9
+A2_route_base,FAIL,None/1/1/0,364.971,629,640,False,,0,False,0,0,0.223,,,,,221.5745,爆散,80.4
+run_U3PO_211438,FAIL,None/1/1/0,2.603,33,54,False,,0,False,0,0,1.0,1.3709,0.01701,125,0.0023,2.0382,爆散,33.9

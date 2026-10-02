@@ -1,0 +1,139 @@
+{
+ "run": "A3_hover_gates",
+ "stream_health": {
+  "odom": {
+   "n": 290,
+   "nonfinite_dropped": 0,
+   "extreme_frames": 0,
+   "mag_peak": 0.8,
+   "stamp_regression_n": 0,
+   "stamp_regression_worst_s": 0.0,
+   "stamp_regression_at_t": null
+  },
+  "prop": {
+   "n": 7508,
+   "nonfinite_dropped": 0,
+   "extreme_frames": 0,
+   "mag_peak": 87.0,
+   "stamp_regression_n": 0,
+   "stamp_regression_worst_s": 0.0,
+   "stamp_regression_at_t": null
+  },
+  "truth": {
+   "n": 34443,
+   "nonfinite_dropped": 0,
+   "extreme_frames": 0,
+   "mag_peak": 20.6,
+   "stamp_regression_n": 0,
+   "stamp_regression_worst_s": 0.0,
+   "stamp_regression_at_t": null
+  },
+  "goal": {
+   "n": 0,
+   "nonfinite_dropped": 0,
+   "extreme_frames": 0,
+   "mag_peak": 0.0,
+   "stamp_regression_n": 0,
+   "stamp_regression_worst_s": 0.0,
+   "stamp_regression_at_t": null
+  },
+  "poscmd": {
+   "n": 0,
+   "nonfinite_dropped": 0,
+   "extreme_frames": 0,
+   "mag_peak": 0.0,
+   "stamp_regression_n": 0,
+   "stamp_regression_worst_s": 0.0,
+   "stamp_regression_at_t": null
+  }
+ },
+ "clock_health": {
+  "n": 0,
+  "regression_n": 0,
+  "regression_worst_s": 0.0,
+  "regression_at_t": null
+ },
+ "events": {
+  "t_takeoff": 26.2,
+  "t_goals": []
+ },
+ "freq": {
+  "odom": {
+   "n": 290,
+   "hz_all": 9.7,
+   "hz_1sthalf": 9.7,
+   "hz_2ndhalf": 9.6
+  },
+  "prop": {
+   "n": 7508,
+   "hz_all": 208.3,
+   "hz_1sthalf": 208.4,
+   "hz_2ndhalf": 208.2
+  },
+  "imu": {
+   "n": 28749,
+   "hz_all": 208.6,
+   "hz_1sthalf": 206.5,
+   "hz_2ndhalf": 210.9
+  },
+  "truth": {
+   "n": 34443,
+   "hz_all": 250.0,
+   "hz_1sthalf": 249.9,
+   "hz_2ndhalf": 250.1
+  }
+ },
+ "imu": {
+  "n": 28749,
+  "hdr_regression_n": 0,
+  "hdr_regression_worst_s": 0.0,
+  "hdr_regression_at_t": null,
+  "dt_p50_ms": 4.0,
+  "dt_p99_ms": 12.0,
+  "dt_max_ms": 20.0,
+  "dt_min_ms": 0.0,
+  "acc_peak": 104.3,
+  "acc_sat_frames": 8,
+  "gyr_peak": 37.19,
+  "gyr_glitch_frames": 0,
+  "gyr_glitch_times": []
+ },
+ "t_star_odom": {
+  "t_star": 29.5,
+  "jump_m": 0.198,
+  "frame_dt_ms": 108.0,
+  "truth_move_m": 0.022,
+  "real_motion": false
+ },
+ "t_star_prop": {
+  "t_star": 33.1,
+  "jump_m": 0.133,
+  "frame_dt_ms": 8.0,
+  "truth_move_m": 0.124,
+  "real_motion": true
+ },
+ "frame_jumps_raw_odom": 5,
+ "frame_jumps_smoothed_odom": 6,
+ "fork_odom_prop": {
+  "n_pairs": 290,
+  "t_fork": 29.6,
+  "fork_max_m": 0.66,
+  "precursor_5s_max_m": 0.657
+ },
+ "prop_gap": null,
+ "end_state": {
+  "prop_bbox_diag_m": 94.19,
+  "odom_bbox_diag_m": 1.25,
+  "truth_z_med": 0.05,
+  "truth_z_max": 2.47,
+  "final_drift_prop_truth_m": 51.29
+ },
+ "verdict": {
+  "morph": "爆散",
+  "t_star": 29.5,
+  "divergence_type": "odom先病(优化器窗口解先毒)",
+  "note": "t*前5s窗odom-prop差已达0.657m ",
+  "poisoning_suspect": null,
+  "nearest_event": "t_takeoff@26.2s (Δ=3.3s)"
+ }
+}

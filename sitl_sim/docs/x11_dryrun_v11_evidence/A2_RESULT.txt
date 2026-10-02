@@ -1,0 +1,10 @@
+anchor(goal+5s窗): (1.011, 0.979, 0.104) | 帧稳定性 |pre-post|=364.971 m  <-- VINS 帧中途跳变!
+判据: VINS 帧跳变(364.97m)>0.5m → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)
+leg1 到位(真值) min=4.167 m (<0.75,场景门 world=sitl_world_obstacles)->0 | leg1(VINS自报) min=4.567 m
+避障 min_dist=13.556 m (>0.349)->1
+poscmd 100.0 Hz (>=50)->1
+auto_disarm->0
+跟踪 p95=529.980 m (cmd-odom, 信息项)
+ARRIVE_WATCH1: -
+ARRIVE_WATCH2: -
+RESULT=FAIL  (证据: /home/uav/sitl_sim/t3_results/x11_dryrun_v11/A2_route_base)

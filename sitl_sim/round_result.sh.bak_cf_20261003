@@ -113,23 +113,6 @@ print('ARRIVE_WATCH1: %s' % arr)
 print('ARRIVE_WATCH2: %s' % arr2)
 # T4-E4.2(2026-09-29): 环境性崩溃分口径——gzserver/px4 轮中死亡=ENV-FAIL(重试不计入飞行预算)
 import os as _os, glob as _glob
-# v1.1 受控失败标注(纯标注,不改任何判值;prereg xline_prereg_v1_1.md §3.2)
-# COSTGATE-FIRE=L1 触发行证据(first_t=WARN 头 sim 时刻,与袋时戳同钟);FAILDET=failure 计数
-import re as _re
-_cl = _os.path.join(ev, 'simvins.log')
-if _os.path.exists(_cl):
-    try:
-        _lt = open(_cl, errors='ignore').read()
-    except OSError:
-        _lt = ''
-    _fires = _re.findall(r'cost gate: streak=(\d+) over ([\d.]+)x short-window median, reboot', _lt)
-    if _fires:
-        _m = _re.search(r'\[[\d.]+, ([\d.]+)\]:[^\n]*cost gate: streak=', _lt)
-        print('COSTGATE-FIRE n=%d first_t=%s streak=%s ratio=%s' % (
-            len(_fires), _m.group(1) if _m else '?', _fires[0][0], _fires[0][1]))
-    _nfd = _lt.count('failure detection!')
-    if _nfd:
-        print('FAILDET n=%d' % _nfd)
 _envfail = False
 for _lg in [ _os.path.join(ev, 'sitl.log'), _os.path.join(ev, 'round.log') ] + _glob.glob(_os.path.join(ev, '*.log')):
     try:
