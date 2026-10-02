@@ -72,3 +72,16 @@ bash ~/sitl_sim/vins_smoke.sh --tag <TAG> [--goal X Y Z] [--leg2 X Y Z] [--world
 （判据值零变动，属接线非判据改动）+自测（五合成夹具=SYN_CTRL 受控态×5 的模板验证）。
 - **回退面**：若 U4 通告的栈号≠t2gates 系（L1 触发行不存在），受控路径自动不适用（prereg seam-4），
   x4judge 退化为 v1.0 等价行为（counting_pass=xline_pass），零额外分支。
+
+## 7. X6 并账预备清单（2026-10-03 02:3x；池件 P-G；X4 全绿后执行面的零拖拽预备）
+
+README §3（参数差异账）将增/核行：
+1. **受控分层口径行**（新）：X 线验收口径=「零 fail ∪ 受控失败」计入 5/5（用户 10-02 裁定②）；
+   判读链=prereg v1.1+wa_gate ac1df603（受控五态+PASS-CONTROLLED 计数态）；冻结型边界=爆窗未触发
+   且无恢复证据=未受控 FAIL（§2.6-e）。
+2. **X 线栈号行**（新，槽=T2 U4 定稿）：lib ____+vins_node ____ 双 md5（分水岭 285278cc→U4 定稿值）。
+3. 既有行核对（零改动预期）：gyr_w 0.0001 行/FOCAL 467.7427 行/t2_cost_gate 族行/t2_min_disparity
+   FM-③ 撤出行——X4 轮起飞前逐行与实盘 diff 核对（防静默漂移）。
+4. **git 干净面**：X4 打 tag 前工作树须净——当前在挂的他人 WIP（sitl_sim/analysis/wa_scene_contrast.py/
+   t1_evidence e2_debug_replay.log/t1_g2_exp2_watch.sh/VINS-Fusion estimator.{cpp,h}）@各持线清账。
+5. rviz 截图→vision_inputs/（口径同 T4 素材面）；X7 figs 全链再生凭据（--csv+--runs-glob 命令行入 §9）。
