@@ -126,6 +126,7 @@ t3_r3_planner_domain.py/到位型分解规划段 vs 执行段/回挖不改 5/5 �
 | U3pp A1（route/gates, t2v3_route_035325+u3pp_logs/A1） | 未受控负样本 | 无 cost 行；legacy Bas 门 49.16s 拦（Bas=3.17）；odom 净但流 +29s 死；机体未起飞 | `uncontrolled-fail` | 与 T2 原判一致；§2.6-f 同型（无 motion 无视差不再 init） |
 | U3pp A2（route/base, t2v3_route_034144, log 丢失） | 未受控负样本 | log 缺失（被覆盖）；袋侧 573 跳>0.5m、误差 max 546m、流 145.9s | `uncontrolled-fail`（log 缺失路径） | seam：log 同名覆盖债（T2 已登记编排教训）；X 线轮每轮独立 run 目录无此问题 |
 | U3PO（vins_smoke_runs/run_U3PO_211438） | 零 fail 正样本 | 全程存活 359s/零 fail（T2/T4 双判） | `clean` + xline 原判不变 | 零漂移回归锚：v1.1 判读器对其 four/J0/vins 各判值必须与 v1.0 逐位一致 |
+| **R5（T2 配对实验旗舰袋,t2v3_route_025706.bag,A1 修复栈,2026-10-03）** | （任务书后新增） | **controlled（v1.2）**=史上首个真受控正样本 | 触发@104.5 streak5/10x;onset 98.69;L2a 99 条;L2b p95 0.229m;diag 复流;毒窗 19/0;xline=FAIL(硬门不豁免实弹) | 首真样本驱动 v1.2 窗锚修正（§7）;T2 修复的恢复面获独立机器量化确认 |
 
 **消费记录**：T2 R2F 判别格终局（2026-10-02 02:26：echo 污染修复后 G6 健康/G5 实害→视差门
 撤出在线/gates 臂=纯 cost 门/死亡袋回放不可判）+U3pp 终判（04:10：gate 3/5、U4 未通告、
@@ -151,3 +152,18 @@ route 域 cost 门 0 触发、配对未发生=inconclusive-for-pairing）+T3 三
   受控豁免仅 VINS 域 fail 计数+J0 修订 raw 分账，leg2 到位门与 J0 锚差恒门不豁免；
   ④腿切分正源=goal 时戳（PR1 预演校准：leg1/leg2 切分与史实逐段对上，见
   analysis/t3_pr1_legs_preview_output.txt）。
+
+- **2026-10-03 03:3x（v1.2 修正;R5 首真受控样本驱动;早于任何 X 线起飞）**:
+  ①**毒窗锚点修正**:窗左界 fire-1.0 → **min(onset,fire)-1.0**——v1.1 的 fire-1 起窗
+  隐含零检测延迟假设,R5 实测症状首跳 98.69s 先于触发 104.5s 达 5.8s(门自身 W20+N5
+  streak+短窗中值构建的固有捕捉延迟),捕捉前症状跳 3 个被误计毒窗外;修正后窗内 19 跳
+  (含捕捉前症状+4 次 reboot churn)/窗外 0=事件对号语义成立。
+  ②**L1b 上界 5.0→10.0s**(对齐毒窗尺度):R5 捕捉延迟 5.81s 证伪 5.0s;SYN_LATE 反例
+  (迟 50s)仍被拦=迟触发防线不变。
+  ③**R5 终判(v1.2)**:state=**controlled**(L2a 复流 99≥50/L2b 恢复段自对齐 p95=0.229m/
+  diag_after_fire=True=修复栈 failure 后诊断复流,旧栈静默模式已被 A1 修复消除);
+  xline verdict=FAIL(four=0/1/1/0,到位真值 4.264m+J0 4.682m)=**硬门不豁免语义实弹验证**
+  (受控只免 VINS 域 fail 计数)。R5=T2 配对实验旗舰袋(t2v3_route_025706.bag 23G,保全),
+  判读产物=x11_dryrun_v11/R5_pairing_fix/。
+  ④v1.1 判读器(ac1df603)对 R5 的 triggered-no-recovery 误判记录在案不抹除(过程账);
+  v1.2 判读器=4cb6acc7,全套电池绿(在线 selftest 三格/SYN 正反例×5/边界例×3)。

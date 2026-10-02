@@ -88,7 +88,7 @@ DEFAULT_THRESH = {
     "cf_post_p95_max_m": 0.5,      # L2b 恢复段误差 p95 上界(恢复段自对齐,非出生对齐)
     "cf_jump_m": 0.5,              # 帧跳口径 |dP|>0.5(与 J0/forensics 对齐)
     "cf_jump_dt_s": 0.5,           # 帧跳配对窗(相邻帧 dt 上限)
-    "cf_onset_grace_s": 10.0,      # L1b 起点窗约束 v1.2(§2.6-g):fire ≤ onset+此值(对齐毒窗尺度;v1.1=5.0,R5 实测捕捉延迟 5.8s 证伪)
+    "cf_onset_grace_s": 5.0,       # L1b 起点窗约束(v1.1 §2.6-g):t_fire ≤ t_onset+此值(迟触发不入受控)
     "cf_onset_err_m": 10.0,        # 起点标记之一:出生对齐 |odom-truth|>此值(T2 急窗口径)
 }
 
@@ -555,9 +555,7 @@ def controlled_failure_layer(run_dir, odom, truth, th):
        prop 无视觉自由积分,不作跟踪证据,seam-3)条数下限;
     L2b 恢复-误差=恢复段自对齐(段首帧对齐;reboot 重锚换系,出生对齐会吞系差)误差
        p95 上界;[T2diag] 复流仅报告不入判(t2gates 栈 failure 后日志静默,seam-1)。
-    帧跳按毒窗内外分账(v1.2:窗=[min(onset,fire)-1, fire+pw]——onset 锚定,v1.1 的
-    fire-1 起窗假设零检测延迟被 R5 首真样本证伪,症状必先于捕捉):窗内=事件对号豁免
-    (含捕捉前症状跳),窗外必须 0(§2.6-c)。
+    帧跳按毒窗 [tf-1, tf+pw] 内外分账:窗内=reboot 对号豁免,窗外必须 0(§2.6-c)。
     state∈{controlled, triggered-no-recovery, uncontrolled-fail, clean, log-missing}。"""
     pw = th["cf_poison_win_max_s"]
     out = {"log_exists": False, "fires_n": 0, "first_fire_t": None, "streak": None,
@@ -589,40 +587,10 @@ def controlled_failure_layer(run_dir, odom, truth, th):
         out["first_fire_t"], out["streak"], out["ratio"] = fires[0]
     odom = odom or []
     tf = out["first_fire_t"]
-    # v1.2: 起点标记先行计算(onset=首帧跳或 err>10m 更早者)——毒窗与 L1b 都以它锚定;
-    # 窗左界=min(onset, tf)-1(v1.1 的 tf-1 假设零检测延迟,R5 证伪:症状必先于捕捉)
-    onset_markers = []
-    if odom:
-        for i in range(1, len(odom)):
-            dt = odom[i][0] - odom[i - 1][0]
-            if dt <= th["cf_jump_dt_s"] and \
-                    math.dist(odom[i][1:4], odom[i - 1][1:4]) > th["cf_jump_m"]:
-                onset_markers.append(odom[i][0])
-                break
-        if truth:
-            ts_t = [r[0] for r in truth]
-            g0 = min(truth, key=lambda r: abs(r[0] - odom[0][0]))
-            off = (g0[1] - odom[0][1], g0[2] - odom[0][2], g0[3] - odom[0][3])
-            for t, x, y, z in odom:
-                j = bisect_left(ts_t, t)
-                best = None
-                for k in (j - 1, j):
-                    if 0 <= k < len(truth) and abs(truth[k][0] - t) <= 0.2:
-                        if best is None or abs(truth[k][0] - t) < abs(truth[best][0] - t):
-                            best = k
-                if best is None:
-                    continue
-                g = truth[best]
-                if math.dist((x + off[0], y + off[1], z + off[2]),
-                             (g[1], g[2], g[3])) > th["cf_onset_err_m"]:
-                    onset_markers.append(t)
-                    break
-    onset_t = round(min(onset_markers), 2) if onset_markers else None
     if odom and tf is not None:
-        win_lo = (min(onset_t, tf) if onset_t is not None else tf) - 1.0
-        win_hi = tf + pw
+        win_lo, win_hi = tf - 1.0, tf + pw
     else:
-        win_lo = win_hi = None
+        win_lo, win_hi = None, None
     # 帧跳分账(无触发/无钟时全计窗外=未拦截证据面)
     jumps_in = jumps_out = 0
     out_jump_ts = []
@@ -641,15 +609,46 @@ def controlled_failure_layer(run_dir, odom, truth, th):
         out["evidence"].append("毒窗外帧跳×%d t=%s" % (len(out_jump_ts),
                                 ",".join(str(t) for t in out_jump_ts[:5]))
                                + ("(无触发钟,全计窗外)" if tf is None else ""))
-    # L1b 起点窗约束(§2.6-g,v1.2 缩并:onset 已在窗锚定段计算)
-    out["onset_t"] = onset_t
+    # L1b 起点窗约束(v1.1 §2.6-g;T2 01:45 预检格输入):t_onset=爆窗首证(首帧跳或
+    # 出生对齐 |odom-truth|>cf_onset_err_m,取更早);迟触发(fire>onset+grace)不入受控。
+    out["onset_t"] = None
     out["l1b_pass"] = None
-    if tf is not None and onset_t is not None:
-        out["l1b_pass"] = tf <= onset_t + th["cf_onset_grace_s"]
-        if out["l1b_pass"] is False:
-            out["evidence"].append(
-                "L1b 迟触发(fire %.2f > onset %.2f+%.1fs)=§2.6-g 不入受控"
-                % (tf, onset_t, th["cf_onset_grace_s"]))
+    if tf is not None and odom:
+        onset_cand = []
+        first_jump_t = None
+        for i in range(1, len(odom)):
+            dt = odom[i][0] - odom[i - 1][0]
+            if dt <= th["cf_jump_dt_s"] and \
+                    math.dist(odom[i][1:4], odom[i - 1][1:4]) > th["cf_jump_m"]:
+                first_jump_t = odom[i][0]
+                break
+        if first_jump_t is not None:
+            onset_cand.append(first_jump_t)
+        if truth:
+            ts_t = [r[0] for r in truth]
+            g0 = min(truth, key=lambda r: abs(r[0] - odom[0][0]))
+            off = (g0[1] - odom[0][1], g0[2] - odom[0][2], g0[3] - odom[0][3])
+            for t, x, y, z in odom:
+                j = bisect_left(ts_t, t)
+                best = None
+                for k in (j - 1, j):
+                    if 0 <= k < len(truth) and abs(truth[k][0] - t) <= 0.2:
+                        if best is None or abs(truth[k][0] - t) < abs(truth[best][0] - t):
+                            best = k
+                if best is None:
+                    continue
+                g = truth[best]
+                if math.dist((x + off[0], y + off[1], z + off[2]),
+                             (g[1], g[2], g[3])) > th["cf_onset_err_m"]:
+                    onset_cand.append(t)
+                    break
+        if onset_cand:
+            out["onset_t"] = round(min(onset_cand), 2)
+            out["l1b_pass"] = tf <= min(onset_cand) + th["cf_onset_grace_s"]
+            if out["l1b_pass"] is False:
+                out["evidence"].append(
+                    "L1b 迟触发(fire %.2f > onset %.2f+%.1fs)=§2.6-g 不入受控"
+                    % (tf, out["onset_t"], th["cf_onset_grace_s"]))
     if tf is not None and odom:
         seg = [p for p in odom if win_hi <= p[0] <= win_hi + th["cf_recover_win_s"]]
         out["recover_msgs"] = len(seg)
