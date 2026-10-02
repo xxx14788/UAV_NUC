@@ -173,3 +173,15 @@
 - X 线判读 SLA 与 §7 时序条款无冲突（wa_gate --online 秒级出判决，粗判面归 T4 供给侧不变）。
 - 工具版本凭据：t3_wa_gate.py=ac1df603（S8 修复后）/round_result.sh=b21c8c6e/figs=d8de5747；
   识别器每改一版必跑 --online --selftest（三格绿）+历史 re-regression（纪律，已跑 30 轮零意外漂移）。
+
+### 9.1 判读链工具版本凭据集中表（2026-10-03 02:2x；T3 池件 P-I；每改一版此表刷新+重跑 selftest）
+
+| 件 | 版本凭据（md5 前 8） | 角色 | 改版纪律 |
+|---|---|---|---|
+| sitl_sim/round_result.sh | b21c8c6e（v1.1 标注行版；.bak_cf_20261003=ecc53a98） | 四指标正源+场景门+J0 锚差+COSTGATE/FAILDET 标注 | --online --selftest 三格绿 |
+| sitl_sim/analysis/t3_wa_gate.py | ac1df603（S8 修复版；.bak_cf=f0905154 前身/.bak_regex 备份/.bak_cf_20261003=93c5d187 原始） | xline/vins/受控三层判决+计数语义 | --online --selftest+--selftest 双绿+历史 re-regression |
+| sitl_sim/analysis/t3_xline_report_figs.py | d8de5747（fig2/3 文本版） | fig1-5 再生（fig6=X5 后） | --selftest |
+| sitl_sim/analysis/t3_legs_rescan.py | 沿用 v7.2 版（81 行 csv 2026-10-03 重扫一致） | legs 口径+x4judge（v1.1 集成设计=opcard §6 未实施） | scan 全量对比 |
+| docs/xline_prereg_v1_1.md | f4281363（§7 修正至受控×leg2 语义） | 判据冻结正源 | 修正记录条款制 |
+| sitl_sim/analysis/vins_divergence_forensics.py | 未动（forensics_v2 既有） | J0 修订数据源+形态 | — |
+| docs/xline_opcard_v1.md | 含 §5 v2 走查/§6 x4judge 设计 | 操作卡 | — |
