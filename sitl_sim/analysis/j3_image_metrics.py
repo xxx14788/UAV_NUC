@@ -166,7 +166,8 @@ def _reject_zero_readable(args, why):
     sys.stderr.write('ERROR: %s: %s, no statistics produced\n'
                      % (os.path.abspath(args.frames_dir), why))
     with open(args.out, 'w') as f:
-        json.dump({'error': why,
+        json.dump({'schema_version': '2',  # C14-FIX-4: 拒绝产出亦标键集代际
+                   'error': why,
                    'frames_dir': os.path.abspath(args.frames_dir)},
                   f, indent=1, ensure_ascii=False)
     sys.exit(2)
@@ -193,7 +194,21 @@ def main():
 
     with open(os.path.join(args.frames_dir, 'manifest.json')) as f:
         man = json.load(f)
-    frames = [fr for fr in man['frames'] if fr['tag'] in ('', 'next')]
+    mv = man.get('schema_version')  # C14-FIX-4: 键集代差版本化(无版本=代际1 legacy)
+    if mv is None:
+        manifest_legacy = True
+    elif str(mv) == '2':
+        manifest_legacy = False
+    else:
+        sys.stderr.write('ERROR: MANIFEST-SCHEMA-UNKNOWN: manifest schema_version=%r 不支持'
+                         '(支持: 缺省/1=legacy 兼容读, 2=严格)\n' % (mv,))
+        sys.exit(3)
+    if manifest_legacy:  # 兼容读: 代际1 旧键集缺 tag/seg 时补代际默认值
+        frames = [dict(fr, tag=fr.get('tag', ''), seg=fr.get('seg', 0))
+                  for fr in man['frames']]
+        frames = [fr for fr in frames if fr['tag'] in ('', 'next')]
+    else:
+        frames = [fr for fr in man['frames'] if fr['tag'] in ('', 'next')]
     cache = {}
     per_frame = []
     for fr in frames:
@@ -238,6 +253,7 @@ def main():
         return aggregate([x[0] for x in v], [x[1] for x in v])
 
     out = {
+        'schema_version': '2',  # C14-FIX-4: 输出键集代际(2=含 W3 供给面 12 键代)
         'frames_dir': os.path.abspath(args.frames_dir),
         'bag': man['bag'],
         'camera_info': man.get('camera_info'),
@@ -271,6 +287,9 @@ def main():
             gam.append(pairs[m['file']]['med_gray'] / m['med_gray'])
     if gam:
         out['metrics']['gamma_pair'] = aggregate(gam, [m['seg'] for m in prim if m['file'] in pairs])
+    out['manifest_schema_version'] = '1' if manifest_legacy else '2'
+    if manifest_legacy:
+        out['legacy_keys'] = True  # C14-FIX-4: 旧键集兼容读注记
 
     out = _sanitize(out)  # C14-FIX-2: per_frame 等逐字段清洗非有限值 -> null
     with open(args.out, 'w') as f:

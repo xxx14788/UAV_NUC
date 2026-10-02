@@ -93,7 +93,8 @@ def _reject_zero_readable(args, why):
     sys.stderr.write('ERROR: %s: %s, no statistics produced\n'
                      % (os.path.abspath(args.frames_dir), why))
     with open(args.out, 'w') as f:
-        json.dump({'error': why,
+        json.dump({'schema_version': '2',  # C14-FIX-4: 拒绝产出亦标键集代际
+                   'error': why,
                    'frames_dir': os.path.abspath(args.frames_dir)},
                   f, indent=1, ensure_ascii=False)
     sys.exit(2)
@@ -108,11 +109,24 @@ def main():
 
     with open(os.path.join(args.frames_dir, 'manifest.json')) as f:
         man = json.load(f)
-    lf = sorted([fr for fr in man['frames']
+    mv = man.get('schema_version')  # C14-FIX-4: 键集代差版本化(无版本=代际1 legacy)
+    if mv is None:
+        manifest_legacy = True
+    elif str(mv) == '2':
+        manifest_legacy = False
+    else:
+        sys.stderr.write('ERROR: MANIFEST-SCHEMA-UNKNOWN: manifest schema_version=%r 不支持'
+                         '(支持: 缺省/1=legacy 兼容读, 2=严格)\n' % (mv,))
+        sys.exit(3)
+    if manifest_legacy:  # 兼容读: 代际1 旧键集缺 tag 时补代际默认值
+        frames = [dict(fr, tag=fr.get('tag', '')) for fr in man['frames']]
+    else:
+        frames = list(man['frames'])
+    lf = sorted([fr for fr in frames
                  if ('cam_left' in fr['topic'] or 'infra1' in fr['topic']
                      or 'left' in fr['topic']) and fr['tag'] == ''],
                 key=lambda x: x['t_rec'])
-    rf = sorted([fr for fr in man['frames']
+    rf = sorted([fr for fr in frames
                  if ('cam_right' in fr['topic'] or 'infra2' in fr['topic']
                      or 'right' in fr['topic']) and fr['tag'] == ''],
                 key=lambda x: x['t_rec'])
@@ -157,6 +171,7 @@ def main():
             args, 'no readable frames (0 of %d frame files readable)' % (2 * nf))
 
     out = {
+        'schema_version': '2',  # C14-FIX-4: 输出键集代际
         'frames_dir': os.path.abspath(args.frames_dir),
         'lk_params': {'win': list(LK_WIN), 'maxLevel': LK_MAXLVL, 'eps': LK_EPS,
                       'gFT': [FT_QUALITY, FT_MINDIST, FT_MAXCNT]},
@@ -176,6 +191,9 @@ def main():
             'p90_ratio_stereo_over_temporal': out['stereo_pool']['p90'] / max(out['temporal_pool']['p90'], 1e-9),
             'h6_prediction': 'stereo tail heavier (ratio > 1) supports FPN asymmetry',
         }
+    out['manifest_schema_version'] = '1' if manifest_legacy else '2'
+    if manifest_legacy:
+        out['legacy_keys'] = True  # C14-FIX-4: 旧键集兼容读注记
     with open(args.out, 'w') as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
     print(json.dumps({k: out[k] for k in ('temporal_pool', 'stereo_pool', 'h6_tail_compare')
