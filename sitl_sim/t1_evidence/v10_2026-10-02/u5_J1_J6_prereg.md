@@ -37,3 +37,5 @@ E-5a 改动=launch 开关（不破坏现链），实现过 STATUS 预告 15min �
 - **VINS 域事故轮按受控/未受控分层标注**（受控=cost 门在场且触发于爆窗起点±5s 内、reboot 后 odometry 恢复输出——判据口径同 T3 prereg v1.1 §2.6-g L1b）：受控性只作 J 判读的**分项注记列**（J-pass-controlled / J-fail-controlled / J-fail-uncontrolled 三态计数），**不改 J1-J6 判据本身**。
 - 依据：T2 单元 2 改判链（A3"恢复"不成立案）与 T3 v8.7 受控识别器在库（wa_gate f0905154）；判读时直接消费其 PASS-CONTROLLED 计数路径，不重复实现。
 - 栈号位（C-10）：本节不锁栈；复排执行时按 T2 栈定稿通告在 §0 登记（现行候选=lib d43504d9+node 4701bd3a，配对实验在测未定稿）。
+
+- 栈号登记（2026-10-03 03:2x）：依 T2 03:20 栈定稿通告，E-4 复排在用栈=**lib d43504d9 + vins_node 4701bd3a**（fixface 栈，双件存档 stack_archive/）；本行=C-10 关账标记。
