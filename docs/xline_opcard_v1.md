@@ -93,3 +93,22 @@ README §3（参数差异账）将增/核行：
   fj_raw/smj=CSV 同名列 ✓；判决=CSV `verdict`（v1.1 增 PASS-CONTROLLED 态入计数）+
   `controlled_state`（在 wa_gate_online.json，CSV 无此列——X7 表受控列从 JSON 取，勿在 CSV 找）。
   列错位风险=1 处（t_star≠锚差漂移），已在本条钉死。
+
+## 8. X 线冲刺序列沙盘（2026-10-03 02:4x；池件 P-J；解锁窗零拖拽终页；判据=prereg v1.1，操作=§1-4）
+
+解锁触发=T2 U4 点名 @T3（STATUS）→ 首轮起飞前四查：①栈号双 md5 实读填 prereg 槽+台账 ②df>15G（起飞门）
+③T2 STATUS 尾无未决异议 ④selftest 三格绿（判读链健康证明，输出存档）。
+
+| 序 | 轮 | 命令要点 | 锁 | 判读（轮毕即跑） | 特殊点 |
+|---|---|---|---|---|---|
+| 1 | X1prime | `vins_smoke.sh --tag X1final` | T3-X4 级 | round_result 自动+wa_gate --online+figs | 首轮定标带图体积（25-45G 预算修正） |
+| 2 | X2① | `--tag X2g1 --goal 7 -4 1` | 续 | 同上+受控态登记 | goal 显式（防默认吃） |
+| 3 | X2③ | `--tag X2g3 --goal 8 -1 1` | 续 | 同上 | — |
+| 4 | X2④ | `--tag X2g4 --world sitl_world_obstacles_v2 --goal 8 -1 1` | 续 | 同上+box_D/E 核对（opcard §5） | 附加对照轮不入分母 |
+| 5 | X3② | `--tag X3l2a --goal 7 -4 1 --leg2 1 0 1` | 续 | +legs 面+锚差漂移（prereg §7 互操作） | 两段式 |
+| 6 | X3⑤ | `--tag X3l2b --goal 7 -4 1 --leg2 0 0 1` | 续 | 同上 | — |
+| 7 | X4 | 五连飞=上表 5 计数轮位形复跑（或按 U4 口径修正位形） | T3-X4 | x4judge v1.1 集成（opcard §6）+5/5 表 | 打 tag 前五查=opcard §4 |
+
+节律纪律：每轮间 pgrep CLEAN+锁活性；df 每轮记录；ENV-FAIL→1 次重试（同位形）；连败 2 同型→prereg §4
+回挖分支（不放宽）；T1-D1 域轮（j0≥0.5 且 vins 健康）→不计 5/5 入回挖；受控轮→PASS-CONTROLLED 计数+
+回挖查未受控分量。判读产物三件/轮（RESULT.txt/wa_gate_online.json/forensics）+受控态入台账行。
