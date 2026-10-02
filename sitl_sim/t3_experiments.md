@@ -1029,3 +1029,18 @@ WC2OBS1 爆散/U3PO 导航 223Hz）p50 8-12ms、p95≤36ms、max 56ms、零帧�
 ## 任务书 v8.5 完成清账版落盘（2026-10-02 14:4x；Windows 权威 plans/2026-10-02_T3_planner_vision_acceptance_v8.5.md + NUC 备份 plans_T3_v8.5.md md5 bcd068a5；v8.4 弃读横幅）
 
 - 结构=完成清账六节（A R3 证据包/B X 线预备五件+回归/C U3p 基线/D Z1.2 预写+stampage 基线/E hypot+figs 管线/F 簿记基建，提交链 1ae933d→04de7ba 共 8 笔未推）+剩余待办五项（X 线全链未跑一轮/Z1.2 未接线/X4 袋保全随轮启动/.bak 清理未到条件/持续义务）+卡点客观在册（K-1 按 U3pp 3/5 链况刷新/K-2 K-3 未见/K-7 df 30G vs 需 25-45G+水位线/K-8 WAN 断 14h+ 三代环耗尽两代/④凭据栈条件性 285278cc vs fixface 新栈 5dde4d7e）——只述事实与解锁信号，不开处方（用户 10-02 指示）。
+
+
+## T3 v8.7 会话（2026-10-03 00:39-）：单元 1（prereg v1.1+受控失败识别器）+1.5（判读链干跑）
+
+**单元 1.1 prereg v1.1**（docs/xline_prereg_v1_1.md，md5 8cd6c231）：受控失败分层判据冻结——受控=触发+恢复双证（L1 触发行 `cost gate: streak=N over Mx short-window median, reboot`+L2a 毒窗后求解器 odom 复流≥50 条/10s+L2b 恢复段自对齐误差 p95≤0.5m）；中毒窗上界 10s 冻结（窗内帧跳=reboot 对号豁免，窗外必须 0）；冻结型边界条款写死（§2.6-e：爆窗未触发且无恢复=未受控 FAIL；急冻族只能零 fail 段过门）；§2.6-f 触发-无再 init 型覆盖；栈号留槽（T2 U4 定稿即填）；v1.0 从未被已飞 X 轮消费→v1.1 取代为唯一在用版。预检格结论消费=R2F 格（回放域不可判+视差门撤出+纯 cost 门）+U3pp 终判（route 0 触发/配对未发生/4/4 爆率）+T3 三重取证（下条）。
+
+**单元 0（前置取证，计划外产出）U3pp A3/A4 存档证据翻案**：①A3（t2v3_hover_033842）cost 门触发真实（sim47.024，Bas0.376/Bgs0.843 带内=旧门必漏），但恢复不成立——odom 末条 46.9 早于触发行、末 0.5s 五连跳 0.36-0.54m、prop 毒至 99m 于 52.9 死、px4ctrl D2 门 46.25 起拒帧 851+（|p| 至 67m+，吃 prop 流）、truth z 冲 2.47m→~60s 落地、armed 终 True=物理摔机；T2 原判"reboot 恢复健康"的"袋 err p95=0.094"实为触发前主导全流统计 ②A4（t2v3_hover_033544，T2 判 PASS）truth z 全程≤0.19=从未起飞，odom 同样 +28s 终止（log 被同名覆盖） ③结论=受控路径存档零正样本，cost 门触发面成立/恢复面无实证；U4 不通告结论不受影响（@T2 01:35 STATUS 通告对账）
+
+**单元 1.2 受控失败识别器**（红线 24 全流程：.bak_cf_20261003 双备份+三方 md5+cmp 逐字+三重验证）：t3_wa_gate.py（0d434030）增 controlled_failure_layer（五态 controlled/triggered-no-recovery/uncontrolled-fail/clean/log-missing）+counting_pass 计数语义（受控=与零失败同级计入 5/5；豁免面仅 VINS 域 fail 计数+J0 修订 raw 的毒窗分账；J0 锚差/到位/ENV 硬门不豁免）+verdict 新增 PASS-CONTROLLED 态+selftest 钉值；round_result.sh（b21c8c6e）增 COSTGATE-FIRE/FAILDET 纯标注行（判值零变动）。三重验证=在线 selftest 三格全绿零漂移+回放 selftest 三格全绿+U3PO 新旧判读 14 项逐位一致（controlled=clean 为唯一新增面）。
+
+**单元 1.5 判读链干跑**（analysis/t3_x11_dryrun.sh+docs/xline_dryrun_v11_report.md 8e1c7a4a）：四样本全链（round_result→wa_gate --online→CSV→figs）零手工贯通，机器判定与 prereg §6 预期全对上——A3=triggered-no-recovery/A1=uncontrolled-fail/A2=log-missing（缺失路径正确降级）/U3PO=clean（零漂移锚）。接缝清单 S1-S7 入报告：S1=A3 判读翻案（重大@T2）/S2=A4 样本外发现/S3=failure 后日志静默（恢复判据只能走袋侧）/S4=紧凑袋 odom 结构性截断/S5=prop 流不可作恢复证据/S6=log 缺失降级/S7=forensics 自动再生+figs 占位。链就绪结论=可用，保留项=L2 阈值从严首版（受控正样本零存档，首个带触发 X 线轮=首次实证）。
+
+**单元 1.3 X7 骨架 v0.2**（sitl_sim/docs/t3_xline_acceptance_report.md，ea734b31，.bak_v02_20261003）：§7 sim2real 增第 6 条受控失败分层语义行（tag 证明力=VINS 闭环+事故受控兜底，不含零事故承诺；受控路径零存档正样本的降格声明条款）；§8 残余风险 R8=急冻族载体未隔离+cost 门零 route 证据（配对未发生如实）/R9=受控路径零正样本+数据面三限；§1 判决器行更新 v1.1 层。
+
+现场：锁空全程 0 锁（判读/文档/干跑全只读+NUC 本地写）；df 30G；WAN 断维持（K-8，提交随推挂账）。X线解锁仍=T2 U4 通告（K-1）。
