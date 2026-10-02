@@ -133,3 +133,61 @@
 - 本机：`D:/drone_VINS/t4_work_20261002/work_selftest/`——results.jsonl（33 行逐格记录）、build_and_run.py（构造+驱动脚本，NUC 副本 /tmp/build_and_run_selftest.py）、j3_*.py 三工具只读副本（md5 与 NUC 端一致）、case3_out_metrics.json（含 34 处 NaN，grep -c "NaN"=34）、case3_out_fb.json、case9_out_metrics.json、case12_out_metrics.json。
 - NUC：/tmp/t4_v54_selftest/（cases/ 11 目录＋out_*.json 产出、logs/ 每格 stdout/stderr 原文、results.jsonl），合计 26M。
 - 工具零修改：NUC 端 md5sum 与本机 scp 副本 md5sum 逐字节一致（见文首三行 md5）。
+
+## 修复后复跑登记（2026-10-03，C-14）
+
+- 执行机：NUC uav4，`ssh nuc`；python3 3.8.10 / cv2 4.2.0 / numpy 1.17.4（2026-10-03 本轮实测，与文首同源）；各格执行前 `source /opt/ros/noetic/setup.bash`。
+- 四笔修复（仓库 ~/catkin_ws，branch main，作者 rick，未 push）：
+  - C14-FIX-1 `3a2722f13982f5079b1d535e639715d7ccfa7d75`（零可读帧拒绝，image+fb）
+  - C14-FIX-2 `d2bb538bc2cefc0ac94ff942b5b9d905a64fb29a`（NaN 字面量清洗 null + allow_nan=False 兜底，image）
+  - C14-FIX-3 `282a707287b42b91407c7b8d9629b7721861cbe6`（density shift 来源单一化 explicit/legacy/shift-file）
+  - C14-FIX-4 `ea4d12b54133a5b031d54891613005930bd96dd8`（schema_version 键集代际 + manifest 版本分支，image+fb 对称）
+- 被测工具（修复后，NUC 端 `sitl_sim/analysis/` HEAD 实测，与本机 c14_fix/ 副本一致）：
+  - `j3_image_metrics.py` md5 `3721399e7a78e42f6e1cd81a2680286e`
+  - `j3_fb_residual.py` md5 `08cb8829d180dad91445f1d436d547a2`
+  - `j3_feature_density.py` md5 `7f45974b3a2a81e60c6293865ac3eb5e`
+- 执行方式：合并终回归单次跑批 45 行 = 原 33 行（v57 跑批原样）+ 新增 12 行扩展格（C-14 夜审要求：每处修复 ≥2 格 edge case）。runner `~/sitl_sim/t4_selftest/build_and_run_v58_audit.py`（= v57 正本 md5 239b89f0… 逐字节保留 + 审计扩展块），独立审计 checker `check_audit_ext.py`，驱动 `regress_audit_v58.sh`（守卫：SITL.lock 原子取锁 t4wf＋df≥20G＋gzserver/rosbag 双 0；批次 timeout 900 nice -n 10）。原 33 行由修复工程师 expected_fix4.json 判绿（check_fix4.py，含 FIX-3 探针 P1-P7、FIX-4 探针 Q1-Q4），扩展 12 行由审计员期望表判绿，两 checker 互不依赖。实测最长格 0.75 s，无格触达 timeout（无挂死行）。尾行 `MATRIX-GREEN=绿 (merged 45 rows)`，双 checker rc=0。
+- 本轮证据留档：本机 `work_selftest/audit_v58_evidence/`（results.jsonl 45 行、双 checker 日志、verdict 文件）；NUC /tmp/t4_v58_audit_*.log、/tmp/t4_v57_selftest/{results.jsonl,logs/}。
+- 分类词在原四词基础上扩注一类：**零可读拒绝**＝rc=2、out 顶层恰为 `{schema_version, error, frames_dir}`、stderr 含 ERROR 行（属"干净拒绝"的带产出变体，由 FIX-1 引入）。
+
+### 0a) 修复后期望分类表（原 30 格/33 行）
+
+| 用例 | metrics | fb | density_offset |
+|---|---|---|---|
+| U1 空帧窗（1a 空目录＋1b 仅manifest） | 1a 干净拒绝 / 1b 零可读拒绝 | 1a 干净拒绝 / 1b 零可读拒绝 | 干净拒绝×2 行 |
+| U2 单帧窗 | 干净通过 | 干净拒绝 | 干净拒绝 |
+| U3 全白帧 | 干净通过（NaN 已清洗 null，非有限字面量 0） | 带病输出（空 pool） | 干净拒绝 |
+| U4 全黑帧 | 干净通过（同 U3） | 带病输出（空 pool） | 干净拒绝 |
+| U5 恒定噪声帧 | 干净通过 | 干净通过 | 干净拒绝 |
+| U6 截断损坏 PNG | 零可读拒绝（rc=2） | 零可读拒绝（rc=2） | 干净拒绝 |
+| U7 manifest 时刻重复 | 带病输出（重复计入） | 干净通过 | 干净拒绝 |
+| U8 manifest 缺必填字段 | 干净通过（legacy 兼容读，n_primary=17，legacy_keys=true） | 干净通过（legacy 兼容读） | 干净拒绝 |
+| U9 尾随空格文件名 | 零可读拒绝（rc=2） | 零可读拒绝（rc=2） | 干净拒绝 |
+| U12 非常规位深/尺寸帧 | 干净通过 | 干净拒绝 | 干净拒绝 |
+
+行计（33 行）：干净通过 9、零可读拒绝 6、带病输出 3、干净拒绝 15、挂死 0。对照修复前（§3：干净通过 5、带病输出 10、干净拒绝 18）：FIX-1 翻转 6 行（U1b/U6/U9 × metrics/fb → rc=2 零可读拒绝）、FIX-2 翻转 2 行（U3/U4 × metrics：NaN 字面量 34→0，转干净通过）、FIX-4 翻转 2 行（U8 × metrics/fb：KeyError → legacy 兼容读转干净通过）；其余 23 行分类保持。
+
+### 0b) 扩展格期望分类表（新增 12 行，逐格）
+
+| 格（case\|tool） | rc | 产出 | 分类 | 覆盖面 |
+|---|---|---|---|---|
+| case13_partread \| metrics | 0 | 完整统计 json，n_primary=15（17 帧仅 L_s000 截断不可读），legacy_keys=true | 干净通过 | FIX-1 新退出码误杀面：部分可读帧不触发零可读拒绝，正常出值 |
+| case13_partread \| fb | 0 | pool 双非空＋h6_tail_compare 在位 | 干净通过 | FIX-1 同上（fb 侧） |
+| case14_allgone \| metrics | 2 | out 顶层恰 [error, frames_dir, schema_version]，error 字段以 "no readable frames" 开头，严格 JSON 0 非有限 | 零可读拒绝 | FIX-1 error 字段旧消费者兼容面（缺文件型触发，区别于 U6 截断型） |
+| case14_allgone \| fb | 2 | 同上 | 零可读拒绝 | FIX-1 同上（fb 侧） |
+| case15_mixed_nanwhite \| metrics | 0 | 白/噪声混排：per_frame 清洗 null ≥8 处，grad_dir_maxbin_frac n≥8 仍可算，非有限字面量 0 | 干净通过 | FIX-2 NaN 上游清洗后统计仍可算 |
+| case18_infreject_case3dir \| metrics_infreject | 1 | 绕过 _sanitize 注入非有限值：allow_nan=False 兜底抛 ValueError（Traceback），产出文件截断为不可解析空壳，无非有限字面量落盘 | 干净拒绝（rc=1） | FIX-2 合法 inf 序列化拒绝路径 |
+| case19_shiftconflict \| density_shiftconflict | 3 | stderr 含 `SHIFT-CONFLICT` ASCII 标签，无产出 | 干净拒绝（rc=3） | FIX-3 --shift 与 --shift-file 并给报错 |
+| case20_legacyshift \| density_legacy | 0 | stdout json：shift=[1.01,0.98,0.104]、shift_source="legacy"（探针袋 2×PointCloud×8点+odometry） | 干净通过 | FIX-3 --allow-legacy-shift 复现旧轮（shift 精确值另由 check_fix4 P3 探针全量断言） |
+| case16_legacykeys \| metrics | 0 | 旧键集（无 tag/seg、无 schema_version）兼容读，n_primary=17，legacy_keys=true | 干净通过 | FIX-4 旧键集输入兼容读 |
+| case16_legacykeys \| fb | 0 | pool 双非空，legacy_keys=true | 干净通过 | FIX-4 同上（fb 侧） |
+| case17_schemavers9 \| metrics | 3 | stderr 含 `MANIFEST-SCHEMA-UNKNOWN`，无产出 | 干净拒绝（rc=3） | FIX-4 未知 schema_version 拒绝 |
+| case17_schemavers9 \| fb | 3 | 同上 | 干净拒绝（rc=3） | FIX-4 同上（fb 侧） |
+
+行计（12 行）：干净通过 6、零可读拒绝 2、干净拒绝 4、挂死 0。合计 45 行：干净通过 15、零可读拒绝 8、带病输出 3、干净拒绝 19、挂死 0。
+
+### 0c) 本轮复跑说明与审计备注
+
+- 审计件两处缺陷在首跑暴露并修正后才有终回归（均系审计 harness 自身，与被测工具无关）：case18 探针 wrapper 误将模块 spec 指向目录（漏拼文件名）；case20 忘记 `--world-boxes` 有三盒默认值致 stdout_head 240 字符窗口盖不住 shift_source（改为单盒显式声明）。
+- 已知边界（本轮登记，不属四笔修复范围）：fb 时序残差分支对"前帧可读＋相邻帧不可读"的组合会以 cv2.error 崩溃退出（j3_fb_residual.py 主循环 `if i+1 < nf` 无 None 守卫，calcOpticalFlowPyrLK 不接受空帧）；原 33 格未覆盖该面，扩展格 case13 特意只截首帧 L_s000（pts=None 全短路）以隔离 FIX-1 判定面。该组合面的行为归类留待后续轮。
+- 判读红线遵守：本节为复跑登记与分类对照，不出 PASS/FAIL 判读语；绿/红仅指"实测行为与期望分类表逐格一致"。
