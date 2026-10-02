@@ -42,3 +42,13 @@ X 线五轮=首批在 285278cc 栈+四件套防线下真正争取 <0.75 的轮�
   其到位口径由 T2 台账（到位 11.5/121.9/37.4/39.2m）与单元 3 对照表承接。
 - ENV-FAIL 识别率差异（旧版少识别 7 轮）=2026-09-29 E4.2 分口径落地后的签名库效应，
   与到位分门无关。
+
+## 增补：识别器 v1.1 版 re-regression（2026-10-03 01:2x-01:4x；T3 v8.7 池件/纪律件）
+
+触发=受控失败识别器改版（wa_gate f0905154 + round_result b21c8c6e，v1.1 分层并入）。
+对 30 个历史在线轮全量重跑 round_result（v1.1 标注行版），与 v8.3 基线 summary 逐行比对：
+**29/30 逐位一致；唯一 drift=run_X1final_043355（new FAIL→ENV-FAIL，leg1 8.119 出值）=
+v8.3 夜 hypot 修复（605bd26）已记录的再启用效果（基线 csv 早于该修复的重跑；8.119/ENV-FAIL
+与当夜三重验证值逐位一致）——识别器 v1.1 对历史轮零意外漂移。**
+FAILDET/COSTGATE 标注行仅新增于含 failure detection 的历史轮 .new.txt（判定面零变动）。
+产物=xline_histreg/summary.csv（新版）+summary_v83_baseline.csv（基线保全副本）。

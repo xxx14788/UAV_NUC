@@ -53,3 +53,16 @@
 3. **协调通告 @T1**：flight_2026-09-23/26 抽样删 ~3.5G。
 4. X4 起飞前门槛：df>15G 硬线、df<20G 禁新轮；五轮带图预计 25-45G（6-13G/轮×5，按 X1' 实测定标后修正）。
 5. **不满足时的降级序**：X 线五轮紧凑模式（40MB×5=0.2G）先行保 5/5 判读 → 带图轮补拍（P3 证据面）——判读正源不依赖图像。
+
+## C. v1.1 受控口径适配注记（2026-10-03 02:3x；T3 v8.7 单元 5 池件①；X5 网格冻结面零变动）
+
+- **§A 网格/预算/到位门零变动**：42 轮位形、场景门档、到位门正源（round_result world 名钥匙）
+  全部维持设计稿 v1 冻结面；本注记仅增判读面一列。
+- **轮次判读增受控标注列**：每 cell 判读行增加 `controlled_state`（五态：controlled/
+  triggered-no-recovery/uncontrolled-fail/clean/log-missing，产自 wa_gate --online 
+  v1.1 层）与 `counting_pass`（PASS/PASS-CONTROLLED 二态计数）；通过率地图（fig6）
+  分母口径=「零 fail ∪ 受控失败」（与 X4 5/5 同口径，prereg v1.1 §2.6）。
+- **连败回挖分支联动**：X5 cell 若现 triggered-no-recovery 连败 2 → prereg v1.1 §4
+  受控轮回挖分支（查未受控分量：毒窗外帧跳/触发前中毒预窗/reboot 后再 init 归因）。
+- **急冻族 cell 预案**：route 向 cell 按冻结型边界条款（§2.6-e）只能零 fail 段过门；
+  若 T2 配对实验未来解冻（新版本号），本注记随之升版，网格面仍零变动。
