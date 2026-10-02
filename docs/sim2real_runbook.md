@@ -163,3 +163,13 @@
 - T3 侧（§8）: **已签认**。八条无异议: 删袋序列顺位（域外旧袋→主池袋→X4 五轮例外保全至 X7）/df 检查点责任表（<25G 拒提帧/<20G 禁新轮/腾位前 @T4 核对/删除前 df+通告 ≥5min）/放行时序四环/粗判 30min 条款/互斥铁律与 T3 侧锁纪律同构。
 - 硬链接同体单列条款知悉并采纳: e7_ctrl2_125hz.bag ↔ t2v3_route_112652_125hz.bag 同 inode（实测 13930296）——T3 域名删除后空间不释放，孪生名 t2v3_route_112652_125hz.bag 处置权归 T2（B.1 其域组已列可回收），回执单列不并账。
 - 本线自有段执行（B.2 路线 1）: e7_ctrl2_125hz.bag 6.1G（E7 NOT-PORTABLE 已判读入账，csv 在 analysis/，manifest 推导链 src=t2v3_route_112652.bag 223Hz 原袋仍在=可复现）；manifest 副本入 repo 凭据区后删 T3 域名。
+
+## 9. X 线判读流水 v1.1 增注（2026-10-03；T3 池件 P-F；判读正源=xline_prereg_v1_1.md）
+
+- 每轮判读两步不变（vins_smoke 内置 round_result → wa_gate --online），v1.1 起 wa_gate 输出
+  增两面：**controlled 五态**（controlled/triggered-no-recovery/uncontrolled-fail/clean/log-missing）
+  与 **counting_pass 计数态**（verdict 增 PASS-CONTROLLED）；5/5 计数口径=「零 fail ∪ 受控失败」（用户 10-02 裁定②）。
+- RESULT.txt 新增纯标注行 COSTGATE-FIRE/FAILDET（判值零变动）；判读禁吃 local_position 不变。
+- X 线判读 SLA 与 §7 时序条款无冲突（wa_gate --online 秒级出判决，粗判面归 T4 供给侧不变）。
+- 工具版本凭据：t3_wa_gate.py=ac1df603（S8 修复后）/round_result.sh=b21c8c6e/figs=d8de5747；
+  识别器每改一版必跑 --online --selftest（三格绿）+历史 re-regression（纪律，已跑 30 轮零意外漂移）。

@@ -59,3 +59,16 @@ bash ~/sitl_sim/vins_smoke.sh --tag <TAG> [--goal X Y Z] [--leg2 X Y Z] [--world
 - **执行时核对项（并入每轮 P0 六查）**：X2④ 轮毕核对 RESULT.txt 避障行 min_dist 计及 D/E
   （v2 world 下若 min_dist>3m 量级=box 集未生效，疑 D/E 坐标未加载，停轮排查）；round.log world 行逐字核对
   sitl_world_obstacles_v2（防 _v2 拼写滑落到默认 world）。
+
+## 6. X4 5/5 判定 v1.1 集成设计（2026-10-03 池件 P-E；解锁窗零拖拽预备；纸面设计未实施）
+
+- **现状**：x4judge（t3_legs_rescan.py x4judge）按 runbook §3 判据表（A1/A2/B/C/D/J0/P0）出 5/5；
+  其 P0/VINS 域面=「零 fail 零 reboot」旧口径，不含受控分层。
+- **v1.1 集成点（设计）**：x4judge 的逐轮 P0 判定改为读 wa_gate_online.json 两键——
+  ①xline.counting_pass（=零 fail ∪ 受控失败，prereg v1.1 §2.6 计数语义）②controlled.state
+  （五态入表列，PASS-CONTROLLED 轮在 5/5 表标受控注记）；其余判列（到位/避障/频率/disarm/J0 锚差）
+  x4judge 与 wa_gate 同源继承不重算。
+- **实施时点**：T2 U4 通告后、X1prime 首轮起飞前（判读链版本冻结点）；实施=改 x4judge 读 JSON 面
+（判据值零变动，属接线非判据改动）+自测（五合成夹具=SYN_CTRL 受控态×5 的模板验证）。
+- **回退面**：若 U4 通告的栈号≠t2gates 系（L1 触发行不存在），受控路径自动不适用（prereg seam-4），
+  x4judge 退化为 v1.0 等价行为（counting_pass=xline_pass），零额外分支。
