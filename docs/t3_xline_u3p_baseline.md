@@ -4,6 +4,8 @@
 > U3PH 紧凑袋（compact_U3PH_210708.bag）/route×2（引用单元 1 证据包）。
 > 工具=analysis/t3_r3_planner_domain.py（同预注册四门）；产物 t3_results/u3{po,pg,ph}_plannerdom_*。
 > 用途：X 线五轮（X1'-X3⑤）结果的差值解读框架=对照组基线。
+> **注记（T4-J2 05:25）**：U3PO 袋被 T4 标 odom 双轨交替异常（已 @T2，R2F G5 在用）——本表
+> 读数=imu_propagate 单轨面不受影响；该袋二次消费前先读 T4 判读文 D 章。
 
 ## 1. 五轮画像总表
 
