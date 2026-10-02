@@ -280,6 +280,19 @@ WC2OBS1_032005（爆止 102.0s 窗）+U3PG_210307（44s 全程）+U3PO_211438（
 - **回归锚点核对**：10 指标 |diff|≤5e-5 逐位一致；两处 diffs 见 §2 勘误（p_sat 显示截断/年代
   效应增量标签），σ̂ P25 逐位基线 1.02899/1.02978 复现。
 
+### 修复版本登记（2026-10-03，C-14）
+
+- **登记性质**：事实登记（哈希+证据+对照数），判读语义仍以主会话定稿口径为准；修复前在册轮次的下游判读仍按上方坑位表 + n>0 禁只看退出码纪律执行，历史数值与判读不追溯改写。
+- **四缺陷 → 四 commit**（仓库 ~/catkin_ws，branch main，author rick，未 push；全哈希 git show 在案）：
+  - 坑位① 零告警空统计 → C14-FIX-1 `3a2722f13982f5079b1d535e639715d7ccfa7d75`（j3_image_metrics.py+j3_fb_residual.py 对称 +46 行 0 删：零可读帧拒绝 rc=2、out 顶层 error 字段、stderr ERROR 行；argparse 退出码 0/2/3 口径显式化）；
+  - 坑位② NaN 字面量落盘 → C14-FIX-2 `d2bb538bc2cefc0ac94ff942b5b9d905a64fb29a`（j3_image_metrics.py +16/-2：逐字段清洗 null + allow_nan=False 兜底）；
+  - 坑位③ density 双 shift 输入并存 → C14-FIX-3 `282a707287b42b91407c7b8d9629b7721861cbe6`（j3_feature_density.py +53/-7：shift 来源单一化 explicit/legacy/shift-file，无声明 rc=3 拒跑，输出增 shift_source 字段）；
+  - 坑位④ 键集代差 → C14-FIX-4 `ea4d12b54133a5b031d54891613005930bd96dd8`（j3_image_metrics.py+j3_fb_residual.py 对称 +42/-5：schema_version+manifest_schema_version 落盘、旧 manifest 兼容读 legacy_keys=true、未知 manifest 版本 rc=3 拒绝）。
+- **期望分类变更摘要**（原 30 格/33 行，逐格对照=指引文档 §0a）：修复前 干净通过 5/带病输出 10/干净拒绝 18 → 修复后 干净通过 9/零可读拒绝 6/带病输出 3/干净拒绝 15；翻转 10 行=FIX-1 翻 6（U1b/U6/U9 × metrics/fb → rc=2 零可读拒绝）+FIX-2 翻 2（U3/U4 × metrics，NaN 字面量 34→0）+FIX-4 翻 2（U8 × metrics/fb，KeyError→legacy 兼容读）；FIX-3 在原 33 行零翻转（新拒绝面 rc=3 shift 冲突由扩展格 case19/20 覆盖）。
+- **扩展格**：12 行（每处修复 ≥2 格 edge case），分类=干净通过 6/零可读拒绝 2/干净拒绝 4；45 行合并终回归实测行为与期望分类表逐格一致，双 checker rc=0，尾行 MATRIX-GREEN (merged 45 rows)，无格触达 timeout（最长 0.75 s）。
+- **抽样对照结论（2026-10-03 登记轮实测）**：帧样目录 ~/sitl_sim/vision_inputs/U3PR2_213717_j3 用修复后工具重跑到 /tmp/c14_sample_rerun_t4wf/，与既有在册三份 JSON 数值字段逐位对照（python 严格 repr 级比较，排除 error/schema_version/shift_source/legacy_keys 等新增字段与 NaN→null 重写）：metrics_U3PR2_213717.json 1961 个数值叶 0 差异；fbres_U3PR2_213717.json 592 叶 0 差异；metrics_U3PR2_213717_density.json（features.bag + 在册显式 shift 1.0198,1.0126,0.1085）23 叶 0 差异；NaN→null 重写 0 处（本样例无 NaN）；新增字段仅 schema_version/manifest_schema_version/legacy_keys（image+fb）与 shift_source="explicit"（density）。结论：抽样范围内修复未改历史数值口径（bitIdentical=true）。被测工具两端 md5 对账一致：image=3721399e7a78e42f6e1cd81a2680286e / fb=08cb8829d180dad91445f1d436d547a2 / density=7f45974b3a2a81e60c6293865ac3eb5e（NUC analysis/ HEAD 与本机 c14_fix/ 副本相同；修复前旧版=abcc5fc8…/c23d4287…/9e45f981…）。
+- **矩阵复跑登记文档指引**：`sitl_sim/t4_evidence/v54_20261002/derived/exfail_matrix_synthetic.md` 内 §"修复后复跑登记（2026-10-03，C-14）"（commit 8c5392e，+58 行）；逐格原始记录 results.jsonl 45 行留档本机 work_selftest/audit_v58_evidence/ 与 NUC /tmp/t4_v58_audit_*.log、/tmp/t4_v57_selftest/{results.jsonl,logs/}。
+
 ### 2. J2 正式判读（依预注册 §3.5-3.8；判读对象=Set A=j2_threshold_table_v1.json bags 八袋）
 
 - **袋集合口径裁定**：任务括号（主池6+X1img2/U3PR1）与阈值表 bags 字段差 2 袋；按任务"为准"
