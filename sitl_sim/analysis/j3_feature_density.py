@@ -15,7 +15,11 @@
 用法:
   python3 j3_feature_density.py --mode offset --bag orig.bag
   python3 j3_feature_density.py --mode density --bag features.bag \
-      [--world-boxes "4.51,-0.52,0.9,1.0,1.0,1.8" ...] [--shift 1.01,0.98,0.104]
+      [--world-boxes "4.51,-0.52,0.9,1.0,1.0,1.8" ...] --shift 实测x,y,z
+      或 --shift-file offset实测.json; 二选一必给(否则 exit 3), 互斥.
+  旧出生点先验 1.01,0.98,0.104 不再静默默认; 复现历史轮需显式声明
+  --allow-legacy-shift, 输出 json 以 shift_source 字段标明来源.
+  退出码: 0=有产出; 3=参数/输入错(shift 缺失/互斥/文件非法); 1=运行期 FAIL.
 """
 import argparse
 import json
@@ -26,6 +30,41 @@ import rosbag
 from gazebo_msgs.msg import ModelStates
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import PointCloud
+
+# C14-FIX-3: 旧出生点先验(T2b-U9), 原为 --shift 静默默认; 现仅在 --allow-legacy-shift
+# 显式声明时使用, 且输出 json 的 shift_source=legacy 标明来源.
+LEGACY_SHIFT = '1.01,0.98,0.104'
+
+
+def resolve_shift(args):
+    """C14-FIX-3: shift 来源单一化 explicit/legacy/shift-file, 冲突/缺失/非法
+    均 exit 3 提示, 不静默取一."""
+    if args.shift and args.shift_file:
+        sys.stderr.write('ERROR: SHIFT-CONFLICT: --shift 与 --shift-file 互斥, '
+                         '同时给出拒绝(不静默取一)\n')
+        sys.exit(3)
+    if args.shift:
+        return [float(x) for x in args.shift.split(',')], 'explicit'
+    if args.shift_file:
+        try:
+            with open(args.shift_file) as f:
+                d = json.load(f)
+        except (OSError, ValueError) as e:
+            sys.stderr.write('ERROR: SHIFT-FILE-INVALID: --shift-file 不可读/非法 JSON: %s\n' % e)
+            sys.exit(3)
+        v = d.get('shift') if isinstance(d, dict) else d
+        if not (isinstance(v, list) and len(v) == 3):
+            sys.stderr.write('ERROR: SHIFT-FILE-INVALID: --shift-file 需为 [x,y,z] 或 '
+                             '{"shift":[x,y,z]}(保存 --mode offset 的实测结果)\n')
+            sys.exit(3)
+        return [float(x) for x in v], 'shift-file'
+    if args.allow_legacy_shift:
+        return [float(x) for x in LEGACY_SHIFT.split(',')], 'legacy'
+    sys.stderr.write('ERROR: SHIFT-MISSING: density 模式需 --shift 实测值或 '
+                     '--shift-file(offset 实测 json); 先跑 --mode offset 实测, '
+                     '或 --allow-legacy-shift 显式声明用旧出生点先验 '
+                     '%s(兼容历史轮)\n' % LEGACY_SHIFT)
+    sys.exit(3)
 
 
 def cmd_offset(args):
@@ -68,8 +107,7 @@ def parse_boxes(specs, shift):
     return out
 
 
-def cmd_density(args):
-    shift = [float(x) for x in args.shift.split(',')]
+def cmd_density(args, shift, shift_source):
     boxes = parse_boxes(args.world_boxes, shift) if args.world_boxes else []
     inflate = args.inflate
     ground_plane_z = -shift[2]  # gazebo z=0 地面 -> vins 系
@@ -139,7 +177,8 @@ def cmd_density(args):
     per_msg_n = np.array(per_msg_n)
     res = {
         'mode': 'density', 'bag': args.bag, 'dry_run': True,
-        'boxes_gazebo': args.world_boxes, 'shift': shift, 'inflate_m': inflate,
+        'boxes_gazebo': args.world_boxes, 'shift': shift,
+        'shift_source': shift_source, 'inflate_m': inflate,
         'ground_top_vins': round(ground_top, 4),
         'msgs': n_msgs, 'odom_msgs': odo_n,
         'duration_s': round(t1 - t0, 1) if t0 else None,
@@ -172,14 +211,21 @@ def main():
                              '5.51,-2.52,1.1,1.0,1.0,2.2'],
                     help='gazebo 系 中心x,y,z+尺寸x,y,z(缺省=sitl_world_obstacles 三盒, '
                          'sitl_sim/worlds/sitl_world_obstacles.world:50-92)')
-    ap.add_argument('--shift', default='1.01,0.98,0.104',
-                    help='gazebo->vins 平移(先验出生点; 以 --mode offset 实测为准)')
+    ap.add_argument('--shift', default=None,
+                    help='gazebo->vins 平移(offset 实测值); 旧默认先验 %s 已移除, '
+                         '复现历史轮请显式给出本参数或改用 --allow-legacy-shift' % LEGACY_SHIFT)
+    ap.add_argument('--shift-file', default=None,
+                    help='offset 实测 json([x,y,z] 或 {"shift":[x,y,z]}); 与 --shift 互斥')
+    ap.add_argument('--allow-legacy-shift', action='store_true',
+                    help='显式声明使用旧出生点先验 %s(可复现旧轮, '
+                         '输出 shift_source=legacy)' % LEGACY_SHIFT)
     ap.add_argument('--inflate', type=float, default=0.5)
     ap.add_argument('--ground-band', type=float, default=0.1)
     args = ap.parse_args()
     if args.mode == 'offset':
         sys.exit(cmd_offset(args))
-    sys.exit(cmd_density(args))
+    shift, shift_source = resolve_shift(args)  # C14-FIX-3: density 模式先单一化 shift 来源
+    sys.exit(cmd_density(args, shift, shift_source))
 
 
 if __name__ == '__main__':
