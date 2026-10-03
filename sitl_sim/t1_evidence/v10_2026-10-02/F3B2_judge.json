@@ -1,0 +1,50 @@
+{
+ "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-10-03/19_52_23.ulg",
+ "tag": "F3B2",
+ "dur_s": 224.8,
+ "J1_xy_drift": {
+  "n": 23830,
+  "p50": 0.0835,
+  "p95": 1.1217,
+  "max": 1.1616,
+  "min": 0.0474
+ },
+ "J5_z_rel": {
+  "n": 23830,
+  "p50": 0.0799,
+  "p95": 0.2736,
+  "max": 0.3298,
+  "min": 0.0
+ },
+ "J5_z_mean_ned": -1.061,
+ "J2_J3_ev": {
+  "ev_vpos": {
+   "n_active": 21528,
+   "innov": {
+    "n": 22434,
+    "p50": 0.0018,
+    "p95": 0.0056,
+    "max": 0.0642,
+    "min": 0.0
+   },
+   "ratio": {
+    "n": 21528,
+    "p50": 0.0048,
+    "p95": 0.0142,
+    "max": 0.1614,
+    "min": 0.0
+   },
+   "ratio_gt1": 0
+  }
+ },
+ "ev_too_fast_msgs": [],
+ "params": {
+  "EKF2_EV_CTRL": 15,
+  "EKF2_GPS_CTRL": 0,
+  "EKF2_PREDICT_US": 10000,
+  "EKF2_DELAY_MAX": 200.0,
+  "EKF2_EV_DELAY": 0.0,
+  "EKF2_TAU_POS": 0.25,
+  "EKF2_TAU_VEL": 0.25
+ }
+}

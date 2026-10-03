@@ -1,0 +1,50 @@
+{
+ "ulg": "/home/uav/PX4-Autopilot/build/px4_sitl_default/rootfs/log/2026-10-03/19_58_49.ulg",
+ "tag": "U25FIX",
+ "dur_s": 248.7,
+ "J1_xy_drift": {
+  "n": 26363,
+  "p50": 0.0115,
+  "p95": 0.0351,
+  "max": 0.1219,
+  "min": 0.0001
+ },
+ "J5_z_rel": {
+  "n": 26363,
+  "p50": 0.6494,
+  "p95": 1.2302,
+  "max": 1.3532,
+  "min": 0.0
+ },
+ "J5_z_mean_ned": 9.54,
+ "J2_J3_ev": {
+  "ev_vpos": {
+   "n_active": 23902,
+   "innov": {
+    "n": 24817,
+    "p50": 0.0033,
+    "p95": 0.0053,
+    "max": 10.7732,
+    "min": 0.0
+   },
+   "ratio": {
+    "n": 23902,
+    "p50": 0.0084,
+    "p95": 0.0136,
+    "max": 12.7653,
+    "min": 0.0
+   },
+   "ratio_gt1": 18
+  }
+ },
+ "ev_too_fast_msgs": [],
+ "params": {
+  "EKF2_EV_CTRL": 15,
+  "EKF2_GPS_CTRL": 0,
+  "EKF2_PREDICT_US": 10000,
+  "EKF2_DELAY_MAX": 200.0,
+  "EKF2_EV_DELAY": 0.0,
+  "EKF2_TAU_POS": 0.25,
+  "EKF2_TAU_VEL": 0.25
+ }
+}

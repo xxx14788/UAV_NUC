@@ -75,3 +75,25 @@ T3 02:50 df 斜率告警（50→31G/10min，T2 复裁轮带图录制）——T1 
 | DECISION_LOG 事故 | 并发重写致 D-01 丢失→补录+备份+追加式写法约定建议 | STATUS 03:12 |
 
 **M1 收割完成副作用**：E-4 八轮袋消费面清空（E-5b/J 面板/静置段均已提取）→ 0.9G 可释（挂 T2/T3 腾位协调窗，预注记）。
+
+## 章 5：飞轮窗双轮+判读（03:52-04:0x）
+
+**窗口史**：F3B 首飞 FATAL（ninja 交叠）→F3B2-盘门拒→F3B2-三 U4OBS1 活轮拒→F3B2-四 T2 循环竞态拒→**03:52 真空窗双轮成行**（T2 harness 空转停后）。
+
+| 轮 | 判读 | 凭据 |
+|---|---|---|
+| F3B2（03:52-03:55，canonical EV0/GPS7） | **F3 验收 B 臂 PASS**：J1 p50 0.0835（A=R8 0.041 同数量级，跨栈注记）+J5 0.08+EV 健康+零急性+FSM 时序与新代码一致；到位真值 0.061/跟踪 p95 0.067/帧稳 0.123 | e4_runs/F3B2_judge.json |
+| U25FIX（03:58-04:02，pub_mode=odom） | **U2.5 两判据达成**：ODOM:Ex:=0（修复前 285）+J1 p50 0.0115 历史最优；**J5_z_mean 9.54m 新案**（EKF2 z 拉离 10m 级，候选=EV vel z 变换/EKF2 z-EV 交互）；cs_ev_yaw 判据不可判（**ulog 无该通道键，历轮证据链无源——工具债扩大登记**） | e4_runs/U25FIX_judge.json |
+| P1 健康回归（两轮顺带） | 零 P1 日志+零 hover-entry 拒绝=**误伤 0 判据达成** | 两轮日志 |
+| R3x 探针 dry-run | 失败（时序错位：sleep 100 后轮已近尾，jsonl 0 行）——下轮修正启动时序 | run_F3B2_035213/r3x_probe.jsonl |
+
+**新坑登记**：
+- **H-1 planner-kill 失效**（两轮 auto_disarm=0 根因：position_cmd 流不断→CMD_CTRL 卡→LAND 设计性拒（拒日志在案=U2.7 码正确）→无 disarm；kill 段输出在 round.log 缺失=执行面存疑）——修复面=kill_planner_all 匹配/时序+smoke 收尾可观测性（挂池，harness 域）；**U2.7 DoD（降落轮 disarm✓）挂此坑后**
+- H-2 L-odom z 异常（U25FIX J5 9.54m）——U2.5 后续开案
+- H-3 ev_yaw 通道键缺失（工具债扩大：e4_judge/e5b 全通道审计需求）
+
+## 章 6：会话状态（04:0x）
+
+- 全部 0 锁件+IO 件+两飞轮交付；挂账=P1 A/B 注入轮/R3x dry-run 重试/U2.7 DoD（H-1 后）/w2b 联测（需 IO+build 窗）
+- 提交链：2bc0183→（T2/T3 交错）→f899a0c/a3dc85e/186f00b/f83f446/…全推零积压
+- DECISION_LOG：D-01（补录）/D-02 在册待复核；并发写事故与追加式约定建议已通告
