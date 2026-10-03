@@ -1926,3 +1926,13 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 **修复方向（承 R2 判决"修面=前端筛查"）**：启用既有 T2_DEPTH_GATE（est:615+ 三分支拒收负深/量程外，替代伪注入；**config-only 改动零二进制变更**，banner 自证）——ir_st 型垃圾从源头拒收。饥饿风险评估：R2 时代 g_depth 接受率 0.90-0.98+当前 track 60-140/帧（负深仅 13-28）→生存特征充足。**单元 3=route 复裁以 depth-gate 臂执行**（预注册另行落盘）。
 
 **悬置**：真实狂飙动力学的贡献占比（机体速度/加速度画像 vs 死亡时刻对齐）未展开——若 depth gate 后 Bas 爬坡仍存，此为第二嫌疑（届时查 poscmd×GT 动力学）。
+
+**T2 v8.3 单元 3：route 复裁 depth-gate 臂——负结果带机制，臂证伪（2026-10-03 13:1x-13:4x；prereg_route_readj_v1 先行；commit e11e323 落 config，本轮回退）**
+
+**R1 判读（route gates，depth_gate=1 banner 自证）**：轮仍成熟（|P|max 1004m/11 reboot/444 glitch 极端毒载荷），且出现**新形态=init 活锁**：banner 每 ~1.1s 连发（49.8-57.7s 区间 8 连）无 T2fail 行——两 banner 间=完整 clearState+setParameter+填窗序列（读相机参数/MULTIPLE_THREAD/init first imu pose），触发器=**W4 前置门 gate reject**（7 连：|Bgs|=0.62-5.63 ≥0.5 线 全拒）。机制链：depth gate 拒收负深/量程外特征（**载体清除面成功：尾部 [T2gate] ir_st=0/rej=33/510=6%**）→特征变弱变少→**solveGyroscopeBias 收敛质量降**→Bgs 解越 0.5 线→W4 前置门拒→clearState→重试→活锁；活锁窗内 odometry 静默=无人机盲飞。偶发 cost/Bas 突破后仍 Bas 爬坡成熟（既有病不解）。
+
+**终判（依 prereg 分支如实）**：R1=0/1 未达（且机制上后续轮同型必败）→**config-only depth-gate 臂证伪**，战役于轮 2 后中止（省 3 轮预算，runner 已杀轮 2 自走完）；config 已回退 t2_depth_gate: 0（注释载证伪机制）。判据 R2/H1 未及执行（战役中止）。
+
+**价值（负结果的机制增量）**：①毒载体清除与 init 质量是**冲突约束**——拒收垃圾深度确实清了 ir_st 喂料，但 init 的 gyro-bias 解依赖特征密度/质量（pseudo-injection 在 init 阶段有正贡献）；②W4 前置门 0.5 硬线（est:610 硬编码非 config）与 depth gate 组合=结构性活锁；③修复面改判：可行方向=**分阶段门**（init 填窗期保留 pseudo-injection 保 Bgs 解、NON_LINEAR 稳态期拒收）或 **W4 线 config 化+放松**（两者都要代码窗）——列入下任 build 窗候选，与"悬置第二嫌疑（狂飙动力学占比）"同队。
+
+**ENV**：R1 双 md5 恒 1d7d2302/47d4308e（零二进制自证）；444 glitch=历史最高单轮载荷（glitch 率与场景/失控状态的耦合待画像）；轮 2 作为活锁第二标本归档。
