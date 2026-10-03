@@ -8,7 +8,10 @@
 > +T3 单元 1 对 U3pp 存档证据的三重取证（见 §6 样本案卷，2026-10-03 01:3x @T2 通告）。
 > 正源依赖：round_result.sh（场景名正源，e7120e0+hypot 修复 605bd26，v1.1 增 COSTGATE/FAILDET
 > 标注行）+ t3_wa_gate.py --online（判读继承+受控失败层 v1.1）。
-> 凭据栈：vins_node md5=____（**栈号留槽**：T2 U4 定稿通告即填；分水岭 10-01 20:35=285278cc，
+> 凭据栈：**fixface-3 = lib e704431948c865cfe33f810f4a409f03 + vins_node 08a46d0adaa97b05886db782b3ff0405**
+> （**槽已填 2026-10-04 04:0x**：T2 U4 通告 03:48 值;X1prime 起飞时 §0.5 实读复核+台账;
+> 分水岭链=285278cc(10-01 20:35)→fixface-2 1d7d2302/47d4308e→fixface-3[案A staged=1 n=80
+> 默认入栈,[T2RFIXCFG] banner 自证]）。
 > U3pp 在测栈=lib 5dde4d7e+node 86c5c6a3，X 线轮起飞前 §0.5 实读双 md5 记台账——lib+node 双件）。
 
 ## 1. 轮次位形表与 5/5 计数集（承 v1.0，零变动）
