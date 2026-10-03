@@ -118,7 +118,7 @@ README §3（参数差异账）将增/核行：
 1. **通告面核对**：T2 STATUS 行含 U4 字样+点名 @T3+栈号双 md5（lib+vins_node）；无栈号=向 T2 索要（prereg 槽必填）。
 2. **栈号一致性**：若 U4 栈=lib 5dde4d7e 系（t2gates/A1 修复栈）→ 受控层按 v1.2 全量适用；若栈≠该系（L1 触发行不存在）→ prereg seam-4 自动降级（受控路径不适用，零 fail 或 FAIL 二选一），**不改判读器**。
 3. **栈号填槽**：prereg v1 头部栈号槽填 U4 值+台账登记（判据冻结时点=此刻）。
-4. **判读链健康证明**：`t3_wa_gate.py --online --selftest` 三格绿（输出存档 run 前）+ 版本=4cb6acc7 核对（runbook §9.1 表）。
+4. **判读链健康证明**：`t3_wa_gate.py --online --selftest` 四格绿（输出存档 run 前）+ 版本=6fb9ccb4(v1.3) 核对（runbook §9.1 表;判读器 v1.3=任一门拦截+误触发排除,2026-10-04 换代）。
 5. **x4judge v1.1 接线实施**（opcard §6 设计兑现：读 counting_pass/controlled.state JSON 面）+ SYN_CTRL×5 模板自测。
 6. **df 门**：>15G 起飞门实测（<20G 禁新轮）；当前 51G=通过面。
 7. **T2 STATUS 尾无未决异议**（尤其对我 040932 回执的 27.2m 对账若有回应先消化）。
@@ -145,7 +145,7 @@ controlled 四查（v1.2 冻结值）:
 豁免面（仅两处）: vins 域 fail 计数 + J0 修订 raw==0 的毒窗分账
 反例锚: SYN_LATE（迟 50s 触发）必须 triggered-no-recovery；A3（触发无恢复）必须 triggered-no-recovery
 正例锚: R5（onset 98.69/fire 104.5/复流 99/p95 0.229）= controlled；SYN_CTRL = PASS-CONTROLLED
-版本: 判读器 4cb6acc7（v1.2）；每改一版 → selftest 三格+全 SYN 电池+历史 re-regression
+版本: 判读器 6fb9ccb4（v1.3;v1.2=4cb6acc7）；每改一版 → selftest+全 SYN 电池(9 断言)+历史 re-regression(runbook §9.1)
 ```
 
 ### 8.3 X 线首轮复盘模板（池件 P-N；X1prime 轮毕即填；防复盘面遗漏）
