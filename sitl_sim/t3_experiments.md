@@ -1104,3 +1104,5 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
   判据值零变动（纯接线+两 bug 修复）,U4 通告后仅需栈号填槽+selftest 复跑。
 
 **单元 3 台账分叉处置**（K-11 闭）：runtime ~/sitl_sim/t3_experiments.md 零独有行核对（difflib,repo 1104 行=严格超集）→弃读头+chmod 444 封存；权威唯一=repo 本文件。STATUS 已通告各线。
+
+**单元 3.5 auto_disarm 根因清查**（判读定案 docs/t3_u35_autodisarm_verdict.md;@T1 归因移交;DECISION_LOG #3）：U3′ 标本=复合缺陷（**全程未离地** truth z≡0.0+推力被压 0.20+LAND@246.5 在 MANUAL_CTRL 被静默丢弃→armed 锁 True）；舰队画像=route×4 系统性 disarm 全败（planner 轮=X 线全轮必 0/5）→T1 U2.7 修复承重值实锤;移交四件（验证轮/未起飞面/extended_state 录制/035509 第二标本）;K-2.5 维持开（解锁=验证轮 ✓）。
