@@ -123,3 +123,27 @@ README §3（参数差异账）将增/核行：
 6. **df 门**：>15G 起飞门实测（<20G 禁新轮）；当前 51G=通过面。
 7. **T2 STATUS 尾无未决异议**（尤其对我 040932 回执的 27.2m 对账若有回应先消化）。
 8. **锁序**：sitl_lock v2 acquire T3-X4（权序最高）+ STATUS 预告。
+
+### 8.2 受控层判读速查卡（池件 P-O；判读现场一页；正源=prereg v1.1+v1.2 修正）
+
+```
+五态速判（wa_gate --online 的 controlled.state）:
+  clean                 零触发零 faildet → 正常 PASS/FAIL 流程
+  controlled            触发+起点窗内+恢复双证 → PASS-CONTROLLED 计入 5/5
+  triggered-no-recovery 触发但恢复无证（或迟触发>onset+10s）→ 未受控 FAIL
+  uncontrolled-fail     无触发+faildet>0（或帧跳） → 未受控 FAIL
+  log-missing           simvins.log 缺 → 触发面不可判（四指标/J0/vins 层照判）
+
+controlled 四查（v1.2 冻结值）:
+  L1  触发行 "cost gate: streak=N over Mx ... reboot"（fires_n≥1）
+  L1b t_fire ≤ t_onset+10s（onset=首帧跳|ΔP|>0.5 或 出生对齐误差>10m，取更早）
+  L2a [t_fire+10s, +20s] 窗 odometry（求解器流，非 imu_propagate）≥50 条
+  L2b [t_fire+10s, 轮末] 恢复段自对齐（段首锚）误差 p95 ≤0.5m
+  附: 毒窗=[min(onset,fire)-1, fire+10] 窗内帧跳=对号豁免；窗外必须 0；smj≤10 全程
+
+不豁免面（恒门）: J0 锚差 0.5 / 到位场景门 0.75|0.5 / 避障 / poscmd 50Hz / disarm / ENV
+豁免面（仅两处）: vins 域 fail 计数 + J0 修订 raw==0 的毒窗分账
+反例锚: SYN_LATE（迟 50s 触发）必须 triggered-no-recovery；A3（触发无恢复）必须 triggered-no-recovery
+正例锚: R5（onset 98.69/fire 104.5/复流 99/p95 0.229）= controlled；SYN_CTRL = PASS-CONTROLLED
+版本: 判读器 4cb6acc7（v1.2）；每改一版 → selftest 三格+全 SYN 电池+历史 re-regression
+```
