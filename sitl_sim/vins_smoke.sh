@@ -155,7 +155,17 @@ if ! bash "$L/04_takeoff.sh" 120 > "$EV/takeoff.log" 2>&1; then
   LOG "FATAL takeoff 失败"; tail -5 "$EV/takeoff.log"; exit 1
 fi
 sleep 13
-LOG "已等离地稳定"
+# ---------- 离地真值门(2026-10-04 加固;X2g1=armed 但 truth z≡0 全程 never-flew 实证) ----------
+LZ=$(timeout 6 rostopic echo -n1 /gazebo/model_states/pose[0]/position/z 2>/dev/null | grep -o '\-*[0-9.]*' | head -1)
+[ -n "$LZ" ] || { timeout 6 rostopic echo -n1 /gazebo/model_states 2>/dev/null | head -400 > /tmp/msgs_echo.txt; LZ=$(grep -A6 'pose:' /tmp/msgs_echo.txt | grep -A3 'position:' | grep 'z:' | head -1 | grep -o '\-*[0-9.]*'); }
+[ -n "$LZ" ] || LZ=NA
+if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
+  LOG "WARN NEVER-FLEW: truth z=$LZ<0.3(armed 但未离地)——早停+降落收尾,标本保全(@T1 域取证面)"
+  bash "$L/06_land.sh" >> "$EV/takeoff.log" 2>&1 || true
+  echo "RESULT=FAIL (证据: never-flew 离地真值门 truth z=$LZ; 判读面标本保全)" > "$EV/RESULT.txt"
+  exit 1
+fi
+LOG "已等离地稳定(truth z=$LZ)"
 
 # ---------- goal(重发两轮吸收竞态) ----------
 echo "goal: $GX $GY $GZ leg2: $HASL2 $L2X $L2Y $L2Z" > "$EV/goal.txt"
