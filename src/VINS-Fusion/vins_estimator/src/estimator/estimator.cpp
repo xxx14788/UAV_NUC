@@ -15,6 +15,7 @@ static const bool reanchor_dbg = (getenv("REANCHOR_DEBUG") != nullptr);
 #include "../utility/visualization.h"
 #include "../factor/initial_bias_factor.h"  // T2-WA7G
 #include <cstdio>
+#include <algorithm>  // w2b A-path nth_element
 #include <cstdlib>  // T1-E2: REANCHOR_DEBUG env gate
 
 Estimator::Estimator(): f_manager{Rs}

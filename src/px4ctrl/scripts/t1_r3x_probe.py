@@ -111,6 +111,107 @@ def find_vins_pid():
     return None
 
 
+class W2BB:
+    """w2b B-path (pool-1): in-stream noise-floor collapse gate on odom z.
+
+    M1 first-cut algorithm translated online: 20s window, 10s step, linear
+    detrend, Bartlett 4-segment periodogram, logE_hf (1-5 Hz). Baseline =
+    median of previous feature windows (>=3); alert when current < baseline-2
+    (decades) for 2 consecutive windows. Birth-silence exemption: feature
+    collection starts only after observed motion (design w2b_dualpath_impl_prep
+    §2: absolute cross-stream discrimination NOT established — in-stream
+    relative form only)."""
+
+    WIN = 20.0
+    STEP = 10.0
+    FS = 10.0
+    NEED_BASE = 3
+    DROP_DECADES = 2.0
+    ALERT_STREAK = 2
+
+    def __init__(self):
+        self.t = []
+        self.z = []
+        self.feat = []          # (t_win_end, logE_hf)
+        self.had_motion = False
+        self.alert_streak = 0
+        self.last_step_end = None
+        self._np = None
+        try:
+            import numpy as np
+            self._np = np
+        except ImportError:
+            pass
+
+    def feed(self, t, z, speed):
+        if speed > 0.1:
+            self.had_motion = True
+        if not self.had_motion:
+            return
+        self.t.append(t)
+        self.z.append(z)
+
+    def features_ready(self):
+        if self._np is None or len(self.t) < self.WIN * self.FS * 0.8:
+            return False
+        t_end = self.t[-1]
+        t_start = self.t[0]
+        want = t_start + self.WIN
+        if self.last_step_end is not None:
+            want = self.last_step_end + self.STEP
+        return t_end >= want
+
+    def pop_feature(self):
+        np = self._np
+        t_start = self.last_step_end - self.WIN if self.last_step_end is not None else self.t[0]
+        if self.last_step_end is not None:
+            t_start = self.last_step_end - self.WIN + self.STEP
+        t_end = t_start + self.WIN
+        tu = np.arange(t_start, t_end, 1.0 / self.FS)
+        zu = np.interp(tu, self.t, self.z)
+        n = len(zu)
+        tt = np.arange(n) / self.FS
+        A = np.vstack([tt, np.ones(n)]).T
+        coef, *_ = np.linalg.lstsq(A, zu, rcond=None)
+        resid = zu - A @ coef
+        nseg = n // 4
+        if nseg < 16:
+            return None
+        psds = []
+        for i in range(4):
+            seg = resid[i * nseg:(i + 1) * nseg]
+            w = np.hanning(nseg)
+            psd = np.abs(np.fft.rfft(seg * w)) ** 2 / np.sum(w ** 2)
+            psds.append(psd)
+        psd = np.mean(psds, axis=0)
+        freqs = np.fft.rfftfreq(nseg, 1.0 / self.FS)
+        m = (freqs >= 1.0) & (freqs < 5.0)
+        log_e_hf = float(np.log10(float(np.sum(psd[m])) + 1e-30))
+        self.last_step_end = t_end
+        self.feat.append((t_end, log_e_hf))
+        # trim raw buffer to last WIN+STEP seconds
+        cut = t_end - self.WIN - self.STEP
+        while self.t and self.t[0] < cut:
+            self.t.pop(0)
+            self.z.pop(0)
+        return log_e_hf
+
+    def evaluate(self, log_e):
+        """returns alert dict or None"""
+        if len(self.feat) < self.NEED_BASE + 1:
+            return None
+        base = sorted(f for _, f in self.feat[:-1])
+        med = base[len(base) // 2]
+        if log_e < med - self.DROP_DECADES:
+            self.alert_streak += 1
+            if self.alert_streak >= self.ALERT_STREAK:
+                return {"baseline_med": round(med, 3), "logE_hf": round(log_e, 3),
+                        "drop_decades": round(med - log_e, 2), "streak": self.alert_streak}
+        else:
+            self.alert_streak = 0
+        return None
+
+
 class Probe:
     def __init__(self, out_path, mode):
         self.out = open(out_path, "a", buffering=1)
@@ -134,6 +235,8 @@ class Probe:
         # face 4
         self.proc = None
         self.last_emit = time.monotonic()
+        # w2b B-path (pool-1): in-stream z noise-floor collapse
+        self.w2bb = W2BB()
 
     def emit(self, face, obj):
         rec = {"face": face, "t_wall": time.time(),
@@ -170,6 +273,10 @@ class Probe:
         if age_ms is not None and age_ms >= 0:
             self.age[name].push(age_ms)
             self.age_n[name] += 1
+        if name == "odometry":
+            p = msg.pose.pose.position
+            v = msg.twist.twist.linear
+            self.w2bb.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
         _ = wall, now_t  # wall kept for future mixed-domain analysis
 
     def on_clock(self, msg):
@@ -245,6 +352,17 @@ class Probe:
             c = self.proc.sample()
             if c:
                 self.emit("cpu", c)
+        # w2b B-path windows
+        while self.w2bb.features_ready():
+            log_e = self.w2bb.pop_feature()
+            if log_e is None:
+                break
+            alert = self.w2bb.evaluate(log_e)
+            rec = {"t_win_end": self.w2bb.last_step_end, "logE_hf": round(log_e, 3),
+                   "n_base": len(self.w2bb.feat) - 1}
+            if alert:
+                rec["W2BB_ALERT"] = alert
+            self.emit("w2bb", rec)
 
 
 def main():
