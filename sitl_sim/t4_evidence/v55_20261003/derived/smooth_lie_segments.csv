@@ -1,0 +1,2 @@
+window_id,t_start_s,t_end_s,dur_s,n_rows_gt5,total_rows,rows_le5,dup_stamp_groups,max_rows_per_stamp,row_run_max,n_primary_in,n_primary_out,n_next_in,n_next_out
+frozen,50.828,632.644,581.816,5758,12142,6384,6066,2,2,66,6,62,5
