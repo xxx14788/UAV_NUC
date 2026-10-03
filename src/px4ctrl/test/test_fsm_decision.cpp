@@ -246,6 +246,42 @@ TEST(FsmHover, CmdWaitOffboardBlocksLandSameTick)
     EXPECT_EQ(AUTO_HOVER, decide_hover(i).next); // stay, do NOT take LAND yet
 }
 
+
+// ---------- P1 (2026-10-04): rebirth birth-offset gate ----------
+// Latch semantics live in Odom_Data_t::feed (gap>gap_sec, offset>birth_thresh)
+// and clear on disarm; these tests cover the pure-decision face.
+TEST(FsmP1BirthMismatch, HoverEntryRejectedOnMismatch)
+{
+    Inputs i = base(); i.enter_hover = true; i.odom_ok = true; i.birth_mismatch = true;
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_BIRTH_MISMATCH, o.reason);
+}
+TEST(FsmP1BirthMismatch, HoverEntryOkWhenClean)
+{
+    Inputs i = base(); i.enter_hover = true; i.odom_ok = true; i.birth_mismatch = false;
+    EXPECT_EQ(AUTO_HOVER, decide_manual(i).next);
+}
+TEST(FsmP1BirthMismatch, U27LandRejectedOnMismatch)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = true;
+    i.odom_ok = true; i.odom_v = 0.3; i.birth_mismatch = true;
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_BIRTH_MISMATCH, o.reason);
+}
+TEST(FsmP1BirthMismatch, U27LandAcceptedWhenClean)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = true;
+    i.odom_ok = true; i.odom_v = 0.3; i.birth_mismatch = false;
+    EXPECT_EQ(AUTO_HOVER, decide_manual(i).next);
+}
+TEST(FsmP1BirthMismatch, PassiveManualNotBlocked)
+{
+    // no request in flight: mismatch latch alone does not force anything
+    Inputs i = base(); i.birth_mismatch = true;
+    Outcome o = decide_manual(i);
+    EXPECT_EQ(MANUAL_CTRL, o.next); EXPECT_FALSE(o.reject);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

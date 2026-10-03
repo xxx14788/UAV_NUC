@@ -76,3 +76,10 @@ odom_gate:
   max_vel: 5.0
   max_acc: 10.0
   max_jump: 0.6
+
+# T1-P1 (2026-10-04, v11.0 unit 2): rebirth birth-offset gate
+# U9 rebirth family 1.42-1.46m vs healthy gap drift cm-level; 0.75 splits.
+p1_rebirth:
+  enabled: true
+  gap_sec: 2.0
+  birth_thresh: 0.75

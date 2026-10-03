@@ -39,6 +39,16 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	ROS_WARN("[px4ctrl] odom sanity gate: enabled=%d max_vel=%.1f max_acc=%.1f max_jump=%.2f",
 	         (int)odom_gate.enabled, odom_gate.max_vel, odom_gate.max_acc, odom_gate.max_jump);
 
+	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate (default OFF = legacy;
+	// SITL yaml enables). gap_sec 2.0 >> healthy 223Hz gaps (ms-level) and
+	// << VINS restart window; birth_thresh 0.75 splits healthy cm-level
+	// gap drift from the U9 rebirth family 1.42-1.46m (~20x separation).
+	nh.param("p1_rebirth/enabled", p1_rebirth.enabled, false);
+	nh.param("p1_rebirth/gap_sec", p1_rebirth.gap_sec, 2.0);
+	nh.param("p1_rebirth/birth_thresh", p1_rebirth.birth_thresh, 0.75);
+	ROS_WARN("[px4ctrl] P1 rebirth gate: enabled=%d gap_sec=%.1f birth_thresh=%.2f",
+	         (int)p1_rebirth.enabled, p1_rebirth.gap_sec, p1_rebirth.birth_thresh);
+
 	read_essential_param(nh, "pose_solver", pose_solver);
 	read_essential_param(nh, "mass", mass);
 	read_essential_param(nh, "gra", gra);

@@ -147,6 +147,24 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
                           (int)verdict, v_in.norm(), p_in.norm(), sanity_st.rejected);
             return;  // state untouched: freshness clock runs on last healthy frame
         }
+        // T1-P1 (v11.0 unit 2): rebirth birth-offset check. Gap counted
+        // on ACCEPTED frames only (poison frames expire freshness, so a
+        // gap here = true supply loss e.g. VINS restart). Uses p (last
+        // accepted pose) BEFORE it is overwritten by p_in below.
+        if (p1_cfg.enabled && !rcv_stamp.isZero() &&
+            (now - rcv_stamp).toSec() > p1_cfg.gap_sec)
+        {
+            double p1_off = (p_in - p).norm();
+            if (p1_off > p1_cfg.birth_thresh)
+            {
+                birth_mismatch = true;
+                ROS_ERROR("[px4ctrl] P1: odom REBIRTH birth-offset %.2fm > %.2fm (gap %.1fs) - frame misaligned (U9 1.42m family); AUTO_HOVER entry gated until disarm.",
+                          p1_off, p1_cfg.birth_thresh, (now - rcv_stamp).toSec());
+            }
+            else
+                ROS_INFO("[px4ctrl] P1: odom gap-rebirth re-aligned (offset %.2fm <= %.2fm).",
+                         p1_off, p1_cfg.birth_thresh);
+        }
         msg = *pMsg;
         rcv_stamp = now;
         recv_new_msg = true;

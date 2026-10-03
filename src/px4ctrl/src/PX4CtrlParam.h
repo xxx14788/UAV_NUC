@@ -76,6 +76,13 @@ public:
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
 	OdomSanityGate_t odom_gate;
+	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate params
+	struct
+	{
+		bool enabled;
+		double gap_sec;
+		double birth_thresh;
+	} p1_rebirth;
 
 	int pose_solver;
 	double mass;

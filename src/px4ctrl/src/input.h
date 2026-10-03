@@ -69,6 +69,19 @@ public:
   // from params in node main; default disabled = legacy behavior.
   OdomSanityConfig sanity_cfg;
   OdomSanityState sanity_st;
+  // T1-P1 (2026-10-04, v11.0 unit 2): rebirth birth-offset gate.
+  // U9 forensics: VINS restart rebirths odom with a constant offset
+  // (+1.01,+0.99,+0.10)|1.42| (1.42-1.46m across three stack generations,
+  // p11b_budget_table) while control continues on a misaligned frame.
+  // Latched on gap-rebirth offset > birth_thresh; cleared on disarm;
+  // blocks AUTO_HOVER entry via fsm_decision RJ_BIRTH_MISMATCH.
+  struct
+  {
+    bool enabled = false;
+    double gap_sec = 2.0;
+    double birth_thresh = 0.75;
+  } p1_cfg;
+  bool birth_mismatch = false;
 
   Odom_Data_t();
   void feed(nav_msgs::OdometryConstPtr pMsg);

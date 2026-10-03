@@ -133,6 +133,10 @@ int main(int argc, char *argv[])
     fsm.odom_data.sanity_cfg.max_vel = param.odom_gate.max_vel;
     fsm.odom_data.sanity_cfg.max_acc = param.odom_gate.max_acc;
     fsm.odom_data.sanity_cfg.max_jump = param.odom_gate.max_jump;
+    // T1-P1 (v11.0 unit 2)
+    fsm.odom_data.p1_cfg.enabled = param.p1_rebirth.enabled;
+    fsm.odom_data.p1_cfg.gap_sec = param.p1_rebirth.gap_sec;
+    fsm.odom_data.p1_cfg.birth_thresh = param.p1_rebirth.birth_thresh;
     fsm.process(); // We DO NOT rely on feedback as trigger, since there is no significant performance difference through our test.
     }
 

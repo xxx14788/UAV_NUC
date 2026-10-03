@@ -111,6 +111,8 @@ void PX4CtrlFSM::process()
 			{
 				if (fd_o.reason == fsm_decision::RJ_NO_ODOM)
 					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). No odom!");
+				else if (fd_o.reason == fsm_decision::RJ_BIRTH_MISMATCH)
+					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). P1: odom rebirth misaligned (U9 family); disarm and re-align first.");
 				else if (fd_o.reason == fsm_decision::RJ_CMD_ACTIVE)
 					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). You are sending commands before toggling into AUTO_HOVER, which is not allowed. Stop sending commands now!");
 				else
@@ -190,6 +192,10 @@ void PX4CtrlFSM::process()
 			else if (fd_o.reason == fsm_decision::RJ_DISARMED)
 			{
 				ROS_WARN("[px4ctrl] U2.7: LAND in MANUAL_CTRL ignored (disarmed).");
+			}
+			else if (fd_o.reason == fsm_decision::RJ_BIRTH_MISMATCH)
+			{
+				ROS_ERROR("[px4ctrl] U2.7+P1: Reject LAND in MANUAL_CTRL - odom rebirth misaligned; disarm and re-align first.");
 			}
 			else
 			{

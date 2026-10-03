@@ -49,7 +49,8 @@ enum RejectReason : int
     RJ_RC_GUARD,      // RC switches/sticks not in takeoff pose
     RJ_STATE,         // CMD_CTRL LAND: must be triggered in AUTO_HOVER
     RJ_DISARMED,      // U2.7: LAND ignored, disarmed (nothing to land)
-    RJ_MANUAL_PRIO    // U2.7: RC connected / no odom / vel>3 — manual priority or unsafe
+    RJ_MANUAL_PRIO,   // U2.7: RC connected / no odom / vel>3 — manual priority or unsafe
+    RJ_BIRTH_MISMATCH // P1: odom rebirth birth-offset latched (U9 1.42m family)
 };
 
 struct Inputs
@@ -72,6 +73,7 @@ struct Inputs
     bool fcu_state_stale = false; // STEP0: /mavros/state stream >3s stale
     double dt_takeoff = 1e9;    // now - toggle_takeoff_land_time
     bool no_rc = false;         // param.takeoff_land.no_RC (U2.7)
+    bool birth_mismatch = false; // P1: rebirth birth-offset latched (cleared on disarm)
 };
 
 struct Outcome
@@ -106,6 +108,7 @@ inline Outcome decide_manual(const Inputs &in)
     if (in.enter_hover)
     {
         if (!in.odom_ok)     { o.reject = true; o.reason = RJ_NO_ODOM; return o; }
+        if (in.birth_mismatch) { o.reject = true; o.reason = RJ_BIRTH_MISMATCH; return o; } // P1
         if (in.cmd_ok)       { o.reject = true; o.reason = RJ_CMD_ACTIVE; return o; }
         if (in.odom_v > 3.0) { o.reject = true; o.reason = RJ_VEL; return o; }
         o.next = AUTO_HOVER; o.offboard_on = true; return o;
@@ -124,6 +127,7 @@ inline Outcome decide_manual(const Inputs &in)
     if (in.land_trigger)
     {
         if (!in.armed) { o.reject = true; o.reason = RJ_DISARMED; return o; }
+        if (in.birth_mismatch) { o.reject = true; o.reason = RJ_BIRTH_MISMATCH; return o; } // P1
         if (in.no_rc && in.odom_ok && in.odom_v <= 3.0)
         {
             // programmatic config: accept, hand over to AUTO_HOVER; the next
