@@ -84,7 +84,7 @@ nohup bash "$HOME/catkin_ws/sitl_sim/02_start_mavros.sh" > "$EV/mavros.log" 2>&1
 ok=0; for i in $(seq 1 30); do sleep 2
   timeout 5 rostopic echo -n1 /mavros/state/connected 2>/dev/null | grep -q True && { ok=1; break; }; done
 [ $ok = 1 ] || { LOG "FATAL mavros 未连"; exit 1; }
-rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 2>/dev/null; sleep 2
+rosrun mavros mavcmd long 511 105 ${T1_E4_IMU_US:-4000} 0 0 0 0 0 2>/dev/null; sleep 2
 LOG "mavros up + 511@4000us(仓库标准 632e0ee:4ms网格量化,~223Hz;5000us实际=125Hz量化伪影)"
 # T1 P0-A.1 (2026-10-01): E2 stderr probes (E2uls/E2clamp/E2gap) default-on EVERY round
 # (v8.0: 此后一切飞行轮默认带探针,跳变机制数据); env gate = estimator.cpp a5cd330 form

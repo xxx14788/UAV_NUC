@@ -19,5 +19,8 @@
     <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen">
         <!-- T1 E-5a: publish arm via env (default pose = legacy bit-path; T1_E5A_PUB_MODE=odom for L-odom arm) -->
         <param name="pub_mode" value="$(optenv T1_E5A_PUB_MODE pose)"/>
+        <!-- T1 E-4 density face (defaults = legacy bit-path) -->
+        <param name="pub_source" value="$(optenv T1_E4_PUB_SOURCE odometry)"/>
+        <param name="pub_rate_hz" value="$(optenv T1_E4_PUB_RATE 0)"/>
     </node>
 </launch>

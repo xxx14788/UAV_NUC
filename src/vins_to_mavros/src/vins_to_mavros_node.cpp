@@ -13,6 +13,9 @@ ros::Publisher pose_pub;
 ros::Publisher odom_pub;
 static vins_to_mavros::PubMode g_pub_mode = vins_to_mavros::PubMode::POSE;
 
+// T1 E-4 density face: source select + rate throttle (default off = bit-identical)
+static vins_to_mavros::PubThrottle g_throttle;
+
 // ---- 健康门控（T2-W4，2026-09-26 翻机事故防线）----
 // 相邻帧位置跳变或隐含速度超阈 → 停止向 /mavros/vision_pose/pose 转发并告警；
 // 连续 gate_stable_frames 帧平稳后自动恢复。阈值走私有 rosparam。
@@ -380,6 +383,9 @@ void vins_callback(const nav_msgs::Odometry::ConstPtr& msg)
 {
     if (g_gate && !g_gate->allow(msg->pose.pose.position, msg->header.stamp))
         return;  // 跳变/爆炸：不转发（EKF2 防线, 第一道）
+    // T1 E-4: rate throttle AFTER gates, before arm branch (any rate is gated)
+    if (!g_throttle.allow(msg->header.stamp.toSec()))
+        return;
     if (g_imu && !g_imu->allow(msg))
         return;  // 平滑漂移：不转发（IMU 一致性, 第二道, T2b-U5）
     // T1 E-5a: arm branch AFTER the shared gates (gates protect both arms)
@@ -420,8 +426,29 @@ int main(int argc, char** argv)
     ImuConsistency imucheck(pnh);
     g_imu = &imucheck;
 
-    // 订阅 VINS-Fusion 的里程计输出
-    ros::Subscriber vins_sub = nh.subscribe("/vins_estimator/odometry", 10, vins_callback);
+    // 订阅 VINS-Fusion 的里程计输出（T1 E-4: pub_source 可切 imu_prop 高频源）
+    std::string pub_source;
+    pnh.param<std::string>("pub_source", pub_source, "odometry");
+    double pub_rate_hz = 0.0;
+    pnh.param("pub_rate_hz", pub_rate_hz, 0.0);
+    g_throttle.configure(pub_rate_hz);
+    ros::Subscriber vins_sub;
+    if (pub_source == "imu_prop")
+    {
+        vins_sub = nh.subscribe("/vins_estimator/imu_propagate", 10, vins_callback);
+        ROS_WARN("vins_to_mavros: pub_source=imu_prop (T1 E-4 density face), rate_hz=%.1f",
+                 pub_rate_hz);
+    }
+    else
+    {
+        vins_sub = nh.subscribe("/vins_estimator/odometry", 10, vins_callback);
+        if (pub_source != "odometry")
+            ROS_WARN("vins_to_mavros: pub_source '%s' unrecognized, fell back to odometry",
+                     pub_source.c_str());
+        if (pub_rate_hz > 0.0)
+            ROS_WARN("vins_to_mavros: throttle active rate_hz=%.1f (source=odometry)",
+                     pub_rate_hz);
+    }
     // IMU 缓存(第二道防线, T2b-U5)
     ros::Subscriber imu_sub = nh.subscribe("/mavros/imu/data_raw", 2000, imu_callback);
 

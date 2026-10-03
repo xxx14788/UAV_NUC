@@ -18,7 +18,7 @@ def main():
     bagp = sys.argv[1]
     tag = sys.argv[2] if len(sys.argv) > 2 else os.path.basename(bagp).replace(".bag", "")
     b = rosbag.Bag(bagp)
-    dl, st, gaps, n_odom, last_t = [], {}, [], 0, None
+    dl, st, gaps, n_odom, last_t = [], [], [], 0, None
     topics = ["/debugPx4ctrl", "/vins_estimator/imu_propagate"]
     for tp, m, _ in b.read_messages(topics=topics):
         if tp == "/debugPx4ctrl":

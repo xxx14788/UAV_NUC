@@ -126,6 +126,47 @@ TEST(FillOdomMsg, OutputIsCleanSlate)
   EXPECT_EQ(0.0, out.pose.covariance[0]);
 }
 
+
+TEST(PubThrottle, OffIsPassthrough)
+{
+  vins_to_mavros::PubThrottle th;
+  th.configure(0.0);
+  for (int i = 0; i < 100; ++i)
+    EXPECT_TRUE(th.allow(1.0 + i * 0.005));
+}
+
+TEST(PubThrottle, RateTenOnFiftyHzStream)
+{
+  vins_to_mavros::PubThrottle th;
+  th.configure(10.0);
+  int passed = 0;
+  double t = 100.0;
+  for (int i = 0; i < 500; ++i, t += 0.02)
+    if (th.allow(t))
+      ++passed;
+  EXPECT_GE(passed, 98);
+  EXPECT_LE(passed, 102);
+}
+
+TEST(PubThrottle, FirstFrameAlwaysPasses)
+{
+  vins_to_mavros::PubThrottle th;
+  th.configure(30.0);
+  EXPECT_TRUE(th.allow(55.0));
+  EXPECT_FALSE(th.allow(55.01));
+  EXPECT_TRUE(th.allow(55.04));
+}
+
+TEST(PubThrottle, ReconfigureResets)
+{
+  vins_to_mavros::PubThrottle th;
+  th.configure(10.0);
+  EXPECT_TRUE(th.allow(1.0));
+  EXPECT_FALSE(th.allow(1.05));
+  th.configure(0.0);
+  EXPECT_TRUE(th.allow(1.05));
+}
+
 int main(int argc, char** argv)
 {
   ::testing::InitGoogleTest(&argc, argv);

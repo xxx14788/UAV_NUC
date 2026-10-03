@@ -70,6 +70,39 @@ inline void fill_odom_msg(const nav_msgs::Odometry& vins, nav_msgs::Odometry& ou
   out.twist.twist.linear.z = vz;
 }
 
+// T1 E-4 (2026-10-03): EV supply-density face (D30/D60).
+// pub_source: "odometry" (legacy 10Hz input) | "imu_prop" (223Hz high-rate input)
+// pub_rate_hz: 0 = no throttle (bit-identical); >0 = min publish interval gate.
+// Throttle sits AFTER the shared health gates (gates protect both arms and
+// every rate) and stamps on header.stamp (sim domain, monotone per stream).
+struct PubThrottle
+{
+  double rate_hz = 0.0;   // 0 = off
+  double min_dt = 0.0;    // 1/rate, computed on set
+  bool have_last = false;
+  double last_pub_t = 0.0;
+
+  void configure(double hz)
+  {
+    rate_hz = hz;
+    min_dt = (hz > 0.0) ? (1.0 / hz) : 0.0;
+    have_last = false;
+    last_pub_t = 0.0;
+  }
+
+  // true = this frame may pass
+  inline bool allow(double stamp)
+  {
+    if (rate_hz <= 0.0)
+      return true;
+    if (have_last && (stamp - last_pub_t) < min_dt - 1e-6)
+      return false;
+    have_last = true;
+    last_pub_t = stamp;
+    return true;
+  }
+};
+
 }  // namespace vins_to_mavros
 
 #endif  // VINS_TO_MAVROS_ODOM_FILL_H
