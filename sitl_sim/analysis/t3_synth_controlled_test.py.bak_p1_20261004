@@ -8,12 +8,6 @@ v1.3 扩展(2026-10-04;T3 v9.3 单元1):任一门拦截三夹具——
                → 期望 state=uncontrolled-fail(§2.6-h 误触发处置,裁定②"误触发不算")
   SYN_LEG_A1 : legacy fire@49.212+触发前 diag Bas=3.17(真实性面ii)+odom 流止于触发点
                → 期望 state=triggered-no-recovery(A1 正型:真触发+无恢复)
-池件 P1 扩充(2026-10-04 03:4x;v1.3 新路径对抗面四型):
-  SYN_EARLY    : legacy fire@50+晚无关事故 jump@250 → 早触发不因无关事故翻受控
-                 (jumps_out>0+L2b 恢复段含晚事故)→ 期望 TNR
-  SYN_MULTI2   : cost+legacy 双门同刻(R5 同型) → 锚不漂移 → 期望 controlled
-  SYN_LATE_LEG : legacy 迟触发(fire@100>onset@50+10) → L1b 拦 → 期望 TNR
-  SYN_NOTC_LEG : legacy 行无钟(WARN 头不可解析) → 不可锚定 → 期望 TNR
 判读走 wa_gate --online --skip-forensics(合成件无 forensics,smj=None→cf_smj_ok=True)。"""
 import os
 import math
@@ -32,18 +26,8 @@ except ImportError:
     sys.exit("need ROS env: source /opt/ros/noetic/setup.bash")
 
 
-RESULT_TMPL = ("anchor(goal+5s窗): (1.000, 0.980, 0.100) | 帧稳定性 |pre-post|=0.083 m\n"
-               "leg1 到位(真值) min=0.312 m (<0.75,场景门 world=sitl_world_obstacles)->1 "
-               "| leg1(VINS自报) min=0.401 m\n"
-               "避障 min_dist=1.530 m (>0.349)->1\n"
-               "poscmd 98.0 Hz (>=50)->1\n"
-               "auto_disarm->1\n"
-               "RESULT=PASS  (证据: synthetic)\n")
-
-
-def make_bag(path, fire_t, jump_t=None, t_end=130.0, shift_t=None):
-    """odom 10Hz t=40..t_end;truth=odom+0.02m 级噪声;jump_t 处 odom 单帧跳 1.0m(起点标记);
-    shift_t 起 odom 持久 +1.0m(真实晚发事故代理:L2b 恢复段误差面)。"""
+def make_bag(path, fire_t, jump_t=None, t_end=130.0):
+    """odom 10Hz t=40..t_end;truth=odom+0.02m 级噪声;jump_t 处 odom 单帧跳 1.0m(起点标记)。"""
     if os.path.exists(path):
         return
     with rosbag.Bag(path, 'w') as b:
@@ -53,9 +37,8 @@ def make_bag(path, fire_t, jump_t=None, t_end=130.0, shift_t=None):
             x, y, z = 0.5 * math.sin(0.05 * (t - 40)), 0.3 * (t - 40) / 90.0, 0.75
             if jump_t is not None and abs(t - jump_t) < 0.05:
                 y += 1.0  # 单帧 1.0m 跳=起点标记(>0.5 口径)
-            y_odom = y + (1.0 if (shift_t is not None and t >= shift_t) else 0.0)
             odo = Odometry()
-            odo.pose.pose.position = Point(x, y_odom, z)
+            odo.pose.pose.position = Point(x, y, z)
             b.write('/vins_estimator/odometry', odo, rospy.Time(t))
             ms = ModelStates()
             ms.name = ['iris_stereo_vins']
@@ -66,13 +49,6 @@ def make_bag(path, fire_t, jump_t=None, t_end=130.0, shift_t=None):
             t += 0.1
 
 
-def _write_common(d):
-    with open(os.path.join(d, 'round.log'), 'w') as f:
-        f.write("[00:00:01] SITL up (sitl_world_obstacles)\n")
-    with open(os.path.join(d, 'RESULT.txt'), 'w') as f:
-        f.write(RESULT_TMPL)
-
-
 def make_run(name, fire_t, jump_t):
     d = os.path.join(BASE, name)
     os.makedirs(d, exist_ok=True)
@@ -80,41 +56,41 @@ def make_run(name, fire_t, jump_t):
     with open(os.path.join(d, 'simvins.log'), 'w') as f:
         f.write("[33m[WARN] [1790880000.000000000, %.3f000000]: "
                 "cost gate: streak=5 over 10.0x short-window median, reboot[0m\n" % fire_t)
-    _write_common(d)
+    with open(os.path.join(d, 'round.log'), 'w') as f:
+        f.write("[00:00:01] SITL up (sitl_world_obstacles)\n")
+    with open(os.path.join(d, 'RESULT.txt'), 'w') as f:
+        f.write("anchor(goal+5s窗): (1.000, 0.980, 0.100) | 帧稳定性 |pre-post|=0.083 m\n")
+        f.write("leg1 到位(真值) min=0.312 m (<0.75,场景门 world=sitl_world_obstacles)->1 "
+                "| leg1(VINS自报) min=0.401 m\n")
+        f.write("避障 min_dist=1.530 m (>0.349)->1\n")
+        f.write("poscmd 98.0 Hz (>=50)->1\n")
+        f.write("auto_disarm->1\n")
+        f.write("RESULT=PASS  (证据: synthetic)\n")
     return d
 
 
-def make_leg_run(name, fire_t, jump_t=None, t_end=130.0, diag_bas=None, no_clock=False,
-                 shift_t=None):
-    """v1.3 legacy 触发夹具:failure detection! 行(±可选触发前 diag 偏置行/无钟变体)。"""
+def make_leg_run(name, fire_t, jump_t=None, t_end=130.0, diag_bas=None):
+    """v1.3 legacy 触发夹具:failure detection! 行(±可选触发前 diag 偏置行)。"""
     d = os.path.join(BASE, name)
     os.makedirs(d, exist_ok=True)
-    make_bag(os.path.join(d, 'flight.bag'), fire_t, jump_t, t_end, shift_t)
+    make_bag(os.path.join(d, 'flight.bag'), fire_t, jump_t, t_end)
     with open(os.path.join(d, 'simvins.log'), 'w') as f:
         if diag_bas is not None:
             f.write("[T2diag] t=%.4f P=[0.0 0.0 0.1] V=[0.0 0.0 0.0] |Bas|=%.6f "
                     "|Bgs|=0.1486274 Bas=[-0.4 -0.6 -1.8] Bgs=[-0.1 0.05 0.1] "
                     "tic0=[0.0 0.0] track=120\n" % (fire_t - 0.048, diag_bas))
-        if no_clock:
-            f.write("[33m[WARN]: failure detection![0m\n")
-        else:
-            f.write("[33m[WARN] [1790880000.000000000, %.3f000000]: failure detection![0m\n"
-                    % fire_t)
-    _write_common(d)
-    return d
-
-
-def make_dual_run(name, fire_t):
-    """池件P1:双门同刻触发(R5 同型:legacy+cost 同 t 锚不漂移)。"""
-    d = os.path.join(BASE, name)
-    os.makedirs(d, exist_ok=True)
-    make_bag(os.path.join(d, 'flight.bag'), fire_t, None)
-    with open(os.path.join(d, 'simvins.log'), 'w') as f:
-        f.write("[33m[WARN] [1790880000.000000000, %.3f000000]: "
-                "cost gate: streak=5 over 10.0x short-window median, reboot[0m\n" % fire_t)
-        f.write("[33m[WARN] [1790880000.100000000, %.3f000000]: failure detection![0m\n"
-                % (fire_t + 0.001))
-    _write_common(d)
+        f.write("[33m[WARN] [1790880000.000000000, %.3f000000]: failure detection![0m\n"
+                % fire_t)
+    with open(os.path.join(d, 'round.log'), 'w') as f:
+        f.write("[00:00:01] SITL up (sitl_world_obstacles)\n")
+    with open(os.path.join(d, 'RESULT.txt'), 'w') as f:
+        f.write("anchor(goal+5s窗): (1.000, 0.980, 0.100) | 帧稳定性 |pre-post|=0.083 m\n")
+        f.write("leg1 到位(真值) min=0.312 m (<0.75,场景门 world=sitl_world_obstacles)->1 "
+                "| leg1(VINS自报) min=0.401 m\n")
+        f.write("避障 min_dist=1.530 m (>0.349)->1\n")
+        f.write("poscmd 98.0 Hz (>=50)->1\n")
+        f.write("auto_disarm->1\n")
+        f.write("RESULT=PASS  (证据: synthetic)\n")
     return d
 
 
@@ -125,12 +101,7 @@ if __name__ == '__main__':
     c = make_leg_run('SYN_LEG', 50.0, jump_t=52.0)                    # 真触发(onset面)→controlled
     e = make_leg_run('SYN_FALSE', 50.0)                               # 零证据→误触发处置
     f_ = make_leg_run('SYN_LEG_A1', 49.212, t_end=49.3, diag_bas=3.172506)  # diag面真触发+流死→TNR
-    # 池件P1 对抗样本扩充(v1.3 新路径四型)
-    g1 = make_leg_run('SYN_EARLY', 50.0, shift_t=110.0)               # 早触发+晚发持久事故(110s 起+1.0m)→L2b拦→TNR
-    g2 = make_dual_run('SYN_MULTI2', 50.0)                            # 双门同刻(R5同型)→锚不漂→controlled
-    g3 = make_leg_run('SYN_LATE_LEG', 100.0, jump_t=50.0)             # legacy 迟触发→L1b拦→TNR
-    g4 = make_leg_run('SYN_NOTC_LEG', 50.0, no_clock=True)            # legacy 行无钟→不可锚定→TNR
-    for d in (a, b_, c, e, f_, g1, g2, g3, g4):
+    for d in (a, b_, c, e, f_):
         r = subprocess.run([sys.executable,
                             os.path.expanduser('~/catkin_ws/sitl_sim/analysis/t3_wa_gate.py'),
                             '--online', '--skip-forensics', d],
@@ -141,12 +112,7 @@ if __name__ == '__main__':
             ('SYN_LATE', ('triggered-no-recovery', 'FAIL')),
             ('SYN_LEG', ('controlled', 'PASS-CONTROLLED')),
             ('SYN_FALSE', ('uncontrolled-fail', 'FAIL')),
-            ('SYN_LEG_A1', ('triggered-no-recovery', 'FAIL')),
-            # 池件P1 扩充四型(v1.3 新路径对抗面)
-            ('SYN_EARLY', ('triggered-no-recovery', 'FAIL')),     # 早触发+晚无关事故=jumps_out>0+L2b 拦
-            ('SYN_MULTI2', ('controlled', 'PASS-CONTROLLED')),    # 双门同刻=锚不漂(R5 同型回归)
-            ('SYN_LATE_LEG', ('triggered-no-recovery', 'FAIL')),  # legacy 迟触发=L1b 拦
-            ('SYN_NOTC_LEG', ('triggered-no-recovery', 'FAIL')))  # legacy 行无钟=不可锚定
+            ('SYN_LEG_A1', ('triggered-no-recovery', 'FAIL')))
     fails = 0
     for n, w in want:
         j = json.load(open(os.path.join(BASE, n, 'wa_gate_online.json')))

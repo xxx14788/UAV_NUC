@@ -153,7 +153,7 @@ tag 各一 commit。STATUS 批次通告与轮间 RESULT 落盘后再发下一轮
 
 - 判读器任何改动走红线 24 全流程:双备份(.bak_<ver>_<date>+/tmp 副本)+补丁唯一命中
   断言+md5 入本表+三层验证;备份清理条件=X1' 轮后(.bak 凭据族统一处置)。
-- 合成电池正源=`analysis/t3_synth_controlled_test.py`(5 断言:SYN_CTRL/SYN_LATE/
+- 合成电池正源=`analysis/t3_synth_controlled_test.py`(9 断言:SYN_CTRL/SYN_LATE/SYN_LEG/SYN_FALSE/SYN_LEG_A1/SYN_EARLY[早触发+晚发真实事故 L2b 拦]/SYN_MULTI2[双门同刻锚不漂,R5 型]/SYN_LATE_LEG[legacy 迟触发 L1b 拦]/SYN_NOTC_LEG[无钟不可锚];池件 P1 2026-10-04 扩充)/SYN_MULTI/SYN_NOBAG/SYN_NOTC(边界×3)
   SYN_LEG/SYN_FALSE/SYN_LEG_A1)+`x11_dryrun_v11/SYN_MULTI/SYN_NOBAG/SYN_NOTC`(边界×3)。
 - 受控层期望态速查(判读链对抗样本扩充池的种子集):cost 真触发→controlled;
   legacy 真触发双面证据→controlled;迟触发(L1b)→TNR;零证据触发→误触发处置
