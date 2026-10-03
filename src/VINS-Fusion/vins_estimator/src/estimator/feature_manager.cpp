@@ -356,6 +356,8 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
     // when gate on; absent config key = gate off = upstream behavior bit-identical)
     std::set<int> t2_gate_reject;
     int t2_stat_tri = 0, t2_stat_rej = 0, t2_stat_xrej = 0, t2_stat_init = 0;
+    // T2-v8.3 unit-1b: source-resolved init_replace (stereo / motion2; residual stays in t2_stat_init)
+    int t2_stat_init_st = 0, t2_stat_init_m2 = 0;
     // T2-R2F: far_drop counters + starvation-guard supply (near = disp/shift >= gate)
     int t2_stat_fardrop = 0, t2_stat_fardrop_starved = 0, t2_near_supply_cur = 0;
     for (auto &it_per_id : feature)
@@ -467,6 +469,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             {
                 it_per_id.estimated_depth = INIT_DEPTH;
                 t2_stat_init++;
+                t2_stat_init_st++;  // T2-v8.3 unit-1b
             }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
@@ -555,6 +558,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             {
                 it_per_id.estimated_depth = INIT_DEPTH;
                 t2_stat_init++;
+                t2_stat_init_m2++;  // T2-v8.3 unit-1b
             }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
@@ -645,8 +649,12 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                 ++it;
         }
     }
-    printf("[T2gate] t=%.4f tri=%d rej=%d xrej=%d init_replace=%d gate=%d\n",
-           t2_cur_t, t2_stat_tri, t2_stat_rej, t2_stat_xrej, t2_stat_init, T2_DEPTH_GATE);
+    // T2-v8.3 unit-1b: source-resolved injection accounting on the [T2gate] line
+    long t2_ir_shift_delta = t2_init_shift_total - t2_init_shift_last;
+    t2_init_shift_last = t2_init_shift_total;
+    printf("[T2gate] t=%.4f tri=%d rej=%d xrej=%d init_replace=%d gate=%d ir_st=%d ir_m2=%d ir_shift=%ld\n",
+           t2_cur_t, t2_stat_tri, t2_stat_rej, t2_stat_xrej, t2_stat_init, T2_DEPTH_GATE,
+           t2_stat_init_st, t2_stat_init_m2, t2_ir_shift_delta);
     t2_near_supply_last = t2_near_supply_cur;  // T2-R2F: supply memory for next frame
 }
 
@@ -707,7 +715,10 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
                 if (dep_j > 0)
                     it->estimated_depth = dep_j;
                 else
+                {
                     it->estimated_depth = INIT_DEPTH;
+                    t2_init_shift_total++;  // T2-v8.3 unit-1b: shift-path injection counted
+                }
             }
         }
         // remove tracking-lost feature after marginalize

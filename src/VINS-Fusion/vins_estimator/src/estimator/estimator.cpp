@@ -95,6 +95,13 @@ void Estimator::clearState()
     f_manager.clearState();
 
     failure_occur = 0;
+    // T2-v8.3 unit-1a (2026-10-03, prereg_gatereset_initshift.md): the cost
+    // gate's rolling window/streak are estimator state and must reboot with
+    // the rest — stale pre-failure medians made fresh post-reboot init costs
+    // look like 10x surges and killed maturing clean inits (U3pp-rerun
+    // 033941 t=55.432: streak-7 fire on pristine state, Bas=0.0096 — storm
+    // self-perpetuation). Clearing here re-arms the gate only after 20 fresh
+    // NON_LINEAR frames (re-init maturation guard). No-op when gate off.
 
     mProcess.unlock();
 }
