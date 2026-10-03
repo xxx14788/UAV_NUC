@@ -112,3 +112,14 @@ README §3（参数差异账）将增/核行：
 节律纪律：每轮间 pgrep CLEAN+锁活性；df 每轮记录；ENV-FAIL→1 次重试（同位形）；连败 2 同型→prereg §4
 回挖分支（不放宽）；T1-D1 域轮（j0≥0.5 且 vins 健康）→不计 5/5 入回挖；受控轮→PASS-CONTROLLED 计数+
 回挖查未受控分量。判读产物三件/轮（RESULT.txt/wa_gate_online.json/forensics）+受控态入台账行。
+
+### 8.1 U4 通告消费检查单（池件 P-Q；解锁瞬间按序执行，全部满足才飞 X1prime）
+
+1. **通告面核对**：T2 STATUS 行含 U4 字样+点名 @T3+栈号双 md5（lib+vins_node）；无栈号=向 T2 索要（prereg 槽必填）。
+2. **栈号一致性**：若 U4 栈=lib 5dde4d7e 系（t2gates/A1 修复栈）→ 受控层按 v1.2 全量适用；若栈≠该系（L1 触发行不存在）→ prereg seam-4 自动降级（受控路径不适用，零 fail 或 FAIL 二选一），**不改判读器**。
+3. **栈号填槽**：prereg v1 头部栈号槽填 U4 值+台账登记（判据冻结时点=此刻）。
+4. **判读链健康证明**：`t3_wa_gate.py --online --selftest` 三格绿（输出存档 run 前）+ 版本=4cb6acc7 核对（runbook §9.1 表）。
+5. **x4judge v1.1 接线实施**（opcard §6 设计兑现：读 counting_pass/controlled.state JSON 面）+ SYN_CTRL×5 模板自测。
+6. **df 门**：>15G 起飞门实测（<20G 禁新轮）；当前 51G=通过面。
+7. **T2 STATUS 尾无未决异议**（尤其对我 040932 回执的 27.2m 对账若有回应先消化）。
+8. **锁序**：sitl_lock v2 acquire T3-X4（权序最高）+ STATUS 预告。
