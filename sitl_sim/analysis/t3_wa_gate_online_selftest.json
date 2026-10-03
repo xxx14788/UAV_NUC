@@ -2,9 +2,9 @@
  "pass": true,
  "cells": [
   {
-   "cell": "run_WAOL5R_222234",
+   "cell": "run_U3PO_211438",
    "ok": true,
-   "line": "run_WAOL5R_222234: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=2.448 j0rev=False(raw=57,smj=43) env=sitl.log:Connection-closed(normal-cleanup-artifact?) T1D1 | vins=✓ reboot=0 gaps=0 cov=1.0 bas_pk=0.9808 bgs_pk=0.00132 ate=1.8859 morph=数值溢出型(含 extreme/非有限帧) cf=clean]",
+   "line": "run_U3PO_211438: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=2.603 j0rev=False(raw=33,smj=54) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=1.3709 bgs_pk=0.01701 ate=2.0382 morph=爆散 cf=clean]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -17,13 +17,8 @@
      "pass": true
     },
     {
-     "check": "j0_jump ref=2.448",
-     "got": 2.448,
-     "pass": true
-    },
-    {
-     "check": "t1d1_domain ref=True",
-     "got": true,
+     "check": "j0_jump ref=2.603",
+     "got": 2.603,
      "pass": true
     },
     {
@@ -37,60 +32,13 @@
      "pass": true
     },
     {
-     "check": "bas_peak ref=0.981",
-     "got": 0.9808,
+     "check": "bas_peak ref=1.3709",
+     "got": 1.3709,
      "pass": true
     },
     {
-     "check": "bgs_peak_le ref=0.01",
-     "got": 0.00132,
-     "pass": true
-    },
-    {
-     "check": "vins_pass ref=True",
-     "got": true,
-     "pass": true
-    },
-    {
-     "check": "scene ref=obstacles",
-     "got": "obstacles",
-     "pass": true
-    },
-    {
-     "check": "controlled_state ref=clean",
-     "got": "clean",
-     "pass": true
-    }
-   ]
-  },
-  {
-   "cell": "run_X1_232055",
-   "ok": true,
-   "line": "run_X1_232055: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散 cf=triggered-no-recovery]",
-   "checks": [
-    {
-     "check": "verdict==FAIL",
-     "got": "FAIL",
-     "pass": true
-    },
-    {
-     "check": "fj_raw_ge ref=100",
-     "got": 624,
-     "pass": true
-    },
-    {
-     "check": "fj_smj_ge ref=100",
-     "got": 632,
-     "pass": true
-    },
-    {
-     "check": "j0_rev_pass ref=False",
-     "got": false,
-     "pass": true
-    },
-    {
-     "check": "morph_diverged ref=True",
-     "got": "爆散",
+     "check": "bgs_peak_le ref=0.05",
+     "got": 0.01701,
      "pass": true
     },
     {
@@ -104,8 +52,8 @@
      "pass": true
     },
     {
-     "check": "controlled_state ref=triggered-no-recovery",
-     "got": "triggered-no-recovery",
+     "check": "controlled_state ref=clean",
+     "got": "clean",
      "pass": true
     }
    ]
@@ -133,6 +81,26 @@
     {
      "check": "j0_jump ref=369.839",
      "got": 369.839,
+     "pass": true
+    },
+    {
+     "check": "controlled_state ref=triggered-no-recovery",
+     "got": "triggered-no-recovery",
+     "pass": true
+    },
+    {
+     "check": "t1d1_domain ref=True",
+     "got": true,
+     "pass": true
+    },
+    {
+     "check": "morph_diverged ref=True",
+     "got": "数值溢出型(含 extreme/非有限帧)",
+     "pass": true
+    },
+    {
+     "check": "fj_raw_ge ref=100",
+     "got": 512,
      "pass": true
     }
    ]

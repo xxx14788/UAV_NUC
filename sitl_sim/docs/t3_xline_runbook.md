@@ -167,3 +167,20 @@ tag 各一 commit。STATUS 批次通告与轮间 RESULT 落盘后再发下一轮
 - 受控层期望态速查(判读链对抗样本扩充池的种子集):cost 真触发→controlled;
   legacy 真触发双面证据→controlled;迟触发(L1b)→TNR;零证据触发→误触发处置
   uncontrolled-fail;真触发+流死→TNR(A1 型);log 缺失→log-missing 降级。
+
+### §9.2 判读锚袋注册表（2026-10-04 03:05 设;任何腾位动作删袋前必查本表+@T3）
+
+> 缘起：2026-10-04 02:57 T1 K-7 紧急腾位删除 WAOL×5/X1×10 历史袋,其中 run_WAOL5R_222234
+> 与 run_X1_232055 = 在线 selftest 冻结锚格(prereg 对账基准),事前无 @T3 fixture 核对面
+> ——本表即补该流程缺口。删袋前核对流程=责任表 §8.2 + 本表。
+
+| 锚袋 | 锚面 | 判读链版本 |
+|---|---|---|
+| run_U3PO_211438/flight.bag（**compact 蒸馏袋 0.2G**,2026-10-04 03:00 换装;原 13G 袋已删,蒸馏判读逐位一致核验在册） | 在线 selftest 格 1:j0 2.603/Bas 病态 1.3709/ctrl clean/359s 存活 | 判读器 e3478a88 起用 |
+| run_WC2OBS1_032005/flight.bag（13.5G,**T4 域素材兼判读活锚**——T4 裁量删除前必须 @T3;建议同款蒸馏换装） | 在线 selftest 格 2:v1.3 任一门 TNR 活锚/j0 369.839/溢出型 morph | 判读器 e3478a88 起用 |
+| t3_results/x11_dryrun_v11/SYN_*(12 夹具族,合成小袋) | SYN 电池 9 断言 | 永久 |
+| x11_dryrun_v11/R5_pairing_fix+U3R_*(硬链接袋,原袋在 T2 域) | 受控正样本/舰队回归 | 至 X7 |
+
+版本行补登：**v1.3-anchor = e3478a88**（2026-10-04 03:05;判读逻辑零变动——仅在线
+selftest 锚格重建[U3PO compact+WC2OBS1 双格,WAOL5R/X1 退役入史证块 @6336922]+morph
+白名单字面量勘误[含 extreme/非有限帧];两 selftest 全绿）。

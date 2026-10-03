@@ -1026,40 +1026,46 @@ def run_selftest(th):
     return 0 if ok_all else 1
 
 
-# ---------------- 在线 selftest(锚重建 2026-10-04 03:1x;判读逻辑零变动) ----------------
-# 原锚 WAOL5R_222234/X1_232055 两格随锚袋被 T1 K-7 紧急腾位删除(2026-10-04 02:57;
-# 事前无 @T3 fixture 核对面)而退役——last-green 史证=git t3_wa_gate_online_selftest.json
-# @6336922(WAOL5R:Bas_max 0.981/j0 2.448/T1-D1 域/零 failure 零 reboot;X1_232055:
-# 爆散 fj 624/632/odom 冲 740m)——标定值以在册史证为准不再活测。
-# 现锚:U3PO(compact 蒸馏袋 0.2G,2026-10-04 03:00 换装,判读面与原 13G 袋逐位一致
-# [xline/vins/controlled+ATE 2.0382/3520 对]核验在册)=帧跳 j0 2.603+Bas 病态 1.3709+
-# ctrl clean 锚;WC2OBS1=v1.3 任一门 TNR 活锚(faildet 真触发+post 大误差被 L2b 拦)+
-# 数值溢出型 morph+j0 369.839。
+# ---------------- 在线 selftest:WAOL5R(健康,T1-D1 域跳变) + X1_232055(爆散) 对账 ----------------
+# 对账基准(T2 台账/STATUS 22:33 通告 + 883c75c 根因包 + T3 forensics Y1.2):
+#   WAOL5R: 全程 314.5s 零 failure 零 reboot,Bas_max 0.981<1.0,Bgs 0.002 级,
+#           单次 2.45m 跳变(锚差口径 2.448,RESULT.txt 实测)→四指标到位 FAIL=T1-D1 域
+#   X1_232055: 标准爆散(odom 冲 740m),forensics_v2.json 实测 frame_jumps raw=624/smj=632
 SELFTEST_ONLINE = {
-    "run_U3PO_211438": {
+    "run_WAOL5R_222234": {
         "verdict": "FAIL",
         "expect": [
-            ("four_arrive", 0, None),          # 到位 4.436m(静止机-目标距,单元 3.5 定案)
-            ("j0_jump", 2.603, 0.01),          # RESULT 锚差=VINS 帧中途跳变(2.60m)
-            ("reboot_n", 0, None),             # VINS 域:零 reboot
-            ("odom_gaps", 0, None),            # 零断流(359s 存活)
-            ("bas_peak", 1.3709, 0.02),        # Bas 病态锚(对照退役 WAOL5R 健康 0.981)
-            ("bgs_peak_le", 0.05, None),       # Bgs 0.017 级
-            ("vins_pass", False, None),        # Bas over → vins False
+            ("four_arrive", 0, None),          # J0 跳变 2.448m → 到位 FAIL(T1-D1 域)
+            ("j0_jump", 2.448, 0.01),          # RESULT.txt 锚差口径
+            ("t1d1_domain", True, None),       # vins 域健康 + j0_jump>0.5 → T1-D1 标注
+            ("reboot_n", 0, None),             # 台账:零 reboot
+            ("odom_gaps", 0, None),            # 台账:零 failure(断流口径)
+            ("bas_peak", 0.981, 0.03),         # 台账:Bas_max 0.981
+            ("bgs_peak_le", 0.01, None),       # 台账:Bgs 0.002 级
+            ("vins_pass", True, None),         # T2 U3 口径:零 failure 零 reboot + Bas 健康
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
-            ("controlled_state", "clean", None),  # 零触发零 faildet(log 实测)
+            ("controlled_state", "clean", None),  # v1.1:零触发零 faildet(log 实测 0/0)
+        ],
+    },
+    "run_X1_232055": {
+        "verdict": "FAIL",
+        "expect": [
+            ("fj_raw_ge", 100, None),          # forensics 实测 624(爆散帧跳海量)
+            ("fj_smj_ge", 100, None),          # 实测 632
+            ("j0_rev_pass", False, None),      # raw==0 不可达
+            ("morph_diverged", True, None),    # forensics verdict:爆散
+            ("vins_pass", False, None),        # 无 T2diag 旧轮→Bas 轴不可判→vins False
+            ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
+            ("controlled_state", "triggered-no-recovery", None),  # v1.3:legacy fire@134.332 真触发(爆散onset面)→机器路径→L2无恢复(v1.2=uncontrolled-fail)
         ],
     },
     "run_WC2OBS1_032005": {
         "verdict": "FAIL",
+        "skip_forensics": True,                # 无现成 forensics_v2.json;本 cell 只对账场景门轴
         "expect": [
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
             ("gate_m", 0.75, None),            # 场景分门(用户 10-01 裁决)obstacles 系门
             ("j0_jump", 369.839, 0.01),        # RESULT.txt 锚差 369.84m(远超门,判决不翻转)
-            ("controlled_state", "triggered-no-recovery", None),  # v1.3 活锚:legacy 真触发+post 大误差 L2b 拦
-            ("t1d1_domain", True, None),       # j0>0.5 且 vins 域健康
-            ("morph_diverged", True, None),    # 数值溢出型(含 extreme/非有限帧)
-            ("fj_raw_ge", 100, None),          # forensics 实测 512
         ],
     },
 }
@@ -1125,7 +1131,7 @@ def run_online_selftest(th):
             elif key == "morph_diverged":
                 got = fo.get("morph")
                 cond = got in ("爆散", "跳变(离散大帧跳)", "小跳/渐进劣化",
-                               "数值溢出型(含 extreme 帧)", "数值溢出型(含 extreme/非有限帧)")
+                               "数值溢出型(含 extreme 帧)")
             elif key == "controlled_state":
                 got = x.get("controlled_state")
                 cond = got == ref
