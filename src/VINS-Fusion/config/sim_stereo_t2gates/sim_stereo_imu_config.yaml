@@ -97,3 +97,10 @@ t2_cost_gate: 1
 # livelock windows, round still matured 1004m). Disabled pending init-side
 # redesign (relaxed Bgs bar needs code, see ledger unit-3 chapter).
 t2_depth_gate: 0
+
+# T2-v8.9 unit-2 readjudication VERDICT (2026-10-04, prereg_route_fix): case-A WINS 2/2
+# (A1 healthy 0.990m dual-leg 3min / A2 healthy 0.633m PASSES 0.75 gate) vs case-B 1/2
+# (B1 transient-controlled 6fail contained, tail p50 0.023 / B2 maturity-by-d leg2 1.654m).
+# Winner stays ON per prereg branch; case-B knob stays available but off.
+t2_staged_depth_gate: 1
+t2_staged_n_sec: 80

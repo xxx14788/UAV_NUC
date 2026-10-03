@@ -1961,3 +1961,27 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
   - ARMA（案A 臂）：**分阶段行为完美生效**——pre-grace（init t=20.6 后 80s 内 793 帧）ir_st_sum=981/max=13 伪注入保留=填窗语义；**post-grace（941 帧）ir_st_sum=0/max=0 稳态伪注入全零**+rej 6-14/帧拒收在岗；零活锁（W4 reject=0/单次 init/无 banner 连发）——对照 v8.3 depth-gate 臂同场景活锁（gate reject 7 连+1.1s 连发）**活锁根除实证**。
   - ARMB（案B 臂）：banner w4=5 生效 ✓；T2fail=3/init_finish=4=单变量差异（CANON 同袋 0 fail/1 init）指向 w4 放行 Bgs 0.5-5 带劣质 init 后被 cost/后置防线拦截 reboot，第 4 次 init 收敛存活——**无活锁形态**（非 1.1s 连发循环）；放行面行为如实记，生死在线定。
 - **ENV**：三回放私有 master 11312 零残留；T1 02:05 通告已消费（其 02:40 px4ctrl build 与本线 build/回放错峰完成）；臂 config=cfg_routefix_A/B（R2_dissect/，基带 sim_stereo_t2gates cost_gate=1 不动）。
+
+
+**T2 v8.9 单元 2：复裁在线轮终局——主判 R1 达标 3/4，案A 胜（2026-10-04 02:40-03:4x；栈=fixface-3 e7044319/08a46d0a 每轮 banner 自证；prereg_route_fix 先行；判据禁放宽）**
+
+**route×4 逐轮**（轮序 A1,B1,A2,B2；每轮 [T2RFIXCFG] banner 实证臂配置；goal 3,-2,1→0,0,1；到位对照列=truth min_d1 vs 健康带 0.79-1.10m）：
+
+| 轮 | 臂 | 判定 | 关键读数 |
+|---|---|---|---|
+| A1 024006 | 案A staged=1 | **无成熟（健康）** | 零 T2fail/单 init/零 reboot；双腿 3min 完成；truth min_d1=**0.990**（带内）/d2=0.486；max_exc 3.6m |
+| B1 024434 | 案B w4=5 | **无成熟（瞬态受控）** | 6×T2fail/9 reboot 拦截链+30 跳变+odom 瞬态 13.2m，**尾 60s \|P\|p50=0.023 完全恢复**（落地静态再 init 干净，U3″032809 同型最好恢复例）；truth max_exc 3.01m 机体安全；d1=1.063 |
+| A2 025808 | 案A | **无成熟（健康）** | 零 fail/单 init；双腿 3.5min；truth min_d1=**0.633 破 0.75 门**（历史首次 route 到位门 PASS 级读数，对照 040932 0.871-1.029/noise-off 1.095/带 0.79-1.10——破带下沿） |
+| B2 030207 | 案B | **成熟（签名 d）** | 零 fail/零跳变/单 init=非假盆地非急冻；leg2 truth min 1.654m 未到位+全长超时落地→签名 d（任务未完成）计成熟，无瞬态豁免条款适用（尾 p50=3.888 中间态）；d1=0.638 过门；odom max<8m 全程有界 |
+
+- **主判 R1=3/4 无假盆地成熟 ≥ 2/4 → 达标**（预注册主判过线；X 线解锁条件=U4 通告→单元 3 执行）。
+- **案分胜负=案A 2/2 > 案B 1/2** → 按 prereg 分支：**胜者案A 默认开**（t2gates config 已写入 t2_staged_depth_gate:1+t2_staged_n_sec:80+判决注释）、败者案B 旋钮保留但 off。
+- **次判**：R2a init 质量不劣化 ✓（四轮全部 init 完成存活，无 1.1s banner 连发）；R2b 零活锁 ✓（对照 v8.3 depth-gate 臂活锁根除）；R2c 正常域零回归 ✓（canonical 零新键逐位+预筛 CANON PASS+build gtest 38/38）。
+- **到位对照列（精度红利锚）**：A1 0.990/A2 0.633/B1 1.063/B2 0.638——健康轮全入或破 0.79-1.10 带；A2/B2 破带下沿=修复面精度红利初现（样本 2，C 域单元 5 深挖面）。
+- **B1 机理注记**：w4=5.0 放行面=6 劣质 init 放入后被 cost/后置防线逐次拦截（预筛 ARMB 形态在线再现）；拦截-恢复链完整=受控失败口径（10-03 四裁定②：任意门拦截+完整恢复）。B2=精度地板型（零事件但不到位）——w4 放行不解决精度，与案B 定位一致（活锁解除面非精度面）。
+
+**obstacles×2 补格（终版补格：U3″ 10 臂无此场景格；臂=案A；goal 7,-4,1 U3PO 型；判据=VINS 域零 fail/受控+到位记录）**：
+- OBS1=ENV-FAIL（gazebo/px4 轮中死亡，prereg 环境性重试分支，不计入）→ OBS1r：**VINS 域受控 ✓**（2×T2fail 拦截+再 init 恢复存活）+到位 3.476m FAIL（场景地板带）；OBS2：**受控 ✓**（1×T2fail 拦截恢复）+到位 4.692m FAIL。
+- 到位地板带 3.476-4.692 vs U3PO 4.436 同带=**obstacles 场景结构性到位地板**（8m 航线×VINS 漂移刻画），非修复回归；帧跳变 7.46/3.93m=出生对齐窗瞬态族。证据格语义达成（记录+判据指针），obstacles 格不构成 U4 表的 VINS 域阻塞项（受控达标口径）但到位红如实双记。
+
+**ENV 与资源**：ENV-FAIL 1 起（OBS1 gazebo 死，重试合规）；磁盘事件=B1/B2 大袋（23G+22G）触发 df 12G<20G 磁盘门拦停 obstacles 轮起飞机——**紧凑保全（口径 22：odom/imu/truth/setpoint 九话题，296M+302M，rosbag info 验证）后删原袋，df 恢复 56G**；A1/A2 全量袋（6.1G+6.0G，图像在）直留；四轮 flight_logs 归档+双 md5 随 banner 自证；launch 已复原 canonical 指向。
