@@ -1102,3 +1102,5 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
   正源=round_result.sh;两 v1.0 bug 修复在册）。
 - 实施时点注记：opcard §6 原设计"U4 通告后实施"——按 v9.3 任务书自主推进条款提前落地,
   判据值零变动（纯接线+两 bug 修复）,U4 通告后仅需栈号填槽+selftest 复跑。
+
+**单元 3 台账分叉处置**（K-11 闭）：runtime ~/sitl_sim/t3_experiments.md 零独有行核对（difflib,repo 1104 行=严格超集）→弃读头+chmod 444 封存；权威唯一=repo 本文件。STATUS 已通告各线。
