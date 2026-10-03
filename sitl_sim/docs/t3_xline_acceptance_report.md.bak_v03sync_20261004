@@ -13,12 +13,6 @@
   raw==0 且 smj≤10+ENV-FAIL 硬证据；vins 域层=零 failure 零 reboot+Bas 三重口径+ATE 出生点对齐；
   **受控失败层 v1.1（2026-10-03 增）**=触发+恢复双证→PASS-CONTROLLED 计数态，判据=
   prereg v1.1 §2.6，selftest 三格全绿+U3PO 零漂移 @0d434030；回放模式零回归复验 PASS）。
-  **受控失败层 v1.3（2026-10-04 增,池件③同步）**=L1 任一门拦截（用户 10-03 12:09 裁定②:
-  legacy 与 cost 同等）+§2.6-h 误触发排除（真实事故证据三面）;判读器 **6fb9ccb4**
-  （修正链 v1.1→v1.2→v1.3=prereg §7 三条目;runbook §9.1 凭据表正源）;X4 5/5 计数判定=
-  x4judge v1.1（counting_pass/controlled.state 两键接线,4e02bddb,SYN_CTRL×5 模板电池）;
-  18 样本 re-regression 判值面零漂移+U3″ 舰队表 v1.3 仅 035509 翻 controlled。逐轮表
-  [DATA:*] 槽增受控层两列槽位:controlled_state 五态/counting_pass。
 - **架构红线**：纯视觉（VINS 唯一位置源，R1-R6 同构）；zb 轴姿态判读；帧跳变测法双注明
   （帧间 |dp| vs 锚差）；J0 修订+出生点对齐（不对齐=+0.65m 级假误差）。
 - **栈代一致性凭据**：[DATA: git HEAD + sim_stereo/*.yaml md5 快照（runbook §0.5）]
