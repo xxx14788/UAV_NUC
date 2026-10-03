@@ -1081,3 +1081,24 @@ WC2OBS1 爆散/U3PO 导航 223Hz）p50 8-12ms、p95≤36ms、max 56ms、零帧�
   →TNR）；5 断言全绿。
 - 文档：prereg §7 v1.3 修正条目（冻结前并入，零 X 轮消费）；runbook §9.1 凭据表创建
   （v1.1 ac1df603/v1.2 4cb6acc7/v1.3 6fb9ccb4 三行入册+期望态速查）。
+
+**单元 2 x4judge v1.1 接线实施**（opcard §6 设计落地;红线 24 流程;.bak_x4j_20261004；
+v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
+
+- 接线面：①P0/VINS 域面改读 `wa_gate_online.json` 两键 `xline.counting_pass`（零 fail ∪
+  受控,prereg §2.6 计数语义）+`controlled.state`（五态列,PASS-CONTROLLED 轮表标"绿·受控"
+  注记）；②A1 改同源继承 `four[0]`（正源=round_result.sh 场景分门口径 K-5）——**修 v1.0
+  接线 bug#1**:A1 正则硬编码 `(<0.5)` 对 obstacles 轮 RESULT 打印 `(<0.75,场景门…)` 恒解析
+  失败=X 线主场景轮 A1 恒 None；③**修 v1.0 bug#2**:J0 误严（`raw==0∧smj==0`,§3 冻结口径
+  =`raw==0∧smj≤10`——smj∈[1,10] 的好轮[hover=1/route-PASS=7,Y1.4 校准]会被 v1.0 误杀）；
+  受控轮 J0 修订面按 prereg §2.6-c 毒窗豁免（`j0_rev_pass ∨ controlled∧jumps_out==0∧
+  smj≤10`）；④B/C/D 保持 RESULT.txt 原文正源；毒嫌疑降为信息列；⑤`wa_gate_online.json`
+  缺失=拒判（先判读后判定,退出码 2）；⑥降级面按设计零额外分支（非 t2gates 栈→判读器零
+  触发行→counting=xline_pass 自然退化）。
+- 验证：`--selftest` 模板电池=SYN_CTRL×5 夹具族 **PASS**（2 受控绿[CTRL/LEG]+3 FAIL 分型
+  [LATE 迟触发/FALSE 误触发/LEG_A1 触发-无恢复]）；实弹回归 15 轮（U3R×10+R5+A1/A2/A3+
+  U3PO）全 FAIL 与 wa_gate 判决一致=零假绿,ctrl 列与舰队表 v1.3 逐臂一致。
+- runbook §3 A1 行勘误注记（0.5 原口径已被 K-5 场景分门裁定取代,X 线 obstacles 轮=0.75,
+  正源=round_result.sh;两 v1.0 bug 修复在册）。
+- 实施时点注记：opcard §6 原设计"U4 通告后实施"——按 v9.3 任务书自主推进条款提前落地,
+  判据值零变动（纯接线+两 bug 修复）,U4 通告后仅需栈号填槽+selftest 复跑。

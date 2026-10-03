@@ -63,7 +63,7 @@
 
 | 代号 | 判据 | 门 |
 |---|---|---|
-| A1 | leg1 到位(真值) min_truth | <0.5m(T2-W3 曾建议 0.75m 协商门——**未获用户裁定前按 0.5 原口径**) |
+| A1 | leg1 到位(真值) min_truth | 场景分门(K-5 用户裁定 10-01,取代本行原<0.5 原口径注记):no_obstacles 0.5m/obstacles 系 0.75m;正源=round_result.sh 场景名口径;x4judge v1.1 已同源继承 four[0](勘误 10-04:原 0.5 注记已被 K-5 取代;v1.0 正则硬编码 0.5=接线 bug 已修) |
 | A2(②⑤) | leg2 到位(真值)+ 锚差漂移 | min_truth<0.5m 且 final_drift<0.5m |
 | B | 避障 min_dist | >0.349m(harness 既有口径) |
 | C | poscmd 频率 | ≥50Hz |

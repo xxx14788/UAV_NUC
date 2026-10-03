@@ -15,8 +15,7 @@ X4 判定:x4_judge(--x4 轮目录×5)按 runbook §3 判据表出 5/5 自动判�
 
 用法:
   t3_legs_rescan.py scan [--only 子串]        # 增量,输出 <script_dir>/t3_legs_rescan.csv
-  t3_legs_rescan.py x4judge <run_dir> ×5      # X4 五连飞自动判定 v1.1(读 wa_gate_online.json;模板验证可用任意轮)
-  t3_legs_rescan.py x4judge --selftest        # v1.1 模板电池:SYN_CTRL×5 夹具族(opcard §6)
+  t3_legs_rescan.py x4judge <run_dir> ×5      # X4 五连飞自动判定(模板验证可用任意轮)
 """
 import argparse
 import csv
@@ -228,83 +227,49 @@ def cmd_scan(only):
     print(f"[legs] 汇总 {len(all_rows)} 腿行 → {OUT_CSV}")
 
 
-def cmd_x4judge(dirs, selftest=False):
-    """X4 5/5 自动判定 v1.1(opcard §6;prereg v1.3 §2.6 计数语义)。
-    P0/VINS 域面=wa_gate_online.json 两键:xline.counting_pass(零 fail ∪ 受控)+
-    controlled.state(五态列,PASS-CONTROLLED 轮标受控注记);A1/J0 同源继承 wa_gate
-    (A1=four[0],正源=round_result.sh 场景分门口径 K-5——修 v1.0 正则硬编码 (<0.5)
-    对 obstacles 0.75 轮解析不出;J0=锚差恒门 0.5+修订面,修 v1.0 raw==0∧smj==0 误严
-    [§3 冻结=raw==0∧smj≤10],受控轮毒窗豁免=prereg §2.6-c[j0_rev_pass ∨
-    controlled∧jumps_out==0∧smj≤10]);B/C/D 读 RESULT.txt 原文;毒嫌疑=信息列不判。
-    降级面(opcard §6):非 t2gates 栈→判读器零触发行→受控路径自然不适用
-    (counting=xline_pass),零额外分支。wa_gate_online.json 缺失=拒判(先判读后判定)。"""
-    import json
-    if selftest:
-        base = os.path.expanduser("~/sitl_sim/t3_results/x11_dryrun_v11")
-        dirs = [os.path.join(base, n) for n in
-                ("SYN_CTRL", "SYN_LATE", "SYN_LEG", "SYN_FALSE", "SYN_LEG_A1")]
+def cmd_x4judge(dirs):
+    """X4 5/5 自动判定:runbook §3 判据表(A1/A2/B/C/D/J0/P0)。"""
     rounds = []
     for d in dirs:
         name = os.path.basename(d.rstrip("/"))
-        jp = os.path.join(d, "wa_gate_online.json")
-        if not os.path.exists(jp):
-            print(f"[x4judge] {name}: wa_gate_online.json 缺失——X4 判定拒吃未判读轮"
-                  f"(先跑 t3_wa_gate.py --online)", flush=True)
-            return 2
-        with open(jp, errors="replace") as f:
-            wj = json.load(f)
-        x, cf = wj.get("xline", {}), wj.get("controlled", {})
-        body = open(os.path.join(d, "RESULT.txt"), errors="replace").read() \
-            if os.path.exists(os.path.join(d, "RESULT.txt")) else ""
-        b_ok = re.search(r"避障 min_dist=[\d.]+ m \(>0\.349\)->(\d)", body)
-        c_ok = re.search(r"poscmd [\d.]+ Hz \(>=50\)->(\d)", body)
-        d_ok = re.search(r"auto_disarm->(\d)", body)
-        four = x.get("four") or [None, None, None, None]
-        controlled = cf.get("state") == "controlled"
-        cf_smj = x.get("fj_smj") is None or x["fj_smj"] <= 10
-        j0_anchor = x.get("j0_jump_m") is not None and x["j0_jump_m"] < 0.5
-        j0_rev = x.get("j0_rev_pass") is True or \
-            (controlled and cf.get("jumps_out") == 0 and cf_smj)
-        poison = None
+        res = parse_result(d) if os.path.isdir(d) else "?"
+        # J0/P0 由 legs_rescan 行/forensics 提供;此处读 RESULT 四指标+rescan 行
+        j0 = p0 = None
         fv = os.path.join(d, "forensics_v2.json")
         if os.path.exists(fv):
+            import json
             with open(fv, errors="replace") as f:
-                poison = bool(json.load(f).get("verdict", {}).get("poisoning_suspect"))
-        crit = {"A1": four[0] in (True, 1),
-                "B": (b_ok.group(1) == "1") if b_ok else None,
-                "C": (c_ok.group(1) == "1") if c_ok else None,
+                fr = json.load(f)
+            j0 = (fr.get("frame_jumps_raw_odom") == 0
+                  and fr.get("frame_jumps_smoothed_odom") == 0)
+            p0 = not fr.get("verdict", {}).get("poisoning_suspect")
+        body = open(os.path.join(d, "RESULT.txt"), errors="replace").read() \
+            if os.path.exists(os.path.join(d, "RESULT.txt")) else ""
+        a1 = re.search(r"min=([\d.]+) m \(<0.5\)->(\d)", body)
+        b_ok = re.search(r"避障 min_dist=([\d.]+) m \(>0.349\)->(\d)", body)
+        c_ok = re.search(r"poscmd ([\d.]+) Hz \(>=50\)->(\d)", body)
+        d_ok = re.search(r"auto_disarm->(\d)", body)
+        crit = {"RESULT": res,
+                "A1": (a1.group(2) == "1") if a1 else None,
+                "B": (b_ok.group(2) == "1") if b_ok else None,
+                "C": (c_ok.group(2) == "1") if c_ok else None,
                 "D": (d_ok.group(1) == "1") if d_ok else None,
-                "J0": bool(j0_anchor and j0_rev),
-                "counting": x.get("counting_pass") is True}
-        env = bool(x.get("env_hard")) or ("ENV-FAIL" in body)
-        ok = all(v is True for v in crit.values())
+                "J0": j0, "P0": p0}
+        ok = all(v is True for k, v in crit.items() if k != "RESULT")
+        env = "ENV-FAIL" in body
         rounds.append({"round": name, "crit": crit, "green": ok and not env,
-                       "env": env, "ctrl": cf.get("state"), "poison": poison})
+                       "env": env})
     greens = [r for r in rounds if r["green"]]
-    print("| 轮 | A1 | B | C | D | J0 | counting | ctrl | 毒 | ENV | 判 |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|")
+    print("| 轮 | A1 | B | C | D | J0 | P0 | ENV | 判 |")
+    print("|---|---|---|---|---|---|---|---|---|")
     for r in rounds:
         c = r["crit"]
-        mark = "绿·受控" if (r["green"] and r["ctrl"] == "controlled") else \
-               ("绿" if r["green"] else ("ENV" if r["env"] else "FAIL"))
         print(f"| {r['round']} | {c['A1']} | {c['B']} | {c['C']} | {c['D']} | "
-              f"{c['J0']} | {c['counting']} | {r['ctrl']} | {r['poison']} | "
-              f"{r['env']} | {mark} |")
+              f"{c['J0']} | {c['P0']} | {r['env']} | "
+              f"{'绿' if r['green'] else ('ENV' if r['env'] else 'FAIL')} |")
     n_env = sum(1 for r in rounds if r["env"])
     verdict = f"X4 {'达成:5/5 绿' if len(greens) >= 5 else f'未达:{len(greens)}/5 绿(ENV {n_env} 不计不断)'}"
     print(f"\n[x4judge] {verdict}")
-    if selftest:
-        want = {"SYN_CTRL": "绿·受控", "SYN_LEG": "绿·受控",
-                "SYN_LATE": "FAIL", "SYN_FALSE": "FAIL", "SYN_LEG_A1": "FAIL"}
-        bad = []
-        for r in rounds:
-            w = want.get(r["round"])
-            got = "绿·受控" if (r["green"] and r["ctrl"] == "controlled") else \
-                  ("绿" if r["green"] else ("ENV" if r["env"] else "FAIL"))
-            if w != got:
-                bad.append(f"{r['round']}: got={got} want={w}")
-        print(f"[x4judge-selftest] {'PASS(5 模板全对上:2 受控绿+3 FAIL 分型)' if not bad else 'FAIL: ' + '; '.join(bad)}")
-        return 0 if not bad else 1
     return 0 if len(greens) >= 5 else 1
 
 
@@ -313,13 +278,11 @@ def main():
     ap.add_argument("cmd", choices=["scan", "x4judge"])
     ap.add_argument("--only", default=None)
     ap.add_argument("dirs", nargs="*", help="x4judge: 五轮目录")
-    ap.add_argument("--selftest", action="store_true",
-                    help="x4judge v1.1 模板电池(SYN_CTRL×5 夹具族,opcard §6)")
     args = ap.parse_args()
     if args.cmd == "scan":
         cmd_scan(args.only)
     else:
-        sys.exit(cmd_x4judge(args.dirs, selftest=args.selftest))
+        sys.exit(cmd_x4judge(args.dirs))
 
 
 if __name__ == "__main__":
