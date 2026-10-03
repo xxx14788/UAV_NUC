@@ -1,0 +1,6 @@
+round,reading
+A1_fixface3_caseA,"dur=178 n=1774 | scale a=0.08197 m/m b=-0.0445 R2=0.87 | dir_const=0.68 (0.63,0.24,0.07) | hover_share=0.06 (hv_n=1405 tr_n=368) | |e|end=0.983 max=1.140 rate=0.005536 m/s"
+A2_fixface3_caseA,"dur=177 n=1768 | scale a=0.04963 m/m b=-0.0304 R2=0.98 | dir_const=0.40 (0.26,0.31,0.03) | hover_share=0.07 (hv_n=1450 tr_n=317) | |e|end=0.621 max=0.878 rate=0.003513 m/s"
+H040932_fixface2,"dur=177 n=1774 | scale a=0.05107 m/m b=-0.0175 R2=0.99 | dir_const=0.75 (0.21,0.57,0.44) | hover_share=0.02 (hv_n=1377 tr_n=396) | |e|end=0.587 max=0.633 rate=0.003309 m/s"
+U3PO_obstacles,"dur=360 n=3602 | scale a=0.09966 m/m b=0.0823 R2=0.85 | dir_const=0.89 (0.79,-0.41,-0.08) | hover_share=0.21 (hv_n=2946 tr_n=655) | |e|end=2.617 max=3.446 rate=0.007267 m/s"
+NR1_noiseoff,"dur=177 n=1772 | scale a=0.05308 m/m b=-0.0456 R2=0.92 | dir_const=0.51 (0.16,0.41,0.26) | hover_share=0.08 (hv_n=1321 tr_n=450) | |e|end=0.681 max=0.734 rate=0.003847 m/s"
