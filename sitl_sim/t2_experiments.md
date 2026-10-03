@@ -1899,3 +1899,18 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 4. **X 线（T3）维持锁**：等门复位修复+route 复裁后再定解锁，U4 通告语义不变。
 
 **裁定即时效果**：U3pp 重跑 hover 场景改判 **4/4 达标**（hover_035509 legacy 拦截+恢复=受控）；route 维持 1/4 未达（040932 零失败唯一计入；032809 legacy 拦截+落地干净恢复——按新口径②"任意门"已满足拦截+恢复两要件，但其恢复发生在落地后（静态再 init），空中段未恢复=按三段式③段记"落地恢复"，是否计入 route 达标**留待门复位修复后的复跑轮统一裁决**，本轮回溯改判不追溯）。配对实验 R5 按三段式=①✓（t=104.448 带内 solo 捕获）②✓（四连 reboot 断流 1.1s）③✓（米级恢复+5569 帧存活）——**三段全绿，配对（功能等价）成立**，急冻族检测-执行-恢复链在线实证。
+
+**T2 v8.3 单元 1：门复位+分源计数器落地与验证（2026-10-03 12:17-13:1x；prereg 先行；commit 19335d4；栈=lib 1d7d2302+node 47d4308e 双 md5 双件存档）**
+
+**落地**：1a=clearState 清 t2_cost_hist/streak（20 帧重武装语义，boot/reboot/init 门 reinit 三路径全覆盖；gate-off 轮零行为差声明）；1b=tri 侧负深写点分源计数（st@472/m2@561）+shift 侧累计计数器（removeBackShiftDepth）+[T2gate] 行追加 `ir_st/ir_m2/ir_shift`（shift=打印间增量）。gtest **31/31**（新 test_t2_init_shift 2 例：Rx(π) 翻转转移→计数+注入；正转移→不动）。
+
+**验证轮三发（route gates×2+hover gates×1；判据 V1/V2/V3 预注册于 prereg_gatereset_initshift.md）**：
+- 【VR1 route 12:37】爆窗轮：30 glitch→爆（|P|max 613）→**legacy Bas 门 1 发@124.98**→reboot 完成（断流 1.22s）→米级恢复→后段假盆地成熟（尾 p50 580m）——与修复前 035800 同型=既有 route 域疾病非回归（形式匹配归因）；本轮 V1✓（banner 后零 cost 触发）V2✓。
+- 【VR2 route 12:44】**风暴轮=单元 2 干净标本**：95 glitch→**15 次 legacy Bas reboot 散布 400s**（max 2/10s 窗，非 033941 型 14 连/7s 密集）→每次 reboot 完成后**再 init 落坏态→Bas 再爆**循环→成熟 106m 假盆地；**cost-fires=0**——门复位后误触发清零，风暴余量=疾病本身（空中再 init 循环）实证；V1✓V2✓。
+- 【VR3 hover 13:02】零 [T2fail]/odom 连续/2 glitch 吸收——VINS 域✓；**新异常：悬停保持物理漂移 8.5m**（GT 实动至 (-7.5,-3.8)，VINS 如实跟踪误差仅 1.1m=估计器无罪）→**控制域异常 @T1**（px4ctrl/EKF2 面；VINS-direct 框架下 drone 追 VINS fiction 或控制器自身问题；对照既往 hover 轮 GT 原地）。台账如实记：V3"悬停保持正常"半判不达（物理面），VINS 域半判达。
+
+**终判：修复 PASS 定稿（fixface-2 代栈）**——V1 决定性通过（21 banner 零误触发，55.432 型根除），V2 通过（密集风暴消失；散布 reboot=真疾病捕获）；V3 例外项如实（route 假盆地=既有病形式匹配非回归；hover 物理漂移=控制域非本线）。门复位修复自此入栈，"非误触发"限定生效（四裁定①兑现）。
+
+**单元 2 直接受益**：VR2 的 15 次 legacy reboot 循环=**无门噪声的空中再 init 标本**（对比 033941 的 cost 混杂风暴）；ir_st/ir_m2/ir_shift 分源计数已在新轮 log 中积累。
+
+**ENV**：三轮全绿执行零 ENV-FAIL；df 51G；紧凑袋+flight_logs 归档。
