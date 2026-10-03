@@ -242,6 +242,13 @@ if [ $HASL2 = 1 ]; then
 fi
 timeout 8 rostopic hz /position_cmd 2>/dev/null | grep 'average rate' | tail -1 > "$EV/poscmd_hz.txt"
 
+# ---------- 停 planner(H-1 修复 2026-10-04: LAND 前置) ----------
+# H-1: CMD_CTRL 态 LAND 被 px4ctrl 设计性拒(ROS_ERROR 在案)且 position_cmd 流不断则永不回 AUTO_HOVER
+# → 5 轮重掷降落全拒 → auto_disarm 恒 0(F3B2/U25FIX 实证;序列对齐 sitl_smoke 的 kill→land)
+bash "$HOME/sitl_sim/kill_planner_all.sh" > "$EV/planner_kill.log" 2>&1
+sleep 2
+LOG "planner 已停(kill_planner_all, 见 planner_kill.log; H-1)"
+
 # ---------- 降落(重掷制) ----------
 LOG "降落指令(5 轮重掷)"
 disarmed=0
