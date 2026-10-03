@@ -1,0 +1,634 @@
+{
+ "case12_odddepth|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case12_odddepth|fb": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "Traceback",
+   "cv2.error"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case12_odddepth|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 4,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case1a_emptydir|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case1a_emptydir|fb": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "FileNotFoundError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case1a_emptydir|metrics": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "FileNotFoundError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case1b_manifestonly|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case1b_manifestonly|fb": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ },
+ "case1b_manifestonly|metrics": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ },
+ "case2_singleframe|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case2_singleframe|fb": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "AssertionError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case2_singleframe|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 1,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case3_allwhite|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case3_allwhite|fb": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "frames_dir",
+   "lk_params",
+   "method_note",
+   "stereo",
+   "temporal"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case3_allwhite|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 16,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case4_allblack|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case4_allblack|fb": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "frames_dir",
+   "lk_params",
+   "method_note",
+   "stereo",
+   "temporal"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case4_allblack|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 16,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case5_constnoise|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case5_constnoise|fb": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "frames_dir",
+   "h6_tail_compare",
+   "lk_params",
+   "method_note",
+   "stereo",
+   "stereo_pool",
+   "temporal",
+   "temporal_pool"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case5_constnoise|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 16,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case6_truncpng|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case6_truncpng|fb": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ },
+ "case6_truncpng|metrics": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ },
+ "case7_dupts|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case7_dupts|fb": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "frames_dir",
+   "h6_tail_compare",
+   "lk_params",
+   "method_note",
+   "stereo",
+   "stereo_pool",
+   "temporal",
+   "temporal_pool"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case7_dupts|metrics": {
+  "rc": 0,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": true,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "bag",
+   "camera_info",
+   "frames_dir",
+   "metrics",
+   "n_primary",
+   "per_frame",
+   "sensor_property"
+  ],
+  "n_primary": 17,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": false
+ },
+ "case8_missingfield|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case8_missingfield|fb": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "KeyError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case8_missingfield|metrics": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "KeyError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case9_trailspace|density_offset": {
+  "rc": 1,
+  "out_exists": false,
+  "out_json_ok": null,
+  "out_nonfinite_hits": null,
+  "stderr_tokens": [
+   "IsADirectoryError",
+   "Traceback"
+  ],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": null,
+  "n_primary": null,
+  "missing_pool_keys": null,
+  "flipped": false
+ },
+ "case9_trailspace|fb": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ },
+ "case9_trailspace|metrics": {
+  "rc": 2,
+  "out_exists": true,
+  "out_json_ok": true,
+  "out_nonfinite_hits": 0,
+  "stderr_tokens": [],
+  "stdout_json_ok": false,
+  "stdout_nonfinite_hits": 0,
+  "out_top_keys": [
+   "error",
+   "frames_dir"
+  ],
+  "n_primary": null,
+  "missing_pool_keys": [
+   "temporal_pool",
+   "stereo_pool",
+   "h6_tail_compare"
+  ],
+  "flipped": true
+ }
+}
