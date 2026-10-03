@@ -1985,3 +1985,12 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - 到位地板带 3.476-4.692 vs U3PO 4.436 同带=**obstacles 场景结构性到位地板**（8m 航线×VINS 漂移刻画），非修复回归；帧跳变 7.46/3.93m=出生对齐窗瞬态族。证据格语义达成（记录+判据指针），obstacles 格不构成 U4 表的 VINS 域阻塞项（受控达标口径）但到位红如实双记。
 
 **ENV 与资源**：ENV-FAIL 1 起（OBS1 gazebo 死，重试合规）；磁盘事件=B1/B2 大袋（23G+22G）触发 df 12G<20G 磁盘门拦停 obstacles 轮起飞机——**紧凑保全（口径 22：odom/imu/truth/setpoint 九话题，296M+302M，rosbag info 验证）后删原袋，df 恢复 56G**；A1/A2 全量袋（6.1G+6.0G，图像在）直留；四轮 flight_logs 归档+双 md5 随 banner 自证；launch 已复原 canonical 指向。
+
+
+**T2 v8.9 单元 2 勘误补章：obstacles 格判读修正（2026-10-04 03:5x；袋级尾窗判读后置发现，commit 6078c9b 文案同步勘误）**
+
+- 勘误原因：obstacles 两轮初判只读 [T2fail] 计数（2/1 次）未做袋级尾窗判读；跳变计数交付面（@T1）补算时发现 odom max_exc 1001.87/755.57m（公里级爆窗段），补尾 60s |P|p50 后判定翻转。
+- **OBS1r 修正=失控 FAIL（triggered-no-recovery）**：2×T2fail 拦截+2496 跳变+odom max 1001.87m 爆窗后**尾 60s |P|p50=15.75m>10m=尾段假盆地**（恢复不完整，final=(-7.63,21.42)）。truth 侧机体健康（到位 3.476m）=odom-fiction 型（估计器域）。
+- **OBS2 维持=受控 PASS（triggered-with-recovery）**：1×T2fail+3061 跳变+odom max 755.57m 爆窗后**尾 60s |P|p50=0.09m 完全恢复零位**=案A 栈恢复力实证（百米级爆窗拉回）。
+- **机理定位**：OBS1r=既有病族复发（WC2OBS1 030927 爆窗族+U3″033941 假盆地族同型），**非案A 修复引入的新形态**（案A 减毒喂料不灭 Bas 病根；OBS2 同场景同臂恢复成功=轮间混沌（noise-off 判读）在 obstacles 域的延续）；单轮失控样本不定罪不豁免。
+- **obstacles 格终判=1/2 受控（OBS2）+1 失控（OBS1r）+到位地板带双红如实记录**——U4 证据表填 OBS2（受控达标）+OBS1r 失控分层注记；跳变计数表（@T1 交付）：A1=0/A2=0/B1=30/B2=0/OBS1r=2496/OBS2=3061/ground=0/hover=0。
