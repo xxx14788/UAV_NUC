@@ -351,6 +351,12 @@ static bool t2SvdDepth(const FeaturePerId &fp, int frameCnt, Vector3d Ps[], Matr
 
 void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 {
+    // T2-v8.9 case-A staged gate: T2_DEPTH_GATE rejects everywhere (legacy
+    // semantics); the staged arm rejects only when the estimator reports
+    // steady state (NON_LINEAR beyond the post-init grace window). The
+    // INITIAL fill-window keeps pseudo-injection so solveGyroscopeBias keeps
+    // feature mass (depth-gate livelock lesson, v8.3 unit-3).
+    const bool t2_dg_on = T2_DEPTH_GATE || (T2_DEPTH_GATE_STAGED && t2_staged_steady);
     // T2-WA1G: depth-domain gate - out-of-range / cross-disagreeing features are
     // erased after the loop (INIT_DEPTH silent pseudo-depth path fully removed
     // when gate on; absent config key = gate off = upstream behavior bit-identical)
@@ -452,7 +458,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
             }
             // T2-WA1G: stereo branch gate - out-of-range depth rejects the track
             // (replaces the silent INIT_DEPTH pseudo-depth path when gate on)
-            if (T2_DEPTH_GATE)
+            if (t2_dg_on)
             {
                 if (depth < T2_DEPTH_MIN || depth > T2_DEPTH_MAX || !(depth > 0))
                 {
@@ -541,7 +547,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                     t2_near_supply_cur++;
             }
             // T2-WA1G: two-frame motion branch gate (same policy as stereo)
-            if (T2_DEPTH_GATE)
+            if (t2_dg_on)
             {
                 if (depth < T2_DEPTH_MIN || depth > T2_DEPTH_MAX || !(depth > 0))
                 {
@@ -619,7 +625,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
 
         // T2-WA1G: SVD branch gate - out-of-range or degenerate depth rejects the
         // track (replaces the silent <0.1 -> INIT_DEPTH pseudo-depth path)
-        if (T2_DEPTH_GATE)
+        if (t2_dg_on)
         {
             if (it_per_id.estimated_depth < T2_DEPTH_MIN ||
                 it_per_id.estimated_depth > T2_DEPTH_MAX)

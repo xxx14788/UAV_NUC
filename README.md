@@ -137,6 +137,8 @@ VINS 话题见 config/sim_stereo/sim_stereo_imu_config.yaml。
 | `sitl_sim/v1_flight.sh`+`t1_evidence/v1_{ground,hover}_analysis.py`+`t1_evidence/v1_flight_results.md`（T1-v5 V1/V4 新增） | VINS 链路轮编排器（锁 T1-V1/清场补杀 vins 系/fresh-master+use_sim_time 前置/VINS init 门/T2 preflight/511 三档探针/降落重掷/t3_clean 收尾释锁；bag 增录 fsm_state+debugPx4ctrl）+双口径分析器+实测：悬停保持中位 0.005m（PASS,优于 0.03m 基线与 EKF2 参照 0.050m）、静态漂移 2-3cm/45s、imu_propagate 125Hz 零断流（maxgap 12ms）、出生点平移假象(+1.01,+0.98)复现登记 |
 | `docs/t1_vins_odom_contract.md`（T1-v5 V1.1 新增,双会话合并） | px4ctrl odom 契约差异表（源码级+bag 实证）：EKF2 odom vs VINS imu_propagate 12 维度；结论=契约兼容无需改参，两真差异属流程适配（init 前零发布/参考点 IMU 2cm），msg_timeout 不调（调大有害） |
 
+- **VINS-Fusion t2_route_fix 族(2026-10-04 T2-v8.9 单元1,route 假盆地修复面两案同窗,用户 10-03 晚批写码)**:`t2_staged_depth_gate`(案A 分阶段门,默认 0=关=逐位不变)+`t2_staged_n_sec`(案A init 后恩典窗,默认 80=VR2 十五段再造起点 4.3-78.7s 保守上界)+`t2_w4_bgs_thresh`(案B W4 前置门 Bgs 线,默认 0.5=原硬编码逐位不变)。案A 作用点=feature_manager.cpp stereo/motion2/svd 三角化三分支:INITIAL 填窗期+init 后恩典窗保留 INIT_DEPTH 伪注入(solveGyroscopeBias 特征量保底,depth-gate 活锁教训 v8.3 单元3),NON_LINEAR 稳态期与 t2_depth_gate 同策略拒收;稳态旗由 estimator 每帧同步(t2_staged_steady_now),clearState 归零=再 init 自动回填窗期(活锁结构防御)。案B 作用点=estimator.cpp initialStructure 前置门(Bgs 线谓词化 t2_w4_bgs_ok,Bas 1.0 线不动)。自证=新 banner [T2RFIXCFG] 独立行([T2GATECFG]/[T2gate]/cost 触发行格式零改动=T3 识别器契约不触碰);判据预注册=t2_results/R2_dissect/prereg_route_fix.md;生死判定=在线复裁轮(红线 11 回放不可判);gtest=test_t2_route_fix.cpp 7 用例。
+
 ## 4. SITL 全流程仿真（脚本在本仓库 `sitl_sim/`，每脚本一个终端，按编号执行）
 
 | 脚本 | 作用 |

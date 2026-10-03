@@ -50,6 +50,24 @@ extern int ROLLING_SHUTTER;
 // T2-WA1G: depth-domain gate (defaults = gate off, legacy behavior)
 extern int T2_DEPTH_GATE;
 extern double T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL;
+// T2-v8.9 route-fix faces (absent keys = legacy behavior, bit-identical)
+extern int T2_DEPTH_GATE_STAGED;   // case-A staged depth gate: reject only in steady state
+extern double T2_STAGED_N_SEC;     // case-A post-init grace window (s) before arming rejection
+extern double T2_W4_BGS_THRESH;    // case-B W4 pre-init gate Bgs line (default 0.5 = legacy hardcode)
+
+// T2-v8.9 case-B: W4 pre-init Bgs-line predicate (0.5 default = bit-identical
+// to the former hardcoded norm()<0.5 in Estimator::initialStructure)
+inline bool t2_w4_bgs_ok(const Eigen::Vector3d &bgs, double thresh)
+{
+    return bgs.allFinite() && bgs.norm() < thresh;
+}
+
+// T2-v8.9 case-A: steady-state arming condition — NON_LINEAR and past the
+// post-init grace window (t_init_finish==0 = never finished = fill-window)
+inline bool t2_staged_steady_now(bool non_linear, double t_init_finish, double header, double n_sec)
+{
+    return non_linear && t_init_finish > 0 && header - t_init_finish >= n_sec;
+}
 // T2-WA23456G (defaults = legacy behavior)
 extern int T2_VISION_LOSS;
 extern double T2_CAUCHY_DELTA;

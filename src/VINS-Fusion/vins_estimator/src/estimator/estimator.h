@@ -192,6 +192,7 @@ class Estimator
     // T2-R3F: cost-surge gate state (unit4) - short-window median streak
     std::deque<double> t2_cost_hist;
     int t2_cost_streak = 0;
+    double t2_t_init_finish = 0;  // T2-v8.9 case-A: init-finish stamp (grace window origin; 0 = fill-window)
     PropagateGuard propagate_guard;       // T1-E2: dt-clamp hold / gap-skip counters (C03 A3/A4)
 
     bool initFirstPoseFlag;

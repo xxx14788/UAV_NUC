@@ -95,6 +95,7 @@ void Estimator::clearState()
     f_manager.clearState();
 
     failure_occur = 0;
+    t2_t_init_finish = 0;  // T2-v8.9 case-A: re-init re-enters the fill-window (pseudo-injection back on)
     // T2-v8.3 unit-1a (2026-10-03, prereg_gatereset_initshift.md): the cost
     // gate's rolling window/streak are estimator state and must reboot with
     // the rest — stale pre-failure medians made fresh post-reboot init costs
@@ -136,6 +137,10 @@ void Estimator::setParameter()
     ROS_WARN("[T2GATECFG] cost_gate=%d ratio=%.1f n=%d win=%d | min_disparity=%.4g fardrop_min_near=%d depth_gate=%d",
              T2_COST_GATE, T2_COST_RATIO, T2_COST_N, T2_COST_BASE_WIN,
              T2_MIN_DISPARITY, T2_FARDROP_MIN_NEAR, T2_DEPTH_GATE);
+    // T2-v8.9 route-fix faces self-attestation (own line by design: the
+    // [T2GATECFG] format above is a frozen cross-line contract)
+    ROS_WARN("[T2RFIXCFG] w4_bgs=%.4g staged=%d n=%.1f",
+             T2_W4_BGS_THRESH, T2_DEPTH_GATE_STAGED, T2_STAGED_N_SEC);
     mProcess.unlock();
 }
 
@@ -516,6 +521,11 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     Headers[frame_count] = header;
     // T2-WA1: stamp header time for [T2depth] census dumps (covers all triangulate calls + slide)
     f_manager.t2_cur_t = header;
+    // T2-v8.9 case-A staged gate: arm steady-state rejection only when
+    // NON_LINEAR and past the post-init grace window (t2_staged_n_sec).
+    f_manager.setT2StagedSteady(t2_staged_steady_now(solver_flag == NON_LINEAR,
+                                                     t2_t_init_finish, header,
+                                                     T2_STAGED_N_SEC));
 
     ImageFrame imageframe(image, header);
     imageframe.pre_integration = tmp_pre_integration;
@@ -562,6 +572,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                     updateLatestStates(true);
                     slideWindow();
                     ROS_INFO("Initialization finish!");
+                    t2_t_init_finish = header;  // T2-v8.9 case-A: grace window origin
                 }
                 else
                     slideWindow();
@@ -604,8 +615,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 // 前置门只查 bias（实测恒 sane；状态检查会拦截到上游
                 // INITIAL 路径遗留的毒槽位 Vs[i]=e25，导致永久重试无法
                 // 初始化——窗口状态交给 optimization 重写后由后置门判定）
-                bool init_sane = Bgs[WINDOW_SIZE].allFinite() &&
-                                 Bgs[WINDOW_SIZE].norm() < 0.5 &&
+                bool init_sane = t2_w4_bgs_ok(Bgs[WINDOW_SIZE], T2_W4_BGS_THRESH) &&
                                  Bas[WINDOW_SIZE].norm() < 1.0;
                 if (!init_sane)
                 {
@@ -622,7 +632,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                         mx_v = max(mx_v, Vs[i].norm());
                     ROS_WARN("gate reject: |Bgs|=%.3g mxP=%.3g(mxV=%.3g,i=%d) bias_ok=%d",
                              Bgs[WINDOW_SIZE].norm(), mx_p, mx_v, bad_i,
-                             (int)(Bgs[WINDOW_SIZE].allFinite() && Bgs[WINDOW_SIZE].norm() < 0.5));
+                             (int)t2_w4_bgs_ok(Bgs[WINDOW_SIZE], T2_W4_BGS_THRESH));
                     reinit_request = true;
                     return;
                 }
@@ -648,6 +658,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                     updateLatestStates(true);
                     slideWindow();
                     ROS_INFO("Initialization finish!");
+                    t2_t_init_finish = header;  // T2-v8.9 case-A: grace window origin
                 }
                 else
                 {

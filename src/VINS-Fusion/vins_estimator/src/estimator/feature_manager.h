@@ -110,6 +110,8 @@ class FeatureManager
     int long_track_num;
     double t2_cur_t = 0.0;  // T2-WA1: current frame stamp for [T2depth] dumps (set by Estimator::solve)
     int t2_near_supply_last = 0;  // T2-R2F: prev-frame near-feature supply (starvation guard memory)
+    bool t2_staged_steady = false;  // T2-v8.9 case-A: steady-state flag synced per-frame by Estimator
+    void setT2StagedSteady(bool v) { t2_staged_steady = v; }
     long t2_init_shift_total = 0;  // T2-v8.3 unit-1b: cumulative shift-path INIT_DEPTH injections (removeBackShiftDepth dep_j<=0)
     long t2_init_shift_last = 0;   // watermark: per-[T2gate] delta = total - last
 

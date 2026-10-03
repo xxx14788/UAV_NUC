@@ -12,6 +12,9 @@
 double INIT_DEPTH;
 // T2-WA1G: depth-domain gate globals
 int T2_DEPTH_GATE = 0;
+int T2_DEPTH_GATE_STAGED = 0;     // T2-v8.9 case-A: 0=off=bit-identical
+double T2_STAGED_N_SEC = 80.0;    // T2-v8.9 case-A: post-init grace (VR2 rebuild-onset 4.3-78.7s conservative upper bound)
+double T2_W4_BGS_THRESH = 0.5;    // T2-v8.9 case-B: W4 Bgs line, 0.5 = legacy hardcode
 double T2_DEPTH_MIN = 0.15, T2_DEPTH_MAX = 30.0, T2_XCHECK_TOL = 0.30;
 // T2-WA23456G globals (defaults = legacy behavior)
 int T2_VISION_LOSS = 0;
@@ -147,6 +150,12 @@ void readParameters(std::string config_file)
     // real-machine configs without these keys are bit-identical to upstream)
     if (!fsSettings["t2_depth_gate"].empty())
         T2_DEPTH_GATE = (int)fsSettings["t2_depth_gate"];
+    if (!fsSettings["t2_staged_depth_gate"].empty())
+        T2_DEPTH_GATE_STAGED = (int)fsSettings["t2_staged_depth_gate"];
+    if (!fsSettings["t2_staged_n_sec"].empty())
+        T2_STAGED_N_SEC = (double)fsSettings["t2_staged_n_sec"];
+    if (!fsSettings["t2_w4_bgs_thresh"].empty())
+        T2_W4_BGS_THRESH = (double)fsSettings["t2_w4_bgs_thresh"];
     if (!fsSettings["t2_depth_min"].empty())
         T2_DEPTH_MIN = (double)fsSettings["t2_depth_min"];
     if (!fsSettings["t2_depth_max"].empty())
@@ -167,6 +176,8 @@ void readParameters(std::string config_file)
         T2_COST_BASE_WIN = (int)fsSettings["t2_cost_base_win"];
     printf("T2_DEPTH_GATE: %d min=%.3f max=%.3f xcheck_tol=%.2f\n",
            T2_DEPTH_GATE, T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL);
+    printf("T2_ROUTEFIX: staged=%d n=%.1f w4_bgs=%.4g\n",
+           T2_DEPTH_GATE_STAGED, T2_STAGED_N_SEC, T2_W4_BGS_THRESH);
     // T2-WA23456G knobs (absent = legacy)
     if (!fsSettings["t2_vision_loss"].empty())
         T2_VISION_LOSS = (int)fsSettings["t2_vision_loss"];
