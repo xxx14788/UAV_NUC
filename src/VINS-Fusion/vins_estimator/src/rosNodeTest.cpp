@@ -16,6 +16,7 @@
 #include <sys/resource.h>
 #include <mutex>
 #include <ros/ros.h>
+#include <cstdlib>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 #include "estimator/estimator.h"
@@ -28,12 +29,44 @@ queue<sensor_msgs::ImuConstPtr> imu_buf;
 queue<sensor_msgs::PointCloudConstPtr> feature_buf;
 queue<sensor_msgs::ImageConstPtr> img0_buf;
 queue<sensor_msgs::ImageConstPtr> img1_buf;
+
+// T1-R3x (2026-10-04, v11.0 unit 6) face-2b v1.1: queue-depth probe on the
+// REAL queues (img0/img1 bufs consumed by sync_process; imu_buf/feature_buf
+// are dead declarations in this fork - callbacks are pass-through). Default
+// OFF via env T1_R3XQ=1 (T2 discipline: default off = bit-identical). 1Hz
+// [R3xQ] console line, same log channel as [E2uls]; zero cost when off.
+static bool g_r3xq = (::getenv("T1_R3XQ") != nullptr);
+static double g_r3xq_last_t = 0.0;
+static int g_r3xq_max_img0 = 0, g_r3xq_max_img1 = 0;
+static double g_r3xq_img_head_age_ms = -1.0;
+static void r3xq_tick(const char* where)
+{
+    double now = ros::Time::now().toSec();
+    if (now - g_r3xq_last_t < 1.0) {
+        int d0 = (int)img0_buf.size(), d1 = (int)img1_buf.size();
+        if (d0 > g_r3xq_max_img0) g_r3xq_max_img0 = d0;
+        if (d1 > g_r3xq_max_img1) g_r3xq_max_img1 = d1;
+        return;
+    }
+    g_r3xq_last_t = now;
+    printf("[R3xQ] t=%.3f img0_buf=%d img1_buf=%d max0=%d max1=%d img_head_age_ms=%.1f (%s)\n",
+           now, (int)img0_buf.size(), (int)img1_buf.size(),
+           g_r3xq_max_img0, g_r3xq_max_img1, g_r3xq_img_head_age_ms, where);
+    g_r3xq_max_img0 = g_r3xq_max_img1 = 0;
+}
+static void r3xq_head_age()
+{
+    if (!img0_buf.empty())
+        g_r3xq_img_head_age_ms =
+            (ros::Time::now() - img0_buf.front()->header.stamp).toSec() * 1000.0;
+}
 std::mutex m_buf;
 
 
 void img0_callback(const sensor_msgs::ImageConstPtr &img_msg)
 {
     m_buf.lock();
+    if (g_r3xq) { r3xq_tick("img0_cb"); }
     img0_buf.push(img_msg);
     m_buf.unlock();
 }
@@ -41,6 +74,7 @@ void img0_callback(const sensor_msgs::ImageConstPtr &img_msg)
 void img1_callback(const sensor_msgs::ImageConstPtr &img_msg)
 {
     m_buf.lock();
+    if (g_r3xq) { r3xq_head_age(); r3xq_tick("img1_cb"); }
     img1_buf.push(img_msg);
     m_buf.unlock();
 }

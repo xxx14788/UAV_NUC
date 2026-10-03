@@ -68,3 +68,12 @@ T2 帧级解剖发现**原始 IMU glitch 簇（50-104 m/s²）存在于 8/9 臂*
 - **`glitch_align` 栏**：t1_r3x_probe.py 的 imu_jit 记录增字段 `spike_n`/`spike_max_ms2`（|acc|>50 m/s² 帧计数与峰值，5s 窗）——与面① 到达间隔抖动同源采集（同回调内一次范数计算，<0.5µs/msg 增量），开销预算不变（§4 上界声明仍成立）。
 - **对齐用途**：glitch 簇时刻 ↔ 到达间隔抖动 ↔ 队列深/戳龄 ↔ term 收敛率四方对齐 → 伪影产生机制（T2 ③⑤⑦注入机制候选）的两线合流判别面。
 - **采集面边界**：探针只做"时刻对齐底账"，不做四态分型（分型判读归 T2——GT-IMU 双流对质需其工具链）。
+
+## 8. 实现增补 v1.1（2026-10-04 03:0x；T1 v11.0 单元 6 执行）
+
+- **架构事实修正**：设计稿 ②b 原打 imu_buf/feature_buf——实读 rosNodeTest.cpp 发现该 fork 为**直通架构**（imu_callback 直通 estimator.inputIMU、feature_callback 直通 inputFeature，imu_buf/feature_buf 为死声明零使用）；**真实积压面=img0_buf/img1_buf**（sync_process 2ms 轮询消费 vs 图像回调）。②b v1.1 改打 img 队列深+队首时戳龄。
+- **已落码**：
+  - 外部探针 `src/px4ctrl/scripts/t1_r3x_probe.py`（面①③②a+④+⑤glitch_align：imu_jit/stampage/rtf/cpu 四 face jsonl，5s 窗，双钟戳，环形缓冲 4096 无 steady-state 分配；py_compile 绿；0 依赖 dry-run 就绪）
+  - 面②b `src/VINS-Fusion/vins_estimator/src/rosNodeTest.cpp`：[R3xQ] 1Hz 行（img0_buf/img1_buf 深度+1s 窗 max+img_head_age_ms），env T1_R3XQ=1 启用**默认 off=逐位不变**；g++ -fsyntax-only 全路径 0 error；**未 build**（fixface-3 二进制不动——编译挂 T2 fixface-3 定稿后窗，届时 vins 双 md5 换代登记）
+- **gtest 说明（如实登记）**：②b 为 printf 控制台通道（依赖全局 queue 与 ros::Time），单测不适用；**开关两态等价验证=A/B 轮对拍（本档 §4 验证法，prereg 在案）**——探针 off 轮与 on 轮 hover 剖面 RTF/延迟/输出逐位对拍，任何可感知差异即判废回炉。
+- **dry-run 计划**：外部探针三面（①③②a）0 依赖——T2 验证轮放锁后随 F3B 重跑窗顺跑 dry-run（不进轮判据，只验开销与格式）。
