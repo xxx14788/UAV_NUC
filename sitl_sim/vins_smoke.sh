@@ -165,6 +165,19 @@ for k in 1 2; do
   sleep 2
 done
 LOG "goal 已发(2×8s)"
+# ---------- goal 送达验证门(2026-10-04 加固;X2g1=planner 饿死 WAIT_TARGET 189B 启动日志实证) ----------
+for k in 1 2 3; do
+  sleep 8
+  PC=$(timeout 4 rostopic hz /position_cmd 2>&1 | grep -o 'average rate: [0-9.]*' | head -1 | grep -o '[0-9.]*$' || echo 0)
+  [ -n "$PC" ] || PC=0
+  if awk "BEGIN{exit !($PC > 1.0)}"; then LOG "poscmd 存活门通过(第${k}查 rate=${PC}Hz)"; break; fi
+  if [ "$k" = 3 ]; then
+    LOG "WARN PLANNER-STARVED: 三查 poscmd~=0(末次=${PC}Hz)=goal 未达/规划器死——本轮判读面注记,勿盲续"
+  else
+    LOG "poscmd 门未过(第${k}查 rate=${PC}Hz),goal 再重发 8s"
+    timeout 8 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped       "{header: {frame_id: 'world'}, pose: {position: {x: $GX, y: $GY, z: $GZ}}}" >/dev/null 2>&1
+  fi
+done
 
 # ---------- 到位监视(真值口径,锚点自推导;外部wall超时+异常吞噬) ----------
 arrive_watch() {  # $1..3 goal; $4 tag后缀
