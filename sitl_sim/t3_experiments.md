@@ -1106,3 +1106,5 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
 **单元 3 台账分叉处置**（K-11 闭）：runtime ~/sitl_sim/t3_experiments.md 零独有行核对（difflib,repo 1104 行=严格超集）→弃读头+chmod 444 封存；权威唯一=repo 本文件。STATUS 已通告各线。
 
 **单元 3.5 auto_disarm 根因清查**（判读定案 docs/t3_u35_autodisarm_verdict.md;@T1 归因移交;DECISION_LOG #3）：U3′ 标本=复合缺陷（**全程未离地** truth z≡0.0+推力被压 0.20+LAND@246.5 在 MANUAL_CTRL 被静默丢弃→armed 锁 True）；舰队画像=route×4 系统性 disarm 全败（planner 轮=X 线全轮必 0/5）→T1 U2.7 修复承重值实锤;移交四件（验证轮/未起飞面/extended_state 录制/035509 第二标本）;K-2.5 维持开（解锁=验证轮 ✓）。
+
+**单元 4 Z1.2 接线+P3 合流设计承接**：K-3 解锁（T1 EV 撕裂红线 D-block=T1 E1/0.5 分叉定案,T3 复核通过）;Z1.2 计划 §4 承接节（EV_CTRL 实验空间定界/P3 合流槽预开/预写维持/v1 零变动）;DECISION_LOG 三笔跨线复核+修账（#4 补挂/撞号顺延）;W-G/W-F 消费。
