@@ -16,5 +16,8 @@
          消费：run_planner_sitl_vins.launch / run_ctrl_sitl_vins.launch -->
     <node pkg="vins" type="vins_node" name="vins_estimator" output="screen"
           args="$(env HOME)/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml"/>
-    <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen"/>
+    <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen">
+        <!-- T1 E-5a: publish arm via env (default pose = legacy bit-path; T1_E5A_PUB_MODE=odom for L-odom arm) -->
+        <param name="pub_mode" value="$(optenv T1_E5A_PUB_MODE pose)"/>
+    </node>
 </launch>
