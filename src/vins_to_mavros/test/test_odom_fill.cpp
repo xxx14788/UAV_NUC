@@ -94,7 +94,7 @@ TEST(FillOdomMsg, FieldMappingAndTwistRotation)
   fill_odom_msg(vins, out);
 
   EXPECT_EQ(123.456, out.header.stamp.toSec());
-  EXPECT_STREQ("map", out.header.frame_id.c_str());
+  EXPECT_STREQ("odom", out.header.frame_id.c_str());  // U2.5: frame_id must reach odom_ned via static TF
   EXPECT_STREQ("base_link", out.child_frame_id.c_str());
   EXPECT_NEAR(1.0, out.pose.pose.position.x, EPS);
   EXPECT_NEAR(2.0, out.pose.pose.position.y, EPS);

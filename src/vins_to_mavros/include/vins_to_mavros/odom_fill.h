@@ -57,7 +57,12 @@ inline void fill_odom_msg(const nav_msgs::Odometry& vins, nav_msgs::Odometry& ou
 {
   out = nav_msgs::Odometry();
   out.header = vins.header;
-  out.header.frame_id = "map";       // aligned with L-pose arm frame choice
+  out.header.frame_id = "odom";      // U2.5 fix (2026-10-04): mavros odom plugin looks up TF
+                                      // <odom_parent_id_des>_ned <- header.frame_id; "map" has no path to
+                                      // odom_ned (two unconnected static trees) => ConnectivityException every
+                                      // frame + uninitialized Eigen::Affine3d poisons pose (R3: 285 Ex lines,
+                                      // J1 0.783 const-offset). "odom" reaches odom->odom_ned static TF =>
+                                      // correct ENU->NED, same transform family as L-pose hardcoded path.
   out.child_frame_id = "base_link";  // twist frame = body FLU; mavros converts to FRD
   out.pose = vins.pose;
   double vx = vins.twist.twist.linear.x;
