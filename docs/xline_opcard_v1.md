@@ -147,3 +147,18 @@ controlled 四查（v1.2 冻结值）:
 正例锚: R5（onset 98.69/fire 104.5/复流 99/p95 0.229）= controlled；SYN_CTRL = PASS-CONTROLLED
 版本: 判读器 4cb6acc7（v1.2）；每改一版 → selftest 三格+全 SYN 电池+历史 re-regression
 ```
+
+### 8.3 X 线首轮复盘模板（池件 P-N；X1prime 轮毕即填；防复盘面遗漏）
+
+```
+X1prime 首轮复盘（run_<TAG>_<ts>；栈=lib ____/node ____；df 前__G后__G）
+[A] 判读面: verdict=____ controlled=____ four=__/1/1/__ j0jump=____m fj_raw/smj=__/__
+    vins 域: reboot=__ gaps=__ bas_pk=____ bgs_pk=____ track_med=____
+    到位双口径: truth=____m vins自报=____m | 规划段 poscmd→goal=____m（planner 有罪面判）
+[B] 带图定标: bag 体积=__G（X4 预算 25-45G 修正值=__G/轮×5）
+[C] 新形态登记（有则展开）: 触发窗故事=（onset/fire/复流/p95 四点）/ 未拦截故事=（首证/终态）
+[D] 与 prereg §6 样本案卷的对表: 新样本属何态=____（受控正样本池扩充?）
+[E] 连败计数: 同型 FAIL 连败=__（2 即触发回挖分支 §4）
+[F] 回挖件（触发性）: 毒窗外帧跳清单=/触发前中毒预窗差=____s/reboot 后再 init 归因=
+[G] 台账行+STATUS 回执时戳=____ | X4 打 tag 前置余量: 5/5 进度 _/5 | K-2(T1 跳变)=状态
+```
