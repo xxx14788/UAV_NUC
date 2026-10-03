@@ -192,6 +192,60 @@ TEST(FsmComposition, Step0PreemptsStateLogic)
     EXPECT_EQ(MANUAL_CTRL, s0.next);
 }
 
+
+// ---------- U2.7 (2026-10-04): LAND in MANUAL_CTRL ----------
+// Forensics: run_U3PO_211438 — odom dropout -> MANUAL_CTRL while armed,
+// harness LAND (1Hz, 120s) silently ignored, armed hover until tree kill.
+TEST(FsmManualLand, AcceptedNoRcArmedOdomOk)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true;
+    i.no_rc = true; i.odom_ok = true; i.odom_v = 0.3; i.landed = false; // airborne hover
+    Outcome o = decide_manual(i);
+    EXPECT_EQ(AUTO_HOVER, o.next); EXPECT_TRUE(o.offboard_on); EXPECT_FALSE(o.reject);
+}
+TEST(FsmManualLand, RejectedDisarmed)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = false; i.no_rc = true;
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_DISARMED, o.reason); EXPECT_EQ(MANUAL_CTRL, o.next);
+}
+TEST(FsmManualLand, RejectedRcManualPriority)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = false; // RC connected
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_MANUAL_PRIO, o.reason);
+}
+TEST(FsmManualLand, RejectedNoOdom)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = true; i.odom_ok = false;
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_MANUAL_PRIO, o.reason);
+}
+TEST(FsmManualLand, RejectedFastOdomVel)
+{
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = true; i.odom_v = 3.1;
+    Outcome o = decide_manual(i);
+    EXPECT_TRUE(o.reject); EXPECT_EQ(RJ_MANUAL_PRIO, o.reason);
+}
+TEST(FsmManualLand, TwoTickLandingPath)
+{
+    // accepted tick -> AUTO_HOVER; next tick with LAND still streaming goes AUTO_LAND
+    Inputs i = base(); i.land_trigger = true; i.armed = true; i.no_rc = true;
+    EXPECT_EQ(AUTO_HOVER, decide_manual(i).next);
+    Outcome h = decide_hover(i); // hover inputs: rc_hover true, no cmd stream
+    EXPECT_EQ(AUTO_LAND, h.next);
+}
+
+// ---------- F3 v2 strict-mirror fix boundary ----------
+// Source else-if chain: when rc_cmd&&cmd_ok but OFFBOARD not yet confirmed,
+// the request branch is consumed and LAND is NOT evaluated on that tick.
+TEST(FsmHover, CmdWaitOffboardBlocksLandSameTick)
+{
+    Inputs i = base(); i.rc_cmd = true; i.cmd_ok = true;
+    i.offboard_confirmed = false; i.land_trigger = true;
+    EXPECT_EQ(AUTO_HOVER, decide_hover(i).next); // stay, do NOT take LAND yet
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
