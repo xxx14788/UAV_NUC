@@ -1,0 +1,11 @@
+arm	state	fires	faildet	trig_kind	t_trig	onset	l1b	reflow	post_p95	real	goal	log_dir
+t2v3_ground_032114	clean	0	0	-	-	None	None	None	None	None	(0.0, 0.0, 1.0)	20261003_032203_ground
+t2v3_hover_032229	clean	0	0	-	-	None	None	None	None	None	(0.0, 0.0, 1.0)	20261003_032452_hover
+t2v3_hover_032518	clean	0	0	-	-	124.9	None	None	None	None	(0.0, 0.0, 1.0)	20261003_032740_hover
+t2v3_route_032809	triggered-no-recovery	0	2	legacy	49.308	53.09	True	100	68.3026	True	(3.0, -2.0, 1.0)	20261003_033911_route
+t2v3_route_033941	triggered-no-recovery	5	14	legacy	49.376	51.77	True	80	791.9016	True	(3.0, -2.0, 1.0)	20261003_035043_route
+t2v3_ground_035105	clean	0	0	-	-	None	None	None	None	None	(0.0, 0.0, 1.0)	20261003_035154_ground
+t2v3_hover_035220	clean	0	0	-	-	None	None	None	None	None	(0.0, 0.0, 1.0)	20261003_035443_hover
+t2v3_hover_035509	controlled	0	1	legacy	46.476	51.36	True	96	0.0755	True	(0.0, 0.0, 1.0)	20261003_035731_hover
+t2v3_route_035800	triggered-no-recovery	0	2	legacy	50.384	49.86	True	98	95.4095	True	(3.0, -2.0, 1.0)	20261003_040903_route
+t2v3_route_040932	clean	0	0	-	-	None	None	None	None	None	(3.0, -2.0, 1.0)	20261003_041235_route

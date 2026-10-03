@@ -167,3 +167,30 @@ route 域 cost 门 0 触发、配对未发生=inconclusive-for-pairing）+T3 三
   判读产物=x11_dryrun_v11/R5_pairing_fix/。
   ④v1.1 判读器(ac1df603)对 R5 的 triggered-no-recovery 误判记录在案不抹除(过程账);
   v1.2 判读器=4cb6acc7,全套电池绿(在线 selftest 三格/SYN 正反例×5/边界例×3)。
+
+- **2026-10-04 02:2x（v1.3 修正;用户 10-03 12:09 裁定②落地;早于任何 X 线起飞）**:
+  ①**L1 触发面扩至任一门拦截**:cost 门行之外,legacy `failure detection!` 行同等作 L1
+  触发行（裁定②"legacy 与 cost 同等"）;锚=任一门首触发时刻（033941 实证 legacy 49.376
+  早于 cost 51.872 达 2.5s——v1.2 仅认 cost 首发会把毒窗整体右移）;毒窗/L1b/L2a/L2b
+  全链以统一锚起算;`first_fire_t` 键保留=cost 首发口径（v1.2 兼容）。
+  ②**§2.6-h 误触发排除（裁定②"误触发不算"的机器签名）**:触发取得 L1 资格须有真实事故
+  证据,三面任一——(h-i)位姿面 onset 标记存在;(h-ii)首触发前 2s 内 [T2diag] |Bas|>1.0
+  或 |Bgs|>0.5（A1 正型:fire@49.212 前 0.048s |Bas|=3.17;健康域锚=WAOL5R 0.981<1.0;
+  Bgs 线=W4 前置门 0.5）;（h-iii)cost 行自带 ratio≥10x 门阈证据（§2.6-a 正型 10.0x）。
+  三面皆无=误触发处置:不入受控,按 §2.6-d 既有映射（门行在=fail 面→uncontrolled-fail）。
+  残余面如实登记:飞行中 spurious 触发若自造 >0.5m 再锚跳会伪造 (h-i)——防线=fixface-2
+  门复位已根除 55.432 型（T2 V1:21 banner 零误触发）+L2a/L2b 仍须全过;X 线轮若现此
+  形态=新版本号,不追溯。
+  ③**U3″ 舰队表 v1.3 重跑（逐臂核对;ps_u3r_fleet_table_v13.txt;判值面 18 样本零漂移）**:
+  6 clean 不变+035509 **controlled**（legacy@46.476 真触发双面证据[onset@51.36+diag 越线]/
+  L2a 复流 96≥50/L2b p95=0.0755m/帧跳 3 个全部改判窗内）+032809/035800 →
+  triggered-no-recovery（复流 100/98 过但 post_p95 68.3m/95.4m 被 L2b 拦=「落地恢复型」
+  恢复到错处的机器量化;T2 12:09 ④"032809 留复跑轮统一裁不回溯"口径下受控路径机器答案
+  =否）+033941 维持 TNR（锚前移 49.376,post_p95 791.9m 仍拦）+A1 → triggered-no-recovery
+  （§2.6-f"触发-无再 init"原型态:v1.2 的 uncontrolled-fail 仅因 L1 限 cost 所致）。
+  **预期核对=任务书 v9.3"仅 035509 翻 controlled"精确命中**。
+  ④判读器 v1.3=**6fb9ccb4**（v1.2=4cb6acc7→.bak_v13_20261004 双备份;红线 24 全流程:
+  补丁 8 处唯一命中+py_compile+三层验证=离线 selftest 绿+在线 4 格绿[含 X1_232055 期望
+  合法更新 uncontrolled-fail→triggered-no-recovery:v1.3 下 legacy fire@134.332 为真触发
+  →机器路径→L2 无恢复]+18 样本 re-regression 判值面逐位一致+SYN 电池 8 夹具 5 断言全绿
+  [新增 SYN_LEG=任一门正型/SYN_FALSE=误触发负型/SYN_LEG_A1=触发-无恢复原型]）。

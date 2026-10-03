@@ -142,3 +142,19 @@
 X 线轮加 `wa_gate --online` 一行判决+`--csv` 汇总行),每工作单元一 commit;X4 达成与
 tag 各一 commit。STATUS 批次通告与轮间 RESULT 落盘后再发下一轮(顺序发射纪律)。
 **袋保全**:带图轮录后先 T4 后清理;清盘前重扫价值评估+STATUS 报备(11 组历史清盘教训)。
+
+## 9. 判读链版本凭据表（§9.1;每版本=三层验证全绿证据;opcard §8.1 步 4 版本核对正源）
+
+| 版本 | md5 | 日期 | 变更摘要 | 三层验证 |
+|---|---|---|---|---|
+| v1.1 | ac1df603 | 10-03 | 受控失败分层五态+S8 正则修复(RE_RES_ARRIVE 双兼容) | selftest+SYN×5 |
+| v1.2 | 4cb6acc7 | 10-03 | 毒窗锚 min(onset,fire)-1;L1b 10s;R5 首真受控正样本 | 在线三格+SYN+舰队 10 臂 |
+| **v1.3** | **6fb9ccb4** | 10-04 | L1 任一门拦截(用户 10-03 12:09 裁定②)+§2.6-h 误触发排除三面签名;SYN 电池扩至 8 夹具 | 离线绿+在线 4 格绿+18 样本 re-regression 判值面零漂移+SYN 5 断言全绿;035509→controlled(唯一翻转,与任务书预期精确命中) |
+
+- 判读器任何改动走红线 24 全流程:双备份(.bak_<ver>_<date>+/tmp 副本)+补丁唯一命中
+  断言+md5 入本表+三层验证;备份清理条件=X1' 轮后(.bak 凭据族统一处置)。
+- 合成电池正源=`analysis/t3_synth_controlled_test.py`(5 断言:SYN_CTRL/SYN_LATE/
+  SYN_LEG/SYN_FALSE/SYN_LEG_A1)+`x11_dryrun_v11/SYN_MULTI/SYN_NOBAG/SYN_NOTC`(边界×3)。
+- 受控层期望态速查(判读链对抗样本扩充池的种子集):cost 真触发→controlled;
+  legacy 真触发双面证据→controlled;迟触发(L1b)→TNR;零证据触发→误触发处置
+  uncontrolled-fail;真触发+流死→TNR(A1 型);log 缺失→log-missing 降级。

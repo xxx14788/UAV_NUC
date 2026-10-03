@@ -90,11 +90,6 @@ DEFAULT_THRESH = {
     "cf_jump_dt_s": 0.5,           # 帧跳配对窗(相邻帧 dt 上限)
     "cf_onset_grace_s": 10.0,      # L1b 起点窗约束 v1.2(§2.6-g):fire ≤ onset+此值(对齐毒窗尺度;v1.1=5.0,R5 实测捕捉延迟 5.8s 证伪)
     "cf_onset_err_m": 10.0,        # 起点标记之一:出生对齐 |odom-truth|>此值(T2 急窗口径)
-    # ---- v1.3 §2.6-h 误触发排除(用户 10-03 12:09 裁定②"任一门拦截,误触发不算") ----
-    "cf_real_diag_win_s": 2.0,     # 真实性面(ii):首触发前此窗内 [T2diag] 偏置越线(A1 实证 fire 前 0.048s)
-    "cf_real_bas_min": 1.0,        # |Bas| 越线=健康域上界(WAOL5R Bas_max 0.981<1.0 对账锚)
-    "cf_real_bgs_min": 0.5,        # |Bgs| 越线=W4 前置门线(T2 depth-gate 臂在册 0.5)
-    "cf_real_cost_ratio_min": 10.0,  # 真实性面(iii):cost 行自带门阈证据(prereg §2.6-a 正型 10.0x)
 }
 
 RE_DIAG = re.compile(
@@ -554,14 +549,8 @@ def scene_of_run(run_dir, th):
 
 def controlled_failure_layer(run_dir, odom, truth, th):
     """受控失败分层 v1.1(prereg xline_prereg_v1_1.md §2.6):触发+恢复双证,机器可判签名。
-    L1 触发(v1.3=任一门拦截,用户 10-03 12:09 裁定②;legacy 与 cost 同等,误触发不算):
-       cost 门行 'cost gate: streak=N over Mx short-window median, reboot' 或
-       legacy 行 'failure detection!'(WARN 头第二字段=sim 时刻,与 flight.bag 时戳同钟
-       ——A3 实证 47.024 vs 袋末 46.9);锚=任一门首触发(033941 实证 legacy 49.376
-       早于 cost 51.872 达 2.5s);误触发排除(§2.6-h)=真实事故证据三面任一:
-       (i)onset 位姿标记 (ii)首触发前 2s 内 [T2diag] |Bas|>1.0 或 |Bgs|>0.5
-       (A1 正型 fire@49.212 前 0.048s Bas=3.17)(iii)cost 行自带 ratio≥10x 门阈证据;
-       三面皆无=误触发处置(不入受控,§2.6-d 既有映射);
+    L1 触发=simvins.log 行 'cost gate: streak=N over Mx short-window median, reboot'
+       (WARN 头第二字段=sim 时刻,与 flight.bag 时戳同钟——A3 实证 47.024 vs 袋末 46.9);
     L2a 恢复-复流=毒窗后求解器 odom 流(/vins_estimator/odometry,非 imu_propagate——
        prop 无视觉自由积分,不作跟踪证据,seam-3)条数下限;
     L2b 恢复-误差=恢复段自对齐(段首帧对齐;reboot 重锚换系,出生对齐会吞系差)误差
@@ -575,16 +564,12 @@ def controlled_failure_layer(run_dir, odom, truth, th):
            "ratio": None, "faildet_n": 0, "pw_s": pw,
            "diag_after_fire": None, "recover_msgs": None, "post_p95_m": None,
            "l2a_pass": None, "l2b_pass": None,
-           "jumps_in": None, "jumps_out": None, "state": "clean", "evidence": [],
-           "faildet_first_t": None, "trig_first_t": None, "trig_first_kind": None,
-           "trig_real": None, "real_face": None}
+           "jumps_in": None, "jumps_out": None, "state": "clean", "evidence": []}
     vlog = os.path.join(run_dir, "simvins.log")
-    fires = []        # cost 门触发行:(sim_t, streak, ratio)
-    faildets = []     # legacy 'failure detection!' 行:sim_t(v1.3 纳入 L1=任一门拦截)
-    diag_all = []     # (t, |Bas|, |Bgs|):v1.3 真实性面(ii) 触发前偏置证据
+    fires = []
     if os.path.exists(vlog):
         out["log_exists"] = True
-        trig_seen = False
+        fire_seen = False
         with open(vlog, "r", errors="replace") as f:
             for line in f:
                 m = RE_COSTFIRE.search(line)
@@ -592,33 +577,18 @@ def controlled_failure_layer(run_dir, odom, truth, th):
                     tm = RE_WARNHDR.search(line)
                     fires.append((float(tm.group(1)) if tm else None,
                                   int(m.group(1)), float(m.group(2))))
-                    trig_seen = True
+                    fire_seen = True
                     continue
                 if "failure detection!" in line:
                     out["faildet_n"] += 1
-                    tm = RE_WARNHDR.search(line)
-                    faildets.append(float(tm.group(1)) if tm else None)
-                    trig_seen = True
-                    continue
-                md = RE_DIAG.search(line)
-                if md:
-                    diag_all.append((float(md.group(1)), float(md.group(2)),
-                                     float(md.group(3))))
-                    if trig_seen and out["diag_after_fire"] is not True:
-                        out["diag_after_fire"] = True
+                if fire_seen and out["diag_after_fire"] is not True \
+                        and RE_DIAG.search(line):
+                    out["diag_after_fire"] = True
     out["fires_n"] = len(fires)
     if fires:
         out["first_fire_t"], out["streak"], out["ratio"] = fires[0]
-    ft_ = [t for t in faildets if t is not None]
-    if ft_:
-        out["faildet_first_t"] = round(min(ft_), 3)
     odom = odom or []
-    # v1.3 统一锚=任一门首触发(cost/legacy 同等,裁定②);first_fire_t 键保留=cost 首发
-    # 口径(v1.2 兼容);033941 实证 legacy 49.376 早于 cost 51.872
-    cand = sorted([(t, "cost") for t, _, _ in fires if t is not None] +
-                  [(t, "legacy") for t in faildets if t is not None])
-    tf = cand[0][0] if cand else None
-    out["trig_first_t"], out["trig_first_kind"] = tf, (cand[0][1] if cand else None)
+    tf = out["first_fire_t"]
     # v1.2: 起点标记先行计算(onset=首帧跳或 err>10m 更早者)——毒窗与 L1b 都以它锚定;
     # 窗左界=min(onset, tf)-1(v1.1 的 tf-1 假设零检测延迟,R5 证伪:症状必先于捕捉)
     onset_markers = []
@@ -680,20 +650,7 @@ def controlled_failure_layer(run_dir, odom, truth, th):
             out["evidence"].append(
                 "L1b 迟触发(fire %.2f > onset %.2f+%.1fs)=§2.6-g 不入受控"
                 % (tf, onset_t, th["cf_onset_grace_s"]))
-    # v1.3 §2.6-h 误触发排除(裁定②'误触发不算'):真实事故证据三面任一才给 L1 资格
-    if tf is not None:
-        faces = []
-        if onset_t is not None:
-            faces.append("onset位姿面@%.2fs" % onset_t)
-        if any(tf - th["cf_real_diag_win_s"] <= t <= tf and
-               (b > th["cf_real_bas_min"] or g > th["cf_real_bgs_min"])
-               for t, b, g in diag_all):
-            faces.append("触发前diag偏置越线(%gs窗)" % th["cf_real_diag_win_s"])
-        if any(r >= th["cf_real_cost_ratio_min"] for _, _, r in fires):
-            faces.append("cost行ratio≥%.0fx" % th["cf_real_cost_ratio_min"])
-        out["trig_real"] = bool(faces)
-        out["real_face"] = "+".join(faces) if faces else None
-    if tf is not None and out["trig_real"] and odom:
+    if tf is not None and odom:
         seg = [p for p in odom if win_hi <= p[0] <= win_hi + th["cf_recover_win_s"]]
         out["recover_msgs"] = len(seg)
         out["l2a_pass"] = len(seg) >= th["cf_recover_msgs_min"]
@@ -726,19 +683,16 @@ def controlled_failure_layer(run_dir, odom, truth, th):
     if not out["log_exists"]:
         out["state"] = "log-missing"
         out["evidence"].append("simvins.log 缺失:触发面不可判(四指标/J0/vins 层口径不变)")
-    elif out["fires_n"] == 0 and out["faildet_n"] == 0:
-        out["state"] = "clean"
-        if jumps_out > 0:
-            out["evidence"].append("无触发但帧跳×%d=冻型/未拦截候选(§2.6-e;终判仍由四指标+J0+vins 层)"
-                                   % jumps_out)
-    elif tf is None:
-        out["state"] = "triggered-no-recovery"
-        out["evidence"].append("触发行无钟(WARN 头不可解析)=不可锚定,受控不可达")
-    elif not out["trig_real"]:
-        out["state"] = "uncontrolled-fail"
-        out["evidence"].append("误触发处置(§2.6-h,裁定②'误触发不算'):零真实事故证据"
-                               "(无onset标记+触发前无偏置越线diag+无cost门阈行)——不入受控,"
-                               "按§2.6-d既有映射(门行在=fail面)")
+    elif out["fires_n"] == 0:
+        if out["faildet_n"] > 0:
+            out["state"] = "uncontrolled-fail"
+            out["evidence"].append("无 cost 触发+failure detection ×%d=未拦截(§2.6-e)"
+                                   % out["faildet_n"])
+        else:
+            out["state"] = "clean"
+            if jumps_out > 0:
+                out["evidence"].append("无触发但帧跳×%d=冻型/未拦截候选(§2.6-e;终判仍由四指标+J0+vins 层)"
+                                       % jumps_out)
     else:
         if out["l2a_pass"] and out["l2b_pass"] and out["l1b_pass"] is not False:
             out["state"] = "controlled"
@@ -798,7 +752,7 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
         sp["spike_rate"] = round(len(spk) / len(costs), 4)
         sp["max_ratio"] = round(max(ratios), 1)
     ate = online_ate_aligned(odom, truth, th["online_pair_win_s"])
-    # ---- C.5 受控失败分层 v1.3(prereg §2.6;任一门拦截+误触发排除;改动须重跑 --online --selftest) ----
+    # ---- C.5 受控失败分层 v1.1(prereg §2.6;触发+恢复双证;改动须重跑 --online --selftest) ----
     cf = controlled_failure_layer(run_dir, odom, truth, th)
     controlled = cf["state"] == "controlled"
     # ---- D. 判决组装 ----
@@ -1056,7 +1010,7 @@ SELFTEST_ONLINE = {
             ("morph_diverged", True, None),    # forensics verdict:爆散
             ("vins_pass", False, None),        # 无 T2diag 旧轮→Bas 轴不可判→vins False
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
-            ("controlled_state", "triggered-no-recovery", None),  # v1.3:legacy fire@134.332 真触发(爆散onset面)→机器路径→L2无恢复(v1.2=uncontrolled-fail)
+            ("controlled_state", "uncontrolled-fail", None),  # v1.1:无触发+faildet×1(log 实测)
         ],
     },
     "run_WC2OBS1_032005": {

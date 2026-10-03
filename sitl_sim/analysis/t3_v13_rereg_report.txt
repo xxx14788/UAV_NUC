@@ -1,0 +1,29 @@
+v1.3 re-regression 报告(判读器 6fb9ccb4;对照 v1.2=4cb6acc7)
+== 判值面逐位一致审计 ==
+全样本逐位一致(verdict/four/j0/fj/env/xpass/vins)
+
+== 受控层状态变化目录(合法面=任一门 L1 扩展所致) ==
+U3R_t2v3_route_032809: uncontrolled-fail -> triggered-no-recovery (trig=legacy@49.308 real=True face=onset位姿面@53.09s+触发前diag偏置越线(2s窗))
+U3R_t2v3_hover_035509: uncontrolled-fail -> controlled (trig=legacy@46.476 real=True face=onset位姿面@51.36s+触发前diag偏置越线(2s窗))
+U3R_t2v3_route_035800: uncontrolled-fail -> triggered-no-recovery (trig=legacy@50.384 real=True face=onset位姿面@49.86s+触发前diag偏置越线(2s窗))
+A1_route_gates: uncontrolled-fail -> triggered-no-recovery (trig=legacy@49.212 real=True face=触发前diag偏置越线(2s窗))
+
+== 全样本 v1.3 态 ==
+U3R_t2v3_ground_032114             clean                  verdict=FAIL             counting=False/False
+U3R_t2v3_hover_032229              clean                  verdict=FAIL             counting=False/False
+U3R_t2v3_hover_032518              clean                  verdict=FAIL             counting=False/False
+U3R_t2v3_route_032809              triggered-no-recovery  verdict=FAIL             counting=False/False
+U3R_t2v3_route_033941              triggered-no-recovery  verdict=FAIL             counting=False/False
+U3R_t2v3_ground_035105             clean                  verdict=FAIL             counting=False/False
+U3R_t2v3_hover_035220              clean                  verdict=FAIL             counting=False/False
+U3R_t2v3_hover_035509              controlled             verdict=FAIL             counting=False/False
+U3R_t2v3_route_035800              triggered-no-recovery  verdict=FAIL             counting=False/False
+U3R_t2v3_route_040932              clean                  verdict=FAIL             counting=False/False
+R5_pairing_fix                     controlled             verdict=FAIL             counting=False/False
+A1_route_gates                     triggered-no-recovery  verdict=FAIL             counting=False/False
+A2_route_base                      log-missing            verdict=FAIL             counting=False/False
+A3_hover_gates                     triggered-no-recovery  verdict=FAIL             counting=False/False
+SYN_MULTI                          controlled             verdict=PASS-CONTROLLED  counting=True/True
+SYN_NOBAG                          triggered-no-recovery  verdict=FAIL             counting=False/False
+SYN_NOTC                           triggered-no-recovery  verdict=FAIL             counting=False/False
+run_U3PO_211438                    clean                  verdict=FAIL             counting=False/False

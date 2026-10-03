@@ -1048,3 +1048,36 @@ WC2OBS1 爆散/U3PO 导航 223Hz）p50 8-12ms、p95≤36ms、max 56ms、零帧�
 ## T3 v8.8 任务书收口（2026-10-03 11:45）
 
 本会话（00:39-11:3x）全清账=v8.8 册 A 节 11 件；台账权威=repo 副本（runtime 分叉挂账 K-11）。X线解锁=T2 U4，判读链就绪（prereg v1.1+v1.2/识别器 4cb6acc7/R5+舰队实弹验证）。
+
+## T3 v9.3 会话（2026-10-04 01:4x-）：单元 1 判读器 v1.3 + 单元 2/3/3.5（流水执行）
+
+**单元 1 判读器 v1.3 承接**（红线 24 全流程）：
+
+- 改动面：①L1 触发面扩至任一门拦截（用户 10-03 12:09 裁定②）——legacy `failure
+  detection!` 行与 cost 门行同等作 L1 触发行，统一锚=任一门首触发时刻（033941 实证
+  legacy 49.376 早于 cost 51.872 达 2.5s：v1.2 仅认 cost 首发会把毒窗整体右移）；
+  毒窗/L1b/L2a/L2b 全链以统一锚起算，`first_fire_t` 键保留=cost 首发口径（v1.2 兼容）。
+  ②§2.6-h 误触发排除（裁定②"误触发不算"机器签名）：真实事故证据三面任一——
+  (h-i)onset 位姿标记/(h-ii)首触发前 2s 内 [T2diag] |Bas|>1.0 或 |Bgs|>0.5（A1 正型
+  fire@49.212 前 0.048s |Bas|=3.17；健康锚 WAOL5R 0.981<1.0；Bgs 线=W4 前置门 0.5）/
+  (h-iii)cost 行自带 ratio≥10x 门阈证据；三面皆无=误触发处置→uncontrolled-fail
+  （§2.6-d 既有映射）。残余面登记：spurious 触发自造 >0.5m 再锚跳可伪造 (h-i)——
+  防线=fixface-2 已根除 55.432 型+L2a/L2b 全过；新形态=新版本号。
+  ③selftest X1_232055 期望合法更新（legacy fire@134.332 真触发→机器路径→TNR）。
+- 版本：v1.2=4cb6acc7 → **v1.3=6fb9ccb4**（.bak_v13_20261004+/tmp 双备份；补丁 8 处
+  唯一命中+py_compile）。
+- 三层验证：离线 selftest 绿+在线 4 格绿+18 样本 re-regression 判值面
+  （verdict/four/j0/fj/env/xpass/vins）**逐位零漂移**（t3_v13_rereg_report.txt）。
+- U3″ 舰队表 v1.3 重跑（ps_u3r_fleet_table_v13.txt，逐臂核对）：**仅 035509 翻
+  controlled**（任务书预期精确命中；legacy@46.476 双面真触发[onset@51.36+diag 越线]/
+  L2a 复流 96/L2b p95=0.0755m/3 帧跳全部改判窗内）；032809/035800→triggered-no-recovery
+  （复流 100/98 过但 post_p95 68.3m/95.4m 被 L2b 拦=「落地恢复型」恢复到错处的机器量化；
+  T2 12:09 ④ 不回溯口径下受控路径机器答案=否）；033941 维持 TNR（锚前移 49.376，
+  post_p95 791.9m 仍拦）；A1→triggered-no-recovery（§2.6-f 原型态，v1.2 的
+  uncontrolled-fail 仅因 L1 限 cost）；R5 controlled/A3 TNR/A2 log-missing/U3PO clean/
+  SYN_MULTI/NOBAG/NOTC——全部锚定稳定。
+- SYN 电池扩至 8 夹具（t3_synth_controlled_test.py 重写+备份）：新增 SYN_LEG（任一门
+  正型→controlled）/SYN_FALSE（零证据触发→误触发处置）/SYN_LEG_A1（diag 面真触发+流死
+  →TNR）；5 断言全绿。
+- 文档：prereg §7 v1.3 修正条目（冻结前并入，零 X 轮消费）；runbook §9.1 凭据表创建
+  （v1.1 ac1df603/v1.2 4cb6acc7/v1.3 6fb9ccb4 三行入册+期望态速查）。

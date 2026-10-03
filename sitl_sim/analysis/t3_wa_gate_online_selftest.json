@@ -66,7 +66,7 @@
   {
    "cell": "run_X1_232055",
    "ok": true,
-   "line": "run_X1_232055: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散 cf=uncontrolled-fail]",
+   "line": "run_X1_232055: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/1 j0jump=None j0rev=False(raw=624,smj=632) env=sitl.log:Connection-closed(normal-cleanup-artifact?) | vins=✗ reboot=0 gaps=0 cov=0.75 bas_pk=None bgs_pk=None ate=367.2475 morph=爆散 cf=triggered-no-recovery]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -104,8 +104,8 @@
      "pass": true
     },
     {
-     "check": "controlled_state ref=uncontrolled-fail",
-     "got": "uncontrolled-fail",
+     "check": "controlled_state ref=triggered-no-recovery",
+     "got": "triggered-no-recovery",
      "pass": true
     }
    ]
@@ -113,7 +113,7 @@
   {
    "cell": "run_WC2OBS1_032005",
    "ok": true,
-   "line": "run_WC2OBS1_032005: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=369.839 j0rev=False(raw=512,smj=684) env=- T1D1 | vins=✓ reboot=0 gaps=0 cov=0.291 bas_pk=0.7425 bgs_pk=0.12547 ate=116.4114 morph=数值溢出型(含 extreme/非有限帧) cf=uncontrolled-fail]",
+   "line": "run_WC2OBS1_032005: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=369.839 j0rev=False(raw=512,smj=684) env=- T1D1 | vins=✓ reboot=0 gaps=0 cov=0.291 bas_pk=0.7425 bgs_pk=0.12547 ate=116.4114 morph=数值溢出型(含 extreme/非有限帧) cf=triggered-no-recovery]",
    "checks": [
     {
      "check": "verdict==FAIL",
