@@ -1950,3 +1950,14 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **穷举取证（10-04 01:5x-02:1x，六袋全查）**：对 t2v3_route_{040932,032809,033941,035800,034144,035325}.bag × {truth(/gazebo/model_states iris_stereo_vins), odom(imu_propagate)} × goal{(3,-2,1),(0,0,1),(7,-4,1)} × {min,final,max} 全口径实测——**无任何组合复现 27.2m**（min 全域 0.028-7.84m；040932 truth min_d1=1.029/odom min_d1=0.030/min_d2=0.028）。leg2"0.097"同判无源。04:27 深夜草判数字=笔误级，**撤回**。
 - **正源并记**：T3 探针（R040932_decomp，flight.bag 与 bags/t2v3_route_040932.bag 同 inode 13930695 实证）truth min_d1=0.871m；T2 复核全程口径=1.029m（min 时刻 t=117.9）；差 0.158m=窗处理差异（出生锚定修正假设已排除：修正后 0.288m 非其口径），**两读数均 >0.75 门，到位 FAIL 判读不变**；VINS 自报 0.030/0.028 双侧逐位一致。034144(A2 袋) truth min_d1=0.870m≈0.871 属健康轮同带巧合，非配错袋。
 - **影响面**：U3″判读表 route_040932"零失败✓"判定不动（依据=零 T2fail/零 reboot）；到位统计行与移交文数字已行内勘误；"到位异常→planner/EKF2 面"定性撤回——正源定性=**估计精度本体**（T3 三段分解：planner 0.013m 无罪/px4ctrl p95 0.195m 紧/主残差=odom-truth 漂移 0.6-0.9m），T3 判读方向正确。C 域 0.79-1.10m 到位地板带再添独立样本（040932=1.029）。
+
+
+**T2 v8.9 单元 1 收口：route 修复面两案写码+build+预筛（2026-10-04 02:0x-02:3x；prereg_route_fix 先行；commit f87f8db 已推）**
+
+- **写码（两案同窗，用户 10-03 晚批）**：案A 分阶段门=`t2_staged_depth_gate`+`t2_staged_n_sec`（默认 0=关=逐位不变；恩典窗 80=VR2 十五段再造起点 4.3-78.7s 保守上界）——feature_manager 三角化 stereo/motion2/svd 三分支：INITIAL 填窗期+init 后恩典窗保留 INIT_DEPTH 伪注入（solveGyroscopeBias 特征量保底=depth-gate 活锁教训的结构防御），NON_LINEAR 稳态期与 t2_depth_gate 同策略拒收；稳态旗 estimator 每帧同步（t2_staged_steady_now），clearState 归零=再 init 自动回填窗期。案B=`t2_w4_bgs_thresh`（默认 0.5=原硬编码逐位；Bas 1.0 线不动）。**banner 契约=[T2RFIXCFG] 独立新行自证（启动+每次 setParameter 复打）；[T2GATECFG]/[T2gate]/cost 触发行/gate reject 行逐字节未动=T3 识别器零改动**（决策已 STATUS 通告+DECISION_LOG 登记）。
+- **栈换代 fixface-3**：lib e704431948c865cfe33f810f4a409f03 + node 08a46d0adaa97b05886db782b3ff0405（双件顶层存档；fixface-2 1d7d2302/47d4308e 退役入 stack_archive/fixface-2/）。build 全绿；**gtest 38/38**（新 test_t2_route_fix 7 例：staged 关逐位/填窗保注入/稳态拒收/恩典窗真值表/W4 默认边界 0.5 严格小于/5.0 臂中带通过 5.63 极值仍拦/旋钮不越权；旧 31 例动态链新 lib 全绿=回归实证）。
+- **单元 1.5 回放预筛（粗筛，不判生死——prereg 声明；素材=t2v3_route_112652 全图像袋 177s；紧凑袋无图像不可回放=W1 坑同款，040932 复筛袋弃用）**：
+  - CANON（t2gates 零新键）：T2fail=0/gate_reject=0/单次 init/ir_st≤13 历史带内/末态健康（|Bgs|=0.0046/track=131）——**零回归 PASS**；[T2RFIXCFG] 默认值 staged=0 w4=0.5 banner 自证 ✓。
+  - ARMA（案A 臂）：**分阶段行为完美生效**——pre-grace（init t=20.6 后 80s 内 793 帧）ir_st_sum=981/max=13 伪注入保留=填窗语义；**post-grace（941 帧）ir_st_sum=0/max=0 稳态伪注入全零**+rej 6-14/帧拒收在岗；零活锁（W4 reject=0/单次 init/无 banner 连发）——对照 v8.3 depth-gate 臂同场景活锁（gate reject 7 连+1.1s 连发）**活锁根除实证**。
+  - ARMB（案B 臂）：banner w4=5 生效 ✓；T2fail=3/init_finish=4=单变量差异（CANON 同袋 0 fail/1 init）指向 w4 放行 Bgs 0.5-5 带劣质 init 后被 cost/后置防线拦截 reboot，第 4 次 init 收敛存活——**无活锁形态**（非 1.1s 连发循环）；放行面行为如实记，生死在线定。
+- **ENV**：三回放私有 master 11312 零残留；T1 02:05 通告已消费（其 02:40 px4ctrl build 与本线 build/回放错峰完成）；臂 config=cfg_routefix_A/B（R2_dissect/，基带 sim_stereo_t2gates cost_gate=1 不动）。
