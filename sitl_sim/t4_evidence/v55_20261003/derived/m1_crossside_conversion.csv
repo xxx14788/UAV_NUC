@@ -1,0 +1,10 @@
+# T4-poolM1conv M1 cross-side conversion per-bag pairs; mechanical output; draft stats only
+# caliber notes: pc_n/pc_p50/pc_p90/pc_frac_p50 = nonempty-cloud caliber (j13_supply_pooled per_round, points/150); pc_p10/pc_max = all-cloud caliber quoted from d1_supply_model.md sec1c (reference only)
+# sup_* = image-side supply_frac (=corners_gFT/150), primary caliber = frames with tag==""
+bag,pool,inj_era,pc_n,pc_p10,pc_p50,pc_p90,pc_max,pc_frac_p50,j13_vs_d1_ok,img_src,img_calib,img_native,n_all,n_prim,sup_p25_all,sup_p50_all,sup_p90_all,sup_p50_prim,sup_p90_prim,corners_p50_prim,ident_mism,ident_n,x55_src,x55_n_prim,x55_sup_p50_prim,x55_reldiff,ratio_prim,ratio_inv,ratio_all
+X1img_015950,主池,no,1991,41,45,90,154,0.3,yes,metrics_X1img_sim.json,derived corners_gFT/150 (d1 sec0 on-record convention),no,139,72,0.2333333333,0.2466666667,0.4546666667,0.2466666667,0.4453333333,37,0,0,,,,,0.8222222222,1.216216216,0.8222222222
+WC2OBS1_030927,主池,yes,393,0,97,141,156,0.6466666667,yes,metrics_WC2OBS1_030927_w3.json,native supply_frac,yes,139,72,0.66,0.68,0.7333333333,0.68,0.726,102,0,139,,,,,1.051546392,0.9509803922,1.051546392
+WC2OBS1_032005,主池,yes,609,0,51,128,157,0.34,yes,metrics_WC2OBS1_032005_w3.json,native supply_frac,yes,139,73,0.7733333333,0.88,1,0.8666666667,1,130,0,139,,,,,2.549019608,0.3923076923,2.588235294
+U3PG_210307,主池,yes,422,83,83,119,132,0.5533333333,yes,metrics_U3PG_210307.json,native supply_frac,yes,141,73,0.4666666667,0.58,0.64,0.6,0.6333333333,90,0,141,pool_m1m2_j3img_U3PG_210307.json,73,0.6,0,1.084337349,0.9222222222,1.048192771
+U3PO_211438,主池,yes,3469,80,119,133,159,0.7933333333,yes,metrics_U3PO_211438.json,native supply_frac,yes,141,74,0.76,0.8133333333,1,0.8066666667,0.99,121,0,141,pool_m1m2_j3img_U3PO_211438.json,74,0.8066666667,0,1.016806723,0.9834710744,1.025210084
+U3PR2_213717,主池,yes,6066,120,130,149,167,0.8666666667,yes,metrics_U3PR2_213717.json,native supply_frac,yes,139,72,0.4533333333,0.4733333333,0.5333333333,0.4733333333,0.5393333333,71,0,139,pool_m1m2_j3img_U3PR2_213717.json,72,0.4733333333,0,0.5461538462,1.830985915,0.5461538462
