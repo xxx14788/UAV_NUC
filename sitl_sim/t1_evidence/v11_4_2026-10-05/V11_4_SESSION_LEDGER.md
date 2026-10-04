@@ -41,9 +41,29 @@
 
 - **D-1005-T1-01**：[W2BA] 面灭失（源码未入库+三代存档无）+F3B15/16「W2BA=0 触发」伪读数勘误。四面→三面；不阻塞 C-M。
 
+### A4. 单元 4 w2b 双流扩展 + 深挖池①（01:40-01:50）
+
+- **双流扩展落地（探针侧）**（commit 1f4340a）：W2BB 第二实例喂 imu_propagate 流——face=`w2bbp`（同构 in-stream 坍缩语义）+`d_logE_vs_odom` 配对参考字段（|Δt|≤STEP 时输出；发现面不进门）。**实现位置偏差注记**：任务书预想 VINS 侧（挂 build 窗），实际探针侧实现=零 build 窗即随轮生效；绝对跨流判别"未立"结论维持（w2b_dualpath_impl_prep §2）。
+- **首验=MACH7**（01:46:57 起）：w2bbp 面出数（logE_hf=-1.33 + d_logE_vs_odom=0.155 健康形态）——双流在线版 PASS 级素材（判读面=发现面）。
+- **深挖池①G1 strace 预备稿部署**：`~/sitl_sim/t1_g1_strace.sh`（vins_pid+轮目录+限时 10s；内核栈/线程快照零开销前采+strace process/memory/futex 面）。**触发纪律**：仅敌对发作确认后+T2 同意（ptrace 开销 10-30% 污染轮=对照轮期间禁触发）；strace 已装 3090。
+- **env 注入决策记录**：T2 起轮编排（vins_smoke.sh:92）不带 T1_W2BB/T1_R3XQ——不改 T2 域脚本；launch 写死 value 违反"默认关≡zetafix-1"纪律；**进程内面损失由离线判别器（w2b_dual_offline.py 全轮袋可复算 B1/B2）+探针外部双流面（w2bb/w2bbp）覆盖**。加急通告在册（01:20）待 T2 自主。
+
+### A5. T2 机器对照轮侧记（判读权归 T2；此处仅登记探针附着与发现面）
+
+| 轮 | 起时 | 探针 | 轮结果（round.log 口径） | 探针发现面 |
+|---|---|---|---|---|
+| MACH1 | 01:08:32 | 手工迟挂 ~3min（133 行六面） | FAIL TIMEOUT min_truth=33.5m | img_fp dup_run_max=0 |
+| MACH2 | 01:13:43 | **缺（换挂失败：vins PID 抓空+argparse 拒空参）** | FAIL ARRIVED_TRUTH min_d=0.217m | —（如实登记） |
+| MACH3 | 01:18:04 | 守护自动挂 | FAIL（FAILDET n=1） | 六面全活 |
+| MACH4 | 01:25:23 | 守护 | FAIL（FAILDET n=2） | **w2bb HF 坍缩窗 t_ros≈175 logE_hf=−7.85 vs 两端 −4.0/−2.2（深度 3.6+d）+大分离形态 p95 cmd-odom 700m** |
+| MACH5 | 01:32:33 | 守护 | （FAIL 带定，探针自 CPU 14% 大流量窗） | 六面全活 |
+| MACH6 | 01:39:44 | 守护 | FAIL（H-1 planner_kill+降落段） | 六面全活 |
+| MACH7 | 01:46:57 | 守护（迟挂 19s） | 进行中 | **w2bbp 双流首验出数** |
+
 ## B. 待办（滚动）
 
-- A1-尾：轮后 replay 微基准（img_fp 单面耗时切分）+ B 臂无探针对拍。
-- img_fp 预算表补 3090 列（多轮样本汇入后落账）。
-- W-A build 窗需求（P2/w2b 双流写码）挂净窗依赖不变。
-- 深挖池≥3 维持。
+- [挂起] T2 收口 build 窗：catkin build px4ctrl + gtest 全绿（P2 三件套）。
+- A1-尾：轮后 replay 微基准（img_fp 单面耗时切分）+ B 臂无探针对拍 + 预算表终判（素材=img_fp_budget_3090_column.md）。
+- P2 A/B 飞轮（净窗依赖，prereg v1 §3）。
+- 深挖池维持：EXP3 长窗（3090 独占窗）/P0-A.5/F4b/栈号跟随。
+
