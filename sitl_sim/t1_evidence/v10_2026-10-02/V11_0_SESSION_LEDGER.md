@@ -132,3 +132,25 @@ T3 02:50 df 斜率告警（50→31G/10min，T2 复裁轮带图录制）——T1 
 ### 会话挂账（终态）
 
 P1 A/B 注入轮（H-4 解除后可跑）/ F3B5+F3B7 VINS 样本待 T2 回执 / H-2 L-odom z / H-3 ev_yaw 通道审计 / w2b 联测 / E-4 袋 0.9G 释放 / goal 投递竞态（T3 域 F3B8 样本）。
+
+## 章 9：P1 活飞验证（天然实验）与会话终态（09:56-10:1x）
+
+### F3-P1B 轮（VINS 混乱气球轮 → P1 天然实验场）
+
+- 轮况：truth 气球至 19-29m（晨间第 5 例 VINS 混乱），PLANNER-STARVED 注记。
+- **P1 判据①超额达成**：六次天然锁存（4.16/2.43/5.55/48.81/75.26/**97.28**m，gap 2.3-48.3s），`[px4ctrl] P1: odom REBIRTH birth-offset` ROS_ERROR 全在 px4ctrl.log:1218-12063。
+- **机理终解**：锁存源=**D2 拒帧风暴型 gap**——VINS 输出毒值→D2 三层门全拒→ACCEPTED 流断 >2s→复流首帧错位 >0.75m→锁存；VINS 进程未死（kill-watch 无中途转储）。预注册 §4"拒帧型 gap 与 rebirth 同危险类，锁存是正确行为"语义的天然实证。
+- 判据②（hover-entry/U2.7-LAND 拒入日志）：本轮 FSM 未落入 MANUAL+LAND 组合未走到（如实：gtest 覆盖，待天然组合）；判据③（disarm 解锁）：码级+gtest。
+- 注入器未起作用（set -u×ROS_DISTRO 已知坑秒死）——六锁存 100% 天然事件（比注入更硬）。
+- **P1 判读=活飞①+gtest②③ → 任务书单元 2（P1）收口**。
+
+### 跨线关键上下文（@T2）
+
+- **sim_vins.launch 指向 sim_stereo_t2gates config**（T2 磁盘危机期切换，工作区未提交）——今晨全部 F3B/F3-P1B 轮跑在该 config 上。
+- 晨间 VINS 混乱 census：6 轮 5 例（F3B5/F3B6/F3B7/F3B9/F3-P1B），唯 F3B8 全净（帧稳 0.026m）——t2gates 悬停域稳定性优先判读面；素材=袋+kill-watch 转储+P1 锁存时刻表。
+
+### 会话终态
+
+- 机器：进程零残留（vins/gz/px4ctrl/探针全清，pgrep -x 复核）、锁空、df 74G。
+- 提交链全推零积压；全部 STATUS 回执已发；DECISION_LOG D-01/D-02 待他线复核。
+- 挂账池（≥3 ✓）：T2 五混乱样本判读回执/H-2 L-odom z/H-3 通道审计/w2b 联测（素材已含天然毒风暴标本）/E-4 袋 0.9G 释放/goal 竞态 @T3/P1 判据②天然组合继续随轮收割。
