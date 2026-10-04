@@ -1176,3 +1176,87 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
 - T2 机器对照战役(T2M0+T2MACH1-12)同机连发进行中(01:02-),锁=T3-T2MACH*;我全程不扰(权序 T2 机器对照轮>T3 非X4轮;单机一路)。
 - 3090 VINS init 实测 +4s(NUC 53s,28C 性能优势;BL5 系 NUC 轮,3090 系 T2MACH*)。
 - df 688G 空闲(X4 带图预算解除,df 门维持现场实测制)。
+
+### 池件 P16 第一刀:静默大发散分类(BL7/BL9 j0_decomp 读数;0 锁)
+
+- **BL7**(0fail×j0 64m 静默大发散):transit=46.06(72%)vs jump=21.45→**transit 主导型**(njf=178,res=0.0;窗 26.4→319.2)。
+- **BL9**(0fail×j0 7.8m):jump 4.00/transit 5.91→mixed(njf=163)。
+- 分类学三层:jump 主导(A2 溢出型 378.96/73.18)/transit 主导(BL5 干净 0.65、BL7 静默发散 46.06、A1 31.10)/mixed(U3PO/035509/BL9)。**干净轮 vs 静默发散轮的 transit 分量 70 倍分离(0.65 vs 46.06)——transit 分量=「fail 门平滑虚构盲区」的量化度量衡**(门盯 fail/reboot/jump,平滑漂移零门;T2「零fail≠健康」纪律的判读工具面)。@T2 B1 消费素材+1。
+
+### 会话池登记刷新(恒≥3;01:5x)
+
+- **P14/K-C 升级评估稿(3090 盘裕版;正式裁定留 X4 时点 DECISION_LOG #9 续)**:3090 空闲 688G vs NUC 时代 65G 门——X4 五连飞带图 5×5.8G≈29G(占 4%,预算解除面成立);判读面收益=带图袋支持事后图像取证(T1 对审/img_fp/敌对四面活体取证均吃带图,F3B15/16 先例)+敌对态轮 X1prime 型分母口径的环境证据链;轮时成本≈录制 I/O(3090 NVMe 无压力实测 T2MACH 带图连发正常)。**评估结论=倾向带图恢复**(X2① 重飞起即带图;正式裁定 @X4 前置检查单)。
+- P15(新):R3090_1-3 腐烂轮袋 7.1G 处置(定性毕=旧脚本配对腐烂非敌对态;腾位候选,§9.2 v3 锚表查无注册;删前 @T3 复核=本线即核)。
+- P16(进行中):静默大发散分类——第一刀毕(BL7 transit 主导/BL9 mixed,见上节);后续=受控层判读器对 transit 型大发散轮的归类口径(候选=cf 五态外挂 morph 级标注,判读工具域,红线 24)。
+- 承接旧池:P5(033941 锚前移深挖,IO 件)/P12(X2g1 紧凑袋处置,待 @T1/@T2 回执)/X7 槽位审计(P10 型,骨架对齐 j0d 新列)。
+
+### 单元 1 尾件:vins_smoke 3090 全链实战一轮(T3U1V;02:34-02:42)
+
+- **全链面全工作**:录制(flight.bag 紧凑)/VINS init +3s(3090 速度面)/preflight 全绿/banner 判读面/四指标 RESULT(含 v1.1 FAILDET 标注行 n=2)/goal 送达门(poscmd 100.2Hz)/log 归档/wa_gate online 判读(带 j0d 列)/CSV/figs 五件——**X 线先决件(harness 适配)达成**。
+- 轮本身=敌对态签名:j0=6.469 帧跳变+跟踪 p95 786m+morph=数值溢出型+cf=triggered-no-recovery+j0d=jump 234.56/transit 230.37→mixed(njf=11479 风暴级,res=9.3);leg1 真值到位 0.791(距 0.75 门 0.041)。**3090 上 T3 亲历敌对态=H-machine 排除的独立第三证据**(与 T2MACH 对照互证)。
+- 验证轮判读不入 X 线分母(非 X 线轮;敌对态签名按 X1prime 域模式注记)。
+
+### T2MACH 12 轮第三方统计(02:4x;正式判定权=T2 收口通告)
+
+12/12 全 FAIL。min_truth 分布:大发散(>30m)6 轮(M1/M4/M5/M7/M10/M11,峰 169m)+中间带(2-10m)4 轮(M3/M8/M9/M12)+近门 M6(0.612 但 j0=65 静默大发散)+到位 M2(0.217,j0=2.7)。j0 静默大发散族:M9(964.7)/M6(65.2)/M10(16.8)。**敌对率粗算 ≥8/12=67%≫25% 线 → 指向 H-machine 排除(3090 照样爆=软件病非 NUC 机器不稳定)**;加 T3U1V 独立证据,分叉方向基本确定,等 T2 通告正式化后按 v9.6 单元 3 排除分支执行(X 线维持暂停+环境性重试条款+统计化飞法+DECISION_LOG 重大标记;J0 双口径与归因注记路径已产出 ✓)。
+
+## T3 v9.6 X 线序列启动(H-machine 支持分支;02:4x-)
+
+T2 02:45 机器对照定案(**H-machine 强支持:敌对 2/12=17%≤25% 门;形态学剧变=极端失控 8→0/风暴 1→10;敏感性口径 j0≥2.6∨never 两机同 92%**——T1 02:43 采信行解码)+单元 1 适配毕 → **W-X 双条件齐,X 线全速启动**(任务书单元 3 支持分支)。
+
+### X2g1 重飞(3090 首个 X 线轮;run_X2g1_024637;带图 10.2G;栈 8c3453c0/2ad9676e)
+
+- 判读:FAIL four=0/1/1/**0**;j0=0.809(j0d:jump 0.396/transit 0.729 mixed,njf=3);真值到位 4.512m(门 0.75);cf=**clean**;reboot=0/gaps=0/cov=1.0/Bas 峰 1.9273/ATE 0.736/morph=小跳渐进劣化;**disarm=0**(降落未确认,WARN 在案)。
+- **K-B(X2g1 饿死复验)结论:饿死不复现**——原轮(NUC 041203)planner WAIT_TARGET 饿死+never-flew;3090 重飞 poscmd 100Hz+跟踪 p95 3.56=planner 吃到 goal 正常出令,真飞(truth 动全程)。
+- 形态定性:**非敌对态**(敌对三族+Bas 爆型签名全无;cf clean+流健康)——属 3090 中间带/风暴族(min_truth 3.556,与 T2MACH M3/M8/M9/M12 同构:飞了但差 3-7m;VINS 自报 3.405 与真值 4.512 差=锚差 0.8 主导)。按预写死分母口径:风暴签名是否成立=T2 判读签名对齐后裁(**待办:X2 系轮分母标注口径与 T2 风暴判读对齐**);裁前按机械判读 FAIL 入账不豁免。
+- 凭据纪律注记:X2g1 起飞前双 md5 漏记,轮毕即补(8c3453c0/2ad9676e,期间零 build 零改动,X2g3 起已恢复起飞前实读)。
+
+### 3090 适配缺口第三处:kill_planner_all 漏杀(catkin build 路径断层)
+
+- 实证:连续两轮清场后 ego_planner_node 孤儿存活(T2MACH8 轮 149274+X2g1 轮 229369,PPID=1);planner_kill.log 谎报 after_kill=0。
+- 根因:3090=catkin build(catkin_tools),进程真实路径 devel/**.private**/ego_planner/lib/…;脚本 pgrep 模式=devel/lib/ego_planner/(旧 catkin_make 路径)不匹配+统计模式同谎。两机 build 系统差异=handoff §5 之外的新腐蚀面。
+- 修复:模式改双路径兼容交替(ego_planner/lib/ego_planner_node 等);kill_planner_all.sh=a5905009(repo+runtime 双处同步,.bak_catkin2_20261005 留档);实测两孤儿(手动补杀)+模式 grep 命中验证。
+
+### X2g3/X2g4/X3l2a(03:0x-03:18;栈 8c3453c0/2ad9676e 轮前实读)
+
+- **X2g3**(goal 8 -1 1;run_X2g3_025529;带图):FAIL four=0/1/1/0——**物理到位 ARRIVED_TRUTH 0.099m+j0=0.092+j0d(jump 0.111/transit 0.199)+VINS 域全绿(Bas 峰 0.659/ATE 0.084/cov 0.999/cf=clean)**;FAIL 仅两项=①到位窗读数 0.849 撞 0.75 门(差 0.099;route 三题 C 地板族 0.79-1.10 带成员;**撞门预案触发上报,禁私放宽**)②disarm=0。env 软签名=sitl.log Connection-closed(已知 cleanup 伪影)。
+- **X2g4**(v2 world 附加对照轮;run_X2g4_030233):FAIL 大发散族(min_truth 138.008/j0=3.92/ATE 94.4/gaps=1/morph=数值溢出型/cf=triggered-no-recovery/j0d mixed njf=2539)——**不入分母**(prereg 附加对照位),v2 world 首个 3090 数据点=大发散形态。
+- **X3l2a**(leg2 1 0 1 两段;run_X3l2a_031040):FAIL four=0/1/1/0——leg1 3.628/leg2 3.320 双未到位;j0=6.287(j0d=**transit 主导 5.763/0.545**,njf=5);cf=clean/Bas 峰 1.392;disarm=0。
+- **disarm=0 系统性面(X2g1/3/4+X3l2a 四连败)**:降落 5 轮重掷+2min 等待均未确认 disarmed;px4ctrl 收尾 all processes died;X1prime(NUC)disarm=1 的 U2.7 修复实弹验证在 3090 不可复现——**X4 前置「auto_disarm 正面证据」被堵**,已 @T1 取证(03:2x build 后新 md5 轮待验)。
+- kill_planner_all 强化:两轮杀后孤儿仍存(X2g3 轮 247709 实证,疑 roslaunch respawn 竞态)→三轮兜底版 **bc053953**(X2g4 轮起生效,轮尾 planner 净)。
+
+### X3l2b(03:26-03:34;px4ctrl 新代 0e832aa7 轮前实读;vins 栈 2ad9676e 不变)
+
+FAIL four=0/1/1/0:leg1 4.031/leg2 3.019 双未到位(**leg2 真值 0.998 与 VINS 自报 0.996 逐位一致=近门段估计面健康**);j0=368.155(T1D1 域/morph=数值溢出型/ATE 221.1/cf=triggered-no-recovery/j0d mixed njf=4619,res 4.6);leg1 段 min_truth=160.7 大发散;disarm=0(五连败)。
+
+### X 线序列 3090 域汇总(位形全毕;02:46-03:34;栈 8c3453c0/2ad9676e 全程未变)
+
+| 轮 | 形态 | j0 | j0d 主导 | 到位 | disarm |
+|---|---|---|---|---|---|
+| X2g1 | 中间带(4.512)/cf clean | 0.809 | mixed | 4.512 | 0 |
+| X2g3 | **最净:VINS 全绿+ARRIVED 0.099** | 0.092 | mixed | 窗 0.849 撞门 | 0 |
+| X2g4 | 大发散(v2 world 对照,不入分母) | 3.92 | mixed | 138.0 | 0 |
+| X3l2a | transit 主导 | 6.287 | transit 5.76 | 3.628/3.320 | 0 |
+| X3l2b | 数值溢出(T1D1) | 368.2 | mixed | 4.031/3.019 | 0 |
+
+- **X4 五连飞前置检查(runbook §tag 四项)客观未达**:①5/5 全绿=0/5 起步(X2g3 差 0.099 撞门+到位窗地板族)②K-2 跳变销案未到(W-D)③**auto_disarm 正面证据=3090 五连败(X1prime NUC 实弹验证不可复现,@T1 取证中)**④到位能力=route 三题 C 地板课题延续。**X4 暂停,不反盲烧**(明知 0/5 不连飞);预写死敌对分母口径待与 T2 风暴签名对齐后标注(X3l2b/X2g4=敌对候选)。
+- W-X 转 W-disarm(新):唤醒=T1 disarm 取证/修复通告(X2 系素材包已给);W-D 维持。
+
+### 单元 4 Z1.2 常规化三步(03:3x;X 线暂停点触发)
+
+①CMakeLists 接 test_odom_sanity_v2 ✓(catkin_add_gtest 68-70 行在,T1 build 窗接线);②catkin build ✓(T1 03:2x build 产物,px4ctrl 新代 0e832aa7);③**gtest 全量回归 5 件 77/77 全绿**(cmdresp_gate 12+controller_attitude 8+fsm_decision 37+odom_sanity 9+odom_sanity_v2 11)。P3 需求面(@T1 契约 v1)随 v2 面并入。
+
+### 撞门机理定案:X2g3 anchor 动态窗 z 污染(03:4x;只读探针;判读正源零触碰)
+
+**发现(route 三题 C 到位地板 0.79-1.10 的机理)**:round_result 的到位锚=goal+5s 窗 truth−prop 均值对(设计意图=防帧跳变早期锚误判,X1_234437 实证);但该窗恰取在**动态段**,VINS 瞬时 z 高估污染 anchor z。
+
+证据链(X2g3 探针,tmp/x2g3_anchor_probe.py 可复跑):
+1. anchor(goal+5s 动态窗)=(1.114,0.553,0.814)——与 RESULT 逐位一致(复刻口径对账 ✓);
+2. anchor(goal−15~−5s 静止窗)=(1.010,0.980,0.104)——与全库出生偏移 (1.01,1.00,0.09) **逐位一致**;
+3. 两锚差 |d|=0.834,主分量 **z=+0.709**(x +0.104/y −0.426);
+4. anchor 时变曲线:全程 10s 滑窗稳定 (1.07,0.92,0.098),唯 goal+5s 段 z 抬 0.7;
+5. **到位三口径**:动态锚(round_result 正源)=0.849→FAIL;**静止锚=0.036**(深绿);裸 goal=1.015。
+
+**结论**:X2g3 飞机物理到位(静止锚口径 0.036/ARRIVE_WATCH 0.099),被判 FAIL 的根因=anchor 窗动态段 z 污染把到位参考点平移 ~0.8m。route 三题 C「到位地板 0.79-1.10 全在 0.75 门上」= anchor z 污染带(0.7-0.8)——**地板=量测伪影,非飞行能力缺陷**。
+
+**处置(红线)**:round_result anchor 口径=prereg v1.1 冻结判据面,修正=判据变更须预注册版本+跨线复核+用户裁定,**禁私改**。候选修正案(供裁定):①anchor 窗改 goal 前静止悬停段(goal−15~−5s);②anchor z 分量钳到出生偏移带(±0.2);③双锚取稳(动态/静止窗差>0.3m 时用静止窗+注记)。对抗证据包=probe 脚本+三口径对账+anchor 时变表。**X4 到位堵点若此口径修正获准,X2g3 型轮到位面转绿(disarm 面仍堵,独立项)**。
