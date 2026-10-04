@@ -92,11 +92,17 @@ def detect(bag):
             else:
                 consec = 0
     # --- B2 rate divergence (odom starvation vs prop alive)
+    # v1.1 warmup guard: B2 active only after both streams delivered >=20
+    # samples (startup-race artifact found in v1 run: prop floods ms before
+    # first odom -> spurious alert at bag start in EVERY bag, see verdict).
     if od and pr:
         od_t = [x[0] for x in od]
         pr_t = [x[0] for x in pr]
+        warm = max(od_t[19], pr_t[19]) if (len(od_t) >= 20 and len(pr_t) >= 20) else None
         streak_start = None
         for t in pr_t:
+            if warm is None or t <= warm:
+                continue
             i0 = bisect.bisect_right(od_t, t - B2_ODOM_SILENT)
             i1 = bisect.bisect_right(od_t, t)
             j0 = bisect.bisect_right(pr_t, t - B2_ODOM_SILENT)
