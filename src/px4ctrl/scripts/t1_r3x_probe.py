@@ -240,7 +240,7 @@ class Probe:
 
     def emit(self, face, obj):
         rec = {"face": face, "t_wall": time.time(),
-               "t_ros": (rospy.get_time() if rospy.get_rostime_initialized() else 0.0),
+               "t_ros": (rospy.get_time() if rospy.is_initialized() else 0.0),
                "mode": self.mode}
         rec.update(obj)
         self.out.write(json.dumps(rec, separators=(",", ":")) + "\n")

@@ -156,8 +156,10 @@ if ! bash "$L/04_takeoff.sh" 120 > "$EV/takeoff.log" 2>&1; then
 fi
 sleep 13
 # ---------- 离地真值门(2026-10-04 加固;X2g1=armed 但 truth z≡0 全程 never-flew 实证) ----------
-LZ=$(timeout 6 rostopic echo -n1 /gazebo/model_states/pose[0]/position/z 2>/dev/null | grep -o '\-*[0-9.]*' | head -1)
-[ -n "$LZ" ] || { timeout 6 rostopic echo -n1 /gazebo/model_states 2>/dev/null | head -400 > /tmp/msgs_echo.txt; LZ=$(grep -A6 'pose:' /tmp/msgs_echo.txt | grep -A3 'position:' | grep 'z:' | head -1 | grep -o '\-*[0-9.]*'); }
+# T1-H4b fix (2026-10-04): pose[0]=ground_plane z==0.0 ALWAYS (models[0] is the
+# ground plane in every world) -> gate false-killed healthy rounds at 37s
+# (F3B3/F3B4 truth z max 0.93/0.95m actually flying). Read iris by NAME.
+LZ=$(timeout 8 python3 "$L/smoke_truthz.py" 2>/dev/null | tail -1)
 [ -n "$LZ" ] || LZ=NA
 if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
   LOG "WARN NEVER-FLEW: truth z=$LZ<0.3(armed 但未离地)——早停+降落收尾,标本保全(@T1 域取证面)"
