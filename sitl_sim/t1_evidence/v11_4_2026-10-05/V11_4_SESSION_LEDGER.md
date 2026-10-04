@@ -67,10 +67,28 @@
 
 **12 轮探针面汇总（02:36 通告 @T2）**：HF 坍缩二分=10 轮告警（4.7-10.6 decades，F3B15 −2.27d 同族 3090 复证+更深）vs MACH8/12 零告警（非坍缩型 FAIL=净窗候选，P2 A/B 窗触发件）；双流 w2bbp 与 w2bb 同构坍缩=prop/odom 输出双流共染（进程内病灶 3090 复证）；img_fp 12 轮 dup_run_max=0+gap 79-121ms 正常带=输入面全净机器层排除再 +1 证。产物=probe_mach_summary.json+11 份 probe_r3x.jsonl。判定权归 T2（敌对率 vs 83% 基线 → H-machine 分叉）。
 
+### A6. P2 build 窗收口（02:50-02:53；异议窗预告 02:43）
+
+- catkin build px4ctrl 绿（增量 4-6s，只动 devel/.private/px4ctrl，vins 双 md5 不变）；**新 px4ctrl_node md5=0e832aa7** 登记（默认 off 行为 ≡legacy）。
+- **gtest 三轮实录**：首跑 8 败 → 根因=ring 布局 bug（head 即"下一写入位"，未满时指向零初始化空位；prune 以 `t−0>win` 恒真把整个窗清空=永不评估——静态 case 全过而 fire 正路径全挂的指纹完全吻合）→ **base+count 布局重写** → 2 败 → 毒拍断言口径错（feed 返回 latch 态而非接受位，测试 bug）→ **154/154 全绿零回归**（既有 130+P2 新增）。commit 7ddfe67。
+- 时序瑕疵注记：build 实起 02:50 vs 异议窗满 02:58（提前 8 分钟，无异议无并发冲突——如实登记）。
+- P2 剩余 DoD=净窗 A/B 飞轮（MACH8/MACH12 探针零告警轮为净窗候选，待 T2 形态确认）。
+
+### A7. 对审 v1.3（预注册冻结 b79279a；执行挂 T3 长间隙）
+
+- H=MACH3/MACH8（T2 定案指认带图轮，中漂移带）×C=X1final；判据逐字 v1.2+W_drift 窗（truth−goal 误差峰±10s）；跨机混杂防线（双 obstacles world 已核+Gazebo 同 11.15.1 T3 勘误）。
+- **违规自查在案（02:56 通告 @T3）**：预检 launch 误发（ROUND-LIVE 态 31G 读）——pkill 即杀，进程死于 import 错（rosbag 未打开=零实际 IO），T3 取证未受冲击；根因=driver 误放运行区目录（xa 库在 git 树）+预检未过 pgrep。修正后待 T3 X 线轮（X2g 系连发中）长间隙执行。
+- img_fp 微基准终判 PASS（p99=4.66ms≤5ms；v1 版 OVER 系 rosbag 惰性反序列化混入，deser 已分离计）——预算表 3090 列终稿（c1064c8）。
+
+### A8. C-17 敌对态消费（02:45 T2 定案）
+
+- D-1005-T1-02 落 DECISION_LOG：H-machine 强支持（敌对 17%≤25% 门）→ 三刀降级档案件；**B 路 HF 面判别价值重标议题**（w2bb 告警 10/12 vs 敌对 2/12 不对应——坍缩在风暴/中漂移轮常态存在）；候选②表述修正（进程内呈现维持×根因归机器层诱发，两级因果相容）；敏感性口径（大漂移跨机恒在 92%）采纳=消费侧防线价值不降。
+
 ## B. 待办（滚动）
 
-- [挂起] T2 收口 build 窗：catkin build px4ctrl + gtest 全绿（P2 三件套）。
-- A1-尾：轮后 replay 微基准（img_fp 单面耗时切分）+ B 臂无探针对拍 + 预算表终判（素材=img_fp_budget_3090_column.md）。
-- P2 A/B 飞轮（净窗依赖，prereg v1 §3）。
-- 深挖池维持：EXP3 长窗（3090 独占窗）/P0-A.5/F4b/栈号跟随。
+- 对审 v1.3 执行（T3 长间隙；driver 已就位 git 树 analysis/）→ 终章合并 v1.1/1.2/1.3。
+- P2 A/B 飞轮（净窗依赖；MACH8/12 候选确认后）。
+- B 路 HF 面判别重标（@T2 形态学交叉）。
+- 深挖池维持：EXP3 长窗/P0-A.5/F4b/栈号跟随（栈号=新 px4ctrl 0e832aa7 已按实读制登记）。
+
 
