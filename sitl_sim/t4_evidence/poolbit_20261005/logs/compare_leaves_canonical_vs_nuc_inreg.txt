@@ -1,0 +1,21 @@
+LOADED a=metrics_canonical_3090fresh.json b=metrics_U3PG_210307_nuc_inreg.json
+TOP_KEYS_EQ=False
+LEAF_COUNT_A=2441 LEAF_COUNT_B=2438 COMMON=2438
+ONLY_IN_A=3 ONLY_IN_B=0
+ONLY_A legacy_keys = True
+ONLY_A manifest_schema_version = '1'
+ONLY_A schema_version = '2'
+LEAF_DIFF=1
+DIFF frames_dir: '/home/ghj/sitl_sim/vision_inputs/U3PG_210307_j3' vs '/home/uav/sitl_sim/vision_inputs/U3PG_210307_j3'
+DIFFLIB_HUNKS=11
+UDIFF --- a
+UDIFF +++ b
+UDIFF @@ -2,2 +2 @@
+UDIFF - "schema_version": "2",
+UDIFF - "frames_dir": "/home/ghj/sitl_sim/vision_inputs/U3PG_210307_j3",
+UDIFF + "frames_dir": "/home/uav/sitl_sim/vision_inputs/U3PG_210307_j3",
+UDIFF @@ -2870,3 +2869 @@
+UDIFF - ],
+UDIFF - "manifest_schema_version": "1",
+UDIFF - "legacy_keys": true
+VERDICT=DIFF

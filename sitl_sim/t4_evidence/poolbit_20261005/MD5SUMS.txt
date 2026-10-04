@@ -1,0 +1,9 @@
+d9e1f4fbbd87ae1981279be9fd92d54c  k1_metrics.norm.json
+9cb5d9aa88b0ac3255d6520e660daf20  k1_metrics_U3PG_210307_3090run.json
+9cb5d9aa88b0ac3255d6520e660daf20  metrics_canonical_3090fresh.json
+af8298b991fc9734b8d6f0957b572399  metrics_fresh129_3090.json
+c2f28be346181bfcd4f174e18f5a0b16  metrics_U3PG_210307_nuc_inreg.json
+d9e1f4fbbd87ae1981279be9fd92d54c  norm/metrics_3090fresh.norm.json
+2775ea4f8a7cc2ba01a52c2b90994e63  norm/metrics_nuc_inreg.norm.json
+3c44d17f5cdd25700befb46ef60638de  logs/pnglist_3090.md5
+7412e66af41d35134b123ac624c9e44c  logs/pnglist_canon_3090.md5
