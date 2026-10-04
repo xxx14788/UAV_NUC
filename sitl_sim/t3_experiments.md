@@ -1126,3 +1126,5 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
 **会话池再登记（09:4x;恒≥3）**：P5 033941 锚前移深挖（素材在域,IO 件）/P10 X7 槽位审计（骨架 v1.3 版对齐,纸面）/P12 X2g1 紧凑袋处置（判读毕,候选=保全至 T1 域取证收口 vs 蒸馏;待 @T1 回执）/P13 WC2OBS1 边件归档处置（袋失,边件[RESULT/forensics/px4ctrl log]移入 x11_dryrun_v11/RETIRED_WC2OBS1_032005 硬链归档,防 runtime 清扫再失）。重启触发器三条件在册;心跳按节律。
 
 - 池件 P13 执行（09:5x）：WC2OBS1 边件 13 件硬链归档 x11_dryrun_v11/RETIRED_WC2OBS1_032005（袋已失;判读真读数=wa_gate_online.pre_v13.json 随档）;runtime 源目录随后可由任一线按 §8.1 处置不再有证据风险。
+
+**勘误章（09:5x;依 T1 H-4 pose[0] 定案）**：U3PO"从未离地"撤回（name 过滤重读=实飞 33-92s z 峰 2.267m 后自发落回）→3.5 定案改单因（disarm 败=LAND 在 MANUAL_CTRL 被丢唯一因,机制=幻影爬升→推力 0.20→提前落回）;X2g1 措辞软化=未建立飞行（z 峰 0.386）;X1prime 补档（正常飞行 34-86s）;舰队 route×4 画像与 U2.7 承重结论不变;坑入册=model_states 必按 name 过滤。
