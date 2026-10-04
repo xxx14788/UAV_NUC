@@ -82,12 +82,17 @@ def process(path):
             pv = [float(x) for x in d["position_variance"]]
             row["vo_input"]["pv_nonzero_frac"] = round(
                 sum(1 for x in pv if x != 0.0) / len(pv), 4) if pv else None
+    # H-3 (2026-10-04): cs_ev_* true source = estimator_aid_src_ev_*.fused
+    # (innovations has NO ev_yaw key — only hpos/hvel/vpos/vvel; historical
+    # "cs_ev_yaw" claims must come from aid_src fused fractions)
     aid = {}
     for d in u.data_list:
-        if d.name == "estimator_aid_src" and "fused" in d.data:
+        if d.name.startswith("estimator_aid_src") and "fused" in d.data:
             f = d.data["fused"]
-            aid["inst%d" % d.multi_id] = {"fused_n": int(sum(1 for x in f if x)),
-                                          "n": len(f)}
+            fn = int(sum(1 for x in f if x))
+            aid[d.name.replace("estimator_aid_src_", "")] = {
+                "fused_n": fn, "n": len(f),
+                "fused_frac": round(fn / len(f), 4) if len(f) else None}
     if aid:
         row["aid_src"] = aid
     return row
