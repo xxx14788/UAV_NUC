@@ -59,6 +59,10 @@ struct CmdRespConfig
 // steady-state allocation (probe-budget discipline).
 static constexpr int CMDRESP_WIN_CAP = 1100;
 
+// Ring layout: base = index of the OLDEST sample, count = number of live
+// samples. Physical order base, base+1, ..., base+count-1 (mod CAP) is
+// old -> new. (A head=next-write-slot layout silently prunes the
+// zero-initialized empty slot and wipes the window — gtest-caught.)
 struct CmdRespState
 {
   bool latched = false;
@@ -69,7 +73,7 @@ struct CmdRespState
   long fired_count = 0;
   long beats_since_warn = 0;
   std::array<double, CMDRESP_WIN_CAP> t{}, e{}, dv{};
-  int head = 0;
+  int base = 0;
   int count = 0;
 
   void clear()
@@ -78,10 +82,11 @@ struct CmdRespState
     fire_streak = stable_streak = 0;
     samples = fired_count = 0;
     beats_since_warn = 0;
-    head = count = 0;
+    base = count = 0;
   }
 
-  double latest_e() const { return count ? e[(head + CMDRESP_WIN_CAP - 1) % CMDRESP_WIN_CAP] : 0.0; }
+  int newest_idx() const { return (base + count - 1 + CMDRESP_WIN_CAP) % CMDRESP_WIN_CAP; }
+  double latest_e() const { return count ? e[newest_idx()] : 0.0; }
 };
 
 // Pure evaluation over the time window [t-win_sec, t]. Exposed
@@ -91,7 +96,7 @@ inline bool cmdresp_conditions(const CmdRespConfig &cfg, const CmdRespState &st,
 {
   if (st.count < 2)
     return false;
-  double oldest = st.t[st.head];
+  double oldest = st.t[st.base];
   if (now - oldest < cfg.win_sec * 0.99)
     return false; // window not full yet -> no evaluation
   // iterate physical order old->new over the ring
@@ -100,7 +105,7 @@ inline bool cmdresp_conditions(const CmdRespConfig &cfg, const CmdRespState &st,
   int n = 0;
   for (int k = 0; k < st.count; ++k)
   {
-    int idx = (st.head + k) % CMDRESP_WIN_CAP;
+    int idx = (st.base + k) % CMDRESP_WIN_CAP;
     double dt = now - st.t[idx];
     if (dt > cfg.win_sec)
       continue; // aged out (pruning happens in feed; belt&braces)
@@ -138,24 +143,26 @@ inline bool cmdresp_feed(const CmdRespConfig &cfg, CmdRespState &st, bool *warn_
       !p_odom.allFinite() || !v_odom.allFinite())
     return st.latched; // poison beat: skip sample, keep state
 
-  // push
+  // push sample (base/count ring; overwrite-oldest when full)
   double e = (p_odom - p_des).norm();
   double dv = (v_odom - v_des).norm();
-  if (st.count && t <= st.t[(st.head + CMDRESP_WIN_CAP - 1) % CMDRESP_WIN_CAP])
+  if (st.count && t <= st.t[st.newest_idx()])
     return st.latched; // non-monotonic stamp: skip
-  st.t[st.head] = t;
-  st.e[st.head] = e;
-  st.dv[st.head] = dv;
-  st.head = (st.head + 1) % CMDRESP_WIN_CAP;
-  if (st.count < CMDRESP_WIN_CAP)
+  if (st.count == CMDRESP_WIN_CAP)
+    st.base = (st.base + 1) % CMDRESP_WIN_CAP; // overwrite oldest
+  else
     ++st.count;
+  int idx = st.newest_idx();
+  st.t[idx] = t;
+  st.e[idx] = e;
+  st.dv[idx] = dv;
   ++st.samples;
   ++st.beats_since_warn;
 
-  // prune aged samples from the ring head (amortized O(aged))
-  while (st.count && (t - st.t[st.head]) > cfg.win_sec)
+  // prune aged samples from the oldest end
+  while (st.count && (t - st.t[st.base]) > cfg.win_sec)
   {
-    st.head = (st.head + 1) % CMDRESP_WIN_CAP;
+    st.base = (st.base + 1) % CMDRESP_WIN_CAP;
     --st.count;
   }
 

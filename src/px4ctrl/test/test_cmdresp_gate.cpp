@@ -185,9 +185,11 @@ TEST(CmdRespGate, PoisonBeatSkipped)
   EXPECT_FALSE(cmdresp_feed(cfg, st, &warn, 100.0, v3(0, 0, 0), v3(NAN, 0, 0),
                             v3(0, 0, 0), v3(0, 0, 0)));
   EXPECT_EQ(st.count, 0);
+  // healthy beat accepted (feed returns LATCH state = false, not acceptance)
+  EXPECT_FALSE(cmdresp_feed(cfg, st, &warn, 101.0, v3(0, 0, 0), v3(0, 0, 0),
+                            v3(0.1, 0, 0), v3(0, 0, 0)));
+  EXPECT_EQ(st.count, 1);
   // non-monotonic stamp skipped
-  ASSERT_TRUE(cmdresp_feed(cfg, st, &warn, 101.0, v3(0, 0, 0), v3(0, 0, 0),
-                           v3(0.1, 0, 0), v3(0, 0, 0)));
   EXPECT_FALSE(cmdresp_feed(cfg, st, &warn, 100.5, v3(0, 0, 0), v3(0, 0, 0),
                             v3(0.1, 0, 0), v3(0, 0, 0)));
   EXPECT_EQ(st.count, 1);
