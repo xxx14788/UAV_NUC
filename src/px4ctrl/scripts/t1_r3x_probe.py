@@ -319,6 +319,14 @@ class Probe:
         self.last_emit = time.monotonic()
         # w2b B-path (pool-1): in-stream z noise-floor collapse
         self.w2bb = W2BB()
+        # v11.4 unit 4 dual-stream extension: prop-stream feed (w2bbp). Same
+        # in-stream collapse semantics per stream (absolute cross-stream
+        # discrimination NOT established per w2b_dualpath_impl_prep §2);
+        # d_logE_vs_odom is a reference-only pairing field (discovery face,
+        # not a gate). Zero VINS-side changes -> no build window needed.
+        self.w2bbp = W2BB()
+        self.w2bb_last = None   # (t_win_end, logE_hf) of latest odom window
+        self.w2bbp_last = None  # (t_win_end, logE_hf) of latest prop window
 
     def emit(self, face, obj):
         try:
@@ -363,6 +371,11 @@ class Probe:
             p = msg.pose.pose.position
             v = msg.twist.twist.linear
             self.w2bb.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
+        elif name == "imu_propagate":
+            # v11.4 unit 4: prop stream feeds the second W2BB instance
+            p = msg.pose.pose.position
+            v = msg.twist.twist.linear
+            self.w2bbp.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
         _ = wall, now_t  # wall kept for future mixed-domain analysis
 
     def on_image(self, msg):
@@ -451,7 +464,24 @@ class Probe:
                    "n_base": len(self.w2bb.feat) - 1}
             if alert:
                 rec["W2BB_ALERT"] = alert
+            self.w2bb_last = (self.w2bb.last_step_end, log_e)
             self.emit("w2bb", rec)
+        # v11.4 unit 4: prop-stream twin face (w2bbp) + cross-stream pairing
+        while self.w2bbp.features_ready():
+            log_e = self.w2bbp.pop_feature()
+            if log_e is None:
+                break
+            alert = self.w2bbp.evaluate(log_e)
+            rec = {"t_win_end": self.w2bbp.last_step_end, "logE_hf": round(log_e, 3),
+                   "n_base": len(self.w2bbp.feat) - 1}
+            if alert:
+                rec["W2BB_ALERT"] = alert
+            self.w2bbp_last = (self.w2bbp.last_step_end, log_e)
+            if self.w2bb_last is not None:
+                dt = abs(self.w2bb_last[0] - self.w2bbp_last[0])
+                if dt <= W2BB.STEP:
+                    rec["d_logE_vs_odom"] = round(log_e - self.w2bb_last[1], 3)
+            self.emit("w2bbp", rec)
         # face 6
         if self.imgfp.n > 0:
             self.emit("img_fp", self.imgfp.take())
