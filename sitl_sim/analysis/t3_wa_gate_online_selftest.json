@@ -4,7 +4,7 @@
   {
    "cell": "ANCHOR_U3PO",
    "ok": true,
-   "line": "ANCHOR_U3PO: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=2.603 j0rev=False(raw=33,smj=54) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=1.3709 bgs_pk=0.01701 ate=2.0382 morph=爆散 cf=clean]",
+   "line": "ANCHOR_U3PO: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=2.603 j0rev=False(raw=33,smj=54) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=1.3709 bgs_pk=0.01701 ate=2.0382 morph=爆散 cf=clean j0d=jump 1.9068/transit 2.9652→mixed(njf=31,res=0.0)]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -55,13 +55,23 @@
      "check": "controlled_state ref=clean",
      "got": "clean",
      "pass": true
+    },
+    {
+     "check": "j0d_jump ref=1.9068",
+     "got": 1.9068,
+     "pass": true
+    },
+    {
+     "check": "j0d_transit ref=2.9652",
+     "got": 2.9652,
+     "pass": true
     }
    ]
   },
   {
    "cell": "U3R_t2v3_route_033941",
    "ok": true,
-   "line": "U3R_t2v3_route_033941: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=25.467 j0rev=False(raw=5687,smj=5696) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=7.1663 bgs_pk=0.65177 ate=348.947 morph=爆散 cf=triggered-no-recovery]",
+   "line": "U3R_t2v3_route_033941: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/0 j0jump=25.467 j0rev=False(raw=5687,smj=5696) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=7.1663 bgs_pk=0.65177 ate=348.947 morph=爆散 cf=triggered-no-recovery j0d=jump 1059.0637/transit 1026.115→mixed(njf=14628,res=12.4892)]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -107,13 +117,23 @@
      "check": "controlled_state ref=triggered-no-recovery",
      "got": "triggered-no-recovery",
      "pass": true
+    },
+    {
+     "check": "j0d_jump ref=1059.0637",
+     "got": 1059.0637,
+     "pass": true
+    },
+    {
+     "check": "j0d_transit ref=1026.115",
+     "got": 1026.115,
+     "pass": true
     }
    ]
   },
   {
    "cell": "U3R_t2v3_hover_035509",
    "ok": true,
-   "line": "U3R_t2v3_hover_035509: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/0/0 j0jump=1.157 j0rev=False(raw=8,smj=7) env=- | vins=✗ reboot=0 gaps=1 cov=0.999 bas_pk=3.5778 bgs_pk=0.41507 ate=1.0177 morph=小跳/渐进劣化 cf=controlled]",
+   "line": "U3R_t2v3_hover_035509: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/0/0 j0jump=1.157 j0rev=False(raw=8,smj=7) env=- | vins=✗ reboot=0 gaps=1 cov=0.999 bas_pk=3.5778 bgs_pk=0.41507 ate=1.0177 morph=小跳/渐进劣化 cf=controlled j0d=jump 1.858/transit 2.0239→mixed(njf=17,res=0.9656)]",
    "checks": [
     {
      "check": "verdict==FAIL",
@@ -158,6 +178,78 @@
     {
      "check": "controlled_state ref=controlled",
      "got": "controlled",
+     "pass": true
+    },
+    {
+     "check": "j0d_jump ref=1.858",
+     "got": 1.858,
+     "pass": true
+    },
+    {
+     "check": "j0d_transit ref=2.0239",
+     "got": 2.0239,
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "run_T2BL5_203404",
+   "ok": true,
+   "line": "run_T2BL5_203404: FAIL [scene=obstacles/arrive_gate=0.75 four=0/1/1/1 j0jump=0.664 j0rev=False(raw=2,smj=23) env=- | vins=✗ reboot=0 gaps=0 cov=1.0 bas_pk=2.2139 bgs_pk=0.01508 ate=0.6195 morph=爆散 cf=clean j0d=jump 0.0179/transit 0.6525→transit(njf=6,res=0.0)]",
+   "checks": [
+    {
+     "check": "verdict==FAIL",
+     "got": "FAIL",
+     "pass": true
+    },
+    {
+     "check": "four_arrive ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "j0_jump ref=0.664",
+     "got": 0.664,
+     "pass": true
+    },
+    {
+     "check": "reboot_n ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "odom_gaps ref=0",
+     "got": 0,
+     "pass": true
+    },
+    {
+     "check": "bas_peak ref=2.2139",
+     "got": 2.2139,
+     "pass": true
+    },
+    {
+     "check": "vins_pass ref=False",
+     "got": false,
+     "pass": true
+    },
+    {
+     "check": "scene ref=obstacles",
+     "got": "obstacles",
+     "pass": true
+    },
+    {
+     "check": "controlled_state ref=clean",
+     "got": "clean",
+     "pass": true
+    },
+    {
+     "check": "j0d_jump ref=0.0179",
+     "got": 0.0179,
+     "pass": true
+    },
+    {
+     "check": "j0d_transit ref=0.6525",
+     "got": 0.6525,
      "pass": true
     }
    ]
