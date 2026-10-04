@@ -1,0 +1,40 @@
+=== T2 machine-AB campaign start 2026-10-05 01:08:31 host=ghj-System-Product-Name ===
+[01:08:32] T2MACH1 start md5=2ad9676e/8c3453c0 images=1
+[01:13:23] T2MACH1 rc=141 dir=run_T2MACH1_010832 T2fail=2 neverflew=0
+0 |pre-post|=4.702 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832)
+[01:13:43] T2MACH2 start md5=2ad9676e/8c3453c0 images=2
+[01:17:44] T2MACH2 rc=141 dir=run_T2MACH2_011343 T2fail=0
+0 neverflew=0
+0 |pre-post|=2.722 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343)
+[01:18:04] T2MACH3 start md5=2ad9676e/8c3453c0 images=3+img
+[01:25:02] T2MACH3 rc=141 dir=run_T2MACH3_011804 T2fail=1 neverflew=0
+0 |pre-post|=0.008 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH3_011804)
+[01:25:23] T2MACH4 start md5=2ad9676e/8c3453c0 images=4
+[01:32:13] T2MACH4 rc=141 dir=run_T2MACH4_012523 T2fail=2 neverflew=0
+0 |pre-post|=13.074 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523)
+[01:32:33] T2MACH5 start md5=2ad9676e/8c3453c0 images=5
+[01:39:24] T2MACH5 rc=141 dir=run_T2MACH5_013233 T2fail=1 neverflew=0
+0 |pre-post|=2.997 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233)
+[01:39:44] T2MACH6 start md5=2ad9676e/8c3453c0 images=6
+[01:46:37] T2MACH6 rc=141 dir=run_T2MACH6_013944 T2fail=2 neverflew=0
+0 |pre-post|=65.172 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944)
+[01:46:57] T2MACH7 start md5=2ad9676e/8c3453c0 images=7
+[01:53:51] T2MACH7 rc=141 dir=run_T2MACH7_014657 T2fail=2 neverflew=0
+0 |pre-post|=5.992 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657)
+[01:54:11] T2MACH8 start md5=2ad9676e/8c3453c0 images=8+img
+[02:01:13] T2MACH8 rc=141 dir=run_T2MACH8_015411 T2fail=0
+0 neverflew=0
+0 |pre-post|=4.188 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH8_015411)
+[02:01:33] T2MACH9 start md5=2ad9676e/8c3453c0 images=9
+[02:08:26] T2MACH9 rc=141 dir=run_T2MACH9_020133 T2fail=1 neverflew=0
+0 |pre-post|=964.675 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133)
+[02:08:46] T2MACH10 start md5=2ad9676e/8c3453c0 images=10
+[02:15:39] T2MACH10 rc=141 dir=run_T2MACH10_020846 T2fail=1 neverflew=0
+0 |pre-post|=16.759 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846)
+[02:15:59] T2MACH11 start md5=2ad9676e/8c3453c0 images=11
+[02:22:52] T2MACH11 rc=141 dir=run_T2MACH11_021559 T2fail=2 neverflew=0
+0 |pre-post|=4.176 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559)
+[02:23:12] T2MACH12 start md5=2ad9676e/8c3453c0 images=12
+[02:30:05] T2MACH12 rc=141 dir=run_T2MACH12_022312 T2fail=1 neverflew=0
+0 |pre-post|=9.297 m | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312)
+=== campaign end 2026-10-05 02:30:25 ===

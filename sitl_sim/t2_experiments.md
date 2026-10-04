@@ -2058,3 +2058,18 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **裁定③分支执行（单元 3）**：j0≥0.5 → 归因注记路径。**B2 闭案=cauchy 不入 gates 正源**（V2 未过；留实验配置）。X7 注记素材=「上游同形态：无回环里程计 transit 地板（用户裁定①回环不接入；sim+实机 launch 均无 pose_graph）；在线地板带 0.664-1.6m 级（最好值 0.664/回放 1.6/未修 2.6）」。**剂量响应数据包 @T3**：温和 transit（route）0.6-1.0m／激烈未修 2.6m／激烈+cauchy 最好 0.664——其 J0 双口径分解工具（transit 偏移分量）可用 BL5 作验证标本（干净轮+锚差 0.664+物理到位 0.736 三件齐）。VINS 域修复面不再新开（用户裁定+几何/σ/zupt 全负）。
 - **敌对态二新面孔在册**：①静默大发散（BL7/9：0 fail×j0 7.8-64m）=fail 门对平滑虚构盲区第三例证（U3PR1/PR2 族）；②敌对率 83% 时段（对照下午 6/6、上午存活）——敌对态窗口画像新增数据点 @T1。
 - **ENV**：12 轮全归档（vins_smoke_runs/run_T2BL1-12_*+flight_logs/20261004_205351_ground）；紧凑袋/log/banner/双 md5 每轮在位；launch 已复原 canonical；锁空零残留；df 59G。
+
+
+**T2 v9.3 执行域迁移战役——敌对态机器层对照实验定案：H-machine 强支持（3090 敌对率 17% vs NUC 83%），X 线全链转 3090，V2 维持未过（2026-10-05 00:53-03:0x；3090 执行域首战役；prereg_machine_ab 先行 md5 3a275f48）**
+
+- **执行域迁移落地（3090=新飞行正源）**：台账 NUC 最新版同步（md5 9318438a 双端一致，3090 侧承继全部历史含 v9.1/v9.2 章）；BL11/12 判读数据自 NUC 归档侧补读（3090 副本缺此两轮，rsync 时序缺口）；/home/uav/vins_output 目录创建（cfg_zeta_cauchy output_path 兼容，config 三件 md5 a212004e/7ab95ead/eced46a9 双机逐位一致零改动）；Gazebo 11.15.1 双机逐位一致。
+- **前置验证（T2M0 hover）**：harness 全链 3090 首跑通（SITL/mavros/VINS init 3s/preflight/五件套/起飞 truth z=0.77/录制/goal/arrive_watch/RESULT/清场/锁释放）；banner 四行与 NUC BL 系逐字段一致；帧稳定性 0.090m/跟踪 p95 0.068m/ARRIVED_TRUTH 0.038m=VINS 侧健康。W2BB 行为栈确认=devel 2ad9676e/8c3453c0（Designer 00:31 自 4dfec04 W2BB src 重建）。
+- **主战役 12 轮（X1prime 型×cfg_zeta_cauchy×W2BB，01:08-02:30 共 82min，零 harness 崩溃）**：每轮起飞前双 md5 实读 12/12 无漂移+banner 四行核验 12/12 逐字段同。逐轮（T2fail/j0）：M1 2/4.70｜M2 0/2.72｜M3 1/0.008（带图）｜M4 2/13.07｜M5 1/3.00｜M6 2/65.17※｜M7 2/5.99｜M8 0/4.19（带图）｜M9 1/964.7※｜M10 1/16.76｜M11 2/4.18｜M12 1/9.30。※M6/M9 漂移量级=BL7/OBS1r 同级（算法边界注记：fail 数 2/1 使其落 R4 风暴 flown）。
+- **主判（prereg 冻结算法）**：敌对=2/12=**17% ≤25% → H-machine 强支持**——敌对态（Bas 爆型 z 腐坏的极端失控形态）归因旧 NUC 机器层。**形态学分离**：never-flew 6→0，风暴爆散（fail≥10）2→0，极端失控形态合计 8→0；静默大发散 2→2；风暴 flown 1→10；干净 1→0。
+- **敏感性口径（诚实注记）**：j0≥2.6∨never 即敌对（不论 fail）：3090 11/12=92% vs NUC 11/12=92% **完全一致**——大漂移轮发生率两机恒在（软件质量病跨机），机器层改变的是呈现形态（极端失控→中漂移带 j0 众数 3-17m）。"消灭敌对态"≠"消灭漂移"，此读数为后续 V2/精度线工作锚定真实基线。
+- **次判**：3090 干净轮（0fail∧j0<2.6）=0 轮（分布空集；NUC BL5 0.664 无同带延续）；全场 j0 最小=MACH3 0.008（1 fail，优于 NUC 最好值）。
+- **V2 重评（判据逐字 Part A="j0<0.5 且无 fail"）**：j0<0.5 轮（MACH3）有 1 fail；0fail 轮（M2/M8）j0≥2.7；交集=∅ → **V2 主判维持未过**，归因路径（T3 J0 双口径+X7 注记）不变，BL5 标本有效，cauchy 不入 gates 维持（D-1004-T2-02）。
+- **分叉执行（§2-H-machine 支持支五件）**：①D-1005-T2-01 重大标记（敌对态归因机器层+NUC 退役飞行资格）②X 线全链转 3090 @T3（判读素材 MACH1-12+BL1-12 并册）③V2 未过维持（本文件 §6）④T1 三刀降级档案件 @T1 ⑤悬案池刷新（20:47 神秘轮/SIGTERM 并入机器层归因条目）。
+- **ENV**：launch 已复原 canonical（grep 验命中）；锁空零残留；gzserver/px4 双 0；df 661G（带图轮 2×13G 在盘）；T1-V1 僵尸锁（PID 50003 死）由锁 v2 死亡接管通道合规处置。
+- **坑（本会话新增 2）**：①3090 运行区台账为 rsync 时点快照（缺 NUC 尾部章）——跨机台账迁移必先 md5 对账再补差；②campaign 摘要行 anchor 与 fail 计数分置 RESULT/simvins 两文件，判读脚本须双源提取。
+- 产物：R2_dissect/{prereg_machine_ab.md, mach_verdict.md, mach_campaign_summary.log}+vins_smoke_runs/run_T2M{0,ACH1-12}_*+t2_mach_campaign.sh。
