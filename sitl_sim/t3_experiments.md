@@ -1134,3 +1134,45 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
 ## 任务书 v9.4 完成清账版落盘（2026-10-04 10:3x；Windows 权威+NUC 备份 md5 361b8622 双端一致；v9.3 弃读）
 
 结构=A 完成清账 17 件+B 剩余待办（X 线序列主体全未飞等 8 项）+C 卡点客观（K-A 主卡点=T2 odometry 重锚未落地[接缝事实：T2 收口清单时序早于归因]；K-B/K-C/K-D；已解锁 6 项）+D 资产现值+E 等待登记。
+
+## T3 v9.6 会话(2026-10-05 00:53-;3090 执行域首轮;任务书 v9.6)
+
+### 单元 1:判读链+X 线 harness 的 3090 适配验证(先决件)
+
+**资产 md5 实读核对(两机对照)**:
+- t3_wa_gate.py=8720a1f2 ✓(3090 runtime/repo+NUC repo 三处逐位同,任务书匹配)
+- vins_smoke.sh=5051224d ✓(两处同,匹配)
+- **勘误①:x4judge(t3_legs_rescan.py)实际正源=8c767d35**——任务书/commit 0db4eb8 自报值 4e02bddb 无实体对应(git show 0db4eb8 版=8c767d35=HEAD=两机四处逐位同;推断=热修后未 re-add 或笔误);判读资产索引按 8c767d35 修正。
+- **勘误②:round_result.sh 3090 runtime 副本=旧版 ecc53a98**(Designer rsync 落位差异,缺 v1.1 受控失败标注块 17 行)→ 已同步 repo 正源 b21c8c6e 覆盖 runtime(.bak_3090rsync_20261005 留档);vins_smoke.sh 判读链调 $HOME/sitl_sim/round_result.sh(runtime 路径),不同步则 X 线轮 RESULT 缺 COSTGATE-FIRE/FAILDET 标注。
+
+**selftest 三层+SYN×12 全绿(带 ROS 环境)**:离线(R_CAN/e7a223/e7b125 三格 PASS,读数与历史台账逐项一致)+在线(4 锚 PASS,见单元 2 扩为 4 锚)+x4judge(5 模板)+SYN 电池 9/9+SYN 边件 3/3(MULTI/NOTC/NOBAG)=SYN×12 全对上+合成 selftest 全过。x11 四样本干跑重跑:判读与 v8.7 报告/舰队表 v1.3 逐位一致(A3=TNR/A1=TNR[v1.3 改判正源]/A2=log-missing/U3PO=clean j0=2.603)+figs 五件落盘。
+
+**两新坑入册(3090 运营域)**:
+1. **非交互 ssh 无 rosbag**(两机同病:.bashrc 的 ROS source 位于非交互守卫之后)→ 判读器函数内 import rosbag 被 try-except 静默吞→袋读面全空(症状=odom_gaps=0/recover=null/A=cov None 类假读数;首发现=在线 selftest 035509 锚两处未对上)。处置=运营面:跑判读器必须先 source /opt/ros/noetic/setup.bash;判读器零改动(不动判据)。历史绿史证不受影响(历代会话均已 source)。035509 锚假读数教训=U3PO/033941 期望字段恰好不依赖袋读,唯独 035509 依赖→暴露。
+2. round_result runtime 副本须与 repo md5 对账(rsync 落位≠正源保证,见勘误②)。
+
+**Gazebo 版本注记(任务书要求)**:3090=11.15.1,旧 NUC 实测同=11.15.1——两机零差异,判读一致性影响=零(预期相符,无升版风险面)。
+
+**R3090_1-3 轮定性(10-04 22:2x,STATUS T3 行遗留)**:三轮(2.2-2.7G 带图袋×3+半空×4)系旧脚本(t3_verify_flight 族,flight.log 带 spawn_odom/teleport 格式)在 3090 的配对腐烂产物——cmd=0 全程+odom(14,-10) 垃圾传播画像与 handoff §5 定案逐位同族(irisk_depth×sim_stereo 错配→无图永不 init),**非敌对态复现**。EKF2_MAG_TYPE rosservice dict 报错=脚本族附带坑(同族)。处置=袋 7.1G 挂池(腾位候选,§9.2 v3 锚表查无注册,删前 @T3 复核即本线)。
+
+### 单元 2:J0 双口径分解工具 j0_decomp v1.0(0 锁;红线 24 全流程)
+
+**版本链**:8720a1f2(v1.3 锚#3)→1af93720(P1-P6 初版)→2c949784(P8 bisect 性能补丁)→**1f5a806d(P7 钉值)=定稿**;.bak_j0d_20261005 双备份(runtime+/tmp);8+1+4 处补丁全部唯一命中+py_compile;commit 5fc86a0(经裹挟事故链,见下)已推。
+
+**算法(与正源同源)**:与 round_result.sh 帧稳定性口径同配对法(a_pre 袋首/a_post=prop_end-3 近邻配对);分解=全程逐 imu_propagate 帧 near 配对 truth(iris_stereo_vins name 过滤)得配对差 e_i,帧间变化 de_i;跳变帧=|de_i|>0.1m(forensics frame_jumps_raw_odom 同阈)+断流首帧排除(dt>1s 同口径);jump_vec=Σ跳变帧 de(VINS 帧/再定位/重锚单帧贡献),transit_vec=Σ其余(transit/慢变平滑分量);恒等式 jump+transit=e_end-e_start(数学恒等,断流排除帧入 residual)。**纯归因标注列**:xline.j0_decomp 自动携带于每条在线判读行(jump/transit→dominant/njf/residual),无任何门读它,判值零变动(四样本+既有键逐位零漂移实证)。bisect 二分配对(数值与线性扫等价;线性扫 O(n²) 实测 BL5 单袋>8min 不可用)。
+
+**BL5 验证标本判读(T2 指认三件齐)**:j0_total=0.6641 与 RESULT 锚差 0.664 **逐位对账(res=0.0)**;分解=**transit 0.6525(98%)vs jump 0.0179(2.7%)→transit 主导**。结论:BL5 的 0.664 锚差是 transit 地板(平滑漂移)而非 VINS 帧跳变——RESULT"VINS 帧中途跳变!"文案系统一措辞误向(>|0.5 即打,不分型);与 T2 剂量包互证:cauchy 压掉跳变分量(0.018≈零)后 0.664 落温和 transit 地板带(0.6-1.0)。**产出 @T2 B1 消费**:run_T2BL5_203404/j0_decomp.json。
+
+**selftest 扩为 4 锚**:BL5 增为第四锚(base=smoke;four/j0=0.664/bas/clean+j0d 两分量钉值);三旧锚各加 j0d 钉值(U3PO 1.9068/2.9652 mixed、033941 风暴 1059.0637/1026.115 mixed res12.5、035509 1.858/2.0239 mixed)。三重验证=离线 PASS+在线 4 锚 PASS+四样本重判既有键逐位零漂移+SYN 9/9+边件 3/3+x4judge 5/5。
+
+**附加读数(信息面)**:A1_route_gates(T1-D1 域跳变轮)分解=transit 主导 74%(31.10/11.29)——跳变域轮的 transit 分量同样可观;A2(数值溢出)=jump 主导;U3PO=mixed。
+
+### git 裹挟事故与处置(跨线,全过程在案)
+
+我 commit 时 staged 区含 T1 活会话预存的 11 件(px4ctrl P2 写码+v11.4 账/prereg)→ 5fc86a0(14 files)被我误含;本地 reset 重做干净版 3a03b21(3 files)期间,**T1 会话已把 5fc86a0 推上远程并续作 71ad7e7**(T1-P2 正式提交,在其上合法接管内容归属)→ 我撤 3a03b21(reset --soft 收敛远程链,工作区零触碰——sim_vins.launch 的 T2MACH 活配置 cfg_zeta_cauchy 与 flight.png 保持 M 态未扰)。现状=本地=远程(经 e229d97 merge),j0_decomp 交付经 5fc86a0 在库。教训入册:**共享树 commit 前必须 `git status --porcelain` 看 staged 列(第一列),他线预存 staged ≠ 安全**;事故已 @T1 通报。
+
+### 现场与环境
+
+- T2 机器对照战役(T2M0+T2MACH1-12)同机连发进行中(01:02-),锁=T3-T2MACH*;我全程不扰(权序 T2 机器对照轮>T3 非X4轮;单机一路)。
+- 3090 VINS init 实测 +4s(NUC 53s,28C 性能优势;BL5 系 NUC 轮,3090 系 T2MACH*)。
+- df 688G 空闲(X4 带图预算解除,df 门维持现场实测制)。
