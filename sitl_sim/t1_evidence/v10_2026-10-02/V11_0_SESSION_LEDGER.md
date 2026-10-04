@@ -204,3 +204,48 @@ P1 A/B 注入轮（H-4 解除后可跑）/ F3B5+F3B7 VINS 样本待 T2 回执 / 
 - H-3 工具修正（aid_src fused_frac）入库；U25FIX ev_yaw 0.872=U2.5 判据③实质达成。
 - 诊断栈 zetafix-1 确定性复现（devel 现状，@T2 16:38 通告）；governor=performance（D-03）。
 - 挂账余：w2b 双流扩展（prop 喂入）/E-4 袋 0.9G 释放/探针图像指纹面/DECISION_LOG D-01/02/03 复核（他线）。
+
+---
+
+## ch11 v11.2 夜班战役（10-04 晚；任务书 v11.2 执行）
+
+### 首件
+
+push 零积压/WAN 通；EXP-2 timer active 单实例；df 65G 缓降（T4 盯）；**DECISION_LOG 轮转复核批 R-T1b 九条全过**（T2 三条/T4 四条含 WC2 删除注记/T3 #9 #10 注记）+ D 编号跨线撞号记账注记（建议 D-MMDD-<line>-NN）；**D-03 勘误落账**（"逐位冻结"与"忙净闲死"两主张被 pixel-md5 1135/1135 唯一与概率性定案取代；governor 决策维持）。STATUS 时间戳快 45min 勘误一次（"先 date"纪律回归）。
+
+### 单元 1 敌对态攻坚（全链最高优先）
+
+- **离线先手收官**：剩余袋全无图（T2ZETA4/5、T2ZETACTL2、F3B12-14、X1final_172424；T2ZETACTRL 无袋）——**F3B11=唯一敌对带图袋（2.0G）×X1final_040643=净轮带图（5.5G）**对审解锁。
+- **F3B11 签名诊断定案**（v1 abort 依据）：袋 58.7s 早亡；truth zmax 0.386m vs odom 同窗 max 0.798m（爬升亚米高估~2×）+ t−arm≈4s odom_recv=0 流饥饿（fsm 时间线）→ 手动中止；帧率 19.3Hz；=敌对态悬停域缩尺签名（route 死亡轮的亚米版）。
+- **起飞段图像指纹对审**（prereg v1 7fb0ad14 → v1 ABORT[1.0m route 标定阈不适配悬停亚米签名，按条款中止非判读] → v1.1 09ad2a5c 重设计：S1 0.35m+S2 断流 onset、W_static 起飞前静景主面）→ **判读=B 不可分负结果**：W_static sep=0.46/0.24/0.0、W_gnd（含发作前 2s）sep=0.0/0.02/0.0、全窗 hash 唯一率 1.0；onset=arm+3.0s 双信号同点（z 高估∧流饥饿同时发作而图像零变化）；W_post 大分离（std 25×/16 块）=下游症状。**候选①图像内容级被显著削弱→候选②VINS 进程内非确定性上移（T2 域）**。九项排除表+1（第 10 项）。
+- **R3x 终章判读（prereg v1，描述性）=稳定带成立**：敌对六轮（F3B9-14）时序面轮间散布全部 sc≤0.17（imu p50 0.010/p95 0.022/p99 0.096/stampage p50 0.167/rtf 0.001）——**可观测时序面不解释轮间彩票**；尾部 max 高散布（sc 3.4）=死亡级联果非因；**在线 w2bb 面首例敌对正捕获=F3B13 5×W2BB_ALERT**（噪声地板坍缩，与离线 B1 90.7m 对应）；净侧探针样本 0（F3B8 探针阵亡坑三）；队列深面缺席待 [R3xQ] 飞验。**与对审 B 合流：敌对态两外部候选面（图像内容级+时序级）均定量削弱→进程内部态（LK 饥饿×双稳态）成主候选**。
+- 探针卫生：6 僵尸探针（F3B10-14 轮后未退）清零；根因=循环无时限→--max-run 默认 1800 机制修复。
+
+### 单元 1③ 探针 img_fp 面实现（commit 41a1cc1）
+
+ImgFP 面（md5 dup-run/mean/std/gap 窗口聚，queue_size=1+buff 2MB，≤5ms/帧预算预注册 img_fp_face_prereg_v1.md，超预算面作废条款）+ max-run 防僵尸 + py_compile+单测过（dup 检出/gap/mean 全对）。在线部署模式=随轮手工附着；harness 内建接线挂池⑤（T2 栈裁示后）。
+
+### 单元 3 w2b 双流扩展+联测
+
+- 离线检测器（prereg v1 8dbe06a2：B1 值分离 1.0m×2 连续+B2 率分离 4s 静默）：**v1 首跑 FAIL 如实**（四型 4/4 检出全达[B1 真分离：F3B10 736m 弹道/F3B13 90.7m/F3B6 171.1m/F3B12 1.7→9.3m 爬升族]；健康 5/5 误报=流启动竞态伪影 B2@arm−4.2s 全袋同构）→ **v1.1 暖机守卫（双流≥20 样本后 B2 激活；判值零放宽）→ PASS（四型 4/4+健康 5/5 零误报）**；主袋未检出两例=亚型阈值下沿注记（F3B11 亚米 0.48m/F3B14 瞬态再同步）。
+- **[W2BB] 进程内在线化**：visualization.cpp 双发布点喂数（pubLatestOdometry→on_prop/pubOdometry→on_odom），env T1_W2BB 默认 off，O(1)/发布，1Hz banner——build 窗（15min 异议窗纪律）后编译，新双 md5 登记（见 ch11 尾）。
+- 机理贡献：**四型共同签名=odom/prop 双流 z 值分离**（米级→百米级，量级与死亡形态对应）。
+
+### 工具与产物（本夜新增）
+
+analysis/{img_xaudit.py, w2b_dual_offline.py, r3x_final.py}；t1_evidence/v10_2026-10-02/{img_xaudit_prereg_v1.md, img_xaudit_prereg_v1_1.md, img_xaudit_verdict.md, img_xaudit_result.json, img_xaudit_frames_*.csv ×2, w2b_joint_prereg_v1.md, w2b_joint_prereg_v1_1.md, w2b_joint_verdict.md, w2b_joint_result.json, r3x_final_prereg_v1.md, r3x_final_verdict.md, r3x_final_result.json, img_fp_face_prereg_v1.md}；src/px4ctrl/scripts/t1_r3x_probe.py v2（img_fp+max-run）；VINS-Fusion visualization.cpp [W2BB]。
+
+### F3B15 诊断首发轮（[R3xQ]+[W2BB]+[W2BA] 三面全开+img_fp 探针；栈 eea4cb2e/9b88345b）
+
+- RESULT=FAIL=**敌对第 7 例**：VINS 帧中途跳变 **29.07m**（goal+5s 窗）+ truth z 冲 **10.26m** 失控爬升 + 到位 FAIL（leg1 真值 min 8.188m）；管线面全绿（auto_disarm 1✓/poscmd 100Hz✓/planner_kill✓）；轮尾 VINS 自报 10.252≈truth 10.270=跳变后重同步。
+- **四面活体（历史首次同轮全开）**：①[R3xQ] 队列面首飞验✓——敌对全程 img0_buf=0-1、head_age 24ms 稳=VINS 输入端零积压零饥饿（271 行数据入 face2 集）；②img_fp 面首战——4434 帧 dup_run_max=**0**、mean 105.5-118.1 正常带、std 稳、gap_max 172ms、0 异常窗=敌对全程无字面重复帧（在线复证对审 B）；③[W2BA]=0（帧跳型无 Bgs 成分，二次复证）；④[W2BB]=0（瞬态再同步型，与离线 F3B14 注记一致；B 路覆盖=持续分离型待后续型轮在线首秀）；⑤探针 w2bb 在线面第 2 例正捕获：t_ros≈122.7（帧跳窗）odom z HF 能量坍缩 **−2.27 decades**（streak2）。
+- **合流**：输入（图像/队列/时序）全净 + 估计器内部翻转（HF 坍缩与帧跳同窗）=候选② 在线铁证第 7 例。
+- 坑：launch_f3b15.sh 的 `set -u`×ROS_DISTRO 老坑杀探针首挂（60s 内手动补挂成功，丢最早 ~1min 面）；后续发射脚本去 set -u。
+
+### 等待态与移交
+
+- W-A build 窗：本夜已用（[W2BB] 在线化完成）；下一 build 需求=P2 写码（净窗前提未达）。
+- W-B 跳变计数：F3B15 帧跳 29.07m 新样本（跳变四型画像 +1，值域扩至 29m 级）。
+- W-F 敌对态：F3B15=第 7 例；净窗未现（今晚 0 净轮）；T2 重试制轮可随轮附着探针（就绪模式）。
+- 净窗依赖件不变：P2 A/B、L-odom A/B、P3 需求面。
+
