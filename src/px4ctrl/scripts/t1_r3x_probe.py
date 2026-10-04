@@ -7,12 +7,17 @@
 #   stampage (2a) /vins_estimator/{imu_propagate,odometry} stamp age at receive
 #   rtf       (3) /clock vs wall clock lag + windowed RTF
 #   cpu       (4) /proc/<vins_pid> stat/statm differential 1 Hz
+#   img_fp    (6) /iris_stereo_vins/vins_cam_left/image_raw per-frame
+#             fingerprint: md5(raw) dup-run counter + gray mean/std rings;
+#             window aggregates only. Budget prereg img_fp_face_prereg_v1.md:
+#             <=5ms/frame, left cam only, queue_size=1; overrun -> face void.
 # Output: jsonl, one line per face per 5s window, dual clock stamps.
 # Overhead budget (prereg §4): ring buffers, no per-msg allocation steady-state;
 # CPU<0.5% core, RAM<1MB, disk<5MB/h. If budget is exceeded the probe is void.
 # Usage: t1_r3x_probe.py OUT.jsonl [--mode online|replay] [--vins-pid N]
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -21,7 +26,7 @@ import time
 try:
     import rospy
     import std_msgs.msg
-    from sensor_msgs.msg import Imu
+    from sensor_msgs.msg import Imu, Image
     from nav_msgs.msg import Odometry
     from rosgraph_msgs.msg import Clock
 except ImportError:
@@ -212,6 +217,79 @@ class W2BB:
         return None
 
 
+class ImgFP:
+    """img_fp face: per-frame left-cam md5 + gray mean/std (window agg only)."""
+
+    def __init__(self):
+        self.n = 0
+        self.dup_n = 0
+        self.dup_run = 0
+        self.dup_run_max = 0
+        self.prev_md5 = None
+        self.last_mono = None
+        self.gap = Ring(RING)
+        self.means = Ring(RING)
+        self.stds = Ring(RING)
+        self._np = None
+        try:
+            import numpy as np
+            self._np = np
+        except ImportError:
+            pass
+
+    def on_frame(self, msg, mono):
+        d = hashlib.md5(msg.data).hexdigest()
+        self.n += 1
+        if self.prev_md5 is not None:
+            if d == self.prev_md5:
+                self.dup_n += 1
+                self.dup_run += 1
+                if self.dup_run > self.dup_run_max:
+                    self.dup_run_max = self.dup_run
+            else:
+                self.dup_run = 0
+        self.prev_md5 = d
+        if self.last_mono is not None:
+            self.gap.push((mono - self.last_mono) * 1000.0)
+        self.last_mono = mono
+        if self._np is not None:
+            np = self._np
+            try:
+                a = np.frombuffer(msg.data, dtype=np.uint8)
+                if msg.encoding == "mono8":
+                    g = a.reshape(msg.height, msg.width).astype(np.float64)
+                elif msg.encoding in ("bgr8", "rgb8"):
+                    g = a.reshape(msg.height, msg.width, 3).mean(axis=2)
+                else:
+                    g = None
+                if g is not None:
+                    self.means.push(float(g.mean()))
+                    self.stds.push(float(g.std()))
+            except ValueError:
+                pass
+
+    def take(self):
+        gaps = self.gap.sorted_vals()
+        ms = self.means.sorted_vals()
+        ss = self.stds.sorted_vals()
+        out = {"n": self.n, "dup_n": self.dup_n,
+               "dup_run_max": self.dup_run_max}
+        if gaps:
+            out["gap_p50_ms"] = round(pct(gaps, 0.50), 1)
+            out["gap_max_ms"] = round(gaps[-1], 1)
+        if ms:
+            out["mean_med"] = round(pct(ms, 0.50), 2)
+            out["mean_iqr"] = round(pct(ms, 0.75) - pct(ms, 0.25), 2)
+            out["std_med"] = round(pct(ss, 0.50), 2)
+        self.n = 0
+        self.dup_n = 0
+        self.dup_run = 0
+        self.dup_run_max = 0
+        self.gap.clear()
+        self.means.clear()
+        self.stds.clear()
+        return out
+
 class Probe:
     def __init__(self, out_path, mode):
         self.out = open(out_path, "a", buffering=1)
@@ -234,6 +312,10 @@ class Probe:
         self.rtf_win = []  # (wall_mono, sim_t)
         # face 4
         self.proc = None
+        # face 6 (img fingerprint) + max-run anti-zombie guard
+        self.imgfp = ImgFP()
+        self.max_run = 0
+        self.t_start = time.monotonic()
         self.last_emit = time.monotonic()
         # w2b B-path (pool-1): in-stream z noise-floor collapse
         self.w2bb = W2BB()
@@ -282,6 +364,9 @@ class Probe:
             v = msg.twist.twist.linear
             self.w2bb.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
         _ = wall, now_t  # wall kept for future mixed-domain analysis
+
+    def on_image(self, msg):
+        self.imgfp.on_frame(msg, time.monotonic())
 
     def on_clock(self, msg):
         mono = time.monotonic()
@@ -367,6 +452,9 @@ class Probe:
             if alert:
                 rec["W2BB_ALERT"] = alert
             self.emit("w2bb", rec)
+        # face 6
+        if self.imgfp.n > 0:
+            self.emit("img_fp", self.imgfp.take())
 
 
 def main():
@@ -374,6 +462,8 @@ def main():
     ap.add_argument("out", nargs="?", default="/tmp/r3x_probe.jsonl")
     ap.add_argument("--mode", default="online", choices=["online", "replay"])
     ap.add_argument("--vins-pid", type=int, default=0)
+    ap.add_argument("--max-run", type=int, default=1800,
+                    help="anti-zombie: exit after N s (0=unbounded)")
     args = ap.parse_args()
 
     rospy.init_node("t1_r3x_probe_%d" % os.getpid(), anonymous=True, disable_signals=True)
@@ -389,9 +479,14 @@ def main():
     rospy.Subscriber("/vins_estimator/odometry", Odometry,
                      lambda m: probe.on_odom_stream("odometry", m), queue_size=2)
     rospy.Subscriber("/clock", Clock, probe.on_clock, queue_size=2)
+    rospy.Subscriber("/iris_stereo_vins/vins_cam_left/image_raw", Image,
+                     probe.on_image, queue_size=1, buff_size=2 ** 21)
 
     rate = rospy.Rate(5)
     while not rospy.is_shutdown():
+        if args.max_run > 0 and time.monotonic() - probe.t_start > args.max_run:
+            probe.emit("meta", {"max_run_exit_s": args.max_run})
+            break
         probe.maybe_emit()
         rate.sleep()
     probe.out.close()
