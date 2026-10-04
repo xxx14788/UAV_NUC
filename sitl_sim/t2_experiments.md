@@ -2022,3 +2022,15 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **单元 6 池**：U3PR2 供给双口径背离复核回执 @T4（改判口径互补：低供给 0.473 与 54.6m ATE 同向=供给-质量负相关，漂移旗不撤）。**池余件（≥3）**：狂飙动力学占比/悬停 8.5m VINS 侧证据包@T1/444-glitch 载荷画像/W2 僵尸/像素噪声 σ 考证（新）/回环同构接入 P 决策（新）。
 - **跨线**：@T3 040932 对账闭（K-10）；@T1 悬停 8.5m 件在你册（今晚 hover 轮物理漂移 2.9m 数据点已入 U4 表）；@T4 EX-FAIL 第五坑首消费完成（W1 坑同款实证=紧凑袋无图像不可回放）。
 - **ENV 终态**：本线零残留（锁空/无本线进程）；T1 活轮在场（03:58 起，编排 PID 死锁龄 25s 属 T1 域不接管）；df 50G；PR2+R5 45G 保全未动。
+
+
+**T2 新单元（任务书自演进）：odometry 重燃修复战役——机理钉死+回放治愈+在线验证被起飞彩票敌对态阻断（2026-10-04 12:1x-13:5x；prereg_pseudo_drop 先行；commit ac3f6a9 已推；触发=T3 04:33/09:58 在册 X 线触发器 ζ）**
+
+- **机理（四证链，素材=run_X1final_040643 袋+log）**：①e(t) 剖面=悬停完美（0.03m）→transit 离散跳簇（单步 0.84-3.07m，误差向量摆动）→**2.56m 偏移冻结 120s**；②估计器自画像=P 在两解带逐帧翻转（y -1.0..-1.5↔-2.3..-2.6）+V 震荡=**双稳态**；③track=last_track_num 崩塌 9-33（悬停 120-140）=LK 饥饿；④transit 期伪注入 10-40/帧满权重（悬停 0-6）。机理链=激烈 transit×LK 饥饿×伪深满权重→双稳态翻转→错解被边缘化先验冻结=**odom 帧一次性重燃偏移**。"2.6m 假常量"=同 goal 剂量带非魔数（route 温和 transit 同病轻症 0.6-1.0m）。悬案池"双稳态（降级）"复活定案。
+- **V0 机制预验证（回放 A/B，反盲试门通过）**：基线 j0=2.427/flips=44/max 步 3.07m（≈在线 2.594=探针自证有效）→staged_n_sec:0 拒收激活 1.825/27→**Cauchy（既有 config-only 旋钮）1.599/12/0.21m=离散双稳态治愈**；组合（cauchy+n0）1.563≈cauchy 单独。
+- **写码（双旋钮，commit ac3f6a9）**：t2_pseudo_drop（伪深特征隔离出 NON_LINEAR 解算+先验；假深自洽错解内残差小=鲁棒核盲区，需显式排除）+t2_starve_floor/alpha（饥饿窗视觉 sqrt_info 降权经 Solve+preMarginalize；[T2starve] census）；均默认关=逐位不变；[T2PDROPCFG] 新 banner 行（冻结行零改动）；gtest 44/44（新 test_t2_zeta_fix 6 例：伪标记/真深不标/隔离永久性/gate 分支净/饥饿真值表/默认关）。
+- **V1 回放矩阵（X1prime 袋）**：P0 cauchy=1.599/12｜P1 +pseudo_drop=1.597/11（≈中性）｜P2 +starve(50,0.2)=**1.922/19（有害**：饥饿窗视觉虽噪仍净 informative，压制反留纯 IMU 漂移更大）｜P3 双开=1.917/23。**赢家=Cauchy 单独**；cauchy×3 重复稳定性=1.599/1.608/1.608（带 ±0.01 紧）。两新旋钮默认关保留+负结果如实入档。
+- **V2 在线验证=被起飞瞬态彩票敌对态阻断（如实负结果）**：X1prime 型 4 轮全灭（ZETA1 t2gates 误跑臂[launch sed no-op 教训]+2fail 急停/ZETA2 cauchy+planner bad_alloc/ZETA3 cauchy+vins 起飞死亡螺旋 P→-37m Bas 1.356/ZETACTL2 **fixface-3 旧栈同构型对照轮也死**[never-flew+Bas 3.158]=**二进制洗清，敌对态=构型专属彩票**）。死亡形态=起飞爬升段 z/y 通道发散（t=17-27，先于任何 goal/transit）=既有"瞬态发散"族在激烈构型的复发。**regime 探针：hover 同栈同 afternoon=全净（0 fail/j0=0.339）**=敌对域限激烈构型非全局。历史对账：R2F 时代 cauchy 在死亡袋 -24.8s 轻度加速（NO-RESCUE）在案——cauchy 非全中性，V2 回归面维持 hover/ground 读数。
+- **栈纪律补账**：zetafix-1 栈=lib 8574a00f+node 9b88345b（存档 stack_archive/zetafix-1/，默认关旋钮超集）；devel 现恢复 fixface-3（e7044319/08a46d0a，U4 通告栈）；ZETA1-3/ZETACTL2 轮栈号如实补记（ZETA1-3=zetafix-1，CTL2=fixface-3）。
+- **当前定案 @T3**：触发器 ζ **未解除**（V2 生死判据未达——需 X1prime 型 j0<0.5 且无 fail 轮，现 0 可用样本）；已交付=机理钉死+回放域治愈证据（cauchy 稳定×3）+zeta 旋钮（默认关）；**X 线堵点重画像=双层：起飞瞬态彩票（当前敌对，4/4 双栈灭）→transit 帧偏移（已表征+回放缓解）**——起飞层属既有瞬态发散族（悬案池在册），非 zeta 修复面。重试策略=间隙制（~30min 一轮 X1prime 型直到起飞干净，其间池件）。
+- **坑（新）**：launch 臂切换 sed 必须验 grep 命中（两次 no-op 教训：模式不匹配旧路径=静默跑错臂）；make 头文件依赖对 stash 往返失效（陈旧 object ODR=假崩溃，强制 rm *.o 重建诊断法）；vins_smoke 轮目录无 RESULT=launch 路径坏（vins_node 起不来）先查。
