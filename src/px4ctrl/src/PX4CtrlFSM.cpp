@@ -85,6 +85,7 @@ void PX4CtrlFSM::process()
 	fd_in.fcu_state_stale = (now_time - state_data.rcv_stamp).toSec() > 3.0;
 	fd_in.dt_takeoff = (now_time - takeoff_land.toggle_takeoff_land_time).toSec();
 	fd_in.no_rc = param.takeoff_land.no_RC;
+	fd_in.cmdresp_divergent = p2_st.latched; // T1-P2: cmd-response divergence latch
 	if (state_data.rcv_stamp != ros::Time(0) && // 首帧保护留在调用点(纯函数不建模,审计表#S0)
 	    fsm_decision::step0_global(fd_state_of(state), fd_in).next == fsm_decision::MANUAL_CTRL)
 	{
@@ -111,8 +112,10 @@ void PX4CtrlFSM::process()
 			{
 				if (fd_o.reason == fsm_decision::RJ_NO_ODOM)
 					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). No odom!");
-				else if (fd_o.reason == fsm_decision::RJ_BIRTH_MISMATCH)
-					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). P1: odom rebirth misaligned (U9 family); disarm and re-align first.");
+			else if (fd_o.reason == fsm_decision::RJ_BIRTH_MISMATCH)
+				ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). P1: odom rebirth misaligned (U9 family); disarm and re-align first.");
+			else if (fd_o.reason == fsm_decision::RJ_CMDRESP)
+				ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). P2: cmd-response divergence latched (vehicle not following des); recover or disarm first.");
 				else if (fd_o.reason == fsm_decision::RJ_CMD_ACTIVE)
 					ROS_ERROR("[px4ctrl] Reject AUTO_HOVER(L2). You are sending commands before toggling into AUTO_HOVER, which is not allowed. Stop sending commands now!");
 				else
@@ -196,6 +199,10 @@ void PX4CtrlFSM::process()
 			else if (fd_o.reason == fsm_decision::RJ_BIRTH_MISMATCH)
 			{
 				ROS_ERROR("[px4ctrl] U2.7+P1: Reject LAND in MANUAL_CTRL - odom rebirth misaligned; disarm and re-align first.");
+			}
+			else if (fd_o.reason == fsm_decision::RJ_CMDRESP)
+			{
+				ROS_ERROR("[px4ctrl] U2.7+P2: Reject LAND in MANUAL_CTRL - cmd-response divergence latched; recover or disarm first.");
 			}
 			else
 			{
@@ -433,6 +440,30 @@ void PX4CtrlFSM::process()
 	land_detector(state, des, odom_data);
 	// cout << takeoff_land.landed << " ";
 	// fflush(stdout);
+
+	// STEP5.5: T1-P2 cmd-response divergence gate (v11.4 unit 3).
+	// Fed on armed non-MANUAL beats only (des is final here); disarm clears
+	// the latch state (P1's missing-clear gap NOT replicated). The latch feeds
+	// fd_in.cmdresp_divergent on the NEXT tick (rj wiring) and warns here.
+	if (p2_cfg.enabled)
+	{
+		if (state_data.current_state.armed && state != MANUAL_CTRL)
+		{
+			bool warn_now = false;
+			cmdresp_feed(p2_cfg, p2_st, &warn_now, now_time.toSec(),
+			             des.p, des.v, odom_data.p, odom_data.v);
+			if (warn_now)
+				ROS_ERROR("[px4ctrl] [P2] cmd-response divergence %s: e_now=%.2f m (eps=%.2f m, thr=%.2f m/s, win=%.1f s) samples=%ld fired=%ld",
+				          p2_st.latched ? "LATCHED" : "latch", p2_st.latest_e(),
+				          p2_cfg.eps_static_m, p2_cfg.drift_rate_mps, p2_cfg.win_sec,
+				          p2_st.samples, p2_st.fired_count);
+		}
+		else if (!state_data.current_state.armed && p2_st.latched)
+		{
+			p2_st.clear();
+			ROS_WARN("[px4ctrl] [P2] divergence latch cleared on disarm.");
+		}
+	}
 
 	// STEP6: Clear flags beyound their lifetime
 	rc_data.enter_hover_mode = false;

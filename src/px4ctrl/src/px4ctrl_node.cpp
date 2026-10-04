@@ -137,6 +137,11 @@ int main(int argc, char *argv[])
     fsm.odom_data.p1_cfg.enabled = param.p1_rebirth.enabled;
     fsm.odom_data.p1_cfg.gap_sec = param.p1_rebirth.gap_sec;
     fsm.odom_data.p1_cfg.birth_thresh = param.p1_rebirth.birth_thresh;
+    // T1-P2 (v11.4 unit 3): cmd-response divergence gate (default OFF)
+    fsm.p2_cfg.enabled = param.p2_cmdresp.enabled;
+    fsm.p2_cfg.win_sec = param.p2_cmdresp.win_sec;
+    fsm.p2_cfg.eps_static_m = param.p2_cmdresp.eps_static_m;
+    fsm.p2_cfg.drift_rate_mps = param.p2_cmdresp.drift_rate_mps;
     fsm.process(); // We DO NOT rely on feedback as trigger, since there is no significant performance difference through our test.
     }
 

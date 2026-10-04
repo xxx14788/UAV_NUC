@@ -14,6 +14,7 @@
 #include "input.h"
 // #include "ThrustCurve.h"
 #include "controller.h"
+#include "cmdresp_gate.h" // T1-P2: cmd-response divergence gate (v11.4 unit 3)
 
 struct AutoTakeoffLand_t
 {
@@ -58,6 +59,13 @@ public:
 
 	Eigen::Vector4d hover_pose;
 	ros::Time last_set_hover_pose_time;
+
+	// T1-P2 (v11.4 unit 3): cmd-response divergence gate state.
+	// Config injected from params in node main (default OFF = legacy);
+	// fed each process() beat after des is final (armed non-MANUAL only);
+	// latched flag feeds fsm_decision Inputs.cmdresp_divergent (RJ_CMDRESP).
+	CmdRespConfig p2_cfg;
+	CmdRespState p2_st;
 
 	enum State_t
 	{

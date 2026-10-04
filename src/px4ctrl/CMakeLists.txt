@@ -68,4 +68,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_odom_sanity_v2
     test/test_odom_sanity_v2.cpp)
   target_link_libraries(test_odom_sanity_v2 ${catkin_LIBRARIES})
+
+  # T1-P2 (v11.4 unit 3): cmd-response divergence gate gtest
+  # (cmdresp_gate.h + fsm_decision RJ_CMDRESP wiring, no ROS dependency)
+  catkin_add_gtest(test_cmdresp_gate
+    test/test_cmdresp_gate.cpp)
+  target_link_libraries(test_cmdresp_gate ${catkin_LIBRARIES})
 endif()

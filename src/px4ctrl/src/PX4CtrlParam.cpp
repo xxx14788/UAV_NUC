@@ -49,6 +49,19 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	ROS_WARN("[px4ctrl] P1 rebirth gate: enabled=%d gap_sec=%.1f birth_thresh=%.2f",
 	         (int)p1_rebirth.enabled, p1_rebirth.gap_sec, p1_rebirth.birth_thresh);
 
+	// T1-P2 (v11.4 unit 3): cmd-response divergence gate (default OFF =
+	// legacy; SITL yaml enables). Frozen v1 thresholds from u3 verdict:
+	// eps_static 0.5 m = healthy hover des-odom band upper edge (0.48-0.5);
+	// drift_rate 0.21 m/s = event drift velocity (des_v=0 family); win 10 s
+	// (0.21*10=2.1 m > 4*eps=2.0 m separation).
+	nh.param("p2_cmdresp/enabled", p2_cmdresp.enabled, false);
+	nh.param("p2_cmdresp/win_sec", p2_cmdresp.win_sec, 10.0);
+	nh.param("p2_cmdresp/eps_static_m", p2_cmdresp.eps_static_m, 0.5);
+	nh.param("p2_cmdresp/drift_rate_mps", p2_cmdresp.drift_rate_mps, 0.21);
+	ROS_WARN("[px4ctrl] P2 cmdresp gate: enabled=%d win=%.1fs eps_static=%.2fm drift_rate=%.2fm/s",
+	         (int)p2_cmdresp.enabled, p2_cmdresp.win_sec, p2_cmdresp.eps_static_m,
+	         p2_cmdresp.drift_rate_mps);
+
 	read_essential_param(nh, "pose_solver", pose_solver);
 	read_essential_param(nh, "mass", mass);
 	read_essential_param(nh, "gra", gra);
