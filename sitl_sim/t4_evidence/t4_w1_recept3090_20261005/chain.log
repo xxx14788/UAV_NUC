@@ -1,0 +1,75 @@
+[10-05 05:24:13] === T4-W1 driver start ===
+[10-05 05:24:13] CONFIG_MD5 a01e7a3766a500e6ff9a02a7ae215a4d  /home/ghj/catkin_ws/src/VINS-Fusion/config/sim_stereo/e2_debug_smooth.yaml
+[10-05 05:24:13] GATE_OK md5_all try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:24:13] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/flight.bag
+[10-05 05:24:13] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/flight.bag
+[10-05 05:24:13] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/flight.bag
+[10-05 05:24:13] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/flight.bag
+[10-05 05:24:13] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/flight.bag
+[10-05 05:24:13] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/flight.bag
+[10-05 05:24:13] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/flight.bag
+[10-05 05:24:14] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/flight.bag
+[10-05 05:24:14] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/flight.bag
+[10-05 05:24:14] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/flight.bag
+[10-05 05:24:14] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH3_011804/flight.bag
+[10-05 05:24:28] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH3_011804/flight.bag
+[10-05 05:24:28] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/flight.bag
+[10-05 05:24:28] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/flight.bag
+[10-05 05:24:28] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/flight.bag
+[10-05 05:24:29] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/flight.bag
+[10-05 05:24:29] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/flight.bag
+[10-05 05:24:29] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/flight.bag
+[10-05 05:24:29] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/flight.bag
+[10-05 05:24:29] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/flight.bag
+[10-05 05:24:29] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH8_015411/flight.bag
+[10-05 05:24:43] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH8_015411/flight.bag
+[10-05 05:24:43] MD5_BEGIN /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/flight.bag
+[10-05 05:24:44] MD5_OK /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/flight.bag
+[10-05 05:24:44] MD5_BEGIN /home/ghj/sitl_sim/bags/t2v3_hover_134845.bag
+[10-05 05:24:49] MD5_OK /home/ghj/sitl_sim/bags/t2v3_hover_134845.bag
+[10-05 05:24:49] STAGE_OK mach3 -> /home/ghj/sitl_sim/bags/run_t4w1_mach3/flight.bag
+[10-05 05:24:49] GATE_OK mach3_extract try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:24:49] EXTRACT_BEGIN mach3
+[10-05 05:25:09] EXTRACT_RC=0 mach3
+[10-05 05:25:09] GATE_OK mach3_offset try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:25:09] OFFSET_BEGIN mach3
+[10-05 05:25:11] OFFSET_RC=0 mach3
+[10-05 05:25:11] GATE_OK mach3_metrics try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:25:11] METRICS_BEGIN mach3
+[10-05 05:25:16] METRICS_RC=0 mach3
+[10-05 05:25:16] FBRES_BEGIN mach3
+[10-05 05:25:17] FBRES_RC=0 mach3
+[10-05 05:25:17] GATE_OK mach3_replay try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:25:17] REPLAY_BEGIN mach3 budget=600 outer_timeout=900
+[10-05 05:31:52] REPLAY_RC=0 mach3
+[10-05 05:31:52] STAGE_OK mach8 -> /home/ghj/sitl_sim/bags/run_t4w1_mach8/flight.bag
+[10-05 05:31:52] GATE_OK mach8_extract try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:31:52] EXTRACT_BEGIN mach8
+[10-05 05:32:12] EXTRACT_RC=0 mach8
+[10-05 05:32:13] GATE_OK mach8_offset try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:32:13] OFFSET_BEGIN mach8
+[10-05 05:32:15] OFFSET_RC=0 mach8
+[10-05 05:32:15] GATE_OK mach8_metrics try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:32:15] METRICS_BEGIN mach8
+[10-05 05:32:20] METRICS_RC=0 mach8
+[10-05 05:32:20] FBRES_BEGIN mach8
+[10-05 05:32:21] FBRES_RC=0 mach8
+[10-05 05:32:21] GATE_OK mach8_replay try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:32:22] REPLAY_BEGIN mach8 budget=600 outer_timeout=900
+[10-05 05:38:56] REPLAY_RC=0 mach8
+[10-05 05:38:56] STAGE_OK hov134845 -> /home/ghj/sitl_sim/bags/run_t4w1_hov134845/t2v3_hover_134845.bag
+[10-05 05:38:56] GATE_OK hov134845_extract try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:38:56] EXTRACT_BEGIN hov134845
+[10-05 05:39:04] EXTRACT_RC=0 hov134845
+[10-05 05:39:04] GATE_OK hov134845_offset try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:39:04] OFFSET_BEGIN hov134845
+[10-05 05:39:05] OFFSET_RC=0 hov134845
+[10-05 05:39:05] GATE_OK hov134845_metrics try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:39:05] METRICS_BEGIN hov134845
+[10-05 05:39:11] METRICS_RC=0 hov134845
+[10-05 05:39:11] FBRES_BEGIN hov134845
+[10-05 05:39:11] FBRES_RC=0 hov134845
+[10-05 05:39:11] GATE_OK hov134845_replay try=0 rosbag=0 gzserver=0 df=607G
+[10-05 05:39:12] REPLAY_BEGIN hov134845 budget=300 outer_timeout=600
+[10-05 05:41:56] REPLAY_RC=0 hov134845
+[10-05 05:41:56] === T4-W1 driver done ===

@@ -1,0 +1,2 @@
+2ad9676ead5741e11167aa2f507ccd15  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+8c3453c0954ee4e937d91b56f1241bd3  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
