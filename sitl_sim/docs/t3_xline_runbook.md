@@ -168,19 +168,30 @@ tag 各一 commit。STATUS 批次通告与轮间 RESULT 落盘后再发下一轮
   legacy 真触发双面证据→controlled;迟触发(L1b)→TNR;零证据触发→误触发处置
   uncontrolled-fail;真触发+流死→TNR(A1 型);log 缺失→log-missing 降级。
 
-### §9.2 判读锚袋注册表（2026-10-04 03:05 设;任何腾位动作删袋前必查本表+@T3）
+### §9.2 判读锚袋注册表（v3;2026-10-04 09:32 锚重建#3 定稿;任何腾位动作删袋前必查本表+@T3）
 
-> 缘起：2026-10-04 02:57 T1 K-7 紧急腾位删除 WAOL×5/X1×10 历史袋,其中 run_WAOL5R_222234
-> 与 run_X1_232055 = 在线 selftest 冻结锚格(prereg 对账基准),事前无 @T3 fixture 核对面
-> ——本表即补该流程缺口。删袋前核对流程=责任表 §8.2 + 本表。
+> 版本史：v1（03:1x 立,缘起=T1 误删 WAOL5R/X1 锚袋）→v2（WC2OBS1 行+蒸馏建议）→
+> **v3（09:4x,锚袋删除事故第二例后定稿）**：注册≠保护——05:23 T4 以 §8.1 顺位2 代理删
+> WC2×2 主池袋（df 43→68G,X4 磁盘前置达成,其执行本身合规;但未先查本表/未 @T3）,
+> run_WC2OBS1_032005/flight.bag（判读活锚）随之失袋。**v3 设计原则=三锚全部自持
+> t3_results/x11_dryrun_v11（T3 域,不在任何腾位池清单内=结构免疫）**。
 
-| 锚袋 | 锚面 | 判读链版本 |
-|---|---|---|
-| run_U3PO_211438/flight.bag（**compact 蒸馏袋 0.2G**,2026-10-04 03:00 换装;原 13G 袋已删,蒸馏判读逐位一致核验在册） | 在线 selftest 格 1:j0 2.603/Bas 病态 1.3709/ctrl clean/359s 存活 | 判读器 e3478a88 起用 |
-| run_WC2OBS1_032005/flight.bag（13.5G,**T4 域素材兼判读活锚**——T4 裁量删除前必须 @T3;建议同款蒸馏换装） | 在线 selftest 格 2:v1.3 任一门 TNR 活锚/j0 369.839/溢出型 morph | 判读器 e3478a88 起用 |
-| t3_results/x11_dryrun_v11/SYN_*(12 夹具族,合成小袋) | SYN 电池 9 断言 | 永久 |
-| x11_dryrun_v11/R5_pairing_fix+U3R_*(硬链接袋,原袋在 T2 域) | 受控正样本/舰队回归 | 至 X7 |
+| 锚格 | 载体（x11_dryrun_v11/域内） | 锚面 | 起用版本 |
+|---|---|---|---|
+| ANCHOR_U3PO | ANCHOR_U3PO/（硬链 run_U3PO_211438 compact 0.2G+四边件） | clean 锚:j0 2.603/Bas 病态 1.3709/359s 存活 | 8720a1f2 |
+| U3R_t2v3_route_033941 | U3R_t2v3_route_033941/（336MB+边件） | TNR 教科书锚:5fires+14faildet/统一锚 legacy@49.376/L2b 791.9 拦/Bas 峰 7.17 | 8720a1f2 |
+| U3R_t2v3_hover_035509 | U3R_t2v3_hover_035509/（68MB+边件） | controlled 锚:legacy@46.476/L2a 96/L2b p95 0.0755（v1.3 舰队首翻样本） | 8720a1f2 |
+| SYN_×12 | SYN_*（合成小袋族） | SYN 电池 9 断言（对抗面四型含） | 永久 |
+| R5_pairing_fix | R5_pairing_fix/（硬链 T2 保全袋） | 受控正样本（至 X7） | 在册 |
 
-版本行补登：**v1.3-anchor = e3478a88**（2026-10-04 03:05;判读逻辑零变动——仅在线
+退役史证：WAOL5R_222234/X1_232055（T1 02:57 删,last-green@6336922）；
+WC2OBS1_032005（T4 05:23 §8.1 顺位2 删,真读数存档=wa_gate_online.pre_v13.json+本表 v2 行）。
+
+**流程条款（v3 强化）**：任何线执行 §8.1 腾位删除前，必须 grep 本表文件名清单
+（`grep -l <bag名> ~/catkin_ws/sitl_sim/docs/t3_xline_runbook.md`）且命中即 @T3 等回执；
+本表载体的例外保全同 X4 五轮条款。
+
+版本行补登：**v1.3-anchor2 = 8720a1f2**（2026-10-04 09:32;判读逻辑零变动——仅 selftest
+三锚自持化[x11 base 支持]+WC2OBS1 退役+U3R 双真锚入格;在线 4 格+离线 selftest 全绿）。
 selftest 锚格重建[U3PO compact+WC2OBS1 双格,WAOL5R/X1 退役入史证块 @6336922]+morph
 白名单字面量勘误[含 extreme/非有限帧];两 selftest 全绿）。
