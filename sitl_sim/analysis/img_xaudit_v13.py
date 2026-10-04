@@ -48,9 +48,16 @@ def scan_goal_truthxy(run):
 def main():
     res = {'prereg': 'v1.3', 'bags': {}}
     scans = {}
+    import csv as _csv
     for key in ('H1', 'H2', 'C'):
         s = xa.scan(key)
         scans[key] = s
+        fn = os.path.join(OUT, 'img_xaudit_v13_frames_%s.csv' % s['run'])
+        with open(fn, 'w', newline='') as f:
+            w = _csv.writer(f)
+            w.writerow(['t', 'md5', 'mean', 'std', 'grad_med'])
+            for fr in s['frames']['left']:
+                w.writerow([fr[0], fr[1], fr[2], fr[3], fr[4]])
         t0L = s['frames']['left'][0][0] if s['frames']['left'] else None
         res['bags'][key] = {'run': s['run'], 'arm_t': s['arm_t'],
                             'n_left': len(s['frames']['left']), 't0_left': t0L}
@@ -63,7 +70,12 @@ def main():
         w = {'W_gnd': (arm, arm + 5.0),
              'W_arm': (arm, arm + 30.0),
              'W_pre': (max((s['frames']['left'][0][0] + 1.0) if s['frames']['left'] else arm - 30.0,
-                           arm - 30.0), arm - 0.2)}
+                           arm - 30.0), arm - 0.2),
+             # v1.2-isomorphic 10s static window: cross-check for the W_pre
+             # artifact hypothesis (C-side W_pre held only ~58 frames here
+             # because X1final's image stream starts late -> IQR~0 blowup)
+             'W_static': (max((s['frames']['left'][0][0] + 1.0) if s['frames']['left'] else arm - 10.0,
+                              arm - 10.0), arm - 0.2)}
         tstar = None
         truth_xy, goal_xy = scan_goal_truthxy(run)
         if truth_xy and goal_xy is not None:
@@ -81,6 +93,7 @@ def main():
     W['C'] = {'W_gnd': (armC, armC + 5.0),
               'W_arm': (armC, armC + 30.0),
               'W_pre': (max(scans['C']['frames']['left'][0][0] + 1.0, armC - 30.0), armC - 0.2),
+              'W_static': (max(scans['C']['frames']['left'][0][0] + 1.0, armC - 10.0), armC - 0.2),
               'W_drift': (armC + 30.0, armC + 45.0)}  # prereg: C has no drift segment
     res['windows'] = {k: {wn: list(wv) for wn, wv in W[k].items()} for k in W}
 
@@ -99,7 +112,7 @@ def main():
 
     def table_for(key):
         table = {}
-        for wn in ('W_pre', 'W_gnd', 'W_arm', 'W_drift'):
+        for wn in ('W_pre', 'W_static', 'W_gnd', 'W_arm', 'W_drift'):
             sH, sC = sc[key].get(wn), sc['C'].get(wn)
             if sH is None or sC is None:
                 table[wn] = {'status': 'window-empty'}
