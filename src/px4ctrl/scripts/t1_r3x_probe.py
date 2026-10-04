@@ -482,13 +482,15 @@ def main():
     rospy.Subscriber("/iris_stereo_vins/vins_cam_left/image_raw", Image,
                      probe.on_image, queue_size=1, buff_size=2 ** 21)
 
-    rate = rospy.Rate(5)
+    # wall-clock loop: rospy.Rate.sleep() blocks FOREVER when use_sim_time is
+    # set and /clock dies with the round roscore (live-found 10-04: two probes
+    # hung past --max-run 1500). 5 Hz wall cadence; max-run check unconditional.
     while not rospy.is_shutdown():
         if args.max_run > 0 and time.monotonic() - probe.t_start > args.max_run:
             probe.emit("meta", {"max_run_exit_s": args.max_run})
             break
         probe.maybe_emit()
-        rate.sleep()
+        time.sleep(0.2)
     probe.out.close()
 
 
