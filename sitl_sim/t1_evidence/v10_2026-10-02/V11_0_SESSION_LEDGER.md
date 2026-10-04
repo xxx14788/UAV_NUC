@@ -249,3 +249,9 @@ analysis/{img_xaudit.py, w2b_dual_offline.py, r3x_final.py}；t1_evidence/v10_20
 - W-F 敌对态：F3B15=第 7 例；净窗未现（今晚 0 净轮）；T2 重试制轮可随轮附着探针（就绪模式）。
 - 净窗依赖件不变：P2 A/B、L-odom A/B、P3 需求面。
 
+
+### F3B16 带图飞行取证轮（敌对第 8 例·出生失败型）+ 对审 v1.2=B+
+
+- F3B16（19:16，VINS_SMOKE_IMAGES=1+三面全开+探针）：never-flew（truth z=0.1044）——onset=arm+2.54s odom 解算流停摆（S2=59.888）与 [W2BB] B2 banner 62.292 自洽；[W2BB] **B2 在线首秀正样本**（静默 2.404s）；[R3xQ] 队列空；img_fp 1358 帧 0 重复；[W2BA]=0。
+- 对审 v1.2（prereg a000a54e；S2 窗 30→60s 材料修正）：**合并判读 B+**——两型敌对（H1 爬升高估平线/H2 出生失败）W_static/W_pre 全零分离、hash 唯一率 1.0；H2 W_gnd 亚阈（mean 2.21×/7 块 combo 不过）注记=视角混杂残余。候选① n=2 型覆盖下进一步削弱；route 型带图袋=剩余增量面（T2 重试轮可选）。
+- 今晚敌对态合流：F3B15（帧跳 29m+爬升 10.3m）+F3B16（出生失败）四面全净+估计器内部翻转（HF 坍缩/流停摆）=候选② 铁证第 8 例；df 65→63G。

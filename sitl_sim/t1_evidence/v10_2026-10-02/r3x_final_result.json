@@ -1,0 +1,256 @@
+{
+ "rounds": {
+  "run_F3B9_094909": {
+   "desc": "hostile-edge NEVER-FLEW",
+   "imu_p50_ms": 4.047,
+   "imu_p95_ms": 8.183,
+   "imu_p99_ms": 10.321,
+   "imu_max_ms": 102.654,
+   "imu_drop_n": 92,
+   "imu_spike_n": 8,
+   "imu_spike_max": 103.97,
+   "age_odometry_p50_ms": 48.0,
+   "age_odometry_p95_ms": 64.0,
+   "age_odometry_max_ms": 100.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 12.0,
+   "age_imu_propagate_max_ms": 20.0,
+   "rtf1_min": 0.9024,
+   "rtf1_med": 0.998,
+   "simlag_max_s": 0.684,
+   "cpu_med": 88.79,
+   "cpu_max": 102.5,
+   "w2bb_windows": 9,
+   "w2bb_alerts": 0
+  },
+  "run_F3B10_154733": {
+   "desc": "hostile z-overestimate",
+   "imu_p50_ms": 4.045,
+   "imu_p95_ms": 8.249,
+   "imu_p99_ms": 9.572,
+   "imu_max_ms": 30.137,
+   "imu_drop_n": 76,
+   "imu_spike_n": 7,
+   "imu_spike_max": 125.0,
+   "age_odometry_p50_ms": 48.0,
+   "age_odometry_p95_ms": 56.0,
+   "age_odometry_max_ms": 84.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "age_imu_propagate_max_ms": 36.0,
+   "rtf1_min": 0.9856,
+   "rtf1_med": 0.9977,
+   "simlag_max_s": 0.401,
+   "cpu_med": 85.17,
+   "cpu_max": 103.41,
+   "w2bb_windows": 9,
+   "w2bb_alerts": 0
+  },
+  "run_F3B11_155643": {
+   "desc": "hostile flatline",
+   "imu_p50_ms": 4.071,
+   "imu_p95_ms": 8.364,
+   "imu_p99_ms": 10.339,
+   "imu_max_ms": 407.584,
+   "imu_drop_n": 48,
+   "imu_spike_n": 5,
+   "imu_spike_max": 108.61,
+   "age_odometry_p50_ms": 48.0,
+   "age_odometry_p95_ms": 72.0,
+   "age_odometry_max_ms": 440.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 12.0,
+   "age_imu_propagate_max_ms": 20.0,
+   "rtf1_min": 0.9845,
+   "rtf1_med": 0.9985,
+   "simlag_max_s": 0.342,
+   "cpu_med": 101.67,
+   "cpu_max": 107.94,
+   "w2bb_windows": 3,
+   "w2bb_alerts": 0
+  },
+  "run_F3B12_160420": {
+   "desc": "hostile origin-drift",
+   "imu_p50_ms": 4.029,
+   "imu_p95_ms": 8.269,
+   "imu_p99_ms": 9.882,
+   "imu_max_ms": 110.461,
+   "imu_drop_n": 185,
+   "imu_spike_n": 14,
+   "imu_spike_max": 116.17,
+   "age_odometry_p50_ms": 44.0,
+   "age_odometry_p95_ms": 48.0,
+   "age_odometry_max_ms": 108.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "age_imu_propagate_max_ms": 16.0,
+   "rtf1_min": 0.9809,
+   "rtf1_med": 0.9979,
+   "simlag_max_s": 1.387,
+   "cpu_med": 79.74,
+   "cpu_max": 92.44,
+   "w2bb_windows": 23,
+   "w2bb_alerts": 0
+  },
+  "run_F3B13_161000": {
+   "desc": "hostile flatline",
+   "imu_p50_ms": 4.056,
+   "imu_p95_ms": 8.236,
+   "imu_p99_ms": 9.882,
+   "imu_max_ms": 113.397,
+   "imu_drop_n": 63,
+   "imu_spike_n": 1,
+   "imu_spike_max": 54.55,
+   "age_odometry_p50_ms": 52.0,
+   "age_odometry_p95_ms": 64.0,
+   "age_odometry_max_ms": 104.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "age_imu_propagate_max_ms": 16.0,
+   "rtf1_min": 0.9814,
+   "rtf1_med": 0.9981,
+   "simlag_max_s": 0.445,
+   "cpu_med": 104.09,
+   "cpu_max": 114.91,
+   "w2bb_windows": 9,
+   "w2bb_alerts": 5
+  },
+  "run_F3B14_163613": {
+   "desc": "hostile cruise-jump",
+   "imu_p50_ms": 4.032,
+   "imu_p95_ms": 8.25,
+   "imu_p99_ms": 10.544,
+   "imu_max_ms": 108.472,
+   "imu_drop_n": 168,
+   "imu_spike_n": 3,
+   "imu_spike_max": 73.09,
+   "age_odometry_p50_ms": 52.0,
+   "age_odometry_p95_ms": 68.0,
+   "age_odometry_max_ms": 144.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "age_imu_propagate_max_ms": 24.0,
+   "rtf1_min": 0.8995,
+   "rtf1_med": 0.9975,
+   "simlag_max_s": 1.349,
+   "cpu_med": 94.05,
+   "cpu_max": 112.33,
+   "w2bb_windows": 13,
+   "w2bb_alerts": 0
+  }
+ },
+ "scatter": {
+  "imu_p50_ms": {
+   "min": 4.029,
+   "max": 4.071,
+   "med": 4.046,
+   "sc": 0.01,
+   "n": 6
+  },
+  "imu_p95_ms": {
+   "min": 8.183,
+   "max": 8.364,
+   "med": 8.2495,
+   "sc": 0.022,
+   "n": 6
+  },
+  "imu_p99_ms": {
+   "min": 9.572,
+   "max": 10.544,
+   "med": 10.1015,
+   "sc": 0.096,
+   "n": 6
+  },
+  "imu_max_ms": {
+   "min": 30.137,
+   "max": 407.584,
+   "med": 109.4665,
+   "sc": 3.448,
+   "n": 6
+  },
+  "imu_drop_n": {
+   "min": 48,
+   "max": 185,
+   "med": 84.0,
+   "sc": 1.631,
+   "n": 6
+  },
+  "age_odometry_p50_ms": {
+   "min": 44.0,
+   "max": 52.0,
+   "med": 48.0,
+   "sc": 0.167,
+   "n": 6
+  },
+  "age_odometry_p95_ms": {
+   "min": 48.0,
+   "max": 72.0,
+   "med": 64.0,
+   "sc": 0.375,
+   "n": 6
+  },
+  "age_odometry_max_ms": {
+   "min": 84.0,
+   "max": 440.0,
+   "med": 106.0,
+   "sc": 3.358,
+   "n": 6
+  },
+  "age_imu_propagate_p50_ms": {
+   "min": 0.0,
+   "max": 4.0,
+   "med": 0.0,
+   "sc": null,
+   "n": 6
+  },
+  "rtf1_min": {
+   "min": 0.8995,
+   "max": 0.9856,
+   "med": 0.9811,
+   "sc": 0.088,
+   "n": 6
+  },
+  "rtf1_med": {
+   "min": 0.9975,
+   "max": 0.9985,
+   "med": 0.998,
+   "sc": 0.001,
+   "n": 6
+  },
+  "simlag_max_s": {
+   "min": 0.342,
+   "max": 1.387,
+   "med": 0.5645,
+   "sc": 1.851,
+   "n": 6
+  },
+  "cpu_med": {
+   "min": 79.74,
+   "max": 104.09,
+   "med": 91.42,
+   "sc": 0.266,
+   "n": 6
+  },
+  "cpu_max": {
+   "min": 92.44,
+   "max": 114.91,
+   "med": 105.675,
+   "sc": 0.213,
+   "n": 6
+  }
+ },
+ "judgment": {
+  "main_features_sc": {
+   "imu_p50_ms": 0.01,
+   "imu_p95_ms": 0.022,
+   "imu_p99_ms": 0.096,
+   "age_odometry_p50_ms": 0.167,
+   "rtf1_med": 0.001
+  },
+  "all_stable_le_030": true,
+  "high_scatter_features_gt_100": [],
+  "clean_side_samples": 0,
+  "queue_face": "absent \u2014 [R3xQ] flight pending",
+  "form": "stable-band"
+ }
+}
