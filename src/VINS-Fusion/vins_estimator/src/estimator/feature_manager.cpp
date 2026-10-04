@@ -476,6 +476,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                 it_per_id.estimated_depth = INIT_DEPTH;
                 t2_stat_init++;
                 t2_stat_init_st++;  // T2-v8.3 unit-1b
+                it_per_id.t2_pseudo = true;  // T2 zeta-fix: mark pseudo source (stereo)
             }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
@@ -565,6 +566,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
                 it_per_id.estimated_depth = INIT_DEPTH;
                 t2_stat_init++;
                 t2_stat_init_m2++;  // T2-v8.3 unit-1b
+                it_per_id.t2_pseudo = true;  // T2 zeta-fix: mark pseudo source (motion2)
             }
             /*
             Vector3d ptsGt = pts_gt[it_per_id.feature_id];
@@ -641,6 +643,7 @@ void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vec
         {
             it_per_id.estimated_depth = INIT_DEPTH;
             t2_stat_init++;
+            it_per_id.t2_pseudo = true;  // T2 zeta-fix: mark pseudo source (svd degenerate)
         }
 
     }

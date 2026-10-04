@@ -54,6 +54,18 @@ extern double T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL;
 extern int T2_DEPTH_GATE_STAGED;   // case-A staged depth gate: reject only in steady state
 extern double T2_STAGED_N_SEC;     // case-A post-init grace window (s) before arming rejection
 extern double T2_W4_BGS_THRESH;    // case-B W4 pre-init gate Bgs line (default 0.5 = legacy hardcode)
+// T2 zeta-fix (odometry re-ignition, X-line trigger; absent keys = legacy bit-identical)
+extern int T2_PSEUDO_DROP;         // exclude pseudo-depth (INIT_DEPTH-injected) features from NON_LINEAR solves
+extern int T2_STARVE_FLOOR;        // track-count floor arming starvation-weighted vision (0 = off)
+extern double T2_STARVE_ALPHA;     // vision sqrt_info scale in starved windows (1.0 = off; 0 = pure IMU+prior)
+
+// T2 zeta-fix: starvation arming predicate — few LK-surviving tracks means the
+// surviving observations are unreliable wholesale (X1prime forensics 2026-10-04:
+// track 9-33 vs hover 120-140, P flip-flopping between two solution bands).
+inline bool t2_starve_now(bool non_linear, int track_num, int floor)
+{
+    return non_linear && floor > 0 && track_num < floor;
+}
 
 // T2-v8.9 case-B: W4 pre-init Bgs-line predicate (0.5 default = bit-identical
 // to the former hardcoded norm()<0.5 in Estimator::initialStructure)

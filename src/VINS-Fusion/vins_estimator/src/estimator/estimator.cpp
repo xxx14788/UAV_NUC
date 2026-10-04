@@ -142,6 +142,9 @@ void Estimator::setParameter()
     // [T2GATECFG] format above is a frozen cross-line contract)
     ROS_WARN("[T2RFIXCFG] w4_bgs=%.4g staged=%d n=%.1f",
              T2_W4_BGS_THRESH, T2_DEPTH_GATE_STAGED, T2_STAGED_N_SEC);
+    // T2 zeta-fix self-attestation (own new line; frozen formats untouched)
+    ROS_WARN("[T2PDROPCFG] pd=%d sf=%d sa=%.2f",
+             T2_PSEUDO_DROP, T2_STARVE_FLOOR, T2_STARVE_ALPHA);
     mProcess.unlock();
 }
 
@@ -1240,6 +1243,33 @@ void Estimator::optimization()
     TicToc t_whole, t_prepare;
     vector2double();
 
+    // T2 zeta-fix: starvation-weighted vision — when few tracks survive LK into
+    // the current frame the surviving observations are unreliable wholesale
+    // (X1prime forensics 2026-10-04: track 9-33 vs hover 120-140 while P
+    // flip-flopped between two solution bands); scale vision sqrt_info by
+    // alpha so the IMU chain + marginal prior dominate the starved window.
+    // Scaled through Solve AND preMarginalize (prior bakes the scale); restored
+    // at every exit. No-op when floor=0 / alpha=1 (defaults, bit-identical).
+    const bool t2_starved = t2_starve_now(solver_flag == NON_LINEAR,
+                                          f_manager.last_track_num, T2_STARVE_FLOOR);
+    const Matrix2d t2_si_save_2f1c = ProjectionTwoFrameOneCamFactor::sqrt_info;
+    const Matrix2d t2_si_save_2f2c = ProjectionTwoFrameTwoCamFactor::sqrt_info;
+    const Matrix2d t2_si_save_1f2c = ProjectionOneFrameTwoCamFactor::sqrt_info;
+    auto t2_restore_vision_si = [&]()
+    {
+        ProjectionTwoFrameOneCamFactor::sqrt_info = t2_si_save_2f1c;
+        ProjectionTwoFrameTwoCamFactor::sqrt_info = t2_si_save_2f2c;
+        ProjectionOneFrameTwoCamFactor::sqrt_info = t2_si_save_1f2c;
+    };
+    if (t2_starved)
+    {
+        ProjectionTwoFrameOneCamFactor::sqrt_info *= T2_STARVE_ALPHA;
+        ProjectionTwoFrameTwoCamFactor::sqrt_info *= T2_STARVE_ALPHA;
+        ProjectionOneFrameTwoCamFactor::sqrt_info *= T2_STARVE_ALPHA;
+        printf("[T2starve] t=%.4f track=%d alpha=%.2f\n",
+               Headers[frame_count], f_manager.last_track_num, T2_STARVE_ALPHA);
+    }
+
     ceres::Problem problem;
     ceres::LossFunction *loss_function;
     //loss_function = NULL;
@@ -1363,6 +1393,7 @@ void Estimator::optimization()
     int feature_index = -1;
     // T2-WA4G: chi2-rejected track ids (also honored by the marginalization loop below)
     std::set<int> t2_chi2_rejected;
+    std::set<int> t2_pseudo_rejected;  // T2 zeta-fix: pseudo-depth features quarantined this solve
     int t2_chi2_total = 0;
     for (auto &it_per_id : f_manager.feature)
     {
@@ -1371,6 +1402,17 @@ void Estimator::optimization()
             continue;
 
         ++feature_index;
+
+        // T2 zeta-fix: fake INIT_DEPTH depths form a coherent wrong minimum
+        // with small residuals that no robust loss can see (Cauchy probe
+        // 2026-10-04 cured the flip-flop but left ~1.6m; the self-consistent
+        // fake-depth branch is invisible to it). Quarantine the feature from
+        // the NON_LINEAR solve; INITIAL untouched (fill-window semantics).
+        if (T2_PSEUDO_DROP && solver_flag == NON_LINEAR && it_per_id.t2_pseudo)
+        {
+            t2_pseudo_rejected.insert(feature_index);
+            continue;
+        }
 
         // T2-WA4G: chi-square pre-gate - reproj residual e^Te (FOCAL/1.5 weighted) vs chi2(2dof,conf)*m*n_obs
         if (T2_CHI2_GATE)
@@ -1584,7 +1626,10 @@ void Estimator::optimization()
     //printf("frame_count: %d \n", frame_count);
 
     if(frame_count < WINDOW_SIZE)
+    {
+        t2_restore_vision_si();
         return;
+    }
 
     // T2-WA2G: prior health gate - break the polluted-prior carry chain.
     // triggers: init_cost spike | inter-frame ||dBAS|| | prior share of [T2cost];
@@ -1674,6 +1719,8 @@ void Estimator::optimization()
                 ++feature_index;
                 if (t2_chi2_rejected.count(feature_index))
                     continue;  // T2-WA4G: chi2-rejected tracks stay out of the prior too
+                if (t2_pseudo_rejected.count(feature_index))
+                    continue;  // T2 zeta-fix: pseudo-depth quarantine honored by the prior
 
                 int imu_i = it_per_id.start_frame, imu_j = imu_i - 1;
                 if (imu_i != 0)
@@ -1818,6 +1865,7 @@ void Estimator::optimization()
     }
     //printf("whole marginalization costs: %f \n", t_whole_marginalization.toc());
     //printf("whole time for ceres: %f \n", t_whole.toc());
+    t2_restore_vision_si();  // T2 zeta-fix: restore vision sqrt_info (prior already baked the scale)
 }
 
 void Estimator::slideWindow()

@@ -12,6 +12,9 @@
 double INIT_DEPTH;
 // T2-WA1G: depth-domain gate globals
 int T2_DEPTH_GATE = 0;
+int T2_PSEUDO_DROP = 0;          // T2 zeta-fix: 0=off=bit-identical
+int T2_STARVE_FLOOR = 0;         // T2 zeta-fix: 0=off
+double T2_STARVE_ALPHA = 1.0;    // T2 zeta-fix: 1.0=off
 int T2_DEPTH_GATE_STAGED = 0;     // T2-v8.9 case-A: 0=off=bit-identical
 double T2_STAGED_N_SEC = 80.0;    // T2-v8.9 case-A: post-init grace (VR2 rebuild-onset 4.3-78.7s conservative upper bound)
 double T2_W4_BGS_THRESH = 0.5;    // T2-v8.9 case-B: W4 Bgs line, 0.5 = legacy hardcode
@@ -156,6 +159,12 @@ void readParameters(std::string config_file)
         T2_STAGED_N_SEC = (double)fsSettings["t2_staged_n_sec"];
     if (!fsSettings["t2_w4_bgs_thresh"].empty())
         T2_W4_BGS_THRESH = (double)fsSettings["t2_w4_bgs_thresh"];
+    if (!fsSettings["t2_pseudo_drop"].empty())
+        T2_PSEUDO_DROP = (int)fsSettings["t2_pseudo_drop"];
+    if (!fsSettings["t2_starve_floor"].empty())
+        T2_STARVE_FLOOR = (int)fsSettings["t2_starve_floor"];
+    if (!fsSettings["t2_starve_alpha"].empty())
+        T2_STARVE_ALPHA = (double)fsSettings["t2_starve_alpha"];
     if (!fsSettings["t2_depth_min"].empty())
         T2_DEPTH_MIN = (double)fsSettings["t2_depth_min"];
     if (!fsSettings["t2_depth_max"].empty())
@@ -178,6 +187,8 @@ void readParameters(std::string config_file)
            T2_DEPTH_GATE, T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL);
     printf("T2_ROUTEFIX: staged=%d n=%.1f w4_bgs=%.4g\n",
            T2_DEPTH_GATE_STAGED, T2_STAGED_N_SEC, T2_W4_BGS_THRESH);
+    printf("T2_ZETAFIX: pd=%d sf=%d sa=%.2f\n",
+           T2_PSEUDO_DROP, T2_STARVE_FLOOR, T2_STARVE_ALPHA);
     // T2-WA23456G knobs (absent = legacy)
     if (!fsSettings["t2_vision_loss"].empty())
         T2_VISION_LOSS = (int)fsSettings["t2_vision_loss"];

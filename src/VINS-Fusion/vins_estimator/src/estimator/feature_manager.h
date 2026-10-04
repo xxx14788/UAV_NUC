@@ -68,6 +68,8 @@ class FeaturePerId
     double estimated_depth;
     int solve_flag; // 0 haven't solve yet; 1 solve succ; 2 solve fail;
     int t2_xcheck_frame = -100;  // T2-WA1 xcross: last frame this feature's stereo-vs-SVD dual-solution was dumped
+    bool t2_pseudo = false;      // T2 zeta-fix: estimated_depth came from the INIT_DEPTH pseudo-injection path
+                                 // (permanent quarantine: depth>0 blocks re-triangulation, so the flag never clears)
 
     FeaturePerId(int _feature_id, int _start_frame)
         : feature_id(_feature_id), start_frame(_start_frame),
