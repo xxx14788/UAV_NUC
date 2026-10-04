@@ -58,7 +58,14 @@
 | MACH4 | 01:25:23 | 守护 | FAIL（FAILDET n=2） | **w2bb HF 坍缩窗 t_ros≈175 logE_hf=−7.85 vs 两端 −4.0/−2.2（深度 3.6+d）+大分离形态 p95 cmd-odom 700m** |
 | MACH5 | 01:32:33 | 守护 | （FAIL 带定，探针自 CPU 14% 大流量窗） | 六面全活 |
 | MACH6 | 01:39:44 | 守护 | FAIL（H-1 planner_kill+降落段） | 六面全活 |
-| MACH7 | 01:46:57 | 守护（迟挂 19s） | 进行中 | **w2bbp 双流首验出数** |
+| MACH7 | 01:46:57 | 守护（迟挂 19s） | FAIL | **w2bbp 双流首验出数**（logE_hf=−1.33+d_logE=0.155） |
+| MACH8 | 01:54:11 | 守护 | FAIL | **HF 零告警（坍缩 2.1d 无 alert）=净窗候选** |
+| MACH9 | 02:01:33 | 守护 | FAIL | 浅坍缩 4.7d×2 |
+| MACH10 | 02:08:46 | 守护 | FAIL | 6.2d×7+w2bbp 7.6d×7 |
+| MACH11 | 02:15:59 | 守护 | FAIL | 10.0d×10+w2bbp 8.3d×4 |
+| MACH12 | 02:23:12 | 守护 | FAIL（FAILDET n=1） | **HF 零告警（5.7d 无 alert）=净窗候选** |
+
+**12 轮探针面汇总（02:36 通告 @T2）**：HF 坍缩二分=10 轮告警（4.7-10.6 decades，F3B15 −2.27d 同族 3090 复证+更深）vs MACH8/12 零告警（非坍缩型 FAIL=净窗候选，P2 A/B 窗触发件）；双流 w2bbp 与 w2bb 同构坍缩=prop/odom 输出双流共染（进程内病灶 3090 复证）；img_fp 12 轮 dup_run_max=0+gap 79-121ms 正常带=输入面全净机器层排除再 +1 证。产物=probe_mach_summary.json+11 份 probe_r3x.jsonl。判定权归 T2（敌对率 vs 83% 基线 → H-machine 分叉）。
 
 ## B. 待办（滚动）
 
