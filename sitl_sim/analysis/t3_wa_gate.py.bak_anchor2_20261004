@@ -1036,10 +1036,7 @@ def run_selftest(th):
 # ctrl clean 锚;WC2OBS1=v1.3 任一门 TNR 活锚(faildet 真触发+post 大误差被 L2b 拦)+
 # 数值溢出型 morph+j0 369.839。
 SELFTEST_ONLINE = {
-    # 锚重建#3(2026-10-04 09:3x):三锚自持 x11_dryrun_v11(锚袋删除事故第二例后定稿;
-    # WC2OBS1 退役=T4 05:23 §8.1 顺位2 删除,pre_v13 json 存档其真读数)
-    "ANCHOR_U3PO": {
-        "base": "x11",
+    "run_U3PO_211438": {
         "verdict": "FAIL",
         "expect": [
             ("four_arrive", 0, None),          # 到位 4.436m(静止机-目标距,单元 3.5 定案)
@@ -1053,32 +1050,16 @@ SELFTEST_ONLINE = {
             ("controlled_state", "clean", None),  # 零触发零 faildet(log 实测)
         ],
     },
-    "U3R_t2v3_route_033941": {
-        "base": "x11",
+    "run_WC2OBS1_032005": {
         "verdict": "FAIL",
         "expect": [
-            ("four_arrive", 0, None),          # 到位远超门(route 风暴轮)
-            ("j0_jump", 25.467, 0.01),         # RESULT 锚差(门不复位缺陷标本轮)
-            ("reboot_n", 0, None),
-            ("odom_gaps", 0, None),
-            ("bas_peak", 7.1663, 0.05),        # Bas 风暴峰(健康域 0.981 的 7 倍)
-            ("vins_pass", False, None),
-            ("scene", "obstacles", None),
-            ("controlled_state", "triggered-no-recovery", None),  # TNR 教科书锚:5fires+14faildet,统一锚 legacy@49.376,L2b 791.9 拦
-        ],
-    },
-    "U3R_t2v3_hover_035509": {
-        "base": "x11",
-        "verdict": "FAIL",
-        "expect": [
-            ("four_arrive", 0, None),
-            ("j0_jump", 1.157, 0.01),
-            ("reboot_n", 0, None),
-            ("odom_gaps", 1, None),            # 单断流段(reboot 对号)
-            ("bas_peak", 3.5778, 0.02),
-            ("vins_pass", False, None),
-            ("scene", "obstacles", None),
-            ("controlled_state", "controlled", None),  # controlled 锚:legacy@46.476,L2a 96/L2b p95 0.0755(v1.3 舰队首翻样本)
+            ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
+            ("gate_m", 0.75, None),            # 场景分门(用户 10-01 裁决)obstacles 系门
+            ("j0_jump", 369.839, 0.01),        # RESULT.txt 锚差 369.84m(远超门,判决不翻转)
+            ("controlled_state", "triggered-no-recovery", None),  # v1.3 活锚:legacy 真触发+post 大误差 L2b 拦
+            ("t1d1_domain", True, None),       # j0>0.5 且 vins 域健康
+            ("morph_diverged", True, None),    # 数值溢出型(含 extreme/非有限帧)
+            ("fj_raw_ge", 100, None),          # forensics 实测 512
         ],
     },
 }
@@ -1087,12 +1068,10 @@ SELFTEST_ONLINE = {
 def run_online_selftest(th):
     base = os.path.expanduser("~/sitl_sim/vins_smoke_runs")
     results, ok_all = [], True
-    x11 = os.path.expanduser("~/sitl_sim/t3_results/x11_dryrun_v11")
     for name, spec in SELFTEST_ONLINE.items():
-        cell_base = x11 if spec.get("base") == "x11" else base
-        rep = judge_online_dir(os.path.join(cell_base, name), th,
+        rep = judge_online_dir(os.path.join(base, name), th,
                                skip_forensics=bool(spec.get("skip_forensics")))
-        with open(os.path.join(cell_base, name, "wa_gate_online.json"), "w") as f:
+        with open(os.path.join(base, name, "wa_gate_online.json"), "w") as f:
             json.dump(rep, f, ensure_ascii=False, indent=1)
         x, v, fo = rep.get("xline", {}), rep.get("vins", {}), rep.get("forensics", {})
         b = v.get("bas", {})

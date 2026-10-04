@@ -1,0 +1,81 @@
+P2 re-regression v1.3 全量(判读器 e3478a88;运行窗=04:5x IO静窗)
+对象=46 目录(回归=4 新登记=20 错误=0)
+
+== 判值面漂移(须=0) ==
+run_E2FAIL3_024009.counting: None -> False; run_E2FAIL5_024737.counting: None -> False; run_E2PROBE_022152.counting: None -> False; run_E4_GOFF_D10_192513.counting: None -> False; run_E4_GOFF_D10_193039.counting: None -> False; run_E4_GOFF_D10_R2_194927.counting: None -> False; run_U3PH_210708.four: [None, 1, 0, 0] -> [0, 1, 0, 0]; run_U3PH_210708.counting: None -> False; run_U7OL1_195920.counting: None -> False; run_U7OL2_202043.counting: None -> False; run_V8_PROBECHECK_205100.counting: None -> False; run_WAOL5_221128.counting: None -> False; run_WC2OBS1_030927.counting: None -> False; run_WD1_024016.counting: None -> False; run_X1_000718.counting: None -> False; run_X1_002244.counting: None -> False; run_X1_223836.counting: None -> False; run_X1final_043355.counting: None -> False; run_X1final_101627.counting: None -> False; run_X1final_104445.counting: None -> False; run_X1final_104720.counting: None -> False; run_X1final_105449.counting: None -> False; run_X1final_172424.counting: None -> False
+
+== 受控层态变化(合法面=任一门L1) ==
+run_E2FAIL3_024009: None -> clean
+run_E2FAIL5_024737: None -> log-missing
+run_E2PROBE_022152: None -> clean
+run_E4_GOFF_D10_192513: None -> clean
+run_E4_GOFF_D10_193039: None -> triggered-no-recovery
+run_E4_GOFF_D10_R2_194927: None -> triggered-no-recovery
+run_U3PH_210708: None -> triggered-no-recovery
+run_U7OL1_195920: None -> triggered-no-recovery
+run_U7OL2_202043: None -> clean
+run_V8_PROBECHECK_205100: None -> clean
+run_WAOL5_221128: None -> clean
+run_WC2OBS1_030927: None -> uncontrolled-fail
+run_WC2OBS1_032005: triggered-no-recovery -> uncontrolled-fail
+run_WD1_024016: None -> clean
+run_X1_000718: None -> log-missing
+run_X1_002244: None -> log-missing
+run_X1_223836: None -> clean
+run_X1final_043355: None -> triggered-no-recovery
+run_X1final_101627: None -> triggered-no-recovery
+run_X1final_104445: None -> log-missing
+run_X1final_104720: None -> triggered-no-recovery
+run_X1final_105449: None -> triggered-no-recovery
+run_X1final_172424: None -> triggered-no-recovery
+
+== 错误目录 ==
+无
+
+== 全表 ==
+run_E2FAIL3_024009             clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_E2FAIL5_024737             log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_E2PROBE_022152             clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_E4R2-GOFF-D10-LODOM_100819 clean                  verdict=FAIL             j0=1.892     four=[0, 1, 1, 0] (v12态=(new))
+run_E4R2-GOFF-D10_095056       clean                  verdict=FAIL             j0=0.057     four=[0, 1, 1, 0] (v12态=(new))
+run_E4R2-GOFF-D30-I125_103836  clean                  verdict=FAIL             j0=0.016     four=[0, 1, 0, 1] (v12态=(new))
+run_E4R2-GOFF-D30_102511       clean                  verdict=FAIL             j0=0.118     four=[0, 1, 1, 0] (v12态=(new))
+run_E4R2-GOFF-D60_103420       clean                  verdict=FAIL             j0=0.031     four=[1, 1, 1, 0] (v12态=(new))
+run_E4R2-GON-D10_095654        clean                  verdict=FAIL             j0=0.122     four=[0, 1, 1, 0] (v12态=(new))
+run_E4R2-GON-D30_101723        triggered-no-recovery  verdict=FAIL             j0=10.156    four=[0, 1, 1, 0] (v12态=(new))
+run_E4R2-REGRESS_104334        clean                  verdict=FAIL             j0=0.142     four=[1, 1, 1, 0] (v12态=(new))
+run_E4_GOFF_D10_192513         clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_E4_GOFF_D10_193039         triggered-no-recovery  verdict=FAIL             j0=25.481    four=[0, 1, 0, 0] (v12态=None)
+run_E4_GOFF_D10_R2_194927      triggered-no-recovery  verdict=FAIL             j0=8.711     four=[0, 1, 0, 0] (v12态=None)
+run_F3B2_031639                log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_F3B2_032241                log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_F3B2_034130                log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_F3B2_035213                clean                  verdict=FAIL             j0=0.123     four=[0, 1, 1, 0] (v12态=(new))
+run_F3B3_042444                clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_F3B4_043658                clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_F3B_023027                 clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_T2U4OBS1_031531            log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=(new))
+run_T2U4OBS1_031909            clean                  verdict=ENV-FAIL         j0=1.249     four=[0, 1, 1, 0] (v12态=(new))
+run_T2U4OBS1r_032512           triggered-no-recovery  verdict=FAIL             j0=7.465     four=[0, 1, 1, 0] (v12态=(new))
+run_T2U4OBS2_033232            triggered-no-recovery  verdict=FAIL             j0=3.931     four=[0, 1, 1, 0] (v12态=(new))
+run_U25FIX_035839              controlled             verdict=FAIL             j0=1.937     four=[0, 1, 1, 0] (v12态=(new))
+run_U3PH_210708                triggered-no-recovery  verdict=FAIL             j0=140.623   four=[0, 1, 0, 0] (v12态=None)
+run_U3PO_211438                clean                  verdict=FAIL             j0=2.603     four=[0, 1, 1, 0] (v12态=clean)
+run_U7OL1_195920               triggered-no-recovery  verdict=FAIL             j0=609.775   four=[0, 1, 1, 0] (v12态=None)
+run_U7OL2_202043               clean                  verdict=FAIL             j0=0.392     four=[0, 1, 1, 0] (v12态=None)
+run_V8_PROBECHECK_205100       clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_WAOL5_221128               clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_WC2OBS1_030927             uncontrolled-fail      verdict=FAIL             j0=917.758   four=[0, 1, 1, 0] (v12态=None)
+run_WC2OBS1_032005             uncontrolled-fail      verdict=FAIL             j0=369.839   four=[0, 1, 1, 0] (v12态=triggered-no-recovery)
+run_WD1_024016                 clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_X1_000718                  log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_X1_002244                  log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_X1_223836                  clean                  verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_X1final_040643             clean                  verdict=FAIL             j0=2.594     four=[0, 1, 1, 1] (v12态=clean)
+run_X1final_043355             triggered-no-recovery  verdict=FAIL             j0=102.704   four=[None, None, None, None] (v12态=None)
+run_X1final_101627             triggered-no-recovery  verdict=FAIL             j0=471.179   four=[0, 1, 1, 0] (v12态=None)
+run_X1final_104445             log-missing            verdict=FAIL             j0=None      four=[None, None, None, None] (v12态=None)
+run_X1final_104720             triggered-no-recovery  verdict=ENV-FAIL         j0=57.484    four=[0, 1, 0, 0] (v12态=None)
+run_X1final_105449             triggered-no-recovery  verdict=FAIL             j0=890.535   four=[0, 1, 0, 1] (v12态=None)
+run_X1final_172424             triggered-no-recovery  verdict=FAIL             j0=6.042     four=[0, 1, 0, 0] (v12态=None)
+run_X2g1_041203                controlled             verdict=FAIL             j0=0.674     four=[0, 1, 0, 0] (v12态=controlled)
