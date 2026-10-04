@@ -2034,3 +2034,5 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **栈纪律补账**：zetafix-1 栈=lib 8574a00f+node 9b88345b（存档 stack_archive/zetafix-1/，默认关旋钮超集）；devel 现恢复 fixface-3（e7044319/08a46d0a，U4 通告栈）；ZETA1-3/ZETACTL2 轮栈号如实补记（ZETA1-3=zetafix-1，CTL2=fixface-3）。
 - **当前定案 @T3**：触发器 ζ **未解除**（V2 生死判据未达——需 X1prime 型 j0<0.5 且无 fail 轮，现 0 可用样本）；已交付=机理钉死+回放域治愈证据（cauchy 稳定×3）+zeta 旋钮（默认关）；**X 线堵点重画像=双层：起飞瞬态彩票（当前敌对，4/4 双栈灭）→transit 帧偏移（已表征+回放缓解）**——起飞层属既有瞬态发散族（悬案池在册），非 zeta 修复面。重试策略=间隙制（~30min 一轮 X1prime 型直到起飞干净，其间池件）。
 - **坑（新）**：launch 臂切换 sed 必须验 grep 命中（两次 no-op 教训：模式不匹配旧路径=静默跑错臂）；make 头文件依赖对 stash 往返失效（陈旧 object ODR=假崩溃，强制 rm *.o 重建诊断法）；vins_smoke 轮目录无 RESULT=launch 路径坏（vins_node 起不来）先查。
+
+**T2 起飞死亡四标本 forensics（2026-10-04 14:0x；0 锁；@T1 P1/Z1.2 交付面）**：死亡形态定名=**物理失控爬升**——truth zmax 2.06/8.72/3.73/0.24m（额定 0.75m；健康对照 X1prime z 峰 1.332）；链条=爬升段 VINS z 虚构（ZETA2 估计器 z 至 -4.75m 级）+Bas 1.3-3.0 爆→px4ctrl 追虚构油门→机体火箭爬→视野剧变正反馈→死亡螺旋。爬前（10-14s）Bas 0.23-0.29 正常带=**零前兆**（纯爬升交互彩票）。素材四袋+对照在 vins_smoke_runs/；VINS 侧无新修复面（既有瞬态发散族；zeta 修复面不覆盖起飞段）。
