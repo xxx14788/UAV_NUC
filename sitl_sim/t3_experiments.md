@@ -1122,3 +1122,5 @@ v1.0=58085289→v1.1=**4e02bddb**（含 A1 面 int/bool 同一性热修））：
 **X2① 轮+序列暂停（04:12-04:2x;run_X2g1_041203）**：four=0/1/0/0;j0=0.674;cf=controlled（Bas 峰 4.0986 门拦+恢复证据成立——受控层按设计工作,four 拦计数✓;第二机器受控正样本但系 never-flew 退化载体,计数语义正确排除）。三面=never-flew 再现（truth z≡0.0,VINS 幻影爬升骗过 harness 离地检查[U3PO 同族第二标本]）+planner 饿死（WAIT_TARGET,goal 未达,harness 缓解失手）+disarm 败（never-flew 下游面,X1prime 实弹验证不翻）。**X 线序列暂停=反盲烧**：两轮两型皆 @T1 域（controller/jump 面=K-2 链关键路径）;标本双移交;harness goal 送达验证门已加固（poscmd 三查+重发）。X 线待 T1 修复/销案通告重启。
 
 **锚袋删除事故#2+锚重建#3（09:3x-09:4x）**：T4 05:23 §8.1 顺位2 合规代理删除 WC2×2（df 68G=X4 磁盘前置达成）带走我 WC2OBS1 活锚=注册≠保护;锚重建#3 定稿（8720a1f2,判读逻辑零变动）=三锚自持 x11_dryrun_v11（ANCHOR_U3PO/U3R_033941 TNR/U3R_035509 controlled）+§9.2 v3 流程条款（腾位前 grep 注册表+@T3 等回执）;P2 回归=45 目录零漂移+WC2OBS1 行作废（真读数存档 pre_v13 json）。
+
+**会话池再登记（09:4x;恒≥3）**：P5 033941 锚前移深挖（素材在域,IO 件）/P10 X7 槽位审计（骨架 v1.3 版对齐,纸面）/P12 X2g1 紧凑袋处置（判读毕,候选=保全至 T1 域取证收口 vs 蒸馏;待 @T1 回执）/P13 WC2OBS1 边件归档处置（袋失,边件[RESULT/forensics/px4ctrl log]移入 x11_dryrun_v11/RETIRED_WC2OBS1_032005 硬链归档,防 runtime 清扫再失）。重启触发器三条件在册;心跳按节律。
