@@ -12,6 +12,62 @@
 using namespace ros;
 using namespace Eigen;
 ros::Publisher pub_odometry, pub_latest_odometry;
+
+// [W2BB] T1 w2b B-path dual-stream divergence monitor (offline-validated:
+// w2b_joint_prereg_v1_1 PASS 4/4 four-type + zero FP on healthy).
+// B1: |z_odom - z_prop| > 1.0 m for >=2 consecutive odom publishes
+//      (latest prop within 0.5 s; prop @200Hz -> pairing ~5 ms).
+// B2: after warmup (>=20 samples BOTH streams), odom silence >2 s window
+//      with >=2 s streak while prop keeps publishing (offline prop>=5/2s
+//      is always-true at in-process rate; simplified to prop arrival).
+// env T1_W2BB, default OFF; 1 Hz banner; O(1) per publish.
+static bool g_w2bb = (::getenv("T1_W2BB") != nullptr);
+struct W2BBMon {
+    int n_odom = 0, n_prop = 0;
+    double t_prop = -1, z_prop = 0;
+    double t_odom_last = -1;
+    int b1_consec = 0;
+    double b2_streak_start = -1;
+    double last_banner = 0;
+    void banner(double t, const char *type, double v) {
+        double now = ros::Time::now().toSec();
+        if (now > 0 && now - last_banner < 1.0) return;
+        last_banner = now;
+        printf("[W2BB] t=%.3f %s v=%.3f (T1 dual-stream divergence)\n", t, type, v);
+        fflush(stdout);
+    }
+    void on_prop(double t, double z) {
+        if (!g_w2bb) return;
+        n_prop++;
+        t_prop = t; z_prop = z;
+        if (n_odom >= 20 && n_prop >= 20 && t_odom_last > 0) {
+            if (t - t_odom_last > 2.0) {
+                if (b2_streak_start < 0) b2_streak_start = t - 2.0;
+                if (t - b2_streak_start >= 2.0) {
+                    banner(t, "B2", t - t_odom_last);
+                    b2_streak_start = -1;
+                }
+            } else {
+                b2_streak_start = -1;
+            }
+        }
+    }
+    void on_odom(double t, double z) {
+        if (!g_w2bb) return;
+        n_odom++;
+        t_odom_last = t;
+        if (n_odom >= 20 && n_prop >= 20 && t_prop > 0 && fabs(t - t_prop) <= 0.5) {
+            double d = fabs(z - z_prop);
+            if (d > 1.0) {
+                b1_consec++;
+                if (b1_consec >= 2) {
+                    banner(t, "B1", d);
+                    b1_consec = 0;
+                }
+            } else b1_consec = 0;
+        } else b1_consec = 0;
+    }
+} g_w2bb_mon;
 ros::Publisher pub_path;
 ros::Publisher pub_point_cloud, pub_margin_cloud;
 ros::Publisher pub_key_poses;
@@ -52,6 +108,7 @@ void registerPub(ros::NodeHandle &n)
 
 void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, const Eigen::Vector3d &V, double t)
 {
+    g_w2bb_mon.on_prop(t, P.z());
     nav_msgs::Odometry odometry;
     odometry.header.stamp = ros::Time(t);
     odometry.header.frame_id = "world";
@@ -141,6 +198,7 @@ void pubOdometry(const Estimator &estimator, const std_msgs::Header &header)
         odometry.twist.twist.linear.x = estimator.Vs[WINDOW_SIZE].x();
         odometry.twist.twist.linear.y = estimator.Vs[WINDOW_SIZE].y();
         odometry.twist.twist.linear.z = estimator.Vs[WINDOW_SIZE].z();
+        g_w2bb_mon.on_odom(header.stamp.toSec(), estimator.Ps[WINDOW_SIZE].z());
         pub_odometry.publish(odometry);
 
         geometry_msgs::PoseStamped pose_stamped;
