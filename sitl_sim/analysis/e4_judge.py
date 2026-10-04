@@ -25,8 +25,27 @@ def main():
     u = ULog(ulg, None)
     R = {"ulg": ulg, "tag": tag, "dur_s": round((u.last_timestamp - u.start_timestamp)/1e6, 1)}
     lp = get(u, "vehicle_local_position")
+    # H-2 fix (2026-10-04): trim to last-armed. The ulog extends past round
+    # teardown (U25FIX: +43s); VINS death-spiral garbage after disarm sank
+    # EKF2 z to -8m and contaminated J5 (and can contaminate J1). Judge only
+    # the armed flight window.
+    last_armed_us = None
+    vs = get(u, "vehicle_status")
+    if vs:
+        v = vs[0].data
+        for i in range(len(v["timestamp"]) - 1, -1, -1):
+            if v["arming_state"][i] == 2:
+                last_armed_us = float(v["timestamp"][i])
+                break
     if lp:
         d = lp[0].data; t = d["timestamp"]
+        if last_armed_us:
+            keep = set(i for i in range(len(t)) if float(t[i]) <= last_armed_us)
+            if len(keep) > int(len(t)*0.3):
+                d = {k: (vals[[i for i in range(len(vals)) if i in keep]]
+                         if hasattr(vals, "__len__") and not isinstance(vals, str) else vals)
+                     for k, vals in d.items()}
+                t = d["timestamp"]
         s0, s1 = int(len(t)*0.15), len(t)
         xs = [float(d["x"][i]) for i in range(s0, s1)]
         ys = [float(d["y"][i]) for i in range(s0, s1)]
