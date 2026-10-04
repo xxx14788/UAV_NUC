@@ -74,10 +74,6 @@ DEFAULT_THRESH = {
     "online_pair_win_s": 0.2,      # ATE 最近邻配对窗
     "online_j0_rev_raw_max": 0,    # J0 修订: frame_jumps_raw_odom == 0(X1' 验收口径)
     "online_j0_rev_smj_max": 10,   # J0 修订: frame_jumps_smoothed_odom ≤ 10
-    # ---- J0 双口径分解 v1.0(v9.6 单元 2;2026-10-05)纯归因标注列,不进门 ----
-    "j0d_jump_frame_m": 0.1,   # 跳变帧阈=配对差帧间变化>0.1m(forensics frame_jumps_raw_odom 同阈)
-    "j0d_gap_s": 1.0,          # 断流判定:prop 帧间 dt>此值=断流,首帧排除(forensics 同口径)
-    "j0d_dominant_ratio": 2.0, # 主导判定:jump≥2×transit=jump 主导,反之 transit;否则 mixed
     # ---- 场景分门(用户 10-01 裁决;v8.0 等待池②) ----
     # 判定正源=round_result.sh 到位指标(world 参数在握,到位门 0.5/0.75);wa_gate 侧
     # 仅报告 scene/gate_m 供审计(four 继承 RESULT.txt 不重算);J0 锚差门恒 0.5
@@ -752,131 +748,6 @@ def controlled_failure_layer(run_dir, odom, truth, th):
     return out
 
 
-def j0_decomp_layer(run_dir, th):
-    """J0 双口径分解 v1.0(v9.6 单元 2;2026-10-05):j0 锚差 = 跳变分量 + transit 偏移分量。
-
-    正源同源:与 round_result.sh 帧稳定性口径同配对法——
-      a_pre  = 首条 truth(t>=prop0.t) - prop0(袋首锚);
-      a_post = near(prop, prop_end-3) 配 near(truth) 的差(末段锚);
-      j0_total(对账面)= |a_pre - a_post|,与 RESULT 锚差逐位对齐。
-    分解:全程逐 prop 帧 near 配对 truth 得配对差 e_i(3D);帧间变化 de_i = e_i - e_{i-1};
-      跳变帧 = |de_i| > j0d_jump_frame_m(0.1m,forensics frame_jumps_raw_odom 同阈);
-               断流后首帧排除(dt>j0d_gap_s,forensics 同口径);
-      jump_vec    = Σ跳变帧 de_i   —— VINS 帧(再定位/重锚/求解器翻转)单帧贡献;
-      transit_vec = Σ其余帧 de_i   —— transit/慢变偏移分量(平滑漂移,无单帧跳);
-      恒等式 jump_vec+transit_vec = e[i_post]-e[0](数学恒等;残差=断流排除帧贡献,应≈0)。
-    配对噪声假设:model_states(~50Hz)对 imu_propagate(~200Hz) near 配对,健康巡航
-    (≤2m/s)20ms 窗位移≤0.04m<阈;读数健康性由 selftest 三锚+BL5 标本钉值背书。
-    纯归因标注列(dominant,jump/transit/mixed/negligible),不进门不改判值(morph 同族);
-    袋缺 imu_propagate/读袋异常→available=False 判读不崩。
-    """
-    out = {"available": False, "j0_total_m": None, "jump_m": None, "transit_m": None,
-           "jump_frac": None, "n_prop": None, "n_jump_frames": None,
-           "max_frame_de_m": None, "t_start": None, "t_end": None,
-           "residual_m": None, "dominant": None}
-    bag_path = os.path.join(run_dir, "flight.bag")
-    if not os.path.exists(bag_path):
-        return out
-    try:
-        import rosbag
-    except ImportError:
-        return out
-    prop, truth = [], []
-    try:
-        with rosbag.Bag(bag_path, "r") as b:
-            for topic, msg, ts in b.read_messages(
-                    topics=["/vins_estimator/imu_propagate", "/gazebo/model_states"]):
-                t = ts.to_sec() if hasattr(ts, "to_sec") else ts / 1e9
-                if topic == "/vins_estimator/imu_propagate":
-                    p = msg.pose.pose.position
-                    prop.append((t, p.x, p.y, p.z))
-                else:
-                    try:
-                        i = msg.name.index("iris_stereo_vins")  # 红线:name 过滤
-                    except ValueError:
-                        continue
-                    p = msg.pose[i].position
-                    truth.append((t, p.x, p.y, p.z))
-    except Exception as e:
-        print(f"[t3_wa_gate] j0_decomp 读袋异常 {bag_path}: {e!r}", file=sys.stderr)
-        return out
-    if len(prop) < 2 or not truth:
-        return out
-
-    def near(arr, tt):
-        return min(arr, key=lambda q: abs(q[0] - tt))
-
-    # bisect 二分配对(数值与 near 线性扫等价:同一最近邻帧;truth 按袋序≈时间单调)
-    import bisect as _bisect
-    truth_t = [q[0] for q in truth]
-
-    def near_sorted(tt):
-        i = _bisect.bisect_left(truth_t, tt)
-        best, bd = None, math.inf
-        for j in (i - 1, i):
-            if 0 <= j < len(truth):
-                d = abs(truth[j][0] - tt)
-                if d < bd:
-                    bd, best = d, truth[j]
-        return best
-
-    e_seq = []
-    for pt in prop:
-        tg = near_sorted(pt[0])
-        e_seq.append((pt[0], tg[1] - pt[1], tg[2] - pt[2], tg[3] - pt[3]))
-    # 分解窗尾与 round_result a_post 同位:prop[-1].t - 3 的最近 prop 索引
-    t_post_anchor = prop[-1][0] - 3
-    i_post = min(range(len(prop)), key=lambda i: abs(prop[i][0] - t_post_anchor))
-    jump_thr = th["j0d_jump_frame_m"]
-    gap_s = th["j0d_gap_s"]
-    jump_vec = [0.0, 0.0, 0.0]
-    transit_vec = [0.0, 0.0, 0.0]
-    skipped_gap = [0.0, 0.0, 0.0]
-    n_jump = 0
-    max_de = 0.0
-    for i in range(1, i_post + 1):
-        dt = e_seq[i][0] - e_seq[i - 1][0]
-        de = [e_seq[i][k] - e_seq[i - 1][k] for k in (1, 2, 3)]
-        ade = math.sqrt(sum(c * c for c in de))
-        max_de = max(max_de, ade)
-        if dt > gap_s:  # 断流首帧排除(贡献记残差面,不入分量)
-            for k in range(3):
-                skipped_gap[k] += de[k]
-            continue
-        if ade > jump_thr:
-            n_jump += 1
-            for k in range(3):
-                jump_vec[k] += de[k]
-        else:
-            for k in range(3):
-                transit_vec[k] += de[k]
-    delta_total = [e_seq[i_post][k] - e_seq[0][k] for k in (1, 2, 3)]
-    recon = [jump_vec[k] + transit_vec[k] for k in range(3)]
-    residual = math.sqrt(sum((delta_total[k] - recon[k]) ** 2 for k in range(3)))
-    j0_total = math.sqrt(sum(c * c for c in delta_total))
-    jump_m = math.sqrt(sum(c * c for c in jump_vec))
-    transit_m = math.sqrt(sum(c * c for c in transit_vec))
-    r = th["j0d_dominant_ratio"]
-    if j0_total < 0.05:
-        dominant = "negligible"
-    elif jump_m >= r * max(transit_m, 1e-9):
-        dominant = "jump"
-    elif transit_m >= r * max(jump_m, 1e-9):
-        dominant = "transit"
-    else:
-        dominant = "mixed"
-    tot = jump_m + transit_m
-    out.update({"available": True,
-                "j0_total_m": round(j0_total, 4), "jump_m": round(jump_m, 4),
-                "transit_m": round(transit_m, 4),
-                "jump_frac": round(jump_m / tot, 4) if tot > 1e-9 else None,
-                "n_prop": i_post + 1, "n_jump_frames": n_jump,
-                "max_frame_de_m": round(max_de, 4),
-                "t_start": round(e_seq[0][0], 2), "t_end": round(e_seq[i_post][0], 2),
-                "residual_m": round(residual, 4), "dominant": dominant})
-    return out
-
-
 def judge_online_dir(run_dir, th, skip_forensics=False):
     rep = {"dir": os.path.basename(replay_dir_safe(run_dir)), "mode": "online",
            "thresholds": {k: th[k] for k in th
@@ -975,8 +846,6 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
                     "env_hard": env_hard, "t1d1_domain": t1d1, "pass": xline_pass,
                     "controlled_state": cf["state"], "counting_pass": counting_pass}
     rep["controlled"] = cf
-    # J0 双口径分解 v1.0(v9.6 单元 2):纯归因标注列,X 线轮判读自动携带两分量
-    rep["xline"]["j0_decomp"] = j0_decomp_layer(run_dir, th)
     rep["vins"] = dict(surv, bas=bas_stat, bas_pass=bas_pass, spikes=sp, ate=ate,
                        pass_vins=vins_pass,
                        note_vins=("无 T2diag(旧二进制),Bas 轴不可判→vins 判 False"
@@ -991,13 +860,6 @@ def judge_online_dir(run_dir, th, skip_forensics=False):
 
 def replay_dir_safe(d):
     return d.rstrip("/")
-
-
-def _j0d_str(d):
-    if not d or not d.get("available"):
-        return "-"
-    return (f"jump {d['jump_m']}/transit {d['transit_m']}"
-            f"→{d['dominant']}(njf={d['n_jump_frames']},res={d['residual_m']})")
 
 
 def one_line_online(rep):
@@ -1017,8 +879,7 @@ def one_line_online(rep):
             f"bas_pk={b.get('peak')} bgs_pk={b.get('bgs_peak')} "
             f"ate={v.get('ate', {}).get('ate_rmse_m')} morph={fo.get('morph')} "
             f"cf={rep.get('controlled', {}).get('state')}"
-            f"{'/counting' if x.get('counting_pass') else ''} "
-            f"j0d={_j0d_str(x.get('j0_decomp'))}]")
+            f"{'/counting' if x.get('counting_pass') else ''}]")
 
 
 def one_line(rep):
@@ -1190,8 +1051,6 @@ SELFTEST_ONLINE = {
             ("vins_pass", False, None),        # Bas over → vins False
             ("scene", "obstacles", None),      # round.log world=sitl_world_obstacles
             ("controlled_state", "clean", None),  # 零触发零 faildet(log 实测)
-            ("j0d_jump", 1.9068, 0.02),           # j0_decomp v1.0(1af93720 实跑;mixed 型)
-            ("j0d_transit", 2.9652, 0.02),
         ],
     },
     "U3R_t2v3_route_033941": {
@@ -1206,8 +1065,6 @@ SELFTEST_ONLINE = {
             ("vins_pass", False, None),
             ("scene", "obstacles", None),
             ("controlled_state", "triggered-no-recovery", None),  # TNR 教科书锚:5fires+14faildet,统一锚 legacy@49.376,L2b 791.9 拦
-            ("j0d_jump", 1059.0637, 5.0),        # 风暴轮全窗跳乱(14628 跳变帧,res 12.5=断流排除面)
-            ("j0d_transit", 1026.115, 5.0),
         ],
     },
     "U3R_t2v3_hover_035509": {
@@ -1222,26 +1079,6 @@ SELFTEST_ONLINE = {
             ("vins_pass", False, None),
             ("scene", "obstacles", None),
             ("controlled_state", "controlled", None),  # controlled 锚:legacy@46.476,L2a 96/L2b p95 0.0755(v1.3 舰队首翻样本)
-            ("j0d_jump", 1.858, 0.02),
-            ("j0d_transit", 2.0239, 0.02),
-        ],
-    },
-    # BL5 第四锚(v9.6 单元 2 验证标本;T2 2026-10-04 21:16 收口指认:干净轮+锚差 0.664+
-    # 物理到位 0.736 三件齐):j0_decomp 判读=transit 主导(98%)=transit 地板实证,非帧跳变
-    "run_T2BL5_203404": {
-        "base": "smoke",
-        "verdict": "FAIL",
-        "expect": [
-            ("four_arrive", 0, None),
-            ("j0_jump", 0.664, 0.01),
-            ("reboot_n", 0, None),
-            ("odom_gaps", 0, None),
-            ("bas_peak", 2.2139, 0.02),
-            ("vins_pass", False, None),
-            ("scene", "obstacles", None),
-            ("controlled_state", "clean", None),
-            ("j0d_jump", 0.0179, 0.01),          # transit 地板实证:jump 2.7% vs transit 98%
-            ("j0d_transit", 0.6525, 0.01),
         ],
     },
 }
@@ -1252,7 +1089,7 @@ def run_online_selftest(th):
     results, ok_all = [], True
     x11 = os.path.expanduser("~/sitl_sim/t3_results/x11_dryrun_v11")
     for name, spec in SELFTEST_ONLINE.items():
-        cell_base = x11 if spec.get("base") == "x11" else base  # x11=锚自持;smoke/其他=vins_smoke_runs(base 默认)
+        cell_base = x11 if spec.get("base") == "x11" else base
         rep = judge_online_dir(os.path.join(cell_base, name), th,
                                skip_forensics=bool(spec.get("skip_forensics")))
         with open(os.path.join(cell_base, name, "wa_gate_online.json"), "w") as f:
@@ -1310,14 +1147,6 @@ def run_online_selftest(th):
                 got = fo.get("morph")
                 cond = got in ("爆散", "跳变(离散大帧跳)", "小跳/渐进劣化",
                                "数值溢出型(含 extreme 帧)", "数值溢出型(含 extreme/非有限帧)")
-            elif key == "j0d_jump":
-                jd = (x.get("j0_decomp") or {})
-                got = jd.get("jump_m")
-                cond = got is not None and abs(got - ref) <= tol
-            elif key == "j0d_transit":
-                jd = (x.get("j0_decomp") or {})
-                got = jd.get("transit_m")
-                cond = got is not None and abs(got - ref) <= tol
             elif key == "controlled_state":
                 got = x.get("controlled_state")
                 cond = got == ref
@@ -1381,8 +1210,6 @@ def main():
     ap.add_argument("--thresholds", default=None, help="阈值 JSON(默认脚本同目录)")
     ap.add_argument("--csv", default=None, help="追加汇总 CSV(矩阵批)")
     ap.add_argument("--selftest", action="store_true")
-    ap.add_argument("--j0-decomp", action="store_true",
-                    help="J0 双口径分解独立模式(袋读+分解报告,不改判读;@T2 B1 消费入口)")
     ap.add_argument("--online", action="store_true",
                     help="在线判决模式:输入=vins_smoke_runs/run_* 目录")
     ap.add_argument("--skip-forensics", action="store_true",
@@ -1398,24 +1225,6 @@ def main():
         with open(tpath, "r", errors="replace") as f:
             th.update(json.load(f))
 
-    if args.j0_decomp:
-        if not args.dirs:
-            ap.error("--j0-decomp 需要至少一个 run 目录")
-        for d in args.dirs:
-            rep = {"dir": os.path.basename(replay_dir_safe(d)),
-                   "j0_decomp": j0_decomp_layer(d, th)}
-            outp = os.path.join(d, "j0_decomp.json")
-            with open(outp, "w") as f:
-                json.dump(rep, f, ensure_ascii=False, indent=1)
-            print(one_line_online({"dir": rep["dir"], "verdict": "J0-DECOMP",
-                                   "xline": {"j0_decomp": rep["j0_decomp"]},
-                                   "vins": {}, "forensics": {}, "controlled": {}})
-                  if False else
-                  f"{rep['dir']}: {_j0d_str(rep['j0_decomp'])} "
-                  f"j0_total={rep['j0_decomp'].get('j0_total_m')} "
-                  f"(窗 {rep['j0_decomp'].get('t_start')}→{rep['j0_decomp'].get('t_end')}, "
-                  f"n_prop={rep['j0_decomp'].get('n_prop')}) -> {outp}")
-        sys.exit(0)
     if args.online and args.selftest:
         sys.exit(run_online_selftest(th))
     if args.selftest:

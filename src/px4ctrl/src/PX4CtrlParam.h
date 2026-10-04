@@ -83,6 +83,16 @@ public:
 		double gap_sec;
 		double birth_thresh;
 	} p1_rebirth;
+	// T1-P2 (v11.4 unit 3): cmd-response divergence gate params
+	// (frozen v1: eps_static 0.5 m / drift_rate 0.21 m/s / win 10 s —
+	// u3_hover_drift_verdict.md caliber; SITL yaml only, default OFF)
+	struct
+	{
+		bool enabled;
+		double win_sec;
+		double eps_static_m;
+		double drift_rate_mps;
+	} p2_cmdresp;
 
 	int pose_solver;
 	double mass;

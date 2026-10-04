@@ -50,7 +50,8 @@ enum RejectReason : int
     RJ_STATE,         // CMD_CTRL LAND: must be triggered in AUTO_HOVER
     RJ_DISARMED,      // U2.7: LAND ignored, disarmed (nothing to land)
     RJ_MANUAL_PRIO,   // U2.7: RC connected / no odom / vel>3 — manual priority or unsafe
-    RJ_BIRTH_MISMATCH // P1: odom rebirth birth-offset latched (U9 1.42m family)
+    RJ_BIRTH_MISMATCH, // P1: odom rebirth birth-offset latched (U9 1.42m family)
+    RJ_CMDRESP        // P2: cmd-response divergence latched (v11.4 unit 3, u3 hover-8.5m family)
 };
 
 struct Inputs
@@ -74,6 +75,7 @@ struct Inputs
     double dt_takeoff = 1e9;    // now - toggle_takeoff_land_time
     bool no_rc = false;         // param.takeoff_land.no_RC (U2.7)
     bool birth_mismatch = false; // P1: rebirth birth-offset latched (cleared on disarm)
+    bool cmdresp_divergent = false; // P2: cmd-response divergence latched (cleared on recover/disarm)
 };
 
 struct Outcome
@@ -109,6 +111,7 @@ inline Outcome decide_manual(const Inputs &in)
     {
         if (!in.odom_ok)     { o.reject = true; o.reason = RJ_NO_ODOM; return o; }
         if (in.birth_mismatch) { o.reject = true; o.reason = RJ_BIRTH_MISMATCH; return o; } // P1
+        if (in.cmdresp_divergent) { o.reject = true; o.reason = RJ_CMDRESP; return o; } // P2
         if (in.cmd_ok)       { o.reject = true; o.reason = RJ_CMD_ACTIVE; return o; }
         if (in.odom_v > 3.0) { o.reject = true; o.reason = RJ_VEL; return o; }
         o.next = AUTO_HOVER; o.offboard_on = true; return o;
@@ -116,6 +119,7 @@ inline Outcome decide_manual(const Inputs &in)
     if (in.takeoff_trigger)
     {
         if (!in.odom_ok)     { o.reject = true; o.reason = RJ_NO_ODOM; return o; }
+        if (in.cmdresp_divergent) { o.reject = true; o.reason = RJ_CMDRESP; return o; } // P2
         if (in.cmd_ok)       { o.reject = true; o.reason = RJ_CMD_ACTIVE; return o; }
         if (in.odom_v > 0.1) { o.reject = true; o.reason = RJ_VEL; return o; }
         if (!in.landed)      { o.reject = true; o.reason = RJ_NOT_LANDED; return o; }
