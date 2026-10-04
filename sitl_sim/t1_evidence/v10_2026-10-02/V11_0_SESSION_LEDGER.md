@@ -103,3 +103,32 @@ T3 02:50 df 斜率告警（50→31G/10min，T2 复裁轮带图录制）——T1 
 **H-4（新坑，环境级）**：飞行基础设施持续性效死——04:12 后四轮三例 never-flew（X2g1/F3B3/F3B4；X1final 04:06 最后飞行轮），签名一致（armed ✓/fsm 流转 ✓/setpoint_raw 115Hz ✓/truth z≡0.0 电机不转）；每轮 SITL+mavros 重启仍死=非进程残留型；修复面=T1 下会话首件（G1 TCPROS 悬案合流+mavlink 流/输出级排查）。**今晚飞行件全挂 H-4**（H-1 完整验证/P1B 注入轮/R3x dry-run 重试）。
 
 **会话总账**（01:49-04:5x）：提交链 2bc0183→…→specimen commit 全推零积压；交付=单元 0 首件/2.8 定案/2.5 定案+修复+xy 实证/2.7 归因+修复+DoD 达成/F3 三件套闭环/P1 全码+健康回归/R3x 双面/w2b 双路/E-5b 首批/M1 二刀负结果/单元 3 定案/H-1 修复/三标本判读/DECISION_LOG 首建+事故处置/K-7 两轮响应。坑登记=H-1(已修欠验)/H-2 L-odom z/H-3 通道审计/H-4 飞行链效死。挂账=P1 A/B、R3x dry-run、w2b 联测、H-2/H-3、E-4 袋 0.9G 释放。轮询转低频（600-900s 节律，心跳 2h）。
+
+## 章 8：晨间续战——H-4 三层定案与三修复验证（09:26-09:5x）
+
+> 时间注记：04:50 后会话中断至 09:26（NUC 墙钟跳变 ~4.6h），晨间续作战果。
+
+### H-4 三层定案（工具 h4_forensics/h4c_climb 入库）
+
+| 层 | 内容 | 处置 |
+|---|---|---|
+| 层 1 | NEVER-FLEW 门 bug：`pose[0]`=**ground_plane** z 恒 0.0（gazebo 世界 models[0] 永远是地面），04:2x 起一切轮 37s 假杀；F3B3/F3B4 五面取证=完全健康飞行（z max 0.93/0.95，爬升逐 bin 与 F3B2 一致） | **已修**：smoke_truthz.py 按模型名取 iris z（双副本 md5 5051224d，.bak_h4b） |
+| 层 2 | F3B5/F3B7=真 VINS 急性混乱（fixface-3）：F3B5 爬升中段死亡（n_v→0）→开环推满 truth 冲 4.5m→**错位重生 z=-0.7m 地下**→饱和震荡→再死→自由落体→**disarmed 静止机幻影爬升 2m**；F3B7=**出生即幻影**（VINS 0.35→5.6m 而 truth 恒 0.104）→bin12 真机火箭至 6.28m→VINS 钻至 **-36m** | T2 域样本（两袋保全：run_F3B5_092608/run_F3B7_093720）；F3B6 另有 15.69m 帧跳变=晨间三例 |
+| 层 3 | **PX4 SITL 参数持久化**：rootfs/parameters.bson 存在（mtime=每轮 boot 时刻）——注入值泄漏进后续 regression 轮（F3B2 ulg=EV15/GPS0 而调用为 0/7 reg）；"RAM-only 不落 bson"旧假设证伪 | **已修**：e4_wheel always-inject（reg 轮显式注入 canonical 0/7=每轮 boot 确定性；**禁删/恢复 bson**——磁标定在其中，.bak_l3 在案） |
+
+### 修复验证轮序列（F3B6-F3B9）
+
+| 轮 | 判定 | 要点 |
+|---|---|---|
+| F3B6（09:32） | **门 ✓ + H-1 ✓** | 全程飞完（门过）；planner_kill.log after_kill=0 + **auto_disarm 0→1**（H-1 链活飞走通=U2.7+H-1 双 DoD 收口）；到位面=VINS 15.69m 帧跳 FAIL（T2 样本） |
+| F3B7（09:37） | NEVER-FLEW（真） | VINS 出生幻影标本（层 2）；探针 rospy 坑二（is_initialized） |
+| F3B8（09:44） | 门 ✓ + disarm=1 ✓ + **VINS 健康**（帧稳 0.026m） | poscmd 0Hz=planner WAIT_TARGET 饿死（goal 投递竞态复发，F3B6 通/F3B8 失=闪失面，T3 域素材 planner.log 在袋）；探针坑三（Rate.tick→sleep） |
+| F3B9（09:49） | NEVER-FLEW（边缘 z=0.2955） | **R3x 探针首数据达成**：139 行六面全活（imu_jit p50 4.06ms/p95 8.2/RTF 0.99/vins CPU 88%/stampage odometry p50 52ms/w2bb 9 窗零告警）——dry-run DoD ✓ |
+
+### 探针三坑（rospy 兼容性，全修）
+
+`get_rostime_initialized`/`is_initialized` 属性不存在（本 rospy 版）→ emit 改 try/except；`Rate.tick()`→`Rate.sleep()`。探针产物=r3x_probe.jsonl+r3x_probe.err 随轮目录。
+
+### 会话挂账（终态）
+
+P1 A/B 注入轮（H-4 解除后可跑）/ F3B5+F3B7 VINS 样本待 T2 回执 / H-2 L-odom z / H-3 ev_yaw 通道审计 / w2b 联测 / E-4 袋 0.9G 释放 / goal 投递竞态（T3 域 F3B8 样本）。

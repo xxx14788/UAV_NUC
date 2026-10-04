@@ -239,8 +239,12 @@ class Probe:
         self.w2bb = W2BB()
 
     def emit(self, face, obj):
+        try:
+            t_ros = rospy.get_time()
+        except Exception:
+            t_ros = 0.0
         rec = {"face": face, "t_wall": time.time(),
-               "t_ros": (rospy.get_time() if rospy.is_initialized() else 0.0),
+               "t_ros": t_ros,
                "mode": self.mode}
         rec.update(obj)
         self.out.write(json.dumps(rec, separators=(",", ":")) + "\n")
@@ -389,7 +393,7 @@ def main():
     rate = rospy.Rate(5)
     while not rospy.is_shutdown():
         probe.maybe_emit()
-        rate.tick()
+        rate.sleep()
     probe.out.close()
 
 
