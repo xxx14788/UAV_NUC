@@ -185,3 +185,6 @@
 | docs/xline_prereg_v1_1.md | f4281363（§7 修正至受控×leg2 语义） | 判据冻结正源 | 修正记录条款制 |
 | sitl_sim/analysis/vins_divergence_forensics.py | 未动（forensics_v2 既有） | J0 修订数据源+形态 | — |
 | docs/xline_opcard_v1.md | 含 §5 v2 走查/§6 x4judge 设计 | 操作卡 | — |
+| sitl_sim/analysis/t4_ref_closure.py | f17ebfcd（2026-10-05 06:45 3090 实读符） | T4 引用闭环扫描（verdicts v2+runbook+近 7d docs 41 件：247 引用/382 出现，177 在/70 缺=双机皆无 61+仅 NUC 9） | 纯读扫描，零改写被扫描件；报告=sitl_sim/t4_evidence/t4_ref_closure_20261005.md（commit 9c5f129）；NUC 腿分类独立复核 74/82 有不一致【高严重】待主会话定稿 |
+
+> T4 迁移注记（2026-10-05，登记性质维护面，判据零触碰）：判读链迁移 K-1 解除（t4_evidence/t4_migration_3090_20261005.md，commit fdab92a「T4-mig3090」，门核=PASS；零漂移证明=三重同字节前提+分层逐位对账+双机回归：dry-run 袋双机 md5 280d5f245cebff60 逐位一致、四工具 md5 双机逐位同、NUC 在册正本三 json 对账闭）。3090=判读执行域；本表 T4 侧工具行自本注记起按行登记，T3 侧既有行不因之改动。
