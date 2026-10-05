@@ -1,0 +1,112 @@
+%YAML:1.0
+
+# A7 仿真 VINS 配置（Gazebo iris_stereo_vins 双目 + mavros IMU，与实机同源架构）
+# 内参来源：SDF hfov=1.2 推算 fx=(320)/tan(0.6)=467.77（cx=w/2+0.5 规律见 B1 报告）
+# 外参来源：iris_stereo_vins.sdf 安装位姿（机体系 x前 y左 z上）
+#   左目光学中心 (0.12, 0.05, 0.03)，右目 (0.12, -0.05, 0.03)，RPY=0
+#   optical->body 旋转 = [[0,0,1],[-1,0,0],[0,-1,0]]（z前 x右 y下 -> x前 y左 z上）
+# IMU：mavros 转发的 PX4 SITL IMU（同实机 realsense 配置做法），
+#   使用前需 mavcmd long 511 105 4000 提到名义 250Hz（SITL 实测 ~223；5000 会锁死 125，见 sitl_sim 文档）
+
+#common parameters
+imu: 1
+num_of_cam: 2
+
+imu_topic: "/mavros/imu/data_raw"
+image0_topic: "/iris_stereo_vins/vins_cam_left/image_raw"
+image1_topic: "/iris_stereo_vins/vins_cam_right/image_raw"
+output_path: "/home/uav/vins_output/"
+
+cam0_calib: "left.yaml"
+cam1_calib: "right.yaml"
+image_width: 640
+image_height: 480
+
+# Extrinsic parameter between IMU(body) and Camera（body=IMU/机体系，cam=optical）
+# T2-R4/R2p (2026-09-29): 外参精确化入库。z 0.03(手推hack) -> -0.02。
+# 推导: gz sdf -p 实证 include-pose 覆盖语义(相机 base 系 z=0, 非 rig 注释 0.035);
+# IMU=iris::/imu_link (0,0,0.02)(gazebo_imu_plugin 挂载); body_T_cam z = 0-0.02。
+# x/y/旋转不变(0.12,±0.05 与惯例矩阵经 phaseCorr 视差自洽+ext:1 终值 x 收敛互证)。
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0.0, 0.0, 1.0, 0.12,
+       -1.0, 0.0, 0.0, 0.05,
+       0.0, -1.0, 0.0, -0.02,
+       0., 0., 0., 1. ]
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0.0, 0.0, 1.0, 0.12,
+       -1.0, 0.0, 0.0, -0.05,
+       0.0, -1.0, 0.0, -0.02,
+       0., 0., 0., 1. ]
+
+#Multiple thread support
+multiple_thread: 1
+
+#feature tracker parameters
+max_cnt: 150
+min_dist: 30
+freq: 10
+F_threshold: 1.0
+show_track: 0
+flow_back: 1
+
+#optimization parameters
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+
+#imu parameters（与实机 realsense 配置同量级；仿真 IMU 噪声更小，此为保守假设）
+acc_n: 0.2    # T2-R5轮2: 125Hz时代调定0.1,223Hz+闭环放大下goal加速瞬态Bas 3.0爆炸(轮1实测),E15网格机动段稳健点0.2
+gyr_n: 0.01
+acc_w: 0.001
+
+g_norm: 9.810
+
+#loop closure（仿真不需要）
+load_previous_pose_graph: 0
+fast_relocalization: 1
+pose_graph_save_path: "/home/uav/vins_output/pose_graph/"
+
+#unsynchronization parameters
+estimate_extrinsic: 0    # T3-F1 2026-09-29: freeze extrinsic (D2 matrix: ext1 opens est on first motion, tic drifts to 0.135/0.006 vs truth 0.12/0.05/-0.02 while Bas climbs -> 471m jump @X1final_101627 clean stream; ext0+exact = C4 lightest. Exact prior per D3/T2-R4).
+estimate_td: 0                      # T2-W4: td 在线估计在机动段发散到 -190s（E03×bag-B 实测）,关闭后固定 td=0                      # 在线估计相机-IMU 时延（仿真也可能有小的传输延迟）
+td: 0.00
+
+#rolling shutter parameters
+rolling_shutter: 0
+rolling_shutter_tr: 0
+roll_shutter_rho: 0
+
+#reanchor smoothing（T1-D1 2026-09-29: 发布侧平滑重锚; 实机 yaml 不含此 key=默认关闭旧行为, README §3 登记）
+reanchor_smooth: 1
+reanchor_smooth_frames: 15
+gyr_w: 0.0001  # T2-WA C-line FINAL (2026-09-30): upstream Fast-Drone-250 value restored. Was 0.001 (10x overset, origin unknown) - online Bgs sink 1.2-1.3 x2 (WAOL1/3) at 0.001; WAOL5R (bare stack + this value): 314.5s FULL survival, zero failure, Bas_max 0.981. Replay domain blind to this axis (B0 matrix: bit-identical at both values). Single-variable: online 2-round evidence + replay neutrality
+
+# T2 online arms (2026-10-02): R2F disparity screen + R3F cost gate
+t2_min_disparity: 0.0  # R2F gate HARMFUL on U3PO bag (G5 41m vs G5b 11.7m canonical) - pulled from online arms per FM-3; death-bag verdict non-adjudicable (replay nondeterminism)
+t2_cost_gate: 1
+# T2-v8.3 unit-3 (2026-10-03): t2_depth_gate arm FALSIFIED with mechanism —
+# pseudo-injection suppression worked (ir_st->0, rej 6%) but feature rejection
+# degrades solveGyroscopeBias until the T2-W4 pre-init gate (|Bgs|<0.5) livelocks
+# re-init at ~1.1s cadence (readj R1: gate-reject x7, drone blind through
+# livelock windows, round still matured 1004m). Disabled pending init-side
+# redesign (relaxed Bgs bar needs code, see ledger unit-3 chapter).
+t2_depth_gate: 0
+
+# T2-v8.9 case-A staged depth gate arm (prereg_route_fix)
+t2_staged_depth_gate: 1
+t2_staged_n_sec: 80
+
+# T2 zeta probe: Cauchy robust loss (outlier observation driver test)
+t2_vision_loss: 1
+t2_cauchy_delta: 0.0
+
+# T2-v9.5 stream guard (prereg_reanchor_fix): resume continuity + sane hold
+t2_stream_guard: 1
+t2_pub_sane_p: 50.0
+t2_pub_sane_v: 15.0

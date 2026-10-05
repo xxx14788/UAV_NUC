@@ -1,0 +1,14 @@
+=== T1 v11.7 supply campaign#2 (X-line arm) start 2026-10-05 22:55:42 stack=b7de133d/59548c6a ===
+[22:55:42] SUPX2a start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[22:59:45] SUPX2a rc=1 dir=run_SUPX2a_225543 T2fail=73  | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL (证据: never-flew 离地真值门 truth z=0.10
+    no-dual-anchor-line
+[23:00:05] SUPX2b start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[23:02:50] SUPX2b rc=1 dir=run_SUPX2b_230005 T2fail=52  | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL (证据: never-flew 离地真值门 truth z=0.10
+    no-dual-anchor-line
+[23:03:10] SUPHV2a start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[23:09:00] SUPHV2a rc=141 dir=run_SUPHV2a_230310 T2fail=216 auto_disarm->0 | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run
+    DUAL-ANCHOR v1.4: A*=(0.736, 1.244, 0.126) rule=R5 gap=99.900 flag=DUAL-ANCHOR-UNSTABLE | sta=N/A(n=0,span=0.0s,stable=0
+[23:09:20] SUPHV2b start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[23:16:35] SUPHV2b rc=141 dir=run_SUPHV2b_230920 T2fail=154 auto_disarm->0 | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run
+    DUAL-ANCHOR v1.4: A*=(1.914, 1.169, 0.149) rule=R5 gap=99.900 flag=DUAL-ANCHOR-UNSTABLE | sta=N/A(n=0,span=0.0s,stable=0
+=== supply campaign#2 end 2026-10-05 23:16:55 ===
