@@ -1,0 +1,31 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_193039/flight.bag
+version:     2.0
+duration:    4:30s (270s)
+start:       Jan 01 1970 08:00:26.42 (26.42)
+end:         Jan 01 1970 08:04:57.35 (297.35)
+size:        98.5 MB
+messages:    272036
+compression: none [127/127 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped   [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [8adafd9362e5a8fc6c85e6f460fbfc53]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          67734 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   27405 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           269 msgs    : std_msgs/String            
+             /gazebo/model_states            67733 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                13547 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            56414 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      8128 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   27406 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     272 msgs    : mavros_msgs/State          
+             /move_base_simple/goal             14 msgs    : geometry_msgs/PoseStamped   (2 connections)
+             /px4ctrl/takeoff_land              61 msgs    : quadrotor_msgs/TakeoffLand  (6 connections)
+             /vins_estimator/imu_propagate    2988 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry           65 msgs    : nav_msgs/Odometry

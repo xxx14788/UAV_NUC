@@ -1,0 +1,4 @@
+SUMMARY counts={"total_runs": 152, "nobag": 28, "compact": 90, "compact_received": 10, "img_unlinked_fullchain": 2, "img_linked_verify": 0, "img_received_verify": 2, "t1_round_defer": 19, "hov_verify": 1, "err_info": 0, "done_ok": 152, "deferred_final": 0, "partial": 0} complete=True
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_032653 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_043724 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:33] === BATCH_END normal (batch_complete 见 summary.json) ===

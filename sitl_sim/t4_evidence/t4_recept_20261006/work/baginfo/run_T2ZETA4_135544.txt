@@ -1,0 +1,31 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA4_135544/flight.bag
+version:     2.0
+duration:    1:22s (82s)
+start:       Jan 01 1970 08:00:25.49 (25.49)
+end:         Jan 01 1970 08:01:47.52 (107.52)
+size:        42.1 MB
+messages:    98862
+compression: none [55/55 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped   [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          20507 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                    8211 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state            81 msgs    : std_msgs/String            
+             /gazebo/model_states            20502 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                 4101 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            17182 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      2461 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude    8212 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                      83 msgs    : mavros_msgs/State          
+             /move_base_simple/goal              3 msgs    : geometry_msgs/PoseStamped  
+             /px4ctrl/takeoff_land              32 msgs    : quadrotor_msgs/TakeoffLand  (3 connections)
+             /vins_estimator/imu_propagate   16706 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry          781 msgs    : nav_msgs/Odometry

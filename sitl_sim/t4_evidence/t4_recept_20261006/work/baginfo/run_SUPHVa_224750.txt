@@ -1,0 +1,33 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHVa_224750/flight.bag
+version:     2.0
+duration:    2:36s (156s)
+start:       Jan 01 1970 08:00:24.53 (24.53)
+end:         Jan 01 1970 08:03:01.32 (181.32)
+size:        86.1 MB
+messages:    204347
+compression: none [112/112 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          39199 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                   15675 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state           156 msgs    : std_msgs/String               
+             /gazebo/model_states            39198 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 7840 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            35496 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      4704 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude   15677 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                     158 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             16 msgs    : geometry_msgs/PoseStamped      (3 connections)
+             /position_cmd                    9206 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              27 msgs    : quadrotor_msgs/TakeoffLand     (3 connections)
+             /vins_estimator/imu_propagate   35495 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry         1500 msgs    : nav_msgs/Odometry

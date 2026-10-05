@@ -1,0 +1,29 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/flight.bag
+version:     2.0
+duration:    2:23s (143s)
+start:       Jan 01 1970 08:01:27.83 (87.83)
+end:         Jan 01 1970 08:03:51.12 (231.12)
+size:        54.1 MB
+messages:    147333
+compression: none [70/70 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          35825 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   14325 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           142 msgs    : std_msgs/String            
+             /gazebo/model_states            35823 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                 7165 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            32569 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      4299 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   14325 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     144 msgs    : mavros_msgs/State          
+             /px4ctrl/takeoff_land              31 msgs    : quadrotor_msgs/TakeoffLand  (3 connections)
+             /vins_estimator/imu_propagate    1864 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry          821 msgs    : nav_msgs/Odometry

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/ghj/catkin_ws/sitl_sim/t4_evidence/t4_recept_20261006/lib/compact_extract.py", line 4, in <module>
+    import rosbag
+ModuleNotFoundError: No module named 'rosbag'
+COMPACT_DONE run_HVNET1_050936 end_diff=None

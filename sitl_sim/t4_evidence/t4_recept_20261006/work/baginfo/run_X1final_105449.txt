@@ -1,0 +1,30 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X1final_105449/flight.bag
+version:     2.0
+duration:    2:23s (143s)
+start:       Jan 01 1970 08:00:26.20 (26.20)
+end:         Jan 01 1970 08:02:49.28 (169.28)
+size:        60.4 MB
+messages:    151477
+compression: none [79/79 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped   [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [8adafd9362e5a8fc6c85e6f460fbfc53]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          35772 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   14471 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           142 msgs    : std_msgs/String            
+             /gazebo/model_states            35764 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data_raw            29602 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      4293 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   14472 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     144 msgs    : mavros_msgs/State          
+             /move_base_simple/goal             14 msgs    : geometry_msgs/PoseStamped   (2 connections)
+             /px4ctrl/takeoff_land               9 msgs    : quadrotor_msgs/TakeoffLand  (2 connections)
+             /vins_estimator/imu_propagate   16706 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry           88 msgs    : nav_msgs/Odometry

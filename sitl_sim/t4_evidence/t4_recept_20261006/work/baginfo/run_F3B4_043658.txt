@@ -1,0 +1,29 @@
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_F3B4_043658/flight.bag
+version:     2.0
+duration:    37.7s
+start:       Jan 01 1970 08:00:25.54 (25.54)
+end:         Jan 01 1970 08:01:03.24 (63.24)
+size:        19.5 MB
+messages:    45654
+compression: none [26/26 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          9428 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   3783 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           37 msgs    : std_msgs/String            
+             /gazebo/model_states            9428 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                1886 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            7883 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom     1131 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   3784 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     39 msgs    : mavros_msgs/State          
+             /px4ctrl/takeoff_land              8 msgs    : quadrotor_msgs/TakeoffLand  (2 connections)
+             /vins_estimator/imu_propagate   7880 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry         367 msgs    : nav_msgs/Odometry

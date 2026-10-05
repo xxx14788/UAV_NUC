@@ -1,0 +1,3144 @@
+{
+ "bag": "/home/ghj/sitl_sim/bags/run_t4r519_run_F3B16_191620/flight.bag",
+ "topics": [
+  "/iris_stereo_vins/vins_cam_left/image_raw",
+  "/iris_stereo_vins/vins_cam_right/image_raw"
+ ],
+ "t_range": [
+  26.288,
+  80.044
+ ],
+ "duration_s": 53.756,
+ "msg_counts": {
+  "/iris_stereo_vins/vins_cam_left/image_raw": 1050,
+  "/iris_stereo_vins/vins_cam_right/image_raw": 1050
+ },
+ "camera_info": {},
+ "sensor_property": [],
+ "frames": [
+  {
+   "file": "flight_L0_s0_0001.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 26.288,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0001_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 26.316,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0002.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 27.008,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0002_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 27.06,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0003.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 27.756,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0003_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 27.808,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0004.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 28.508,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0004_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 28.552,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0005.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 29.316,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0005_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 29.352,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0006.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 30.116,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0006_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 30.16,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0007.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 30.908,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0007_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 30.956,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0008.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 31.668,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0008_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 31.712,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0009.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 32.416,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0009_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 32.464,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0010.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 33.16,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0010_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 33.208,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0011.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 33.908,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0011_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 33.952,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0012.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 34.708,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0012_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 34.756,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0013.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 35.512,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0013_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 35.564,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0014.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 36.308,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0014_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 36.352,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0015.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 37.056,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0015_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 37.108,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0016.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 37.86,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0016_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 37.916,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0017.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 38.652,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0017_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 38.708,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0018.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 39.408,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0018_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 39.452,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0019.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 40.224,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0019_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 40.272,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0020.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 41.004,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0020_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 41.044,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0021.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 41.724,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0021_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 41.796,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0022.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 42.524,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0022_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 42.568,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0023.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 43.328,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0023_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 43.372,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s0_0024.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 44.192,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0025.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 44.26,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0025_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 44.296,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0026.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 45.0,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0026_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 45.068,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0027.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 45.736,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0027_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 45.792,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0028.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 46.496,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0028_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 46.556,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0029.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 47.268,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0029_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 47.3,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0030.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 48.092,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0030_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 48.156,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0031.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 48.792,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0031_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 48.86,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0032.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 49.66,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0032_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 49.692,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0033.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 50.424,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0033_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 50.464,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0034.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 51.168,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0034_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 51.228,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0035.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 51.96,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0035_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 52.024,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0036.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 52.792,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0036_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 52.828,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0037.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 53.528,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0037_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 53.576,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0038.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 54.3,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0038_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 54.364,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0039.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 55.068,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0039_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 55.124,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0040.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 55.796,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0040_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 55.888,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0041.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 56.596,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0041_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 56.66,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0042.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 57.364,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0042_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 57.424,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0043.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 58.08,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0043_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 58.16,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0044.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 58.828,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0044_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 58.9,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0045.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 59.688,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0045_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 59.74,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0046.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 60.528,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0046_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 60.592,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0047.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 61.336,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0047_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 61.38,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s1_0048.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 62.072,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0049.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 62.128,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0049_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 62.168,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0050.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 62.916,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0050_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 62.988,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0051.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 63.664,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0051_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 63.7,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0052.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 64.44,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0052_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 64.516,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0053.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 65.2,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0053_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 65.24,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0054.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 65.988,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0054_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 66.02,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0055.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 66.76,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0055_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 66.824,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0056.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 67.568,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0056_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 67.624,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0057.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 68.264,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0057_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 68.3,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0058.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 69.028,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0058_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 69.076,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0059.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 69.752,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0059_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 69.812,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0060.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 70.504,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0060_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 70.576,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0061.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 71.316,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0061_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 71.384,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0062.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 72.196,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0062_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 72.228,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0063.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 72.852,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0063_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 72.916,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0064.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 73.696,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0064_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 73.728,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0065.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 74.436,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0065_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 74.48,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0066.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 75.252,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0066_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 75.3,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0067.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 76.048,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0067_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 76.092,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0068.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 76.88,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0068_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 76.908,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0069.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 77.684,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0069_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 77.708,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0070.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 78.44,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0070_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 78.5,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0071.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 79.212,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0071_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 79.24,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0072.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 80.008,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_L0_s2_0072_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_left/image_raw",
+   "t_rec": 80.044,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0001.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 26.288,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0001_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 26.316,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0002.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 27.012,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0002_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 27.06,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0003.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 27.756,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0003_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 27.808,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0004.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 28.508,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0004_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 28.552,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0005.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 29.316,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0005_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 29.352,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0006.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 30.116,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0006_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 30.16,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0007.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 30.912,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0007_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 30.956,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0008.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 31.668,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0008_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 31.716,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0009.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 32.42,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0009_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 32.468,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0010.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 33.16,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0010_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 33.208,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0011.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 33.916,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0011_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 33.952,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0012.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 34.712,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0012_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 34.76,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0013.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 35.516,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0013_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 35.568,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0014.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 36.308,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0014_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 36.356,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0015.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 37.056,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0015_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 37.108,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0016.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 37.864,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0016_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 37.92,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0017.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 38.656,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0017_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 38.708,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0018.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 39.408,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0018_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 39.456,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0019.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 40.224,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0019_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 40.276,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0020.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 41.004,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0020_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 41.048,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0021.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 41.724,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0021_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 41.796,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0022.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 42.528,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0022_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 42.568,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0023.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 43.328,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0023_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 43.376,
+   "seg": 0,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s0_0024.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 44.196,
+   "seg": 0,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0025.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 44.26,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0025_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 44.3,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0026.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 45.0,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0026_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 45.072,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0027.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 45.736,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0027_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 45.792,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0028.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 46.496,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0028_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 46.56,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0029.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 47.268,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0029_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 47.3,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0030.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 48.092,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0030_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 48.16,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0031.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 48.796,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0031_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 48.86,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0032.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 49.66,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0032_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 49.696,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0033.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 50.424,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0033_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 50.464,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0034.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 51.168,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0034_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 51.228,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0035.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 51.96,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0035_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 52.024,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0036.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 52.792,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0036_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 52.832,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0037.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 53.532,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0037_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 53.576,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0038.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 54.3,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0038_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 54.364,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0039.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 55.068,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0039_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 55.124,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0040.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 55.796,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0040_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 55.888,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0041.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 56.596,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0041_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 56.66,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0042.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 57.364,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0042_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 57.424,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0043.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 58.084,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0043_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 58.16,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0044.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 58.828,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0044_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 58.9,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0045.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 59.7,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0045_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 59.74,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0046.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 60.532,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0046_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 60.592,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0047.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 61.336,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0047_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 61.384,
+   "seg": 1,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s1_0048.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 62.076,
+   "seg": 1,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0049.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 62.132,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0049_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 62.168,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0050.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 62.916,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0050_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 62.988,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0051.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 63.664,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0051_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 63.7,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0052.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 64.44,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0052_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 64.516,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0053.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 65.2,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0053_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 65.24,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0054.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 65.988,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0054_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 66.024,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0055.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 66.764,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0055_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 66.824,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0056.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 67.568,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0056_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 67.628,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0057.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 68.264,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0057_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 68.3,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0058.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 69.028,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0058_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 69.076,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0059.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 69.756,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0059_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 69.816,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0060.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 70.504,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0060_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 70.576,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0061.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 71.316,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0061_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 71.384,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0062.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 72.196,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0062_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 72.228,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0063.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 72.856,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0063_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 72.92,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0064.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 73.7,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0064_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 73.728,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0065.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 74.44,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0065_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 74.48,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0066.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 75.256,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0066_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 75.304,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0067.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 76.048,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0067_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 76.096,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0068.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 76.88,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0068_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 76.912,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0069.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 77.688,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0069_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 77.708,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0070.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 78.448,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0070_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 78.504,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0071.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 79.212,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0071_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 79.24,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0072.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 80.008,
+   "seg": 2,
+   "tag": "",
+   "size": [
+    640,
+    480
+   ]
+  },
+  {
+   "file": "flight_R1_s2_0072_next.png",
+   "topic": "/iris_stereo_vins/vins_cam_right/image_raw",
+   "t_rec": 80.044,
+   "seg": 2,
+   "tag": "next",
+   "size": [
+    640,
+    480
+   ]
+  }
+ ]
+}
