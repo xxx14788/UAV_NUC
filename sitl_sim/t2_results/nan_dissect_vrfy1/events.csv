@@ -1,0 +1,1625 @@
+seq,t,line,type,nan,detail
+1,10.16,377,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02274 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+2,10.164,400,init_finish,,
+3,11.444,737,ceres_eval_err,,?
+4,11.544,826,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+5,11.644,912,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+6,11.744,996,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+7,11.844,1096,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+8,11.944,1186,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+9,12.044,1279,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+10,12.144,1364,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+11,12.244,1449,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+12,12.344,1537,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+13,12.444,1618,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+14,12.544,1700,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+15,12.644,1786,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+16,12.744,1866,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+17,12.844,1945,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+18,13.044,2079,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+19,13.044,2146,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+20,13.144,2254,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+21,13.244,2344,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+22,13.344,2435,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+23,13.444,2513,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+24,13.644,2633,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+25,13.644,2709,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+26,13.808,2801,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+27,13.808,2802,t2fail_snapshot,,P=[0.2567 V=[0.1593 Bas=None Bgs=None track=118
+28,13.808,2803,failure_detection,,
+29,14.968,3159,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03077 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+30,14.968,3180,init_finish,,
+31,15.544,3387,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+32,15.544,3455,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+33,15.644,3540,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+34,15.744,3640,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+35,15.844,3736,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+36,15.976,3821,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+37,15.976,3822,t2fail_snapshot,,P=[0.007326 V=[0.005767 Bas=None Bgs=None track=135
+38,15.976,3823,failure_detection,,
+39,17.128,4178,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0288 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+40,17.128,4200,init_finish,,
+41,17.808,4410,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+42,17.912,4486,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+43,18.044,4573,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+44,18.144,4668,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+45,18.244,4765,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+46,18.344,4854,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+47,18.444,4942,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+48,18.544,5033,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+49,18.676,5120,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+50,18.808,5210,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+51,18.908,5303,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+52,19.072,5388,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+53,19.072,5389,t2fail_snapshot,,P=[0.02214 V=[0.04364 Bas=None Bgs=None track=124
+54,19.072,5390,failure_detection,,
+55,20.228,5745,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03001 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+56,20.228,5757,init_finish,,
+57,21.512,6082,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+58,21.644,6162,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+59,21.744,6244,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+60,21.844,6339,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+61,21.944,6441,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+62,22.076,6524,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+63,22.076,6525,t2fail_snapshot,,P=[-0.03974 V=[-0.02729 Bas=None Bgs=None track=134
+64,22.076,6526,failure_detection,,
+65,23.168,6882,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00395 0.00722 0.00781 0.0103 0.0115 0.0151 0.0219 0.0275 0.0338 0.035 Ps: 0 0.000598 0.000406 0.000119 0.000281 0.000328 0.00031 0.000372 0.000521 0.000304 0.000824
+66,23.172,6884,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03499 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+67,23.172,6903,init_finish,,
+68,24.308,7193,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+69,24.408,7278,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+70,24.508,7363,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+71,24.608,7457,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+72,24.708,7554,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+73,24.808,7647,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+74,24.908,7734,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+75,25.048,7810,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+76,25.048,7811,t2fail_snapshot,,P=[-0.1398 V=[-0.1229 Bas=None Bgs=None track=121
+77,25.048,7812,failure_detection,,
+78,26.164,8167,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0105 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+79,26.164,8192,init_finish,,
+80,27.144,8442,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+81,27.276,8528,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+82,27.408,8617,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+83,27.508,8720,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+84,27.58,8817,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+85,27.708,8905,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+86,27.868,8986,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+87,27.868,8987,t2fail_snapshot,,P=[0.02418 V=[0.01638 Bas=None Bgs=None track=121
+88,27.868,8988,failure_detection,,
+89,29.088,9342,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02815 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+90,29.088,9350,init_finish,,
+91,29.644,9530,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+92,29.748,9608,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+93,29.844,9692,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+94,29.944,9787,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+95,30.044,9881,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+96,30.148,9969,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+97,30.244,10056,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+98,30.344,10136,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+99,30.444,10219,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+100,30.544,10311,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+101,30.644,10404,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+102,30.78,10488,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+103,30.78,10489,t2fail_snapshot,,P=[0.0677 V=[0.06892 Bas=None Bgs=None track=116
+104,30.78,10490,failure_detection,,
+105,31.948,10850,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00286 0.0034 0.00921 0.0123 0.0151 0.0164 0.0181 0.0175 0.0149 0.0163 Ps: 0 0.000889 0.000198 0.000249 0.000265 0.000239 0.000351 9.57e-05 0.000359 0.000507 0.000675
+106,31.96,10852,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01811 @i=7 init_cost=-nan final_cost=-nan iters=1 term=0
+107,31.96,10874,init_finish,,
+108,32.608,11075,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+109,32.684,11163,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+110,32.784,11251,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+111,32.884,11344,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+112,32.984,11431,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+113,33.132,11516,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+114,33.132,11517,t2fail_snapshot,,P=[-0.01016 V=[-0.02412 Bas=None Bgs=None track=127
+115,33.132,11518,failure_detection,,
+116,34.288,11874,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03081 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+117,34.288,11885,init_finish,,
+118,35.14,12129,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+119,35.24,12222,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+120,35.34,12302,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+121,35.44,12394,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+122,35.544,12480,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+123,35.64,12576,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+124,35.74,12661,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+125,35.844,12742,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+126,35.976,12817,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+127,36.12,12896,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+128,36.12,12897,t2fail_snapshot,,P=[-0.1067 V=[-0.08545 Bas=None Bgs=None track=130
+129,36.12,12898,failure_detection,,
+130,37.248,13256,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00625 0.00672 0.00789 0.0118 0.0132 0.0162 0.0201 0.0228 0.0291 0.0302 Ps: 0 0.00097 0.000133 0.0001 0.000158 8.32e-05 6.59e-05 0.00107 0.00033 0.000226 0.000354
+131,37.26,13258,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03024 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+132,37.26,13265,init_finish,,
+133,37.74,13427,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+134,37.84,13520,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+135,37.94,13610,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+136,38.04,13707,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+137,38.172,13799,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+138,38.272,13884,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+139,38.372,13976,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+140,38.504,14063,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+141,38.604,14145,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+142,38.768,14225,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+143,38.768,14226,t2fail_snapshot,,P=[0.003583 V=[0.007815 Bas=None Bgs=None track=103
+144,38.768,14227,failure_detection,,
+145,39.868,14578,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00608 0.0095 0.0127 0.015 0.0164 0.0227 0.0277 0.0346 0.0394 0.0441 Ps: 0 0.000769 8.83e-05 7.86e-05 8.9e-05 5.76e-05 9.31e-05 0.000282 0.000137 5.23e-05 7.59e-05
+146,39.872,14580,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04411 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+147,39.872,14593,init_finish,,
+148,41.176,14925,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+149,41.304,15003,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+150,41.404,15083,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+151,41.504,15181,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+152,41.604,15272,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+153,41.724,15350,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+154,41.724,15351,t2fail_snapshot,,P=[-0.1318 V=[-0.0917 Bas=None Bgs=None track=130
+155,41.724,15352,failure_detection,,
+156,42.912,15667,t2opt_initial_solve,True,T2OPT post-solve vmax=0.1376 @i=8 init_cost=-nan final_cost=-nan iters=1 term=0
+157,42.916,15703,init_finish,,
+158,43.216,15844,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+159,43.216,15946,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+160,43.316,16038,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+161,43.416,16147,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+162,43.616,16305,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+163,43.716,16438,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+164,43.716,16539,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+165,43.816,16644,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+166,44.016,16804,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+167,44.016,16877,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+168,44.116,16971,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+169,44.216,17074,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+170,44.316,17170,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+171,44.416,17266,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+172,44.516,17357,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+173,44.616,17459,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+174,44.744,17559,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+175,44.744,17560,t2fail_snapshot,,P=[0.1479 V=[0.1205 Bas=None Bgs=None track=132
+176,44.744,17561,failure_detection,,
+177,45.892,17915,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0185 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+178,45.892,17948,init_finish,,
+179,47.516,18350,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+180,47.616,18437,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+181,47.816,18555,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+182,47.816,18627,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+183,47.916,18723,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+184,48.016,18821,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+185,48.116,18912,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+186,48.216,19004,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+187,48.316,19087,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+188,48.416,19179,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+189,48.52,19280,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+190,48.616,19390,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+191,48.716,19489,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+192,48.816,19588,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+193,48.916,19680,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+194,49.016,19775,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+195,49.116,19878,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+196,49.22,19971,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+197,49.316,20085,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+198,49.516,20239,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+199,49.516,20332,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+200,49.616,20454,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+201,49.756,20568,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+202,49.876,20682,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+203,49.876,20683,t2fail_snapshot,,P=[-0.105 V=[-0.05444 Bas=None Bgs=None track=131
+204,49.876,20684,failure_detection,,
+205,51.068,21041,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0219 @i=7 init_cost=-nan final_cost=-nan iters=1 term=0
+206,51.072,21070,init_finish,,
+207,51.816,21307,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+208,51.916,21389,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+209,52.152,21511,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+210,52.152,21580,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+211,52.252,21672,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+212,52.38,21757,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+213,52.38,21758,t2fail_snapshot,,P=[-0.0002585 V=[0.003641 Bas=None Bgs=None track=133
+214,52.38,21759,failure_detection,,
+215,53.568,22113,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02815 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+216,53.568,22125,init_finish,,
+217,54.088,22324,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+218,54.088,22397,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+219,54.316,22518,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+220,54.316,22584,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+221,54.416,22674,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+222,54.516,22767,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+223,54.616,22854,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+224,54.716,22945,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+225,54.816,23033,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+226,54.916,23127,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+227,54.988,23218,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+228,55.116,23315,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+229,55.216,23421,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+230,55.38,23497,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+231,55.38,23498,t2fail_snapshot,,P=[-0.04175 V=[-0.03935 Bas=None Bgs=None track=123
+232,55.38,23499,failure_detection,,
+233,56.492,23852,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01848 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+234,56.492,23857,init_finish,,
+235,57.152,24054,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+236,57.252,24144,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+237,57.352,24224,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+238,57.452,24324,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+239,57.552,24415,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+240,57.68,24506,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+241,57.68,24507,t2fail_snapshot,,P=[-0.02524 V=[-0.0314 Bas=None Bgs=None track=127
+242,57.68,24508,failure_detection,,
+243,58.836,24859,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01896 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+244,58.836,24881,init_finish,,
+245,60.116,25231,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+246,60.216,25314,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+247,60.288,25398,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+248,60.416,25494,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+249,60.516,25595,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+250,60.664,25686,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+251,60.664,25687,t2fail_snapshot,,P=[0.03123 V=[0.03372 Bas=None Bgs=None track=132
+252,60.664,25688,failure_detection,,
+253,61.772,26039,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05528 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+254,61.772,26048,init_finish,,
+255,62.416,26250,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+256,62.496,26334,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+257,62.596,26419,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+258,62.7,26507,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+259,62.8,26602,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+260,62.9,26693,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+261,63.0,26775,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+262,63.1,26866,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+263,63.204,26950,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+264,63.3,27032,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+265,63.4,27116,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+266,63.532,27191,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+267,63.532,27192,t2fail_snapshot,,P=[0.134 V=[0.09171 Bas=None Bgs=None track=124
+268,63.532,27193,failure_detection,,
+269,64.628,27547,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00573 0.00932 0.0111 0.012 0.0171 0.0203 0.02 0.0243 0.0245 0.0256 Ps: 0 0.00113 0.000304 0.000254 0.000272 0.000119 0.000286 0.000134 0.000291 0.000536 0.0003
+270,64.636,27549,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02562 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+271,64.636,27572,init_finish,,
+272,65.3,27784,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+273,65.4,27869,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+274,65.5,27950,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+275,65.6,28049,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+276,65.732,28149,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+277,65.912,28239,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+278,65.912,28240,t2fail_snapshot,,P=[-0.03593 V=[-0.03963 Bas=None Bgs=None track=128
+279,65.912,28241,failure_detection,,
+280,67.02,28597,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05203 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+281,67.02,28616,init_finish,,
+282,67.564,28803,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+283,67.664,28887,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+284,67.836,29011,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+285,67.836,29077,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+286,67.964,29164,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+287,68.036,29249,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+288,68.168,29339,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+289,68.28,29436,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+290,68.412,29519,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+291,68.676,29639,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+292,68.776,29750,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+293,68.776,29814,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+294,68.94,29904,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+295,68.94,29905,t2fail_snapshot,,P=[-0.03747 V=[-0.0571 Bas=None Bgs=None track=128
+296,68.94,29906,failure_detection,,
+297,70.168,30258,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03773 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+298,70.168,30262,init_finish,,
+299,71.012,30517,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+300,71.112,30594,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+301,71.212,30679,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+302,71.312,30770,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+303,71.416,30860,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+304,71.556,30941,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+305,71.556,30942,t2fail_snapshot,,P=[0.0225 V=[0.01748 Bas=None Bgs=None track=122
+306,71.556,30943,failure_detection,,
+307,72.644,31294,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03924 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+308,72.644,31304,init_finish,,
+309,73.176,31457,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+310,73.176,31528,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+311,73.376,31656,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+312,73.376,31723,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+313,73.476,31814,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+314,73.576,31893,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+315,73.676,31976,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+316,73.78,32053,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+317,73.916,32141,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+318,74.012,32221,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+319,74.116,32310,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+320,74.212,32390,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+321,74.312,32482,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+322,74.416,32580,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+323,74.544,32674,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+324,74.544,32675,t2fail_snapshot,,P=[0.08247 V=[0.08141 Bas=None Bgs=None track=103
+325,74.544,32676,failure_detection,,
+326,75.724,32983,t2opt_initial_solve,True,T2OPT post-solve vmax=0.2945 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+327,75.728,33017,init_finish,,
+328,76.676,33416,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+329,76.776,33519,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+330,76.876,33629,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+331,76.976,33734,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+332,77.176,33886,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+333,77.228,33967,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+334,77.228,33968,t2fail_snapshot,,P=[0.4062 V=[0.2759 Bas=None Bgs=None track=136
+335,77.228,33969,failure_detection,,
+336,78.308,34323,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03777 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+337,78.308,34336,init_finish,,
+338,78.776,34497,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+339,78.876,34575,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+340,78.948,34665,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+341,79.076,34757,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+342,79.18,34853,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+343,79.312,34933,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+344,79.52,35059,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+345,79.52,35124,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+346,79.728,35249,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+347,79.728,35317,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+348,79.832,35418,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+349,79.928,35505,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+350,80.028,35593,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+351,80.16,35684,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+352,80.16,35685,t2fail_snapshot,,P=[-0.01713 V=[-0.01077 Bas=None Bgs=None track=109
+353,80.16,35686,failure_detection,,
+354,81.26,36040,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03012 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+355,81.26,36081,init_finish,,
+356,81.932,36299,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+357,82.028,36386,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+358,82.128,36469,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+359,82.228,36566,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+360,82.328,36664,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+361,82.46,36749,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+362,82.46,36750,t2fail_snapshot,,P=[-0.02687 V=[-0.03756 Bas=None Bgs=None track=131
+363,82.46,36751,failure_detection,,
+364,83.56,37064,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02785 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+365,83.56,37099,init_finish,,
+366,84.492,37356,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+367,84.596,37441,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+368,84.728,37524,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+369,84.832,37621,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+370,84.928,37715,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+371,85.028,37799,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+372,85.128,37890,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+373,85.228,37981,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+374,85.328,38071,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+375,85.476,38157,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+376,85.476,38158,t2fail_snapshot,,P=[0.1139 V=[0.101 Bas=None Bgs=None track=123
+377,85.476,38159,failure_detection,,
+378,86.648,38512,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03388 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+379,86.648,38535,init_finish,,
+380,87.632,38808,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+381,87.728,38897,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+382,87.828,38988,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+383,87.928,39090,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+384,88.028,39187,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+385,88.148,39265,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+386,88.148,39266,t2fail_snapshot,,P=[0.07187 V=[0.06216 Bas=None Bgs=None track=123
+387,88.148,39267,failure_detection,,
+388,89.288,39622,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01406 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+389,89.288,39636,init_finish,,
+390,90.632,39969,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+391,90.732,40051,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+392,90.932,40182,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+393,91.032,40293,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+394,91.032,40360,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+395,91.176,40445,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+396,91.176,40446,t2fail_snapshot,,P=[0.00165 V=[0.02568 Bas=None Bgs=None track=122
+397,91.176,40447,failure_detection,,
+398,92.292,40801,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03484 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+399,92.296,40836,init_finish,,
+400,92.868,41024,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+401,93.0,41110,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+402,93.132,41196,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+403,93.232,41294,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+404,93.332,41387,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+405,93.432,41478,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+406,93.532,41574,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+407,93.632,41662,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+408,93.832,41786,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+409,93.832,41850,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+410,93.932,41944,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+411,94.032,42032,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+412,94.188,42109,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+413,94.188,42110,t2fail_snapshot,,P=[-0.07386 V=[-0.05835 Bas=None Bgs=None track=120
+414,94.188,42111,failure_detection,,
+415,95.36,42424,t2opt_initial_solve,True,T2OPT post-solve vmax=0.1246 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+416,95.36,42462,init_finish,,
+417,96.132,42710,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+418,96.204,42792,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+419,96.432,42911,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+420,96.432,42980,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+421,96.536,43082,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+422,96.728,43171,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+423,96.728,43172,t2fail_snapshot,,P=[0.2612 V=[0.2642 Bas=None Bgs=None track=120
+424,96.732,43173,failure_detection,,
+425,97.804,43527,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00358 0.00513 0.0107 0.0181 0.0214 0.0277 0.0298 0.0353 0.0394 0.0459 Ps: 0 0.00207 0.00103 0.00158 0.00116 0.00124 0.00125 0.0013 0.00132 0.00144 2.5
+426,97.804,43529,gate_reject,,"gate reject: |Bgs|=2 mxP=2.5(mxV=0.0459,i=10) bias_ok=0"
+427,98.92,43844,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0323 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+428,98.92,43884,init_finish,,
+429,99.568,44083,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+430,99.668,44177,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+431,99.768,44273,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+432,99.868,44366,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+433,99.968,44459,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+434,100.068,44550,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+435,100.168,44633,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+436,100.268,44722,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+437,100.368,44811,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+438,100.444,44893,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+439,100.544,44980,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+440,100.68,45081,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+441,100.68,45082,t2fail_snapshot,,P=[0.1149 V=[0.1095 Bas=None Bgs=None track=123
+442,100.68,45083,failure_detection,,
+443,101.816,45434,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03608 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+444,101.816,45446,init_finish,,
+445,102.444,45628,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+446,102.444,45695,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+447,102.544,45794,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+448,102.644,45882,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+449,102.748,45976,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+450,102.844,46062,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+451,102.944,46157,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+452,103.08,46244,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+453,103.08,46245,t2fail_snapshot,,P=[-0.05595 V=[-0.0641 Bas=None Bgs=None track=124
+454,103.08,46246,failure_detection,,
+455,104.168,46594,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00418 0.00665 0.00705 0.051 0.0527 0.0537 0.0529 0.0554 0.0544 0.0592 Ps: 0 0.000925 7.58e-05 0.0255 0.000306 0.000343 0.000226 0.000535 0.00014 0.000231 0.000227
+456,104.172,46596,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05922 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+457,104.172,46603,init_finish,,
+458,104.444,46687,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+459,104.444,46780,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+460,104.644,46911,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+461,104.644,46985,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+462,104.744,47068,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+463,104.848,47156,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+464,104.944,47241,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+465,105.048,47321,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+466,105.144,47407,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+467,105.244,47498,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+468,105.344,47589,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+469,105.444,47681,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+470,105.544,47774,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+471,105.644,47877,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+472,105.776,47979,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+473,105.776,47980,t2fail_snapshot,,P=[-0.1081 V=[-0.07353 Bas=None Bgs=None track=119
+474,105.776,47981,failure_detection,,
+475,106.876,48329,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06289 @i=6 init_cost=-nan final_cost=-nan iters=1 term=0
+476,106.876,48335,init_finish,,
+477,107.144,48461,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+478,107.248,48566,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+479,107.248,48633,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+480,107.344,48721,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+481,107.444,48812,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+482,107.548,48907,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+483,107.644,48994,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+484,107.776,49070,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+485,107.776,49071,t2fail_snapshot,,P=[0.004015 V=[-0.002133 Bas=None Bgs=None track=122
+486,107.776,49072,failure_detection,,
+487,109.004,49374,t2opt_initial_solve,True,T2OPT post-solve vmax=0.08934 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+488,109.004,49413,init_finish,,
+489,109.244,49551,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+490,109.244,49612,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+491,109.344,49689,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+492,109.544,49817,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+493,109.544,49888,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+494,109.676,49981,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+495,109.676,49982,t2fail_snapshot,,P=[0.06052 V=[0.09906 Bas=None Bgs=None track=116
+496,109.676,49983,failure_detection,,
+497,110.864,50330,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00474 0.00466 0.00652 0.00885 0.00963 0.013 0.0156 0.0175 0.0174 0.0185 Ps: 0 0.00122 0.000506 0.000303 0.000267 0.000184 0.00082 0.000316 0.000786 0.000287 0.000562
+498,110.872,50332,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01851 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+499,110.872,50363,init_finish,,
+500,112.308,50723,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+501,112.408,50804,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+502,112.508,50888,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+503,112.58,50970,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+504,112.712,51057,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+505,112.844,51152,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+506,112.944,51243,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+507,113.044,51329,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+508,113.144,51411,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+509,113.276,51490,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+510,113.408,51576,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+511,113.508,51663,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+512,113.588,51750,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+513,113.688,51843,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+514,113.788,51925,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+515,113.888,52027,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+516,113.988,52122,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+517,114.12,52219,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+518,114.252,52306,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+519,114.352,52398,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+520,114.424,52480,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+521,114.552,52568,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+522,114.652,52661,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+523,114.8,52753,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+524,114.8,52754,t2fail_snapshot,,P=[-0.03173 V=[0.01846 Bas=None Bgs=None track=122
+525,114.8,52755,failure_detection,,
+526,115.904,53103,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00613 0.0116 0.0186 0.0197 0.0233 0.0292 0.0364 0.0427 0.0471 0.0545 Ps: 0 0.00354 0.000872 0.00269 0.00101 0.000741 0.000598 0.00059 0.000187 0.000248 0.000105
+527,115.908,53105,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05449 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+528,115.908,53110,init_finish,,
+529,116.588,53304,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+530,116.696,53402,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+531,116.796,53484,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+532,116.896,53582,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+533,117.028,53669,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+534,117.204,53744,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+535,117.204,53745,t2fail_snapshot,,P=[-0.03755 V=[-0.05155 Bas=None Bgs=None track=125
+536,117.204,53746,failure_detection,,
+537,118.328,54053,t2opt_initial_solve,True,T2OPT post-solve vmax=0.008064 @i=7 init_cost=-nan final_cost=-nan iters=1 term=0
+538,118.328,54088,init_finish,,
+539,119.544,54394,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+540,119.644,54474,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+541,119.744,54557,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+542,119.844,54646,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+543,119.944,54742,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+544,120.044,54823,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+545,120.196,54908,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+546,120.196,54909,t2fail_snapshot,,P=[-0.02094 V=[-0.02763 Bas=None Bgs=None track=129
+547,120.2,54910,failure_detection,,
+548,121.308,55221,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02295 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+549,121.308,55264,init_finish,,
+550,122.344,55531,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+551,122.444,55610,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+552,122.544,55693,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+553,122.644,55792,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+554,122.744,55892,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+555,122.844,55983,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+556,122.992,56061,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+557,122.992,56062,t2fail_snapshot,,P=[0.04927 V=[0.03963 Bas=None Bgs=None track=129
+558,122.992,56063,failure_detection,,
+559,124.108,56373,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02992 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+560,124.108,56406,init_finish,,
+561,124.744,56617,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+562,124.844,56701,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+563,124.944,56786,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+564,125.044,56876,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+565,125.144,56974,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+566,125.248,57060,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+567,125.344,57156,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+568,125.444,57242,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+569,125.544,57322,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+570,125.644,57413,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+571,125.796,57501,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+572,125.796,57502,t2fail_snapshot,,P=[0.0515 V=[0.06052 Bas=None Bgs=None track=124
+573,125.796,57503,failure_detection,,
+574,126.888,57813,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04157 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+575,126.892,57853,init_finish,,
+576,127.344,58011,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+577,127.444,58093,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+578,127.548,58182,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+579,127.644,58282,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+580,127.744,58370,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+581,127.844,58453,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+582,127.944,58538,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+583,128.044,58634,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+584,128.204,58722,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+585,128.204,58723,t2fail_snapshot,,P=[0.008359 V=[0.003399 Bas=None Bgs=None track=119
+586,128.204,58724,failure_detection,,
+587,129.296,59071,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04827 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+588,129.3,59079,init_finish,,
+589,129.944,59274,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+590,130.044,59363,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+591,130.144,59458,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+592,130.244,59552,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+593,130.348,59640,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+594,130.444,59730,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+595,130.544,59812,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+596,130.644,59902,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+597,130.768,59984,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+598,130.768,59985,t2fail_snapshot,,P=[0.08069 V=[0.07794 Bas=None Bgs=None track=120
+599,130.768,59986,failure_detection,,
+600,131.908,60336,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03941 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+601,131.908,60356,init_finish,,
+602,132.552,60575,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+603,132.652,60658,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+604,132.756,60743,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+605,132.896,60837,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+606,132.988,60929,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+607,133.1,61021,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+608,133.188,61112,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+609,133.288,61202,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+610,133.424,61285,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+611,133.424,61286,t2fail_snapshot,,P=[-0.09656 V=[-0.09314 Bas=None Bgs=None track=126
+612,133.424,61287,failure_detection,,
+613,134.608,61597,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01537 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+614,134.608,61634,init_finish,,
+615,135.452,61900,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+616,135.552,61985,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+617,135.652,62067,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+618,135.752,62161,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+619,135.852,62263,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+620,135.952,62347,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+621,136.1,62435,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+622,136.1,62436,t2fail_snapshot,,P=[0.01351 V=[0.01672 Bas=None Bgs=None track=129
+623,136.1,62437,failure_detection,,
+624,137.196,62787,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02975 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+625,137.196,62800,init_finish,,
+626,138.024,63054,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+627,138.136,63143,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+628,138.228,63229,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+629,138.328,63326,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+630,138.408,63420,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+631,138.512,63502,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+632,138.6,63586,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+633,138.7,63673,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+634,138.84,63760,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+635,138.84,63761,t2fail_snapshot,,P=[-0.07007 V=[-0.0568 Bas=None Bgs=None track=130
+636,138.84,63762,failure_detection,,
+637,139.984,64115,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01702 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+638,139.984,64146,init_finish,,
+639,140.804,64413,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+640,140.908,64495,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+641,141.008,64584,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+642,141.116,64681,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+643,141.208,64782,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+644,141.308,64873,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+645,141.448,64961,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+646,141.448,64962,t2fail_snapshot,,P=[-0.01798 V=[-0.01195 Bas=None Bgs=None track=125
+647,141.448,64963,failure_detection,,
+648,142.552,65313,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0453 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+649,142.552,65355,init_finish,,
+650,143.364,65577,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+651,143.464,65660,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+652,143.664,65773,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+653,143.664,65841,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+654,143.764,65931,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+655,143.864,66016,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+656,143.964,66103,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+657,144.064,66196,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+658,144.164,66282,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+659,144.32,66373,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+660,144.32,66374,t2fail_snapshot,,P=[0.06999 V=[0.056 Bas=None Bgs=None track=128
+661,144.32,66375,failure_detection,,
+662,145.336,66683,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00458 0.00846 0.0146 0.0216 0.028 0.037 0.0431 0.0508 0.0569 0.0617 Ps: 0 0.000519 0.000163 0.000274 0.000311 0.000383 0.000382 0.000313 0.000396 0.000371 0.00043
+663,145.344,66685,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06172 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+664,145.348,66723,init_finish,,
+665,145.504,66774,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+666,145.712,66912,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+667,145.812,67028,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+668,145.812,67092,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+669,145.904,67178,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+670,146.012,67261,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+671,146.104,67352,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+672,146.208,67443,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+673,146.304,67531,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+674,146.404,67617,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+675,146.504,67702,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+676,146.7,67833,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+677,146.728,67905,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+678,146.728,67906,t2fail_snapshot,,P=[-0.01775 V=[-0.02328 Bas=None Bgs=None track=128
+679,146.728,67907,failure_detection,,
+680,147.86,68257,t2opt_initial_solve,True,T2OPT post-solve vmax=0.07856 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+681,147.86,68263,init_finish,,
+682,148.2,68376,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+683,148.2,68465,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+684,148.3,68560,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+685,148.4,68649,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+686,148.5,68741,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+687,148.6,68827,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+688,148.7,68921,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+689,148.8,69016,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+690,148.964,69095,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+691,148.964,69096,t2fail_snapshot,,P=[0.02893 V=[0.03392 Bas=None Bgs=None track=103
+692,148.964,69097,failure_detection,,
+693,150.084,69447,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05632 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+694,150.084,69472,init_finish,,
+695,151.036,69744,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+696,151.164,69826,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+697,151.264,69911,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+698,151.368,70006,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+699,151.504,70099,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+700,151.668,70183,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+701,151.668,70184,t2fail_snapshot,,P=[-0.08434 V=[-0.08118 Bas=None Bgs=None track=121
+702,151.668,70185,failure_detection,,
+703,152.78,70534,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06167 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+704,152.78,70550,init_finish,,
+705,153.612,70804,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+706,153.736,70886,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+707,153.868,70962,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+708,154.068,71096,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+709,154.068,71158,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+710,154.168,71247,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+711,154.268,71341,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+712,154.376,71429,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+713,154.516,71513,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+714,154.628,71599,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+715,154.628,71600,t2fail_snapshot,,P=[0.2395 V=[0.1896 Bas=None Bgs=None track=124
+716,154.628,71601,failure_detection,,
+717,155.76,71953,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01456 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+718,155.76,71970,init_finish,,
+719,156.604,72207,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+720,156.708,72300,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+721,156.824,72387,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+722,156.908,72482,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+723,157.024,72584,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+724,157.164,72661,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+725,157.164,72662,t2fail_snapshot,,P=[-0.0314 V=[-0.04473 Bas=None Bgs=None track=128
+726,157.164,72663,failure_detection,,
+727,158.268,73012,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03521 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+728,158.268,73043,init_finish,,
+729,159.32,73344,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+730,159.408,73426,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+731,159.508,73506,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+732,159.608,73593,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+733,159.708,73684,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+734,159.808,73768,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+735,159.908,73846,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+736,160.072,73928,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+737,160.072,73929,t2fail_snapshot,,P=[0.1091 V=[0.08261 Bas=None Bgs=None track=120
+738,160.072,73930,failure_detection,,
+739,161.1,74282,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04051 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+740,161.1,74291,init_finish,,
+741,161.408,74399,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+742,161.408,74496,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+743,161.508,74584,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+744,161.712,74718,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+745,161.808,74827,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+746,161.808,74915,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+747,161.908,75024,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+748,162.108,75172,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+749,162.208,75299,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+750,162.208,75405,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+751,162.308,75527,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+752,162.408,75649,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+753,162.608,75813,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+754,162.708,75948,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+755,162.772,76050,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+756,162.772,76051,t2fail_snapshot,,P=[0.6757 V=[0.9408 Bas=None Bgs=None track=120
+757,162.772,76052,failure_detection,,
+758,163.944,76400,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04925 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+759,163.944,76419,init_finish,,
+760,164.608,76637,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+761,164.708,76720,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+762,164.808,76799,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+763,164.908,76900,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+764,165.008,76988,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+765,165.152,77075,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+766,165.152,77076,t2fail_snapshot,,P=[-0.03824 V=[-0.04612 Bas=None Bgs=None track=118
+767,165.152,77077,failure_detection,,
+768,166.308,77425,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04233 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+769,166.308,77459,init_finish,,
+770,167.036,77687,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+771,167.144,77770,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+772,167.22,77856,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+773,167.324,77953,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+774,167.416,78046,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+775,167.516,78130,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+776,167.632,78214,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+777,167.72,78310,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+778,167.82,78405,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+779,168.02,78534,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+780,168.072,78599,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+781,168.072,78600,t2fail_snapshot,,P=[0.007609 V=[-0.01009 Bas=None Bgs=None track=115
+782,168.072,78601,failure_detection,,
+783,169.184,78950,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02297 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+784,169.184,78984,init_finish,,
+785,172.716,79829,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+786,172.852,79917,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+787,172.96,79998,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+788,173.184,80132,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+789,173.184,80205,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+790,173.388,80334,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+791,173.388,80399,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+792,173.496,80480,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+793,173.596,80583,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+794,173.696,80684,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+795,173.796,80773,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+796,173.9,80864,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+797,173.996,80959,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+798,174.096,81045,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+799,174.2,81128,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+800,174.3,81224,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+801,174.396,81326,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+802,174.496,81437,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+803,174.596,81532,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+804,174.7,81640,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+805,174.796,81741,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+806,174.896,81839,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+807,174.996,81935,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+808,175.156,82018,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+809,175.156,82019,t2fail_snapshot,,P=[0.1146 V=[0.006665 Bas=None Bgs=None track=126
+810,175.156,82020,failure_detection,,
+811,176.208,82371,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03641 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+812,176.208,82379,init_finish,,
+813,177.108,82626,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+814,177.208,82717,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+815,177.408,82850,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+816,177.408,82916,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+817,177.512,83009,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+818,177.64,83091,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+819,177.64,83092,t2fail_snapshot,,P=[0.09203 V=[0.08733 Bas=None Bgs=None track=129
+820,177.64,83093,failure_detection,,
+821,178.752,83438,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02758 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+822,178.756,83448,init_finish,,
+823,180.144,83834,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+824,180.272,83915,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+825,180.372,83989,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+826,180.476,84088,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+827,180.608,84179,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+828,180.74,84265,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+829,180.856,84351,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+830,180.972,84444,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+831,181.048,84531,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+832,181.144,84617,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+833,181.248,84707,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+834,181.372,84795,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+835,181.472,84895,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+836,181.58,84990,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+837,181.676,85081,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+838,181.776,85174,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+839,181.876,85271,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+840,181.976,85361,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+841,182.076,85456,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+842,182.152,85551,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+843,182.276,85650,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+844,182.348,85732,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+845,182.46,85841,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+846,182.636,85941,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+847,182.636,85942,t2fail_snapshot,,P=[-0.3614 V=[-0.1678 Bas=None Bgs=None track=103
+848,182.636,85943,failure_detection,,
+849,183.892,86292,gate_reject,,"gate reject: |Bgs|=3.65 mxP=4.07(mxV=1.87,i=8) bias_ok=0"
+850,184.888,86666,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01416 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+851,184.888,86685,init_finish,,
+852,186.092,86993,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+853,186.188,87078,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+854,186.388,87204,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+855,186.388,87268,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+856,186.488,87360,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+857,186.612,87445,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+858,186.612,87446,t2fail_snapshot,,P=[0.02979 V=[0.02277 Bas=None Bgs=None track=120
+859,186.612,87447,failure_detection,,
+860,187.86,87754,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00576 0.0117 0.0147 0.0174 0.0199 0.0235 0.0284 0.0331 0.016 0.0109 Ps: 0 0.00018 0.00011 2.45e-05 4.57e-05 2.43e-05 5.13e-05 8.46e-05 0.0137 0.000119 6.45e-05
+861,187.872,87756,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03308 @i=8 init_cost=-nan final_cost=-nan iters=1 term=0
+862,187.872,87795,init_finish,,
+863,188.124,87886,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+864,188.224,88020,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+865,188.224,88094,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+866,188.328,88184,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+867,188.424,88265,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+868,188.524,88351,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+869,188.624,88430,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+870,188.724,88513,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+871,188.828,88593,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+872,188.924,88681,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+873,189.024,88765,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+874,189.124,88846,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+875,189.224,88928,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+876,189.324,89007,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+877,189.424,89087,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+878,189.524,89175,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+879,189.66,89258,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+880,189.66,89259,t2fail_snapshot,,P=[-0.03172 V=[-0.06176 Bas=None Bgs=None track=116
+881,189.66,89260,failure_detection,,
+882,190.78,89609,t2opt_initial_solve,True,T2OPT post-solve vmax=0.1162 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+883,190.784,89619,init_finish,,
+884,191.26,89786,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+885,191.36,89879,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+886,191.46,89968,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+887,191.56,90068,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+888,191.668,90167,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+889,191.776,90245,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+890,191.776,90246,t2fail_snapshot,,P=[0.1338 V=[0.1708 Bas=None Bgs=None track=121
+891,191.776,90247,failure_detection,,
+892,192.924,90595,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00546 0.0122 0.0135 0.018 0.0203 0.0234 0.0259 0.0311 0.0359 0.0424 Ps: 0 0.00155 0.000288 0.00108 0.000982 0.000286 0.000662 0.000763 0.000804 0.000825 0.000809
+893,192.928,90597,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04244 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+894,192.928,90613,init_finish,,
+895,193.504,90806,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+896,193.604,90894,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+897,193.704,90984,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+898,193.804,91075,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+899,193.904,91169,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+900,194.004,91262,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+901,194.104,91351,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+902,194.204,91446,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+903,194.304,91532,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+904,194.404,91621,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+905,194.504,91699,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+906,194.708,91821,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+907,194.776,91885,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+908,194.776,91886,t2fail_snapshot,,P=[0.05201 V=[0.02708 Bas=None Bgs=None track=131
+909,194.776,91887,failure_detection,,
+910,195.796,92238,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05036 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+911,195.8,92259,init_finish,,
+912,196.368,92441,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+913,196.368,92512,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+914,196.468,92609,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+915,196.568,92701,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+916,196.64,92796,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+917,196.748,92887,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+918,196.904,92967,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+919,196.904,92968,t2fail_snapshot,,P=[0.07485 V=[0.09749 Bas=None Bgs=None track=129
+920,196.904,92969,failure_detection,,
+921,197.98,93319,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03839 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+922,197.98,93334,init_finish,,
+923,198.768,93572,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+924,198.88,93662,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+925,199.004,93748,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+926,199.104,93841,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+927,199.208,93922,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+928,199.336,94009,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+929,199.468,94099,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+930,199.568,94189,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+931,199.676,94285,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+932,199.872,94373,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+933,199.872,94374,t2fail_snapshot,,P=[-0.1035 V=[-0.06642 Bas=None Bgs=None track=115
+934,199.872,94375,failure_detection,,
+935,201.032,94725,t2opt_initial_solve,True,T2OPT post-solve vmax=0.09682 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+936,201.032,94753,init_finish,,
+937,201.34,94882,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+938,201.34,94971,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+939,201.44,95070,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+940,201.568,95159,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+941,201.668,95247,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+942,201.768,95330,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+943,201.868,95430,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+944,201.976,95519,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+945,202.084,95606,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+946,202.204,95702,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+947,202.336,95794,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+948,202.528,95890,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+949,202.528,95891,t2fail_snapshot,,P=[0.1915 V=[0.1728 Bas=None Bgs=None track=92
+950,202.528,95892,failure_detection,,
+951,203.708,96240,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02204 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+952,203.712,96275,init_finish,,
+953,205.064,96618,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+954,205.152,96704,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+955,205.276,96786,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+956,205.352,96876,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+957,205.452,96964,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+958,205.552,97054,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+959,205.664,97142,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+960,205.756,97226,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+961,205.86,97311,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+962,205.96,97392,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+963,206.06,97474,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+964,206.16,97555,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+965,206.26,97636,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+966,206.364,97728,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+967,206.46,97807,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+968,206.56,97888,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+969,206.652,97974,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+970,206.764,98057,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+971,206.852,98161,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+972,206.96,98264,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+973,207.06,98360,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+974,207.156,98456,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+975,207.268,98541,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+976,207.396,98616,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+977,207.396,98617,t2fail_snapshot,,P=[-0.3381 V=[-0.1996 Bas=None Bgs=None track=127
+978,207.396,98618,failure_detection,,
+979,208.492,98969,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00444 0.00754 0.0129 0.0202 0.0284 0.03 0.0296 0.0345 0.0398 0.0427 Ps: 0 0.00258 0.000919 0.000763 0.000999 0.00113 0.000774 0.000926 0.000281 0.000535 0.000493
+980,208.504,98971,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04267 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+981,208.504,99000,init_finish,,
+982,209.02,99158,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+983,209.12,99255,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+984,209.22,99335,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+985,209.32,99438,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+986,209.42,99531,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+987,209.576,99614,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+988,209.576,99615,t2fail_snapshot,,P=[-0.007235 V=[-0.002604 Bas=None Bgs=None track=117
+989,209.576,99616,failure_detection,,
+990,210.708,99965,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01117 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+991,210.708,99986,init_finish,,
+992,211.74,100266,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+993,211.84,100348,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+994,211.94,100436,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+995,212.044,100537,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+996,212.14,100632,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+997,212.24,100715,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+998,212.34,100802,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+999,212.44,100880,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1000,212.584,100967,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1001,212.584,100968,t2fail_snapshot,,P=[0.04855 V=[0.05478 Bas=None Bgs=None track=116
+1002,212.584,100969,failure_detection,,
+1003,213.628,101317,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05652 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1004,213.628,101333,init_finish,,
+1005,214.116,101508,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1006,214.252,101614,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1007,214.252,101678,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1008,214.352,101763,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1009,214.448,101859,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1010,214.548,101937,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1011,214.652,102021,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1012,214.748,102119,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1013,214.848,102217,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1014,214.948,102309,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1015,215.048,102396,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1016,215.192,102479,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1017,215.192,102480,t2fail_snapshot,,P=[0.02119 V=[0.005197 Bas=None Bgs=None track=133
+1018,215.192,102481,failure_detection,,
+1019,216.312,102832,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06026 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1020,216.316,102853,init_finish,,
+1021,216.648,102971,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1022,216.648,103053,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1023,216.748,103152,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1024,216.848,103249,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1025,216.952,103344,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1026,217.048,103439,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1027,217.148,103523,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1028,217.252,103606,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1029,217.348,103697,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1030,217.496,103788,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1031,217.496,103789,t2fail_snapshot,,P=[-0.002605 V=[-0.007611 Bas=None Bgs=None track=123
+1032,217.496,103790,failure_detection,,
+1033,218.588,104141,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03111 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+1034,218.592,104163,init_finish,,
+1035,219.468,104408,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1036,219.592,104496,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1037,219.764,104621,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1038,219.764,104693,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1039,219.876,104797,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1040,219.992,104887,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1041,219.992,104888,t2fail_snapshot,,P=[0.06381 V=[0.07009 Bas=None Bgs=None track=128
+1042,219.992,104889,failure_detection,,
+1043,221.132,105239,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02527 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1044,221.136,105268,init_finish,,
+1045,223.636,105874,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1046,223.74,105965,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1047,223.84,106042,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1048,224.044,106180,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1049,224.044,106246,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1050,224.14,106334,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1051,224.24,106422,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1052,224.34,106510,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1053,224.44,106594,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1054,224.54,106682,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1055,224.64,106765,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1056,224.84,106885,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1057,224.84,106949,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1058,224.94,107041,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1059,225.04,107138,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1060,225.14,107226,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1061,225.244,107309,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1062,225.34,107392,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1063,225.44,107478,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1064,225.54,107575,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1065,225.64,107673,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1066,225.744,107763,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1067,225.84,107849,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1068,225.996,107935,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1069,225.996,107936,t2fail_snapshot,,P=[0.1689 V=[0.03075 Bas=None Bgs=None track=118
+1070,225.996,107937,failure_detection,,
+1071,227.116,108446,t2opt_initial_solve,True,T2OPT post-solve vmax=2.144 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1072,227.148,108486,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1073,227.148,108544,init_finish,,
+1074,227.252,108586,cost_gate_reboot,,"cost gate: streak=6 over 10.0x short-window median, reboot"
+1075,227.252,108587,t2fail_snapshot,,P=[-0.3322 V=[-0.9779 Bas=None Bgs=None track=44
+1076,227.252,108588,failure_detection,,
+1077,228.28,108858,gate_reject,,"gate reject: |Bgs|=1.84 mxP=2.08(mxV=7.15,i=3) bias_ok=0"
+1078,229.404,109256,gate_reject,,"gate reject: |Bgs|=3.76 mxP=11.4(mxV=5.54,i=3) bias_ok=0"
+1079,230.6,109614,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04285 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1080,230.6,109644,init_finish,,
+1081,231.132,109837,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1082,231.352,109973,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1083,231.504,110073,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1084,231.504,110143,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1085,231.616,110232,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1086,231.776,110318,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1087,231.776,110319,t2fail_snapshot,,P=[-0.06647 V=[-0.08375 Bas=None Bgs=None track=110
+1088,231.776,110320,failure_detection,,
+1089,232.876,110664,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0149 @i=6 init_cost=-nan final_cost=-nan iters=1 term=0
+1090,232.88,110694,init_finish,,
+1091,234.952,111228,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1092,235.052,111315,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1093,235.284,111441,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1094,235.284,111508,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1095,235.396,111601,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1096,235.5,111698,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1097,235.616,111779,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1098,235.716,111863,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1099,235.788,111949,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1100,235.888,112037,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1101,236.084,112178,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1102,236.084,112247,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1103,236.188,112335,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1104,236.292,112422,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1105,236.388,112511,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1106,236.496,112599,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1107,236.604,112692,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1108,236.716,112792,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1109,236.788,112892,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1110,236.92,112987,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1111,237.052,113073,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1112,237.152,113164,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1113,237.252,113252,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1114,237.444,113342,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1115,237.444,113343,t2fail_snapshot,,P=[0.4464 V=[0.2106 Bas=None Bgs=None track=121
+1116,237.444,113344,failure_detection,,
+1117,238.644,113690,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02885 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1118,238.644,113717,init_finish,,
+1119,239.952,114068,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1120,240.052,114152,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1121,240.152,114241,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1122,240.224,114342,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1123,240.356,114436,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1124,240.552,114521,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1125,240.552,114522,t2fail_snapshot,,P=[-0.0944 V=[-0.07434 Bas=None Bgs=None track=121
+1126,240.552,114523,failure_detection,,
+1127,241.668,114870,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05052 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1128,241.668,114908,init_finish,,
+1129,242.152,115075,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1130,242.252,115160,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1131,242.484,115292,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1132,242.484,115368,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1133,242.572,115461,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1134,242.652,115553,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1135,242.756,115646,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1136,242.852,115743,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1137,243.088,115866,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1138,243.088,115931,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1139,243.22,116029,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1140,243.32,116114,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1141,243.452,116202,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1142,243.632,116279,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1143,243.632,116280,t2fail_snapshot,,P=[0.1487 V=[0.11 Bas=None Bgs=None track=127
+1144,243.632,116281,failure_detection,,
+1145,244.78,116627,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0543 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1146,244.78,116640,init_finish,,
+1147,245.084,116729,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1148,245.228,116839,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1149,245.228,116917,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1150,245.32,117010,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1151,245.424,117101,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1152,245.552,117193,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1153,245.752,117321,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1154,245.752,117402,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1155,245.92,117494,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1156,245.92,117495,t2fail_snapshot,,P=[-0.06051 V=[-0.05955 Bas=None Bgs=None track=109
+1157,245.92,117496,failure_detection,,
+1158,247.12,117842,t2opt_initial_solve,True,T2OPT post-solve vmax=0.07155 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1159,247.12,117872,init_finish,,
+1160,247.484,118013,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1161,247.592,118103,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1162,247.732,118194,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1163,247.852,118297,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1164,247.984,118398,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1165,248.084,118493,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1166,248.184,118586,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1167,248.284,118678,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1168,248.516,118805,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1169,248.516,118868,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1170,248.624,118951,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1171,248.776,119039,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1172,248.776,119040,t2fail_snapshot,,P=[0.1813 V=[0.1434 Bas=None Bgs=None track=102
+1173,248.776,119041,failure_detection,,
+1174,250.028,119385,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00448 0.00603 0.0138 0.0237 0.0336 0.0346 0.0406 0.0424 0.045 0.0489 Ps: 0 0.0021 0.000844 0.000813 0.00178 0.000841 0.000761 0.000755 0.000986 0.000897 0.000849
+1175,250.04,119387,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04894 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1176,250.04,119413,init_finish,,
+1177,250.552,119568,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1178,250.684,119680,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1179,250.684,119744,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1180,250.784,119842,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1181,250.884,119932,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1182,250.988,120024,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1183,251.116,120118,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1184,251.352,120258,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1185,251.396,120328,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1186,251.396,120329,t2fail_snapshot,,P=[-0.06507 V=[-0.05775 Bas=None Bgs=None track=105
+1187,251.396,120330,failure_detection,,
+1188,252.576,120680,t2opt_initial_solve,True,T2OPT post-solve vmax=0.2293 @i=4 init_cost=-nan final_cost=-nan iters=1 term=0
+1189,252.58,120717,init_finish,,
+1190,253.384,121098,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1191,253.584,121249,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+1192,253.684,121375,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1193,253.684,121446,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1194,253.784,121541,ceres_eval_err,,Residual Block size: 4 parameter blocks x 22 residuals
+1195,253.956,121671,ceres_eval_err,,Residual Block size: 4 parameter blocks x 22 residuals
+1196,254.052,121776,ceres_eval_err,,Residual Block size: 4 parameter blocks x 22 residuals
+1197,254.104,121852,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1198,254.104,121853,t2fail_snapshot,,P=[-0.2001 V=[-0.4933 Bas=None Bgs=None track=120
+1199,254.104,121854,failure_detection,,
+1200,255.448,122200,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03634 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1201,255.448,122225,init_finish,,
+1202,256.384,122517,ceres_eval_err,,Residual Block size: 4 parameter blocks x 22 residuals
+1203,256.484,122600,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1204,256.62,122688,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1205,256.752,122782,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1206,256.852,122881,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1207,257.084,123019,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1208,257.172,123080,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1209,257.172,123081,t2fail_snapshot,,P=[0.13 V=[0.126 Bas=None Bgs=None track=121
+1210,257.172,123082,failure_detection,,
+1211,258.348,123423,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.0057 0.00826 0.0101 0.0115 0.0143 0.0162 0.0201 0.0244 0.0262 0.0284 Ps: 0 0.00162 0.00108 0.000737 0.00101 0.00104 0.00108 0.00107 0.000874 0.000783 0.00102
+1212,258.356,123425,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02838 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1213,258.356,123465,init_finish,,
+1214,259.152,123692,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1215,259.252,123784,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1216,259.52,123916,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1217,259.652,124021,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1218,259.652,124082,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1219,259.756,124164,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1220,259.852,124259,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1221,259.952,124348,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1222,260.052,124436,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1223,260.176,124524,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1224,260.176,124525,t2fail_snapshot,,P=[0.06836 V=[0.0388 Bas=None Bgs=None track=126
+1225,260.176,124526,failure_detection,,
+1226,261.404,124870,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03446 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1227,261.404,124894,init_finish,,
+1228,261.724,124987,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1229,261.832,125096,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1230,261.832,125160,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1231,261.952,125256,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1232,262.052,125334,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1233,262.152,125430,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1234,262.256,125526,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1235,262.352,125608,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1236,262.452,125697,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1237,262.584,125794,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1238,262.788,125925,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1239,262.788,125995,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1240,262.976,126078,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1241,262.976,126079,t2fail_snapshot,,P=[-0.04271 V=[-0.0293 Bas=None Bgs=None track=109
+1242,262.976,126080,failure_detection,,
+1243,264.14,126464,t2opt_initial_solve,True,T2OPT post-solve vmax=0.0942 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1244,264.144,126472,init_finish,,
+1245,264.452,126557,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1246,264.532,126663,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1247,264.532,126733,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1248,264.72,126868,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1249,264.72,126935,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1250,264.82,127035,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1251,264.928,127128,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1252,265.028,127215,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1253,265.152,127311,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1254,265.32,127400,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1255,265.32,127401,t2fail_snapshot,,P=[-0.1672 V=[-0.1932 Bas=None Bgs=None track=118
+1256,265.32,127402,failure_detection,,
+1257,266.444,127750,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04402 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1258,266.444,127770,init_finish,,
+1259,267.052,127978,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1260,267.052,128051,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1261,267.184,128140,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1262,267.284,128240,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1263,267.42,128338,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1264,267.652,128472,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1265,267.784,128583,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1266,267.784,128657,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1267,267.928,128769,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+1268,268.076,128876,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1269,268.076,128877,t2fail_snapshot,,P=[-0.1107 V=[-0.107 Bas=None Bgs=None track=109
+1270,268.076,128878,failure_detection,,
+1271,269.332,129221,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.00581 0.0111 0.016 0.0219 0.0245 0.0313 0.0348 0.0382 0.0439 0.0435 Ps: 0 0.000604 0.00025 0.000391 0.000317 0.000602 0.00057 0.000467 0.000318 0.000575 0.000341
+1272,269.336,129223,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04395 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+1273,269.336,129245,init_finish,,
+1274,269.6,129324,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+1275,269.6,129398,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1276,269.688,129492,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1277,269.82,129587,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1278,269.952,129682,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1279,270.184,129813,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1280,270.184,129880,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1281,270.292,129974,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1282,270.384,130064,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1283,270.52,130151,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1284,270.636,130244,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1285,270.752,130331,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1286,270.952,130411,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1287,270.952,130412,t2fail_snapshot,,P=[0.02101 V=[0.02178 Bas=None Bgs=None track=123
+1288,270.952,130413,failure_detection,,
+1289,272.152,130753,t2snap,,T2SNAP pre AIF=11 fc=10 Vs: 0 0.0067 0.0135 0.0208 0.0273 0.0315 0.0347 0.0398 0.0483 0.0547 0.0593 Ps: 0 0.000583 0.000159 0.000188 0.000276 0.00029 0.000558 0.000335 0.000418 0.000282 0.000381
+1290,272.156,130755,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05935 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1291,272.156,130772,init_finish,,
+1292,272.416,130869,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1293,272.416,130943,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1294,272.516,131042,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1295,272.616,131130,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1296,272.716,131221,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1297,272.828,131317,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1298,272.952,131404,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1299,273.056,131501,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1300,273.152,131587,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1301,273.316,131674,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1302,273.316,131675,t2fail_snapshot,,P=[-0.06224 V=[-0.07633 Bas=None Bgs=None track=121
+1303,273.316,131676,failure_detection,,
+1304,274.544,132022,t2opt_initial_solve,True,T2OPT post-solve vmax=0.08731 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1305,274.544,132047,init_finish,,
+1306,275.152,132223,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1307,275.252,132314,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1308,275.352,132401,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1309,275.584,132542,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1310,275.584,132609,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1311,275.684,132693,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1312,275.784,132786,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1313,275.984,132906,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1314,276.044,132967,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1315,276.044,132968,t2fail_snapshot,,P=[-0.2113 V=[-0.1878 Bas=None Bgs=None track=102
+1316,276.044,132969,failure_detection,,
+1317,277.28,133317,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05144 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1318,277.28,133334,init_finish,,
+1319,277.732,133455,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1320,277.856,133565,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1321,277.856,133649,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1322,277.952,133741,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1323,278.052,133831,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1324,278.156,133917,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1325,278.42,134045,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1326,278.42,134133,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1327,278.52,134235,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1328,278.756,134383,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+1329,278.856,134502,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+1330,278.856,134589,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+1331,279.0,134715,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1332,279.0,134716,t2fail_snapshot,,P=[0.06155 V=[0.04303 Bas=None Bgs=None track=119
+1333,279.0,134717,failure_detection,,
+1334,280.052,135060,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02659 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1335,280.052,135079,init_finish,,
+1336,280.72,135290,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+1337,280.832,135382,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1338,281.084,135508,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1339,281.184,135622,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1340,281.184,135689,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1341,281.372,135774,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1342,281.372,135775,t2fail_snapshot,,P=[-0.05629 V=[-0.06018 Bas=None Bgs=None track=121
+1343,281.372,135776,failure_detection,,
+1344,282.544,136120,t2opt_initial_solve,True,T2OPT post-solve vmax=0.07791 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1345,282.544,136138,init_finish,,
+1346,282.984,136308,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1347,283.088,136404,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1348,283.316,136533,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1349,283.416,136641,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1350,283.416,136704,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1351,283.516,136802,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1352,283.628,136891,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1353,283.724,136978,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1354,283.836,137076,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1355,283.92,137161,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1356,284.024,137262,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1357,284.152,137367,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1358,284.252,137458,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1359,284.392,137555,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1360,284.392,137556,t2fail_snapshot,,P=[-0.2531 V=[-0.2293 Bas=None Bgs=None track=123
+1361,284.392,137557,failure_detection,,
+1362,285.72,137904,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03921 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1363,285.72,137913,init_finish,,
+1364,286.352,138114,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1365,286.484,138210,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1366,286.624,138307,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1367,286.724,138405,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1368,286.82,138504,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1369,286.992,138589,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1370,286.992,138590,t2fail_snapshot,,P=[-0.03261 V=[-0.03458 Bas=None Bgs=None track=111
+1371,286.992,138591,failure_detection,,
+1372,288.176,138936,t2opt_initial_solve,True,T2OPT post-solve vmax=0.1753 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1373,288.176,138978,init_finish,,
+1374,288.528,139127,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1375,288.528,139245,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+1376,288.652,139352,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+1377,288.884,139503,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1378,288.984,139639,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1379,289.04,139721,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1380,289.04,139722,t2fail_snapshot,,P=[0.08086 V=[0.08389 Bas=None Bgs=None track=118
+1381,289.04,139723,failure_detection,,
+1382,290.256,140068,t2opt_initial_solve,True,T2OPT post-solve vmax=0.1412 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1383,290.256,140076,init_finish,,
+1384,291.016,140287,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+1385,291.128,140374,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1386,291.352,140500,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1387,291.352,140575,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1388,291.452,140665,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1389,291.552,140757,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1390,291.652,140862,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1391,291.784,140962,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1392,291.888,141066,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1393,292.136,141204,ceres_eval_err,,Residual Block size: 11 parameter blocks x 64 residuals
+1394,292.136,141279,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+1395,292.316,141378,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1396,292.316,141379,t2fail_snapshot,,P=[-0.5048 V=[-0.3665 Bas=None Bgs=None track=108
+1397,292.316,141380,failure_detection,,
+1398,293.52,141725,t2opt_initial_solve,True,T2OPT post-solve vmax=0.05365 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1399,293.52,141757,init_finish,,
+1400,294.084,141942,ceres_eval_err,,Residual Block size: 10 parameter blocks x 58 residuals
+1401,294.192,142030,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1402,294.316,142109,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1403,294.388,142205,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1404,294.484,142300,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1405,294.62,142386,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1406,294.772,142479,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1407,294.772,142480,t2fail_snapshot,,P=[-0.1052 V=[-0.111 Bas=None Bgs=None track=116
+1408,294.772,142481,failure_detection,,
+1409,295.972,142825,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01608 @i=8 init_cost=-nan final_cost=-nan iters=1 term=0
+1410,295.972,142842,init_finish,,
+1411,297.252,143166,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1412,297.384,143258,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1413,297.584,143386,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1414,297.584,143463,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1415,297.684,143572,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1416,297.86,143669,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1417,297.86,143670,t2fail_snapshot,,P=[0.01192 V=[0.01621 Bas=None Bgs=None track=116
+1418,297.86,143671,failure_detection,,
+1419,298.956,144061,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02796 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1420,298.956,144067,init_finish,,
+1421,299.584,144274,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1422,299.736,144364,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1423,299.984,144498,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1424,299.984,144566,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1425,300.088,144661,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1426,300.228,144762,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1427,300.352,144841,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1428,300.452,144931,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1429,300.652,145058,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1430,300.752,145175,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1431,300.752,145237,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1432,300.872,145317,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1433,300.872,145318,t2fail_snapshot,,P=[0.005657 V=[0.01599 Bas=None Bgs=None track=119
+1434,300.872,145319,failure_detection,,
+1435,302.052,145664,t2opt_initial_solve,True,T2OPT post-solve vmax=0.5848 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1436,302.056,145694,init_finish,,
+1437,302.352,145831,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1438,302.352,145943,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+1439,302.484,146055,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+1440,302.724,146206,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1441,302.852,146376,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1442,302.852,146486,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1443,302.984,146592,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+1444,303.184,146718,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1445,303.288,146877,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1446,303.288,146968,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1447,303.452,147055,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1448,303.452,147056,t2fail_snapshot,,P=[-0.2857 V=[-0.6469 Bas=None Bgs=None track=115
+1449,303.452,147057,failure_detection,,
+1450,304.708,147406,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01689 @i=8 init_cost=-nan final_cost=-nan iters=1 term=0
+1451,304.712,147439,init_finish,,
+1452,306.228,147807,ceres_eval_err,,Residual Block size: 5 parameter blocks x 28 residuals
+1453,306.352,147891,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1454,306.552,148011,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1455,306.552,148075,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1456,306.652,148171,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1457,306.784,148256,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1458,306.884,148337,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1459,306.988,148428,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1460,307.116,148511,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1461,307.216,148594,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1462,307.324,148674,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1463,307.436,148759,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1464,307.552,148841,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1465,307.752,148964,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1466,307.884,149068,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1467,307.884,149135,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1468,307.984,149231,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1469,308.084,149316,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1470,308.184,149400,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1471,308.288,149478,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1472,308.516,149618,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1473,308.516,149681,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1474,308.62,149766,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1475,308.796,149850,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1476,308.796,149851,t2fail_snapshot,,P=[0.1887 V=[0.1576 Bas=None Bgs=None track=123
+1477,308.796,149852,failure_detection,,
+1478,309.968,150199,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03604 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1479,309.968,150215,init_finish,,
+1480,310.384,150338,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1481,310.384,150409,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1482,310.62,150542,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1483,310.62,150611,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1484,310.752,150699,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1485,310.928,150792,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1486,310.928,150793,t2fail_snapshot,,P=[-0.01247 V=[-0.01924 Bas=None Bgs=None track=120
+1487,310.928,150794,failure_detection,,
+1488,312.02,151138,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03884 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1489,312.02,151170,init_finish,,
+1490,312.452,151293,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1491,312.452,151360,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1492,312.532,151445,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1493,312.652,151543,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1494,312.784,151630,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1495,312.952,151708,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1496,312.952,151709,t2fail_snapshot,,P=[0.05632 V=[0.08513 Bas=None Bgs=None track=117
+1497,312.952,151710,failure_detection,,
+1498,314.14,152055,t2opt_initial_solve,True,T2OPT post-solve vmax=0.01928 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1499,314.14,152089,init_finish,,
+1500,315.052,152315,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1501,315.156,152402,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1502,315.252,152487,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1503,315.384,152589,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1504,315.516,152681,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1505,315.616,152774,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1506,315.716,152868,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1507,315.816,152959,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1508,315.916,153042,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1509,316.016,153133,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1510,316.18,153215,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1511,316.18,153216,t2fail_snapshot,,P=[-0.08418 V=[-0.06079 Bas=None Bgs=None track=126
+1512,316.18,153217,failure_detection,,
+1513,317.416,153563,t2opt_initial_solve,True,T2OPT post-solve vmax=0.03032 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+1514,317.416,153588,init_finish,,
+1515,318.72,153917,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1516,318.852,154003,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1517,318.984,154090,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1518,319.084,154182,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1519,319.22,154284,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1520,319.392,154369,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1521,319.392,154370,t2fail_snapshot,,P=[-0.1214 V=[-0.09008 Bas=None Bgs=None track=109
+1522,319.392,154371,failure_detection,,
+1523,320.6,154711,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06209 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1524,320.604,154728,init_finish,,
+1525,320.916,154820,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1526,320.916,154895,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1527,320.988,154976,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1528,321.116,155067,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1529,321.22,155158,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1530,321.332,155239,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1531,321.42,155323,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1532,321.552,155416,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1533,321.684,155510,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1534,321.816,155608,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1535,321.916,155706,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1536,322.016,155800,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1537,322.116,155886,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1538,322.216,155970,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1539,322.416,156105,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1540,322.416,156179,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1541,322.596,156262,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1542,322.596,156263,t2fail_snapshot,,P=[-0.2017 V=[-0.1483 Bas=None Bgs=None track=124
+1543,322.596,156264,failure_detection,,
+1544,323.856,156610,t2opt_initial_solve,True,T2OPT post-solve vmax=0.06576 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1545,323.856,156643,init_finish,,
+1546,324.216,156771,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1547,324.316,156874,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1548,324.316,156967,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1549,324.54,157093,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1550,324.54,157156,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1551,324.708,157231,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1552,324.708,157232,t2fail_snapshot,,P=[-0.03392 V=[-0.05083 Bas=None Bgs=None track=119
+1553,324.708,157233,failure_detection,,
+1554,325.92,157578,t2opt_initial_solve,True,T2OPT post-solve vmax=1.164 @i=9 init_cost=-nan final_cost=-nan iters=1 term=0
+1555,325.924,157598,init_finish,,
+1556,326.228,157734,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1557,326.228,157840,ceres_eval_err,,Residual Block size: 9 parameter blocks x 52 residuals
+1558,326.352,157953,ceres_eval_err,,Residual Block size: 8 parameter blocks x 46 residuals
+1559,326.628,158103,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1560,326.752,158276,ceres_eval_err,,Residual Block size: 7 parameter blocks x 40 residuals
+1561,326.816,158381,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1562,326.816,158382,t2fail_snapshot,,P=[1.012 V=[1.596 Bas=None Bgs=None track=127
+1563,326.816,158383,failure_detection,,
+1564,327.996,158723,t2opt_initial_solve,True,T2OPT post-solve vmax=0.009469 @i=4 init_cost=-nan final_cost=-nan iters=1 term=0
+1565,327.996,158749,init_finish,,
+1566,329.836,159214,ceres_eval_err,,Residual Block size: 6 parameter blocks x 34 residuals
+1567,329.956,159296,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1568,330.052,159379,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1569,330.152,159478,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1570,330.252,159568,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1571,330.352,159657,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1572,330.424,159750,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1573,330.52,159832,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1574,330.616,159913,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1575,330.716,159998,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1576,330.816,160081,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1577,330.92,160164,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1578,331.02,160252,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1579,331.152,160330,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1580,331.252,160419,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1581,331.388,160498,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1582,331.584,160613,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1583,331.724,160725,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1584,331.724,160793,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1585,331.832,160882,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1586,331.92,160972,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1587,332.036,161057,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1588,332.12,161149,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1589,332.26,161235,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1590,332.26,161236,t2fail_snapshot,,P=[-0.1441 V=[-0.04569 Bas=None Bgs=None track=120
+1591,332.26,161237,failure_detection,,
+1592,333.392,161584,t2opt_initial_solve,True,T2OPT post-solve vmax=0.04065 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1593,333.392,161601,init_finish,,
+1594,333.952,161799,ceres_eval_err,,Residual Block size: 12 parameter blocks x 70 residuals
+1595,334.084,161902,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1596,334.084,161969,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1597,334.184,162065,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1598,334.284,162154,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1599,334.428,162239,cost_gate_reboot,,"cost gate: streak=5 over 10.0x short-window median, reboot"
+1600,334.428,162240,t2fail_snapshot,,P=[0.01663 V=[0.01559 Bas=None Bgs=None track=121
+1601,334.428,162241,failure_detection,,
+1602,335.58,162584,t2opt_initial_solve,True,T2OPT post-solve vmax=0.02043 @i=10 init_cost=-nan final_cost=-nan iters=1 term=0
+1603,335.584,162627,init_finish,,
+1604,337.184,163002,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1605,337.284,163082,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1606,337.432,163172,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1607,337.656,163298,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1608,337.656,163369,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1609,337.784,163456,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1610,337.924,163548,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1611,338.056,163636,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1612,338.152,163725,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1613,338.224,163816,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1614,338.328,163910,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1615,338.42,163993,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1616,338.52,164087,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1617,338.62,164170,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1618,338.852,164288,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1619,338.852,164353,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1620,338.952,164442,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1621,339.052,164541,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1622,339.184,164627,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
+1623,339.316,164713,ceres_eval_err,,Residual Block size: 14 parameter blocks x 82 residuals
+1624,339.416,164806,ceres_eval_err,,Residual Block size: 13 parameter blocks x 76 residuals
