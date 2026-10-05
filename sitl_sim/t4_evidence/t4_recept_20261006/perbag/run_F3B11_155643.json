@@ -1,0 +1,19 @@
+{
+ "run": "run_F3B11_155643",
+ "class": "IMG_FULLCHAIN",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B11_155643/flight.bag",
+ "topic_l": "/iris_stereo_vins/vins_cam_left/image_raw",
+ "topic_r": "/iris_stereo_vins/vins_cam_right/image_raw",
+ "updated_at": "2026-10-06 05:34:58",
+ "legs": {
+  "extract_rc": 0,
+  "offset_rc": 0,
+  "offset_out": "/home/ghj/sitl_sim/vision_inputs/offset_F3B11_155643.stdout",
+  "metrics_rc": 0,
+  "fbres_rc": 0,
+  "replay_rc": 0,
+  "budget_s": 300,
+  "d9_rc": 0
+ },
+ "rc": "OK"
+}

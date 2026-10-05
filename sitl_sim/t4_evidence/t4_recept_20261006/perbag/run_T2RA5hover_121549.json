@@ -1,0 +1,30 @@
+{
+ "run": "run_T2RA5hover_121549",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/flight.bag",
+ "bag_dur_s": 195.312,
+ "received": 0,
+ "sources": {
+  "odom": {
+   "n": 1906,
+   "dur_s": 195.24,
+   "z_min": -0.0017,
+   "z_max": 1.0417,
+   "jump_cnt_gt05m": 0,
+   "jump_max_m": 0.4301
+  },
+  "mavros": {
+   "n": 5860,
+   "dur_s": 195.296,
+   "z_min": -0.0168,
+   "z_max": 1.0254,
+   "jump_cnt_gt05m": 0,
+   "jump_max_m": 0.0397
+  },
+  "truth": null
+ },
+ "end_diff_odom_vs_truth_m": null,
+ "j0d_ref": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/j0_decomp.json",
+ "class": "COMPACT",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:42:43"
+}

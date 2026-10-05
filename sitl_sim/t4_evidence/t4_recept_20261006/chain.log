@@ -1,0 +1,635 @@
+[10-06 05:21:08] TOOL_MD5 j3_extract_frames.py 18a71153
+[10-06 05:21:08] TOOL_MD5 j3_feature_density.py 7f45974b
+[10-06 05:21:08] TOOL_MD5 j3_image_metrics.py 3721399e
+[10-06 05:21:08] TOOL_MD5 j3_fb_residual.py 08cb8829
+[10-06 05:21:08] TOOL_MD5_ALL_MATCH
+[10-06 05:21:08] CONFIG_E01 7836067e643defd7117bc821f4e5c784  /home/ghj/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml
+[10-06 05:21:08] CONFIG_W1REF a01e7a3766a500e6ff9a02a7ae215a4d (W1 chain used this one; v5.19 spec says E01_baseline -> difference recorded per bag)
+[10-06 05:21:08] VINS_NODE b7de133d375cabab81efc50b606a05f7  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+[10-06 05:21:08] VINS_LIB 59548c6a532d5f1f47faa513918a1736  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
+[10-06 05:21:08] PREREG_BOOK 6784d008bd50230cc388094c5e698d68  /home/ghj/catkin_ws/docs/t4_smooth_lie_prereg.md
+[10-06 05:21:08] PYLIB_OK 5 py files
+[10-06 05:21:08] === t4_recept_batch_v519 start pid=141265 dry=1 df=590G ===
+[10-06 05:21:08] INVENTORY_BEGIN snapshot=2026-10-06 05:21:08
+[10-06 05:21:46] INVENTORY_DONE nobag=28 compact=103 received_compact=10 img_fullchain=8 img_linked_verify=0 received_img_verify=2 err_info=0
+[10-06 05:21:46] DRY_MODE_END plan at /home/ghj/catkin_ws/sitl_sim/t4_evidence/t4_recept_20261006/plan.txt ; no legs executed
+[10-06 05:25:17] TOOL_MD5 j3_extract_frames.py 18a71153
+[10-06 05:25:17] TOOL_MD5 j3_feature_density.py 7f45974b
+[10-06 05:25:17] TOOL_MD5 j3_image_metrics.py 3721399e
+[10-06 05:25:17] TOOL_MD5 j3_fb_residual.py 08cb8829
+[10-06 05:25:17] TOOL_MD5_ALL_MATCH
+[10-06 05:25:17] CONFIG_E01 7836067e643defd7117bc821f4e5c784  /home/ghj/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml
+[10-06 05:25:17] CONFIG_W1REF a01e7a3766a500e6ff9a02a7ae215a4d (W1 chain used this one; v5.19 spec says E01_baseline -> difference recorded per bag)
+[10-06 05:25:17] VINS_NODE b7de133d375cabab81efc50b606a05f7  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+[10-06 05:25:18] VINS_LIB 59548c6a532d5f1f47faa513918a1736  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
+[10-06 05:25:18] PREREG_BOOK 6784d008bd50230cc388094c5e698d68  /home/ghj/catkin_ws/docs/t4_smooth_lie_prereg.md
+[10-06 05:25:18] PYLIB_OK 5 py files
+[10-06 05:25:18] === t4_recept_batch_v519 start pid=148295 dry=1 df=590G ===
+[10-06 05:25:18] INVENTORY_BEGIN snapshot=2026-10-06 05:25:18
+[10-06 05:25:20] INVENTORY_DONE nobag=28 compact=90 received_compact=10 img_fullchain=2 img_linked_verify=0 received_img_verify=2 t1_round_defer=19 err_info=0
+[10-06 05:25:20] DRY_MODE_END plan at /home/ghj/catkin_ws/sitl_sim/t4_evidence/t4_recept_20261006/plan.txt ; no legs executed
+[10-06 05:26:50] TOOL_MD5 j3_extract_frames.py 18a71153
+[10-06 05:26:50] TOOL_MD5 j3_feature_density.py 7f45974b
+[10-06 05:26:50] TOOL_MD5 j3_image_metrics.py 3721399e
+[10-06 05:26:50] TOOL_MD5 j3_fb_residual.py 08cb8829
+[10-06 05:26:50] TOOL_MD5_ALL_MATCH
+[10-06 05:26:50] CONFIG_E01 7836067e643defd7117bc821f4e5c784  /home/ghj/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml
+[10-06 05:26:50] CONFIG_W1REF a01e7a3766a500e6ff9a02a7ae215a4d (W1 chain used this one; v5.19 spec says E01_baseline -> difference recorded per bag)
+[10-06 05:26:50] VINS_NODE b7de133d375cabab81efc50b606a05f7  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+[10-06 05:26:50] VINS_LIB 59548c6a532d5f1f47faa513918a1736  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
+[10-06 05:26:50] PREREG_BOOK 6784d008bd50230cc388094c5e698d68  /home/ghj/catkin_ws/docs/t4_smooth_lie_prereg.md
+[10-06 05:26:50] PYLIB_OK 5 py files
+[10-06 05:26:50] === t4_recept_batch_v519 start pid=149975 dry=1 df=590G ===
+[10-06 05:26:50] INVENTORY_BEGIN snapshot=2026-10-06 05:26:50
+[10-06 05:26:52] INVENTORY_DONE nobag=28 compact=90 received_compact=10 img_fullchain=2 img_linked_verify=0 received_img_verify=2 t1_round_defer=19 err_info=0
+[10-06 05:26:52] DRY_MODE_END plan at /home/ghj/catkin_ws/sitl_sim/t4_evidence/t4_recept_20261006/plan.txt ; no legs executed
+[10-06 05:27:20] TOOL_MD5 j3_extract_frames.py 18a71153
+[10-06 05:27:20] TOOL_MD5 j3_feature_density.py 7f45974b
+[10-06 05:27:20] TOOL_MD5 j3_image_metrics.py 3721399e
+[10-06 05:27:20] TOOL_MD5 j3_fb_residual.py 08cb8829
+[10-06 05:27:20] TOOL_MD5_ALL_MATCH
+[10-06 05:27:20] CONFIG_E01 7836067e643defd7117bc821f4e5c784  /home/ghj/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml
+[10-06 05:27:20] CONFIG_W1REF a01e7a3766a500e6ff9a02a7ae215a4d (W1 chain used this one; v5.19 spec says E01_baseline -> difference recorded per bag)
+[10-06 05:27:20] VINS_NODE b7de133d375cabab81efc50b606a05f7  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+[10-06 05:27:20] VINS_LIB 59548c6a532d5f1f47faa513918a1736  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
+[10-06 05:27:20] PREREG_BOOK 6784d008bd50230cc388094c5e698d68  /home/ghj/catkin_ws/docs/t4_smooth_lie_prereg.md
+[10-06 05:27:20] PYLIB_OK 5 py files
+[10-06 05:27:20] === t4_recept_batch_v519 start pid=151844 dry=0 df=590G ===
+[10-06 05:27:20] INVENTORY_BEGIN snapshot=2026-10-06 05:27:20
+[10-06 05:27:22] INVENTORY_DONE nobag=28 compact=90 received_compact=10 img_fullchain=2 img_linked_verify=0 received_img_verify=2 t1_round_defer=19 err_info=0
+[10-06 05:27:22] HOV_VERIFY bag=/home/ghj/sitl_sim/bags/t2v3_hover_134845.bag j0d=/home/ghj/sitl_sim/t3_results/j0d_t4w1/hov134845/j0_decomp.json
+[10-06 05:27:22] NOBAG_REGISTER run_ARMCHK_225326 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] COMPACT_BEGIN run_DIAGCAUCHY_231757 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGCAUCHY_231757/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_DIAGCAUCHY_231757 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_DIAGGUARD2_233403 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGGUARD2_233403/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_DIAGGUARD2_233403 rc=1 (honest, no force)
+[10-06 05:27:22] NOBAG_REGISTER run_DIAGGUARD_233048 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] NOBAG_REGISTER run_E2FAIL3_024009 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] NOBAG_REGISTER run_E2FAIL5_024737 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] NOBAG_REGISTER run_E2PROBE_022152 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] NOBAG_REGISTER run_E4_GOFF_D10_192513 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:22] COMPACT_BEGIN run_E4_GOFF_D10_193039 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_193039/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_E4_GOFF_D10_193039 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_E4_GOFF_D10_R2_194927 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_R2_194927/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_E4_GOFF_D10_R2_194927 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_E4R2-GOFF-D10_095056 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10_095056/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_E4R2-GOFF-D10_095056 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_E4R2-GOFF-D10-LODOM_100819 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_E4R2-GOFF-D10-LODOM_100819 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_E4R2-GOFF-D30_102511 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30_102511/j0_decomp.json
+[10-06 05:27:22] COMPACT_FAIL run_E4R2-GOFF-D30_102511 rc=1 (honest, no force)
+[10-06 05:27:22] COMPACT_BEGIN run_E4R2-GOFF-D30-I125_103836 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30-I125_103836/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_E4R2-GOFF-D30-I125_103836 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_E4R2-GOFF-D60_103420 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D60_103420/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_E4R2-GOFF-D60_103420 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_E4R2-GON-D10_095654 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D10_095654/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_E4R2-GON-D10_095654 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_E4R2-GON-D30_101723 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D30_101723/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_E4R2-GON-D30_101723 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_E4R2-REGRESS_104334 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-REGRESS_104334/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_E4R2-REGRESS_104334 rc=1 (honest, no force)
+[10-06 05:27:23] NOBAG_REGISTER run_F3B_023027 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:23] COMPACT_BEGIN run_F3B10_154733 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B10_154733/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_F3B10_154733 rc=1 (honest, no force)
+[10-06 05:27:23] STAGE_OK run_F3B11_155643 -> /home/ghj/sitl_sim/bags/run_t4r519_run_F3B11_155643/flight.bag
+[10-06 05:27:23] IMG_TOPICS run_F3B11_155643 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
+[10-06 05:27:23] GATE_OK run_F3B11_155643_extract waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:27:23] EXTRACT_BEGIN run_F3B11_155643
+[10-06 05:27:23] EXTRACT_RC=1 run_F3B11_155643
+[10-06 05:27:23] IMG_LEG_ABORT run_F3B11_155643 extract_rc=1 -> PARTIAL honest
+[10-06 05:27:23] COMPACT_BEGIN run_F3B12_160420 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B12_160420/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_F3B12_160420 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_F3B13_161000 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B13_161000/j0_decomp.json
+[10-06 05:27:23] COMPACT_FAIL run_F3B13_161000 rc=1 (honest, no force)
+[10-06 05:27:23] COMPACT_BEGIN run_F3B14_163613 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B14_163613/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B14_163613 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B15_190535 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B15_190535/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B15_190535 rc=1 (honest, no force)
+[10-06 05:27:24] STAGE_OK run_F3B16_191620 -> /home/ghj/sitl_sim/bags/run_t4r519_run_F3B16_191620/flight.bag
+[10-06 05:27:24] IMG_TOPICS run_F3B16_191620 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
+[10-06 05:27:24] GATE_OK run_F3B16_191620_extract waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:27:24] EXTRACT_BEGIN run_F3B16_191620
+[10-06 05:27:24] EXTRACT_RC=1 run_F3B16_191620
+[10-06 05:27:24] IMG_LEG_ABORT run_F3B16_191620 extract_rc=1 -> PARTIAL honest
+[10-06 05:27:24] NOBAG_REGISTER run_F3B2_031639 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:24] NOBAG_REGISTER run_F3B2_032241 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:24] NOBAG_REGISTER run_F3B2_034130 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B2_035213 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B2_035213/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B2_035213 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B3_042444 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B3_042444/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B3_042444 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B4_043658 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B4_043658/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B4_043658 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B5_092608 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B5_092608/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B5_092608 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B6_093203 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B6_093203/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B6_093203 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B7_093720 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B7_093720/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B7_093720 rc=1 (honest, no force)
+[10-06 05:27:24] COMPACT_BEGIN run_F3B8_094417 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B8_094417/j0_decomp.json
+[10-06 05:27:24] COMPACT_FAIL run_F3B8_094417 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_F3B9_094909 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_F3B9_094909 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_F3-P1B_095639 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3-P1B_095639/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_F3-P1B_095639 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_health_smoke_1_220521 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_health_smoke_1_220521 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_health_smoke_2_221729 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_2_221729/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_health_smoke_2_221729 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_HVNET1_050936 rec=0 j0d=none
+[10-06 05:27:25] COMPACT_FAIL run_HVNET1_050936 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_HVNET2_051401 rec=0 j0d=none
+[10-06 05:27:25] COMPACT_FAIL run_HVNET2_051401 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_RAREP1_051826 rec=0 j0d=none
+[10-06 05:27:25] COMPACT_FAIL run_RAREP1_051826 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_SUPHV2a_230310 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2a_230310/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_SUPHV2a_230310 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_SUPHV2b_230920 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2b_230920/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_SUPHV2b_230920 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_SUPHV3a_001611 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3a_001611/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_SUPHV3a_001611 rc=1 (honest, no force)
+[10-06 05:27:25] COMPACT_BEGIN run_SUPHV3b_001918 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3b_001918/j0_decomp.json
+[10-06 05:27:25] COMPACT_FAIL run_SUPHV3b_001918 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPHVa_224750 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHVa_224750/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPHVa_224750 rc=1 (honest, no force)
+[10-06 05:27:26] NOBAG_REGISTER run_SUPHVb_225134 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPP2A_234133 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2A_234133/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPP2A_234133 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPP2Av2_235010 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av2_235010/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPP2Av2_235010 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPP2Av3_235735 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av3_235735/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPP2Av3_235735 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPP3INJ_000528 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP3INJ_000528/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPP3INJ_000528 rc=1 (honest, no force)
+[10-06 05:27:26] NOBAG_REGISTER run_SUPX1a_224035 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPX1b_224122 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX1b_224122/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPX1b_224122 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPX2a_225543 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPX2a_225543 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_SUPX2b_230005 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2b_230005/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_SUPX2b_230005 rc=1 (honest, no force)
+[10-06 05:27:26] NOBAG_REGISTER run_T2BL10_210001 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:26] COMPACT_BEGIN run_T2BL1_201552 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL1_201552/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_T2BL1_201552 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_T2BL2_201729 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL2_201729/j0_decomp.json
+[10-06 05:27:26] COMPACT_FAIL run_T2BL2_201729 rc=1 (honest, no force)
+[10-06 05:27:26] COMPACT_BEGIN run_T2BL3_202549 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL3_202549/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL3_202549 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL4_202722 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL4_202722/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL4_202722 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL5_203404 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL5_203404/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL5_203404 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL6_203956 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL6_203956/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL6_203956 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL7_204325 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL7_204325/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL7_204325 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL8_204921 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL8_204921/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL8_204921 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2BL9_205405 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL9_205405/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2BL9_205405 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2M0_010259 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2M0_010259/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2M0_010259 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2MACH10_020846 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2MACH10_020846 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2MACH1_010832 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2MACH1_010832 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2MACH11_021559 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/j0_decomp.json
+[10-06 05:27:27] COMPACT_FAIL run_T2MACH11_021559 rc=1 (honest, no force)
+[10-06 05:27:27] COMPACT_BEGIN run_T2MACH12_022312 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH12_022312 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH2_011343 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH2_011343 rc=1 (honest, no force)
+[10-06 05:27:28] IMG_VERIFY_MISS run_T2MACH3_011804 cls=R_IMG_VERIFY ledger empty (在册袋缺台账 -> 如实登记)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH4_012523 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH4_012523 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH5_013233 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH5_013233 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH6_013944 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH6_013944 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH7_014657 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH7_014657 rc=1 (honest, no force)
+[10-06 05:27:28] IMG_VERIFY_MISS run_T2MACH8_015411 cls=R_IMG_VERIFY ledger empty (在册袋缺台账 -> 如实登记)
+[10-06 05:27:28] COMPACT_BEGIN run_T2MACH9_020133 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2MACH9_020133 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2RA10_132515 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA10_132515/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2RA10_132515 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2RA1_122012 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA1_122012/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2RA1_122012 rc=1 (honest, no force)
+[10-06 05:27:28] NOBAG_REGISTER run_T2RA11gnd_133759 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:28] COMPACT_BEGIN run_T2RA12hov_133845 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA12hov_133845/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2RA12hov_133845 rc=1 (honest, no force)
+[10-06 05:27:28] COMPACT_BEGIN run_T2RA13_134733 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA13_134733/j0_decomp.json
+[10-06 05:27:28] COMPACT_FAIL run_T2RA13_134733 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA14_135448 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA14_135448/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA14_135448 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA15_140205 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA15_140205/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA15_140205 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA16_141056 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA16_141056/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA16_141056 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA17hov_142425 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA17hov_142425/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA17hov_142425 rc=1 (honest, no force)
+[10-06 05:27:29] NOBAG_REGISTER run_T2RA18gnd_142339 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA19_143516 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA19_143516/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA19_143516 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA20_143940 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA20_143940/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA20_143940 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA21_144657 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA21_144657/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA21_144657 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA2_122435 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA2_122435/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA2_122435 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA22_145941 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA22_145941/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA22_145941 rc=1 (honest, no force)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA23hov_151312 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA23hov_151312/j0_decomp.json
+[10-06 05:27:29] COMPACT_FAIL run_T2RA23hov_151312 rc=1 (honest, no force)
+[10-06 05:27:29] NOBAG_REGISTER run_T2RA24gnd_151226 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:29] COMPACT_BEGIN run_T2RA3_123151 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA3_123151/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA3_123151 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2RA4_124434 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA4_124434/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA4_124434 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2RA5hover_121549 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA5hover_121549 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2RA7_125801 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA7_125801/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA7_125801 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2RA8_130517 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA8_130517/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA8_130517 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2RA9_131232 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA9_131232/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2RA9_131232 rc=1 (honest, no force)
+[10-06 05:27:30] NOBAG_REGISTER run_T2U4OBS1_031531 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:30] COMPACT_BEGIN run_T2U4OBS1_031909 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1_031909/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2U4OBS1_031909 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2U4OBS1r_032512 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1r_032512/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2U4OBS1r_032512 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2U4OBS2_033232 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS2_033232/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2U4OBS2_033232 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2ZETA1_131820 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA1_131820/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2ZETA1_131820 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2ZETA2_132510 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA2_132510/j0_decomp.json
+[10-06 05:27:30] COMPACT_FAIL run_T2ZETA2_132510 rc=1 (honest, no force)
+[10-06 05:27:30] COMPACT_BEGIN run_T2ZETA3_133227 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA3_133227/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_T2ZETA3_133227 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_T2ZETA4_135544 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA4_135544/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_T2ZETA4_135544 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_T2ZETA5_140137 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA5_140137/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_T2ZETA5_140137 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_T2ZETACTL2_134622 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETACTL2_134622/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_T2ZETACTL2_134622 rc=1 (honest, no force)
+[10-06 05:27:31] NOBAG_REGISTER run_T2ZETACTRL_133959 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:31] COMPACT_BEGIN run_T3U1V_023428 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T3U1V_023428/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_T3U1V_023428 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_U25FIX_035839 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U25FIX_035839/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_U25FIX_035839 rc=1 (honest, no force)
+[10-06 05:27:31] NOBAG_REGISTER run_U3PH_210708 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:31] COMPACT_BEGIN run_U3PO_211438 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U3PO_211438/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_U3PO_211438 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_U7OL1_195920 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL1_195920/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_U7OL1_195920 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_U7OL2_202043 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL2_202043/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_U7OL2_202043 rc=1 (honest, no force)
+[10-06 05:27:31] NOBAG_REGISTER run_V8_PROBECHECK_205100 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:31] COMPACT_BEGIN run_VRFY1_023908 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY1_023908/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_VRFY1_023908 rc=1 (honest, no force)
+[10-06 05:27:31] COMPACT_BEGIN run_VRFY2_040542 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY2_040542/j0_decomp.json
+[10-06 05:27:31] COMPACT_FAIL run_VRFY2_040542 rc=1 (honest, no force)
+[10-06 05:27:32] COMPACT_BEGIN run_VRG1_025100 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRG1_025100/j0_decomp.json
+[10-06 05:27:32] COMPACT_FAIL run_VRG1_025100 rc=1 (honest, no force)
+[10-06 05:27:32] NOBAG_REGISTER run_WAOL5_221128 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_WC2OBS1_030927 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_WC2OBS1_032005 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_WD1_024016 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_X1_000718 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_X1_002244 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] NOBAG_REGISTER run_X1_223836 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_040643 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_040931 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_043355 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_101627 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] NOBAG_REGISTER run_X1final_104445 (④无袋 run -> 登记行, 不收货)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_104720 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_105449 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X1final_172424 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g1_024637 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g1_041203 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g1_041509 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g1R_045147 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g3_025529 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g3_042025 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g3R_050113 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X2g4_030233 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X3l2a_031040 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X3l2a_042631 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X3l2b_032653 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] T1_ROUND_REGISTER run_X3l2b_043724 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:27:32] === BATCH_END normal (batch_complete 见 summary.json) ===
+[10-06 05:32:25] TOOL_MD5 j3_extract_frames.py 18a71153
+[10-06 05:32:25] TOOL_MD5 j3_feature_density.py 7f45974b
+[10-06 05:32:25] TOOL_MD5 j3_image_metrics.py 3721399e
+[10-06 05:32:25] TOOL_MD5 j3_fb_residual.py 08cb8829
+[10-06 05:32:25] TOOL_MD5_ALL_MATCH
+[10-06 05:32:25] CONFIG_E01 7836067e643defd7117bc821f4e5c784  /home/ghj/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml
+[10-06 05:32:25] CONFIG_W1REF a01e7a3766a500e6ff9a02a7ae215a4d (W1 chain used this one; v5.19 spec says E01_baseline -> difference recorded per bag)
+[10-06 05:32:25] VINS_NODE b7de133d375cabab81efc50b606a05f7  /home/ghj/catkin_ws/devel/lib/vins/vins_node
+[10-06 05:32:26] VINS_LIB 59548c6a532d5f1f47faa513918a1736  /home/ghj/catkin_ws/devel/.private/vins/lib/libvins_lib.so
+[10-06 05:32:26] PREREG_BOOK 6784d008bd50230cc388094c5e698d68  /home/ghj/catkin_ws/docs/t4_smooth_lie_prereg.md
+[10-06 05:32:26] PYLIB_OK 5 py files
+[10-06 05:32:26] === t4_recept_batch_v519 start pid=155741 dry=0 df=590G ===
+[10-06 05:32:26] INVENTORY_BEGIN snapshot=2026-10-06 05:32:26
+[10-06 05:32:28] INVENTORY_DONE nobag=28 compact=90 received_compact=10 img_fullchain=2 img_linked_verify=0 received_img_verify=2 t1_round_defer=19 err_info=0
+[10-06 05:32:28] HOV_VERIFY bag=/home/ghj/sitl_sim/bags/t2v3_hover_134845.bag j0d=/home/ghj/sitl_sim/t3_results/j0d_t4w1/hov134845/j0_decomp.json
+[10-06 05:32:28] NOBAG_REGISTER run_ARMCHK_225326 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:28] COMPACT_BEGIN run_DIAGCAUCHY_231757 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGCAUCHY_231757/j0_decomp.json
+[10-06 05:32:34] COMPACT_OK run_DIAGCAUCHY_231757
+[10-06 05:32:34] COMPACT_BEGIN run_DIAGGUARD2_233403 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGGUARD2_233403/j0_decomp.json
+[10-06 05:32:40] COMPACT_OK run_DIAGGUARD2_233403
+[10-06 05:32:40] NOBAG_REGISTER run_DIAGGUARD_233048 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:40] NOBAG_REGISTER run_E2FAIL3_024009 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:40] NOBAG_REGISTER run_E2FAIL5_024737 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:40] NOBAG_REGISTER run_E2PROBE_022152 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:40] NOBAG_REGISTER run_E4_GOFF_D10_192513 (④无袋 run -> 登记行, 不收货)
+[10-06 05:32:40] COMPACT_BEGIN run_E4_GOFF_D10_193039 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_193039/j0_decomp.json
+[10-06 05:32:44] COMPACT_OK run_E4_GOFF_D10_193039
+[10-06 05:32:44] COMPACT_BEGIN run_E4_GOFF_D10_R2_194927 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_R2_194927/j0_decomp.json
+[10-06 05:32:48] COMPACT_OK run_E4_GOFF_D10_R2_194927
+[10-06 05:32:48] COMPACT_BEGIN run_E4R2-GOFF-D10_095056 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10_095056/j0_decomp.json
+[10-06 05:32:52] COMPACT_OK run_E4R2-GOFF-D10_095056
+[10-06 05:32:52] COMPACT_BEGIN run_E4R2-GOFF-D10-LODOM_100819 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/j0_decomp.json
+[10-06 05:32:58] COMPACT_OK run_E4R2-GOFF-D10-LODOM_100819
+[10-06 05:32:58] COMPACT_BEGIN run_E4R2-GOFF-D30_102511 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30_102511/j0_decomp.json
+[10-06 05:33:02] COMPACT_OK run_E4R2-GOFF-D30_102511
+[10-06 05:33:02] COMPACT_BEGIN run_E4R2-GOFF-D30-I125_103836 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30-I125_103836/j0_decomp.json
+[10-06 05:33:03] COMPACT_OK run_E4R2-GOFF-D30-I125_103836
+[10-06 05:33:03] COMPACT_BEGIN run_E4R2-GOFF-D60_103420 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D60_103420/j0_decomp.json
+[10-06 05:33:07] COMPACT_OK run_E4R2-GOFF-D60_103420
+[10-06 05:33:07] COMPACT_BEGIN run_E4R2-GON-D10_095654 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D10_095654/j0_decomp.json
+[10-06 05:33:10] COMPACT_OK run_E4R2-GON-D10_095654
+[10-06 05:33:10] COMPACT_BEGIN run_E4R2-GON-D30_101723 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D30_101723/j0_decomp.json
+[10-06 05:33:16] COMPACT_OK run_E4R2-GON-D30_101723
+[10-06 05:33:16] COMPACT_BEGIN run_E4R2-REGRESS_104334 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-REGRESS_104334/j0_decomp.json
+[10-06 05:33:20] COMPACT_OK run_E4R2-REGRESS_104334
+[10-06 05:33:20] NOBAG_REGISTER run_F3B_023027 (④无袋 run -> 登记行, 不收货)
+[10-06 05:33:20] COMPACT_BEGIN run_F3B10_154733 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B10_154733/j0_decomp.json
+[10-06 05:33:22] COMPACT_OK run_F3B10_154733
+[10-06 05:33:22] STAGE_EXISTS run_F3B11_155643 -> /home/ghj/sitl_sim/bags/run_t4r519_run_F3B11_155643/flight.bag
+[10-06 05:33:22] IMG_TOPICS run_F3B11_155643 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
+[10-06 05:33:22] GATE_OK run_F3B11_155643_extract waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:33:22] EXTRACT_BEGIN run_F3B11_155643
+[10-06 05:33:26] EXTRACT_RC=0 run_F3B11_155643
+[10-06 05:33:26] GATE_OK run_F3B11_155643_offset waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:33:26] OFFSET_BEGIN run_F3B11_155643
+[10-06 05:33:26] OFFSET_RC=0 run_F3B11_155643 out=/home/ghj/sitl_sim/vision_inputs/offset_F3B11_155643.stdout
+[10-06 05:33:26] GATE_OK run_F3B11_155643_metrics waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:33:26] METRICS_BEGIN run_F3B11_155643
+[10-06 05:33:32] METRICS_RC=0 run_F3B11_155643
+[10-06 05:33:32] FBRES_BEGIN run_F3B11_155643
+[10-06 05:33:33] FBRES_RC=0 run_F3B11_155643
+[10-06 05:33:33] GATE_OK run_F3B11_155643_replay waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:33:33] REPLAY_BEGIN run_F3B11_155643 budget=300s outer_timeout=1200 config=E01_baseline(7836067e)
+[10-06 05:34:57] REPLAY_RC=0 run_F3B11_155643
+[10-06 05:34:57] GATE_OK run_F3B11_155643_d9 waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:34:57] D9_BEGIN run_F3B11_155643
+[10-06 05:34:58] D9_RC=0 run_F3B11_155643
+[10-06 05:34:58] LEDGER_DEPOSIT metrics_F3B11_155643.json
+[10-06 05:34:58] LEDGER_DEPOSIT fbres_F3B11_155643.json
+[10-06 05:34:58] LEDGER_DEPOSIT jr3_replay_F3B11_155643/
+[10-06 05:34:58] LEDGER_DEPOSIT frames_F3B11_155643_manifest.json
+[10-06 05:34:58] IMG_DONE run_F3B11_155643
+[10-06 05:34:58] COMPACT_BEGIN run_F3B12_160420 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B12_160420/j0_decomp.json
+[10-06 05:35:02] COMPACT_OK run_F3B12_160420
+[10-06 05:35:02] COMPACT_BEGIN run_F3B13_161000 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B13_161000/j0_decomp.json
+[10-06 05:35:05] COMPACT_OK run_F3B13_161000
+[10-06 05:35:05] COMPACT_BEGIN run_F3B14_163613 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B14_163613/j0_decomp.json
+[10-06 05:35:08] COMPACT_OK run_F3B14_163613
+[10-06 05:35:08] COMPACT_BEGIN run_F3B15_190535 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B15_190535/j0_decomp.json
+[10-06 05:35:12] COMPACT_OK run_F3B15_190535
+[10-06 05:35:12] STAGE_EXISTS run_F3B16_191620 -> /home/ghj/sitl_sim/bags/run_t4r519_run_F3B16_191620/flight.bag
+[10-06 05:35:12] IMG_TOPICS run_F3B16_191620 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
+[10-06 05:35:12] GATE_OK run_F3B16_191620_extract waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:35:12] EXTRACT_BEGIN run_F3B16_191620
+[10-06 05:35:16] EXTRACT_RC=0 run_F3B16_191620
+[10-06 05:35:16] GATE_OK run_F3B16_191620_offset waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:35:16] OFFSET_BEGIN run_F3B16_191620
+[10-06 05:35:17] OFFSET_RC=0 run_F3B16_191620 out=/home/ghj/sitl_sim/vision_inputs/offset_F3B16_191620.stdout
+[10-06 05:35:17] GATE_OK run_F3B16_191620_metrics waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:35:17] METRICS_BEGIN run_F3B16_191620
+[10-06 05:35:22] METRICS_RC=0 run_F3B16_191620
+[10-06 05:35:22] FBRES_BEGIN run_F3B16_191620
+[10-06 05:35:23] FBRES_RC=0 run_F3B16_191620
+[10-06 05:35:23] GATE_OK run_F3B16_191620_replay waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:35:23] REPLAY_BEGIN run_F3B16_191620 budget=300s outer_timeout=1200 config=E01_baseline(7836067e)
+[10-06 05:36:47] REPLAY_RC=0 run_F3B16_191620
+[10-06 05:36:48] GATE_OK run_F3B16_191620_d9 waited=0s rosbag=0 gzserver=0 px4=0 df=590G
+[10-06 05:36:48] D9_BEGIN run_F3B16_191620
+[10-06 05:36:48] D9_RC=0 run_F3B16_191620
+[10-06 05:36:48] LEDGER_DEPOSIT metrics_F3B16_191620.json
+[10-06 05:36:48] LEDGER_DEPOSIT fbres_F3B16_191620.json
+[10-06 05:36:48] LEDGER_DEPOSIT jr3_replay_F3B16_191620/
+[10-06 05:36:48] LEDGER_DEPOSIT frames_F3B16_191620_manifest.json
+[10-06 05:36:48] IMG_DONE run_F3B16_191620
+[10-06 05:36:48] NOBAG_REGISTER run_F3B2_031639 (④无袋 run -> 登记行, 不收货)
+[10-06 05:36:48] NOBAG_REGISTER run_F3B2_032241 (④无袋 run -> 登记行, 不收货)
+[10-06 05:36:48] NOBAG_REGISTER run_F3B2_034130 (④无袋 run -> 登记行, 不收货)
+[10-06 05:36:48] COMPACT_BEGIN run_F3B2_035213 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B2_035213/j0_decomp.json
+[10-06 05:36:52] COMPACT_OK run_F3B2_035213
+[10-06 05:36:52] COMPACT_BEGIN run_F3B3_042444 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B3_042444/j0_decomp.json
+[10-06 05:36:53] COMPACT_OK run_F3B3_042444
+[10-06 05:36:53] COMPACT_BEGIN run_F3B4_043658 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B4_043658/j0_decomp.json
+[10-06 05:36:54] COMPACT_OK run_F3B4_043658
+[10-06 05:36:54] COMPACT_BEGIN run_F3B5_092608 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B5_092608/j0_decomp.json
+[10-06 05:36:56] COMPACT_OK run_F3B5_092608
+[10-06 05:36:56] COMPACT_BEGIN run_F3B6_093203 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B6_093203/j0_decomp.json
+[10-06 05:37:00] COMPACT_OK run_F3B6_093203
+[10-06 05:37:00] COMPACT_BEGIN run_F3B7_093720 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B7_093720/j0_decomp.json
+[10-06 05:37:02] COMPACT_OK run_F3B7_093720
+[10-06 05:37:02] COMPACT_BEGIN run_F3B8_094417 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B8_094417/j0_decomp.json
+[10-06 05:37:05] COMPACT_OK run_F3B8_094417
+[10-06 05:37:05] COMPACT_BEGIN run_F3B9_094909 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/j0_decomp.json
+[10-06 05:37:07] COMPACT_OK run_F3B9_094909
+[10-06 05:37:07] COMPACT_BEGIN run_F3-P1B_095639 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_F3-P1B_095639/j0_decomp.json
+[10-06 05:37:13] COMPACT_OK run_F3-P1B_095639
+[10-06 05:37:13] COMPACT_BEGIN run_health_smoke_1_220521 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/j0_decomp.json
+[10-06 05:37:19] COMPACT_OK run_health_smoke_1_220521
+[10-06 05:37:19] COMPACT_BEGIN run_health_smoke_2_221729 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_2_221729/j0_decomp.json
+[10-06 05:37:23] COMPACT_OK run_health_smoke_2_221729
+[10-06 05:37:23] COMPACT_BEGIN run_HVNET1_050936 rec=0 j0d=none
+[10-06 05:37:25] COMPACT_OK run_HVNET1_050936
+[10-06 05:37:25] COMPACT_BEGIN run_HVNET2_051401 rec=0 j0d=none
+[10-06 05:37:27] COMPACT_OK run_HVNET2_051401
+[10-06 05:37:27] COMPACT_BEGIN run_RAREP1_051826 rec=0 j0d=none
+[10-06 05:37:29] COMPACT_OK run_RAREP1_051826
+[10-06 05:37:29] COMPACT_BEGIN run_SUPHV2a_230310 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2a_230310/j0_decomp.json
+[10-06 05:37:34] COMPACT_OK run_SUPHV2a_230310
+[10-06 05:37:34] COMPACT_BEGIN run_SUPHV2b_230920 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2b_230920/j0_decomp.json
+[10-06 05:37:40] COMPACT_OK run_SUPHV2b_230920
+[10-06 05:37:40] COMPACT_BEGIN run_SUPHV3a_001611 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3a_001611/j0_decomp.json
+[10-06 05:37:43] COMPACT_OK run_SUPHV3a_001611
+[10-06 05:37:43] COMPACT_BEGIN run_SUPHV3b_001918 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3b_001918/j0_decomp.json
+[10-06 05:37:46] COMPACT_OK run_SUPHV3b_001918
+[10-06 05:37:46] COMPACT_BEGIN run_SUPHVa_224750 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHVa_224750/j0_decomp.json
+[10-06 05:37:49] COMPACT_OK run_SUPHVa_224750
+[10-06 05:37:49] NOBAG_REGISTER run_SUPHVb_225134 (④无袋 run -> 登记行, 不收货)
+[10-06 05:37:49] COMPACT_BEGIN run_SUPP2A_234133 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2A_234133/j0_decomp.json
+[10-06 05:37:55] COMPACT_OK run_SUPP2A_234133
+[10-06 05:37:55] COMPACT_BEGIN run_SUPP2Av2_235010 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av2_235010/j0_decomp.json
+[10-06 05:38:01] COMPACT_OK run_SUPP2Av2_235010
+[10-06 05:38:01] COMPACT_BEGIN run_SUPP2Av3_235735 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av3_235735/j0_decomp.json
+[10-06 05:38:06] COMPACT_OK run_SUPP2Av3_235735
+[10-06 05:38:06] COMPACT_BEGIN run_SUPP3INJ_000528 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP3INJ_000528/j0_decomp.json
+[10-06 05:38:12] COMPACT_OK run_SUPP3INJ_000528
+[10-06 05:38:12] NOBAG_REGISTER run_SUPX1a_224035 (④无袋 run -> 登记行, 不收货)
+[10-06 05:38:12] COMPACT_BEGIN run_SUPX1b_224122 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX1b_224122/j0_decomp.json
+[10-06 05:38:18] COMPACT_OK run_SUPX1b_224122
+[10-06 05:38:18] COMPACT_BEGIN run_SUPX2a_225543 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/j0_decomp.json
+[10-06 05:38:20] COMPACT_OK run_SUPX2a_225543
+[10-06 05:38:20] COMPACT_BEGIN run_SUPX2b_230005 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2b_230005/j0_decomp.json
+[10-06 05:38:23] COMPACT_OK run_SUPX2b_230005
+[10-06 05:38:23] NOBAG_REGISTER run_T2BL10_210001 (④无袋 run -> 登记行, 不收货)
+[10-06 05:38:23] COMPACT_BEGIN run_T2BL1_201552 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL1_201552/j0_decomp.json
+[10-06 05:38:23] COMPACT_OK run_T2BL1_201552
+[10-06 05:38:23] COMPACT_BEGIN run_T2BL2_201729 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL2_201729/j0_decomp.json
+[10-06 05:38:31] COMPACT_OK run_T2BL2_201729
+[10-06 05:38:31] COMPACT_BEGIN run_T2BL3_202549 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL3_202549/j0_decomp.json
+[10-06 05:38:32] COMPACT_OK run_T2BL3_202549
+[10-06 05:38:32] COMPACT_BEGIN run_T2BL4_202722 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL4_202722/j0_decomp.json
+[10-06 05:38:39] COMPACT_OK run_T2BL4_202722
+[10-06 05:38:39] COMPACT_BEGIN run_T2BL5_203404 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL5_203404/j0_decomp.json
+[10-06 05:38:44] COMPACT_OK run_T2BL5_203404
+[10-06 05:38:44] COMPACT_BEGIN run_T2BL6_203956 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL6_203956/j0_decomp.json
+[10-06 05:38:47] COMPACT_OK run_T2BL6_203956
+[10-06 05:38:47] COMPACT_BEGIN run_T2BL7_204325 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL7_204325/j0_decomp.json
+[10-06 05:38:53] COMPACT_OK run_T2BL7_204325
+[10-06 05:38:53] COMPACT_BEGIN run_T2BL8_204921 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL8_204921/j0_decomp.json
+[10-06 05:38:56] COMPACT_OK run_T2BL8_204921
+[10-06 05:38:56] COMPACT_BEGIN run_T2BL9_205405 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL9_205405/j0_decomp.json
+[10-06 05:39:01] COMPACT_OK run_T2BL9_205405
+[10-06 05:39:01] COMPACT_BEGIN run_T2M0_010259 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2M0_010259/j0_decomp.json
+[10-06 05:39:06] COMPACT_OK run_T2M0_010259
+[10-06 05:39:06] COMPACT_BEGIN run_T2MACH10_020846 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/j0_decomp.json
+[10-06 05:39:13] COMPACT_OK run_T2MACH10_020846
+[10-06 05:39:13] COMPACT_BEGIN run_T2MACH1_010832 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/j0_decomp.json
+[10-06 05:39:18] COMPACT_OK run_T2MACH1_010832
+[10-06 05:39:18] COMPACT_BEGIN run_T2MACH11_021559 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/j0_decomp.json
+[10-06 05:39:26] COMPACT_OK run_T2MACH11_021559
+[10-06 05:39:26] COMPACT_BEGIN run_T2MACH12_022312 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/j0_decomp.json
+[10-06 05:39:33] COMPACT_OK run_T2MACH12_022312
+[10-06 05:39:33] COMPACT_BEGIN run_T2MACH2_011343 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/j0_decomp.json
+[10-06 05:39:37] COMPACT_OK run_T2MACH2_011343
+[10-06 05:39:37] IMG_VERIFY_OK run_T2MACH3_011804 cls=R_IMG_VERIFY ledger=[ metrics fbres offset jr3_replay] (在册 -> 跳过重链只核对)
+[10-06 05:39:37] COMPACT_BEGIN run_T2MACH4_012523 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/j0_decomp.json
+[10-06 05:39:45] COMPACT_OK run_T2MACH4_012523
+[10-06 05:39:45] COMPACT_BEGIN run_T2MACH5_013233 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/j0_decomp.json
+[10-06 05:39:52] COMPACT_OK run_T2MACH5_013233
+[10-06 05:39:52] COMPACT_BEGIN run_T2MACH6_013944 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/j0_decomp.json
+[10-06 05:39:59] COMPACT_OK run_T2MACH6_013944
+[10-06 05:39:59] COMPACT_BEGIN run_T2MACH7_014657 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/j0_decomp.json
+[10-06 05:40:07] COMPACT_OK run_T2MACH7_014657
+[10-06 05:40:07] IMG_VERIFY_OK run_T2MACH8_015411 cls=R_IMG_VERIFY ledger=[ metrics fbres offset jr3_replay] (在册 -> 跳过重链只核对)
+[10-06 05:40:07] COMPACT_BEGIN run_T2MACH9_020133 rec=1 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/j0_decomp.json
+[10-06 05:40:14] COMPACT_OK run_T2MACH9_020133
+[10-06 05:40:15] COMPACT_BEGIN run_T2RA10_132515 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA10_132515/j0_decomp.json
+[10-06 05:40:28] COMPACT_OK run_T2RA10_132515
+[10-06 05:40:28] COMPACT_BEGIN run_T2RA1_122012 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA1_122012/j0_decomp.json
+[10-06 05:40:32] COMPACT_OK run_T2RA1_122012
+[10-06 05:40:32] NOBAG_REGISTER run_T2RA11gnd_133759 (④无袋 run -> 登记行, 不收货)
+[10-06 05:40:32] COMPACT_BEGIN run_T2RA12hov_133845 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA12hov_133845/j0_decomp.json
+[10-06 05:40:36] COMPACT_OK run_T2RA12hov_133845
+[10-06 05:40:36] COMPACT_BEGIN run_T2RA13_134733 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA13_134733/j0_decomp.json
+[10-06 05:40:44] COMPACT_OK run_T2RA13_134733
+[10-06 05:40:44] COMPACT_BEGIN run_T2RA14_135448 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA14_135448/j0_decomp.json
+[10-06 05:40:51] COMPACT_OK run_T2RA14_135448
+[10-06 05:40:51] COMPACT_BEGIN run_T2RA15_140205 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA15_140205/j0_decomp.json
+[10-06 05:41:01] COMPACT_OK run_T2RA15_140205
+[10-06 05:41:01] COMPACT_BEGIN run_T2RA16_141056 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA16_141056/j0_decomp.json
+[10-06 05:41:15] COMPACT_OK run_T2RA16_141056
+[10-06 05:41:15] COMPACT_BEGIN run_T2RA17hov_142425 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA17hov_142425/j0_decomp.json
+[10-06 05:41:19] COMPACT_OK run_T2RA17hov_142425
+[10-06 05:41:19] NOBAG_REGISTER run_T2RA18gnd_142339 (④无袋 run -> 登记行, 不收货)
+[10-06 05:41:19] COMPACT_BEGIN run_T2RA19_143516 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA19_143516/j0_decomp.json
+[10-06 05:41:23] COMPACT_OK run_T2RA19_143516
+[10-06 05:41:23] COMPACT_BEGIN run_T2RA20_143940 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA20_143940/j0_decomp.json
+[10-06 05:41:30] COMPACT_OK run_T2RA20_143940
+[10-06 05:41:30] COMPACT_BEGIN run_T2RA21_144657 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA21_144657/j0_decomp.json
+[10-06 05:41:44] COMPACT_OK run_T2RA21_144657
+[10-06 05:41:44] COMPACT_BEGIN run_T2RA2_122435 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA2_122435/j0_decomp.json
+[10-06 05:41:52] COMPACT_OK run_T2RA2_122435
+[10-06 05:41:52] COMPACT_BEGIN run_T2RA22_145941 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA22_145941/j0_decomp.json
+[10-06 05:42:06] COMPACT_OK run_T2RA22_145941
+[10-06 05:42:06] COMPACT_BEGIN run_T2RA23hov_151312 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA23hov_151312/j0_decomp.json
+[10-06 05:42:11] COMPACT_OK run_T2RA23hov_151312
+[10-06 05:42:11] NOBAG_REGISTER run_T2RA24gnd_151226 (④无袋 run -> 登记行, 不收货)
+[10-06 05:42:11] COMPACT_BEGIN run_T2RA3_123151 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA3_123151/j0_decomp.json
+[10-06 05:42:25] COMPACT_OK run_T2RA3_123151
+[10-06 05:42:25] COMPACT_BEGIN run_T2RA4_124434 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA4_124434/j0_decomp.json
+[10-06 05:42:39] COMPACT_OK run_T2RA4_124434
+[10-06 05:42:39] COMPACT_BEGIN run_T2RA5hover_121549 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/j0_decomp.json
+[10-06 05:42:43] COMPACT_OK run_T2RA5hover_121549
+[10-06 05:42:43] COMPACT_BEGIN run_T2RA7_125801 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA7_125801/j0_decomp.json
+[10-06 05:42:50] COMPACT_OK run_T2RA7_125801
+[10-06 05:42:50] COMPACT_BEGIN run_T2RA8_130517 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA8_130517/j0_decomp.json
+[10-06 05:42:57] COMPACT_OK run_T2RA8_130517
+[10-06 05:42:57] COMPACT_BEGIN run_T2RA9_131232 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA9_131232/j0_decomp.json
+[10-06 05:43:11] COMPACT_OK run_T2RA9_131232
+[10-06 05:43:11] NOBAG_REGISTER run_T2U4OBS1_031531 (④无袋 run -> 登记行, 不收货)
+[10-06 05:43:11] COMPACT_BEGIN run_T2U4OBS1_031909 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1_031909/j0_decomp.json
+[10-06 05:43:15] COMPACT_OK run_T2U4OBS1_031909
+[10-06 05:43:15] COMPACT_BEGIN run_T2U4OBS1r_032512 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1r_032512/j0_decomp.json
+[10-06 05:43:22] COMPACT_OK run_T2U4OBS1r_032512
+[10-06 05:43:22] COMPACT_BEGIN run_T2U4OBS2_033232 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS2_033232/j0_decomp.json
+[10-06 05:43:29] COMPACT_OK run_T2U4OBS2_033232
+[10-06 05:43:29] COMPACT_BEGIN run_T2ZETA1_131820 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA1_131820/j0_decomp.json
+[10-06 05:43:34] COMPACT_OK run_T2ZETA1_131820
+[10-06 05:43:34] COMPACT_BEGIN run_T2ZETA2_132510 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA2_132510/j0_decomp.json
+[10-06 05:43:40] COMPACT_OK run_T2ZETA2_132510
+[10-06 05:43:40] COMPACT_BEGIN run_T2ZETA3_133227 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA3_133227/j0_decomp.json
+[10-06 05:43:46] COMPACT_OK run_T2ZETA3_133227
+[10-06 05:43:46] COMPACT_BEGIN run_T2ZETA4_135544 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA4_135544/j0_decomp.json
+[10-06 05:43:47] COMPACT_OK run_T2ZETA4_135544
+[10-06 05:43:47] COMPACT_BEGIN run_T2ZETA5_140137 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA5_140137/j0_decomp.json
+[10-06 05:43:54] COMPACT_OK run_T2ZETA5_140137
+[10-06 05:43:54] COMPACT_BEGIN run_T2ZETACTL2_134622 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETACTL2_134622/j0_decomp.json
+[10-06 05:43:55] COMPACT_OK run_T2ZETACTL2_134622
+[10-06 05:43:55] NOBAG_REGISTER run_T2ZETACTRL_133959 (④无袋 run -> 登记行, 不收货)
+[10-06 05:43:55] COMPACT_BEGIN run_T3U1V_023428 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_T3U1V_023428/j0_decomp.json
+[10-06 05:44:02] COMPACT_OK run_T3U1V_023428
+[10-06 05:44:02] COMPACT_BEGIN run_U25FIX_035839 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U25FIX_035839/j0_decomp.json
+[10-06 05:44:07] COMPACT_OK run_U25FIX_035839
+[10-06 05:44:07] NOBAG_REGISTER run_U3PH_210708 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:07] COMPACT_BEGIN run_U3PO_211438 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U3PO_211438/j0_decomp.json
+[10-06 05:44:14] COMPACT_OK run_U3PO_211438
+[10-06 05:44:14] COMPACT_BEGIN run_U7OL1_195920 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL1_195920/j0_decomp.json
+[10-06 05:44:21] COMPACT_OK run_U7OL1_195920
+[10-06 05:44:21] COMPACT_BEGIN run_U7OL2_202043 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL2_202043/j0_decomp.json
+[10-06 05:44:24] COMPACT_OK run_U7OL2_202043
+[10-06 05:44:24] NOBAG_REGISTER run_V8_PROBECHECK_205100 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:24] COMPACT_BEGIN run_VRFY1_023908 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY1_023908/j0_decomp.json
+[10-06 05:44:28] COMPACT_OK run_VRFY1_023908
+[10-06 05:44:28] COMPACT_BEGIN run_VRFY2_040542 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY2_040542/j0_decomp.json
+[10-06 05:44:30] COMPACT_OK run_VRFY2_040542
+[10-06 05:44:30] COMPACT_BEGIN run_VRG1_025100 rec=0 j0d=/home/ghj/sitl_sim/vins_smoke_runs/run_VRG1_025100/j0_decomp.json
+[10-06 05:44:32] COMPACT_OK run_VRG1_025100
+[10-06 05:44:32] NOBAG_REGISTER run_WAOL5_221128 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_WC2OBS1_030927 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_WC2OBS1_032005 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_WD1_024016 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_X1_000718 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_X1_002244 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] NOBAG_REGISTER run_X1_223836 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_040643 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_040931 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_043355 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_101627 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] NOBAG_REGISTER run_X1final_104445 (④无袋 run -> 登记行, 不收货)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_104720 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_105449 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X1final_172424 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g1_024637 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g1_041203 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g1_041509 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g1R_045147 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g3_025529 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g3_042025 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g3R_050113 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X2g4_030233 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2a_031040 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2a_042631 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_032653 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_043724 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
+[10-06 05:44:33] === BATCH_END normal (batch_complete 见 summary.json) ===

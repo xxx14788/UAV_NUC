@@ -1,0 +1,151 @@
+NOBAG run_ARMCHK_225326
+COMPACT run_DIAGCAUCHY_231757 bytes=152825677 img_topics=
+COMPACT run_DIAGGUARD2_233403 bytes=154870850 img_topics=
+NOBAG run_DIAGGUARD_233048
+NOBAG run_E2FAIL3_024009
+NOBAG run_E2FAIL5_024737
+NOBAG run_E2PROBE_022152
+NOBAG run_E4_GOFF_D10_192513
+COMPACT run_E4_GOFF_D10_193039 bytes=103298772 img_topics=
+COMPACT run_E4_GOFF_D10_R2_194927 bytes=103500082 img_topics=
+COMPACT run_E4R2-GOFF-D10_095056 bytes=105744557 img_topics=
+COMPACT run_E4R2-GOFF-D10-LODOM_100819 bytes=150086803 img_topics=
+COMPACT run_E4R2-GOFF-D30_102511 bytes=105660438 img_topics=
+COMPACT run_E4R2-GOFF-D30-I125_103836 bytes=28991538 img_topics=
+COMPACT run_E4R2-GOFF-D60_103420 bytes=106069873 img_topics=
+COMPACT run_E4R2-GON-D10_095654 bytes=105213067 img_topics=
+COMPACT run_E4R2-GON-D30_101723 bytes=148139134 img_topics=
+COMPACT run_E4R2-REGRESS_104334 bytes=105596290 img_topics=
+NOBAG run_F3B_023027
+COMPACT run_F3B10_154733 bytes=61674892 img_topics=
+IMG_FULLCHAIN run_F3B11_155643 bytes=2124496131 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:1135 /iris_stereo_vins/vins_cam_right/image_raw:1135 
+COMPACT run_F3B12_160420 bytes=126617520 img_topics=
+COMPACT run_F3B13_161000 bytes=62571365 img_topics=
+COMPACT run_F3B14_163613 bytes=81357262 img_topics=
+COMPACT run_F3B15_190535 bytes=126515695 img_topics=
+IMG_FULLCHAIN run_F3B16_191620 bytes=1965078785 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:1050 /iris_stereo_vins/vins_cam_right/image_raw:1050 
+NOBAG run_F3B2_031639
+NOBAG run_F3B2_032241
+NOBAG run_F3B2_034130
+COMPACT run_F3B2_035213 bytes=104939049 img_topics=
+COMPACT run_F3B3_042444 bytes=20597387 img_topics=
+COMPACT run_F3B4_043658 bytes=20464423 img_topics=
+COMPACT run_F3B5_092608 bytes=60302959 img_topics=
+COMPACT run_F3B6_093203 bytes=93919799 img_topics=
+COMPACT run_F3B7_093720 bytes=66567934 img_topics=
+COMPACT run_F3B8_094417 bytes=71956789 img_topics=
+COMPACT run_F3B9_094909 bytes=62285402 img_topics=
+COMPACT run_F3-P1B_095639 bytes=171630350 img_topics=
+COMPACT run_health_smoke_1_220521 bytes=166932255 img_topics=
+COMPACT run_health_smoke_2_221729 bytes=103605595 img_topics=
+COMPACT run_HVNET1_050936 bytes=58899194 img_topics=
+COMPACT run_HVNET2_051401 bytes=54248265 img_topics=
+COMPACT run_RAREP1_051826 bytes=53382941 img_topics=
+COMPACT run_SUPHV2a_230310 bytes=114334453 img_topics=
+COMPACT run_SUPHV2b_230920 bytes=152579149 img_topics=
+COMPACT run_SUPHV3a_001611 bytes=80676456 img_topics=
+COMPACT run_SUPHV3b_001918 bytes=80758205 img_topics=
+COMPACT run_SUPHVa_224750 bytes=90250215 img_topics=
+NOBAG run_SUPHVb_225134
+COMPACT run_SUPP2A_234133 bytes=152488811 img_topics=
+COMPACT run_SUPP2Av2_235010 bytes=167601612 img_topics=
+COMPACT run_SUPP2Av3_235735 bytes=153024851 img_topics=
+COMPACT run_SUPP3INJ_000528 bytes=150685912 img_topics=
+NOBAG run_SUPX1a_224035
+COMPACT run_SUPX1b_224122 bytes=182191388 img_topics=
+COMPACT run_SUPX2a_225543 bytes=56678692 img_topics=
+COMPACT run_SUPX2b_230005 bytes=48017467 img_topics=
+NOBAG run_T2BL10_210001
+COMPACT run_T2BL1_201552 bytes=19850001 img_topics=
+COMPACT run_T2BL2_201729 bytes=222329095 img_topics=
+COMPACT run_T2BL3_202549 bytes=29402382 img_topics=
+COMPACT run_T2BL4_202722 bytes=180530029 img_topics=
+COMPACT run_T2BL5_203404 bytes=143664648 img_topics=
+COMPACT run_T2BL6_203956 bytes=90385176 img_topics=
+COMPACT run_T2BL7_204325 bytes=164702755 img_topics=
+COMPACT run_T2BL8_204921 bytes=76460364 img_topics=
+COMPACT run_T2BL9_205405 bytes=164321395 img_topics=
+COMPACT run_T2M0_010259 bytes=113193411 img_topics=
+R_COMPACT run_T2MACH10_020846 bytes=211827932 img_topics=
+R_COMPACT run_T2MACH1_010832 bytes=140628641 img_topics=
+R_COMPACT run_T2MACH11_021559 bytes=211279227 img_topics=
+R_COMPACT run_T2MACH12_022312 bytes=211163209 img_topics=
+R_COMPACT run_T2MACH2_011343 bytes=113005124 img_topics=
+R_IMG_VERIFY run_T2MACH3_011804 bytes=12960459934 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:6914 /iris_stereo_vins/vins_cam_right/image_raw:6914 
+R_COMPACT run_T2MACH4_012523 bytes=210788239 img_topics=
+R_COMPACT run_T2MACH5_013233 bytes=209384740 img_topics=
+R_COMPACT run_T2MACH6_013944 bytes=211620758 img_topics=
+R_COMPACT run_T2MACH7_014657 bytes=212443840 img_topics=
+R_IMG_VERIFY run_T2MACH8_015411 bytes=12853606851 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:6853 /iris_stereo_vins/vins_cam_right/image_raw:6853 
+R_COMPACT run_T2MACH9_020133 bytes=214252910 img_topics=
+COMPACT run_T2RA10_132515 bytes=371715241 img_topics=
+COMPACT run_T2RA1_122012 bytes=115156065 img_topics=
+NOBAG run_T2RA11gnd_133759
+COMPACT run_T2RA12hov_133845 bytes=114895712 img_topics=
+COMPACT run_T2RA13_134733 bytes=215982830 img_topics=
+COMPACT run_T2RA14_135448 bytes=214172833 img_topics=
+COMPACT run_T2RA15_140205 bytes=270680770 img_topics=
+COMPACT run_T2RA16_141056 bytes=405069596 img_topics=
+COMPACT run_T2RA17hov_142425 bytes=114341202 img_topics=
+NOBAG run_T2RA18gnd_142339
+COMPACT run_T2RA19_143516 bytes=116327516 img_topics=
+COMPACT run_T2RA20_143940 bytes=209678068 img_topics=
+COMPACT run_T2RA21_144657 bytes=401595300 img_topics=
+COMPACT run_T2RA2_122435 bytes=215731330 img_topics=
+COMPACT run_T2RA22_145941 bytes=397568030 img_topics=
+COMPACT run_T2RA23hov_151312 bytes=144301530 img_topics=
+NOBAG run_T2RA24gnd_151226
+COMPACT run_T2RA3_123151 bytes=385143198 img_topics=
+COMPACT run_T2RA4_124434 bytes=403549277 img_topics=
+COMPACT run_T2RA5hover_121549 bytes=114879850 img_topics=
+COMPACT run_T2RA7_125801 bytes=185108269 img_topics=
+COMPACT run_T2RA8_130517 bytes=215611889 img_topics=
+COMPACT run_T2RA9_131232 bytes=396308895 img_topics=
+NOBAG run_T2U4OBS1_031531
+COMPACT run_T2U4OBS1_031909 bytes=99085812 img_topics=
+COMPACT run_T2U4OBS1r_032512 bytes=199132107 img_topics=
+COMPACT run_T2U4OBS2_033232 bytes=198343604 img_topics=
+COMPACT run_T2ZETA1_131820 bytes=147461314 img_topics=
+COMPACT run_T2ZETA2_132510 bytes=177854779 img_topics=
+COMPACT run_T2ZETA3_133227 bytes=151102927 img_topics=
+COMPACT run_T2ZETA4_135544 bytes=44107932 img_topics=
+COMPACT run_T2ZETA5_140137 bytes=175910273 img_topics=
+COMPACT run_T2ZETACTL2_134622 bytes=24476725 img_topics=
+NOBAG run_T2ZETACTRL_133959
+COMPACT run_T3U1V_023428 bytes=212751158 img_topics=
+COMPACT run_U25FIX_035839 bytes=148279477 img_topics=
+NOBAG run_U3PH_210708
+COMPACT run_U3PO_211438 bytes=202714067 img_topics=
+COMPACT run_U7OL1_195920 bytes=153416112 img_topics=
+COMPACT run_U7OL2_202043 bytes=105663669 img_topics=
+NOBAG run_V8_PROBECHECK_205100
+COMPACT run_VRFY1_023908 bytes=86485459 img_topics=
+COMPACT run_VRFY2_040542 bytes=52424512 img_topics=
+COMPACT run_VRG1_025100 bytes=52164382 img_topics=
+NOBAG run_WAOL5_221128
+NOBAG run_WC2OBS1_030927
+NOBAG run_WC2OBS1_032005
+NOBAG run_WD1_024016
+NOBAG run_X1_000718
+NOBAG run_X1_002244
+NOBAG run_X1_223836
+T1_ROUND run_X1final_040643 bytes=5798525580 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:3094 /iris_stereo_vins/vins_cam_right/image_raw:3094  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X1final_040931 bytes=158938052 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X1final_043355 bytes=125876543 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X1final_101627 bytes=124578942 img_topics= note=T1_x4_batch_round_bag_not_ours
+NOBAG run_X1final_104445
+T1_ROUND run_X1final_104720 bytes=93513051 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X1final_105449 bytes=63376910 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X1final_172424 bytes=98322597 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g1_024637 bytes=10176354754 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:5428 /iris_stereo_vins/vins_cam_right/image_raw:5427  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g1_041203 bytes=149967788 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g1_041509 bytes=135206032 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g1R_045147 bytes=169765763 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g3_025529 bytes=6944736188 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:3703 /iris_stereo_vins/vins_cam_right/image_raw:3703  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g3_042025 bytes=168402631 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g3R_050113 bytes=153820086 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X2g4_030233 bytes=10355582984 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:5515 /iris_stereo_vins/vins_cam_right/image_raw:5515  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X3l2a_031040 bytes=14540445148 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:7753 /iris_stereo_vins/vins_cam_right/image_raw:7753  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X3l2a_042631 bytes=317203746 img_topics= note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X3l2b_032653 bytes=14598683368 img_topics=/iris_stereo_vins/vins_cam_left/image_raw:7786 /iris_stereo_vins/vins_cam_right/image_raw:7786  note=T1_x4_batch_round_bag_not_ours
+T1_ROUND run_X3l2b_043724 bytes=340439303 img_topics= note=T1_x4_batch_round_bag_not_ours

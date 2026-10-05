@@ -1,0 +1,30 @@
+{
+ "run": "run_F3B9_094909",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/flight.bag",
+ "bag_dur_s": 116.588,
+ "received": 0,
+ "sources": {
+  "odom": {
+   "n": 1108,
+   "dur_s": 116.472,
+   "z_min": -31.8069,
+   "z_max": 0.0074,
+   "jump_cnt_gt05m": 145,
+   "jump_max_m": 18.4552
+  },
+  "mavros": {
+   "n": 3498,
+   "dur_s": 116.564,
+   "z_min": -4.4213,
+   "z_max": 2.0696,
+   "jump_cnt_gt05m": 5,
+   "jump_max_m": 18.0613
+  },
+  "truth": null
+ },
+ "end_diff_odom_vs_truth_m": null,
+ "j0d_ref": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/j0_decomp.json",
+ "class": "COMPACT",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:37:07"
+}

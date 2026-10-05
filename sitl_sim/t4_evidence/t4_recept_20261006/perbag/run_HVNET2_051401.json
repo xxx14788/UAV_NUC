@@ -1,0 +1,30 @@
+{
+ "run": "run_HVNET2_051401",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_HVNET2_051401/flight.bag",
+ "bag_dur_s": 93.232,
+ "received": 0,
+ "sources": {
+  "odom": {
+   "n": 910,
+   "dur_s": 93.068,
+   "z_min": -0.006,
+   "z_max": 1.0379,
+   "jump_cnt_gt05m": 0,
+   "jump_max_m": 0.3536
+  },
+  "mavros": {
+   "n": 2797,
+   "dur_s": 93.2,
+   "z_min": -0.0138,
+   "z_max": 1.0479,
+   "jump_cnt_gt05m": 0,
+   "jump_max_m": 0.0275
+  },
+  "truth": null
+ },
+ "end_diff_odom_vs_truth_m": null,
+ "j0d_ref": "T3 工具产出后增列",
+ "class": "COMPACT",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:37:27"
+}

@@ -1,0 +1,21 @@
+{
+ "script": "t4_recept_batch_v519.sh",
+ "updated_at": "2026-10-06 05:44:33",
+ "counts": {
+  "total_runs": 152,
+  "nobag": 28,
+  "compact": 90,
+  "compact_received": 10,
+  "img_unlinked_fullchain": 2,
+  "img_linked_verify": 0,
+  "img_received_verify": 2,
+  "t1_round_defer": 19,
+  "hov_verify": 1,
+  "err_info": 0,
+  "done_ok": 152,
+  "deferred_final": 0,
+  "partial": 0
+ },
+ "deferred_final": [],
+ "batch_complete": true
+}

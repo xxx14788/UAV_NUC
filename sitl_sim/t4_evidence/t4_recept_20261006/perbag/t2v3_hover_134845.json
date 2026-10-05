@@ -1,0 +1,9 @@
+{
+ "run": "t2v3_hover_134845",
+ "class": "HOV_VERIFY",
+ "received": 1,
+ "bag": "/home/ghj/sitl_sim/bags/t2v3_hover_134845.bag",
+ "rc": "OK",
+ "note": "I3 权属裁定: hover 计入收货集维持; 本批仅核对 receipt, 不重链",
+ "updated_at": "2026-10-06 05:32:28"
+}

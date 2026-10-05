@@ -1,0 +1,30 @@
+{
+ "run": "run_E4R2-GOFF-D10-LODOM_100819",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/flight.bag",
+ "bag_dur_s": 265.996,
+ "received": 0,
+ "sources": {
+  "odom": {
+   "n": 2586,
+   "dur_s": 265.9,
+   "z_min": -0.0076,
+   "z_max": 1.2583,
+   "jump_cnt_gt05m": 4,
+   "jump_max_m": 0.9253
+  },
+  "mavros": {
+   "n": 7980,
+   "dur_s": 265.964,
+   "z_min": 0.0108,
+   "z_max": 0.7839,
+   "jump_cnt_gt05m": 1,
+   "jump_max_m": 1.8107
+  },
+  "truth": null
+ },
+ "end_diff_odom_vs_truth_m": null,
+ "j0d_ref": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/j0_decomp.json",
+ "class": "COMPACT",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:32:58"
+}

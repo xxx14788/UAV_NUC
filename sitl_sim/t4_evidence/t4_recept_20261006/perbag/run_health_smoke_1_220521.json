@@ -1,0 +1,30 @@
+{
+ "run": "run_health_smoke_1_220521",
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/flight.bag",
+ "bag_dur_s": 283.952,
+ "received": 0,
+ "sources": {
+  "odom": {
+   "n": 2716,
+   "dur_s": 283.744,
+   "z_min": -130.8607,
+   "z_max": 1.0415,
+   "jump_cnt_gt05m": 240,
+   "jump_max_m": 544.3335
+  },
+  "mavros": {
+   "n": 8519,
+   "dur_s": 283.936,
+   "z_min": -4.9119,
+   "z_max": 0.4062,
+   "jump_cnt_gt05m": 396,
+   "jump_max_m": 101.64
+  },
+  "truth": null
+ },
+ "end_diff_odom_vs_truth_m": null,
+ "j0d_ref": "/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/j0_decomp.json",
+ "class": "COMPACT",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:37:19"
+}

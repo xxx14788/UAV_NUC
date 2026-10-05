@@ -1,0 +1,8 @@
+{
+ "run": "run_T2MACH3_011804",
+ "class": "R_IMG_VERIFY",
+ "received": 1,
+ "ledger": " metrics fbres offset jr3_replay",
+ "rc": "OK",
+ "updated_at": "2026-10-06 05:39:37"
+}
