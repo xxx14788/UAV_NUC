@@ -1,0 +1,179 @@
+{
+ "prereg": "r3x supplement v1.x (r3x_final.py caliber verbatim; first-cut deviation discarded in-ledger)",
+ "rounds": {
+  "run_T2MACH10_020846": {
+   "imu_p50_ms": 4.018,
+   "imu_p95_ms": 7.919,
+   "imu_p99_ms": 8.232,
+   "age_odometry_p50_ms": 64.0,
+   "age_odometry_p95_ms": 88.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9992
+  },
+  "run_T2MACH11_021559": {
+   "imu_p50_ms": 4.02,
+   "imu_p95_ms": 7.91,
+   "imu_p99_ms": 8.363,
+   "age_odometry_p50_ms": 60.0,
+   "age_odometry_p95_ms": 80.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9988
+  },
+  "run_T2MACH12_022312": {
+   "imu_p50_ms": 4.019,
+   "imu_p95_ms": 7.951,
+   "imu_p99_ms": 8.337,
+   "age_odometry_p50_ms": 56.0,
+   "age_odometry_p95_ms": 84.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9991
+  },
+  "run_T2MACH1_010832": {
+   "imu_p50_ms": 4.013,
+   "imu_p95_ms": 7.936,
+   "imu_p99_ms": 8.256,
+   "age_odometry_p50_ms": 60.0,
+   "age_odometry_p95_ms": 76.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "rtf1_med": 0.9996
+  },
+  "run_T2MACH2_011343": {
+   "missing": true
+  },
+  "run_T2MACH3_011804": {
+   "imu_p50_ms": 4.007,
+   "imu_p95_ms": 7.999,
+   "imu_p99_ms": 8.132,
+   "age_odometry_p50_ms": 28.0,
+   "age_odometry_p95_ms": 32.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "rtf1_med": 0.9995
+  },
+  "run_T2MACH4_012523": {
+   "imu_p50_ms": 4.006,
+   "imu_p95_ms": 7.964,
+   "imu_p99_ms": 8.079,
+   "age_odometry_p50_ms": 24.0,
+   "age_odometry_p95_ms": 28.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "rtf1_med": 0.9995
+  },
+  "run_T2MACH5_013233": {
+   "imu_p50_ms": 4.006,
+   "imu_p95_ms": 7.993,
+   "imu_p99_ms": 8.105,
+   "age_odometry_p50_ms": 24.0,
+   "age_odometry_p95_ms": 28.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9997
+  },
+  "run_T2MACH6_013944": {
+   "imu_p50_ms": 4.009,
+   "imu_p95_ms": 7.921,
+   "imu_p99_ms": 8.144,
+   "age_odometry_p50_ms": 52.0,
+   "age_odometry_p95_ms": 68.0,
+   "age_imu_propagate_p50_ms": 0.0,
+   "age_imu_propagate_p95_ms": 4.0,
+   "rtf1_med": 0.9995
+  },
+  "run_T2MACH7_014657": {
+   "imu_p50_ms": 4.019,
+   "imu_p95_ms": 7.926,
+   "imu_p99_ms": 8.323,
+   "age_odometry_p50_ms": 56.0,
+   "age_odometry_p95_ms": 80.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9989
+  },
+  "run_T2MACH8_015411": {
+   "imu_p50_ms": 4.014,
+   "imu_p95_ms": 7.893,
+   "imu_p99_ms": 8.222,
+   "age_odometry_p50_ms": 64.0,
+   "age_odometry_p95_ms": 92.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.999
+  },
+  "run_T2MACH9_020133": {
+   "imu_p50_ms": 4.012,
+   "imu_p95_ms": 7.826,
+   "imu_p99_ms": 8.184,
+   "age_odometry_p50_ms": 68.0,
+   "age_odometry_p95_ms": 92.0,
+   "age_imu_propagate_p50_ms": 4.0,
+   "age_imu_propagate_p95_ms": 8.0,
+   "rtf1_med": 0.9987
+  }
+ },
+ "scatter": {
+  "imu_p50_ms": {
+   "min": 4.006,
+   "max": 4.02,
+   "med": 4.013,
+   "sc": 0.003,
+   "n": 11
+  },
+  "imu_p95_ms": {
+   "min": 7.826,
+   "max": 7.999,
+   "med": 7.926,
+   "sc": 0.022,
+   "n": 11
+  },
+  "imu_p99_ms": {
+   "min": 8.079,
+   "max": 8.363,
+   "med": 8.222,
+   "sc": 0.035,
+   "n": 11
+  },
+  "age_odometry_p50_ms": {
+   "min": 24.0,
+   "max": 68.0,
+   "med": 56.0,
+   "sc": 0.786,
+   "n": 11
+  },
+  "age_odometry_p95_ms": {
+   "min": 28.0,
+   "max": 92.0,
+   "med": 80.0,
+   "sc": 0.8,
+   "n": 11
+  },
+  "age_imu_propagate_p50_ms": {
+   "min": 0.0,
+   "max": 4.0,
+   "med": 4.0,
+   "sc": 1.0,
+   "n": 11
+  },
+  "rtf1_med": {
+   "min": 0.9987,
+   "max": 0.9997,
+   "med": 0.9992,
+   "sc": 0.001,
+   "n": 11
+  }
+ },
+ "judgment": {
+  "main_features_sc": {
+   "imu_p50_ms": 0.003,
+   "imu_p95_ms": 0.022,
+   "imu_p99_ms": 0.035,
+   "age_odometry_p50_ms": 0.786,
+   "rtf1_med": 0.001
+  },
+  "stable_all_le_0p30": false
+ }
+}
