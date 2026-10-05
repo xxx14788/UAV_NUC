@@ -13,6 +13,16 @@ if ! printf '%s' "$state" | grep -q 'armed: True'; then
     read -r _
 fi
 
+# F2 (T1 v11.7 单元1,disarm_fix_prereg_v1 §2): /position_cmd 静默门——
+# 若 planner/traj_server 未清场干净,LAND 会被 px4ctrl 在 CMD_CTRL 态按设计拒绝
+# (disarm 五连败根因族,X2g1/g3/g4/X3l2a/l2b 取证在册)。快失败,不空耗 90s 等待窗。
+# 窗口=3s:rostopic echo 进程启动(python 导入)≈1-1.5s,1Hz 僵尸发布者在剩余窗内必达;
+# J3 实测 timeout 1 时订阅未及建立=门失效(启动延迟吃满窗口),勿改回。
+if timeout 3 rostopic echo -n1 /position_cmd >/dev/null 2>&1; then
+    echo "✗ /position_cmd 3s 内仍有消息 — planner/traj_server 清场失败,LAND 必被 CMD_CTRL 拒;先跑 kill_planner_all.sh 再降落" >&2
+    exit 2
+fi
+
 timeout 4 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null
 rc=$?
 if [ "$rc" -ne 0 ] && [ "$rc" -ne 124 ]; then
