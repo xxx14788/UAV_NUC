@@ -10,6 +10,7 @@
 > 标注行）+ t3_wa_gate.py --online（判读继承+受控失败层 v1.1）。
 > 凭据栈：**fixface-3 = lib e704431948c865cfe33f810f4a409f03 + vins_node 08a46d0adaa97b05886db782b3ff0405**(NUC 时代存档参照;zetafix-1 8574a00f/9b88345b 追认为其等价正源,D-1004-T2-01)
 > **3090 执行域栈槽(v9.6 授权更新,2026-10-05)**:起始=build-2 系 **lib 8c3453c0 + node 2ad9676e**(含 W2BB src 诊断打印超集,行为≡zetafix-1 族,Designer 00:31 登记);后续代随 T2 换代填,X 线每轮起飞前 §0.5 实读双 md5 记台账(判据面零变动)
+> **栈槽换代 2026-10-05（v11.7 单元 2 授权,T2 v9.5 终局交付,streamguard v4 正源追认随 DECISION_LOG D-1004-T2-01 同型流程[代持 T2 域]）**:现行=**streamguard v4 node b7de133d + lib 59548c6a**(存档 stack_archive/streamguard-1/,f1b1639;guard 臂=gates+guard,cauchy 不入正源维持;X 线/供给轮每轮起飞前 §0.5 实读双 md5 **+ [T2SGCFG] banner 自证**入凭据列,不符禁起飞;前置 build-2 系 8c3453c0/2ad9676e 系谱保留,判据面零变动)
 > （**槽已填 2026-10-04 04:0x**：T2 U4 通告 03:48 值;X1prime 起飞时 §0.5 实读复核+台账;
 > 分水岭链=285278cc(10-01 20:35)→fixface-2 1d7d2302/47d4308e→fixface-3[案A staged=1 n=80
 > 默认入栈,[T2RFIXCFG] banner 自证]）。
