@@ -8,7 +8,8 @@
 > +T3 单元 1 对 U3pp 存档证据的三重取证（见 §6 样本案卷，2026-10-03 01:3x @T2 通告）。
 > 正源依赖：round_result.sh（场景名正源，e7120e0+hypot 修复 605bd26，v1.1 增 COSTGATE/FAILDET
 > 标注行）+ t3_wa_gate.py --online（判读继承+受控失败层 v1.1）。
-> 凭据栈：**fixface-3 = lib e704431948c865cfe33f810f4a409f03 + vins_node 08a46d0adaa97b05886db782b3ff0405**
+> 凭据栈：**fixface-3 = lib e704431948c865cfe33f810f4a409f03 + vins_node 08a46d0adaa97b05886db782b3ff0405**(NUC 时代存档参照;zetafix-1 8574a00f/9b88345b 追认为其等价正源,D-1004-T2-01)
+> **3090 执行域栈槽(v9.6 授权更新,2026-10-05)**:起始=build-2 系 **lib 8c3453c0 + node 2ad9676e**(含 W2BB src 诊断打印超集,行为≡zetafix-1 族,Designer 00:31 登记);后续代随 T2 换代填,X 线每轮起飞前 §0.5 实读双 md5 记台账(判据面零变动)
 > （**槽已填 2026-10-04 04:0x**：T2 U4 通告 03:48 值;X1prime 起飞时 §0.5 实读复核+台账;
 > 分水岭链=285278cc(10-01 20:35)→fixface-2 1d7d2302/47d4308e→fixface-3[案A staged=1 n=80
 > 默认入栈,[T2RFIXCFG] banner 自证]）。
