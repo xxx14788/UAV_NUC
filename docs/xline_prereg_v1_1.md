@@ -226,3 +226,20 @@ route 域 cost 门 0 触发、配对未发生=inconclusive-for-pairing）+T3 三
   合法更新 uncontrolled-fail→triggered-no-recovery:v1.3 下 legacy fire@134.332 为真触发
   →机器路径→L2 无恢复]+18 样本 re-regression 判值面逐位一致+SYN 电池 8 夹具 5 断言全绿
   [新增 SYN_LEG=任一门正型/SYN_FALSE=误触发负型/SYN_LEG_A1=触发-无恢复原型]）。
+
+- **2026-10-06 04:2x（T3 v9.9 单元 2 回场;j0d 全系扩展+X2g3 重判绿佐证行正式入册;零判据变更）**:
+  ①**X2g3 佐证行（§2.8 预注册预期"唯一翻绿 X2g3"的正式兑现入册）**：run_X2g3_025529
+  到位 old=0.849 → L3 new=0.035（<0.75 翻绿,与 §2.8a 预期 0.035 逐位一致）;j0d 组成
+  j0_total=0.0918/jump=0.1111(1 帧跳)/transit=0.1987/mixed 主导——**佐证限到位锚口径**,
+  jump 面不豁免;四绿维持 0（disarm=0 面,disarm 修复上线晚于该轮,如实注记）。
+  ②**全库 13 轮到位红→绿复核**（本表批跑与新判读器逐位互证,与 L3 15 翻转中的 13 边缘
+  红转绿集一致[另 2 翻=BL7/MACH6 绿→红=T2 域双列注记件]):全部落在 old 0.75-0.97 边缘带
+  =§2.8a 算术 bug 修正的边缘效应,非判据松动;其中 j0_total>1.5 的 2 轮（F3B14/T3U1V）
+  到位翻绿但 jump/风暴面仍在=佐证行只证锚口径,不证轮质量。
+  ③**j0d 三列全系扩展表**（判读器 bee17577 --j0-decomp,113 袋轮全库批跑,产物
+  t3_results/j0d_stats_20261006.{csv,txt}+各轮 j0_decomp.json）:净轮=19/风暴=63/中漂移=31
+  （净轮=T2fail=0∧j0_total<0.5;中漂移=T2fail=0∧j0_total≥0.5,组成 transit 主导 23/31
+  =架构级 transit 慢淋带,T2 B1 标度律 0.05-0.10×腿长的全库版佐证）;3090 段净轮 7 轮
+  名册在册（VRG1=唯一四绿+净轮,X2g3/DIAGGUARD2/RA14 净面在列）。
+  ④组合矩阵（单元 1,commit 56e3fa1）三歧结论行同步在册:cg=1 臂全库 43 轮 0 四绿
+  （Z 成立）/cg=0+guard 同臂 B1005 vs B1006 结果剖分（M 成立）/VRG1 绿无 cauchy（C 排除）。
