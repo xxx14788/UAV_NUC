@@ -1,0 +1,21 @@
+{
+ "total_lines": 126477,
+ "slv_n": 3765,
+ "slv_nan": 0,
+ "slv_phase0": 1,
+ "slv_phase0_nan": 0,
+ "slv_phase1": 3764,
+ "slv_phase1_nan": 0,
+ "gate_n": 3775,
+ "init_finish": 1,
+ "cost_reboot": 0,
+ "gate_reject": 0,
+ "insane": 0,
+ "t2opt_nan": 0,
+ "t2opt_n": 1,
+ "ceres_err": 0,
+ "gyro_calib": 1,
+ "post_reject": 0,
+ "uls": 0,
+ "settle_skip": 0
+}

@@ -1,0 +1,3 @@
+seq,t,line,type,nan,detail
+1,9.796,374,t2opt_initial_solve,False,T2OPT post-solve vmax=0.00527 @i=0 init_cost=4685 final_cost=768.1 iters=9 term=1
+2,9.796,406,init_finish,,
