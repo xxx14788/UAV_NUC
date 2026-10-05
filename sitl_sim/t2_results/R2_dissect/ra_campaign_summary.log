@@ -1,0 +1,75 @@
+=== T2 reanchor-verification campaign start 2026-10-05 12:15:49 stack=ed4b8181/acd9ba78 ===
+[12:15:49] T2RA5hover start md5=ed4b8181/acd9ba78 args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[12:19:52] T2RA5hover rc=141 dir=run_T2RA5hover_121549 T2fail=0
+0 resume=0
+0 |pre-post|=0.232 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549)
+[12:20:12] T2RA1 start md5=ed4b8181/acd9ba78 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[12:24:15] T2RA1 rc=141 dir=run_T2RA1_122012 T2fail=0
+0 resume=0
+0 |pre-post|=4.081 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA1_122012)
+[12:24:35] T2RA2 start md5=ed4b8181/acd9ba78 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[12:31:31] T2RA2 rc=141 dir=run_T2RA2_122435 T2fail=0
+0 resume=0
+0 |pre-post|=3.832 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA2_122435)
+[12:31:51] T2RA3 start md5=ed4b8181/acd9ba78 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[12:44:14] T2RA3 rc=141 dir=run_T2RA3_123151 T2fail=2 resume=2 |pre-post|=5.049 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA3_123151)
+[12:44:34] T2RA4 start md5=ed4b8181/acd9ba78 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[12:56:56] T2RA4 rc=141 dir=run_T2RA4_124434 T2fail=0
+0 resume=0
+0 |pre-post|=4.832 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | loss=1 cauchy=4.00 | [T2GATECFG] cost_gate=1 ratio=10.0 n=5 win=20 | min_disparity=0 fardrop_min_near=30 depth_gate=0 | [T2RFIXCFG] w4_bgs=0.5 staged=1 n=80.0 | [T2PDROPCFG] pd=0 sf=0 sa=1.00 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA4_124434)
+[12:57:16] T2RA6gnd ABORT stack drift node=c127f389 lib=11a94d06
+=== T2 reanchor-verification v2 campaign start 2026-10-05 12:58:01 stack=c127f389/11a94d06 ===
+[12:58:01] T2RA7 start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[13:04:56] T2RA7 rc=141 dir=run_T2RA7_125801 T2fail=0
+0 resume=1 settle=18 |pre-post|=54.183 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA7_125801)
+[13:05:17] T2RA8 start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[13:12:12] T2RA8 rc=141 dir=run_T2RA8_130517 T2fail=0
+0 resume=1 settle=19 |pre-post|=3.456 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA8_130517)
+[13:12:32] T2RA9 start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[13:24:55] T2RA9 rc=141 dir=run_T2RA9_131232 T2fail=1 resume=2 settle=39 |pre-post|=21.203 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA9_131232)
+[13:25:15] T2RA10 start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[13:37:38] T2RA10 rc=141 dir=run_T2RA10_132515 T2fail=4 resume=27 settle=97 |pre-post|=2.408 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA10_132515)
+[13:37:59] T2RA11gnd start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 0 0 1 --budget 60 --probecheck
+[13:38:24] T2RA11gnd rc=0 dir=run_T2RA11gnd_133759 T2fail=0
+0 resume=1 settle=19 no-anchor | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | NO-RESULT
+[13:38:44] T2RA12hov start md5=c127f389/11a94d06 args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[13:42:48] T2RA12hov rc=141 dir=run_T2RA12hov_133845 T2fail=0
+0 resume=1 settle=19 |pre-post|=0.085 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA12hov_133845)
+=== v2 campaign end 2026-10-05 13:43:08 ===
+=== T2 reanchor-verification v3 campaign start 2026-10-05 13:47:32 stack=b7de133d/686499ca ===
+[13:47:32] T2RA13 start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[13:54:28] T2RA13 rc=141 dir=run_T2RA13_134733 T2fail=0
+0 resume=1 settle=20 |pre-post|=0.981 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA13_134733)
+[13:54:48] T2RA14 start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[14:01:45] T2RA14 rc=141 dir=run_T2RA14_135448 T2fail=0
+0 resume=1 settle=20 |pre-post|=0.493 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA14_135448)
+[14:02:05] T2RA15 start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[14:10:36] T2RA15 rc=141 dir=run_T2RA15_140205 T2fail=1 resume=2 settle=39 |pre-post|=6.569 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA15_140205)
+[14:10:56] T2RA16 start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[14:23:19] T2RA16 rc=141 dir=run_T2RA16_141056 T2fail=0
+0 resume=1 settle=20 |pre-post|=8.461 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA16_141056)
+[14:23:39] T2RA18gnd start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 0 0 1 --budget 60 --probecheck
+[14:24:05] T2RA18gnd rc=0 dir=run_T2RA18gnd_142339 T2fail=0
+0 resume=1 settle=19 no-anchor | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | NO-RESULT
+[14:24:25] T2RA17hov start md5=b7de133d/686499ca args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[14:28:30] T2RA17hov rc=141 dir=run_T2RA17hov_142425 T2fail=0
+0 resume=1 settle=20 |pre-post|=0.578 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA17hov_142425)
+=== v3 campaign end 2026-10-05 14:28:50 ===
+=== T2 reanchor-verification v4 campaign start 2026-10-05 14:35:15 stack=b7de133d/59548c6a ===
+[14:35:16] T2RA19 start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[14:39:19] T2RA19 rc=141 dir=run_T2RA19_143516 T2fail=0
+0 resume=1 settle=18 |pre-post|=4.068 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA19_143516)
+[14:39:40] T2RA20 start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180
+[14:46:37] T2RA20 rc=141 dir=run_T2RA20_143940 T2fail=2 resume=3 settle=58 |pre-post|=3.352 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA20_143940)
+[14:46:57] T2RA21 start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[14:59:21] T2RA21 rc=141 dir=run_T2RA21_144657 T2fail=0
+0 resume=1 settle=20 |pre-post|=3.320 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA21_144657)
+[14:59:41] T2RA22 start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240
+[15:12:05] T2RA22 rc=141 dir=run_T2RA22_145941 T2fail=1 resume=2 settle=37 |pre-post|=5.324 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA22_145941)
+[15:12:25] T2RA24gnd start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 0 0 1 --budget 60 --probecheck
+[15:12:51] T2RA24gnd rc=0 dir=run_T2RA24gnd_151226 T2fail=0
+0 resume=1 settle=19 no-anchor | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | NO-RESULT
+[15:13:12] T2RA23hov start md5=b7de133d/59548c6a args=--world sitl_world_obstacles --goal 0 0 1 --budget 60
+[15:18:04] T2RA23hov rc=141 dir=run_T2RA23hov_151312 T2fail=0
+0 resume=1 settle=19 |pre-post|=0.677 m | [T2SGCFG] guard=1 sane_p=50.0 sane_v=15.0 resume_gap=0.15 | RESULT=FAIL  (证据: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA23hov_151312)
+=== v4 campaign end 2026-10-05 15:18:24 ===
