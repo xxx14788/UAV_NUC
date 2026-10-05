@@ -2,10 +2,10 @@
 j0d 三列全系统计表(净轮/风暴/中漂移; anchor v1.4 新口径)  生成 2026-10-06
 判读器=t3_wa_gate bee17577 --j0-decomp 全库批跑(113 袋轮) | join=combo_matrix+L3 | 分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5
 ================================================================================================
-总数 113: 风暴=63, 中漂移=31, 净轮=19
-  3090 62 轮: 净轮=7 中漂移=22 风暴=33
+总数 118: 风暴=65, 中漂移=33, 净轮=20
+  3090 68 轮: 净轮=9 中漂移=24 风暴=35
   NUC  37 轮: 净轮=9 中漂移=8 风暴=20
-  ?    14 轮: 净轮=3 中漂移=1 风暴=10
+  ?    13 轮: 净轮=2 中漂移=1 风暴=10
 
 -- 净轮名册 (T2fail=0 ∧ j0_total<0.5):
   run_DIAGGUARD2_233403        3090      B1005  j0=0.418 jump=0.000 transit=0.418 dom=transit 四绿=0 
@@ -13,9 +13,10 @@ j0d 三列全系统计表(净轮/风暴/中漂移; anchor v1.4 新口径)  生�
   run_T2RA12hov_133845         3090      B1004  j0=0.085 jump=0.000 transit=0.085 dom=transit 四绿=0 重判绿佐证(L3)
   run_T2RA14_135448            3090      B1004  j0=0.493 jump=0.000 transit=0.493 dom=transit 四绿=0 
   run_T2RA5hover_121549        3090      B1004  j0=0.232 jump=0.000 transit=0.232 dom=transit 四绿=0 重判绿佐证(L3)
+  run_VRFY2_040542             3090      B1006  j0=0.100 jump=0.000 transit=0.100 dom=transit 四绿=1 
   run_VRG1_025100              3090      B1006  j0=0.137 jump=0.000 transit=0.137 dom=transit 四绿=1 
   run_X2g3_025529              3090      B1004  j0=0.092 jump=0.111 transit=0.199 dom=mixed 四绿=0 重判绿佐证(L3)
-  run_VRFY2_040542             ?         n/a    j0=0.100 jump=0.000 transit=0.100 dom=transit 四绿= 
+  run_X2g3_042025              3090      B1006  j0=0.042 jump=0.000 transit=0.042 dom=negligible 四绿=0 
   run_F3B3_042444              ?(无证据行,关机 n/a    j0=0.059 jump=0.000 transit=0.059 dom=transit 四绿= 
   run_F3B4_043658              ?(无证据行,关机 n/a    j0=0.036 jump=0.000 transit=0.036 dom=negligible 四绿= 
   run_E4R2-GOFF-D10_095056     NUC       n/a    j0=0.057 jump=0.000 transit=0.057 dom=transit 四绿=0 重判绿佐证(L3)
@@ -43,5 +44,5 @@ j0d 三列全系统计表(净轮/风暴/中漂移; anchor v1.4 新口径)  生�
   run_F3B8_094417              到位 old=0.964 → new=0.312 (<0.75 翻绿) | j0d: j0_total=0.0262 jump=0.0 transit=0.0262 dom=negligible | 四绿=0(disarm 面维持原判, 佐证限到位锚口径)
   run_T3U1V_023428             到位 old=0.791 → new=0.583 (<0.75 翻绿) | j0d: j0_total=6.4686 jump=234.561 transit=230.3677 dom=mixed | 四绿=0(disarm 面维持原判, 佐证限到位锚口径)
 
--- 中漂移主导组成: transit=23, mixed=8
--- 净轮主导组成:   transit=13, negligible=4, mixed=2
+-- 中漂移主导组成: transit=25, mixed=8
+-- 净轮主导组成:   transit=13, negligible=5, mixed=2
