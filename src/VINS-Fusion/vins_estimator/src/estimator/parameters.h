@@ -53,6 +53,9 @@ extern double T2_DEPTH_MIN, T2_DEPTH_MAX, T2_XCHECK_TOL;
 // T2-v8.9 route-fix faces (absent keys = legacy behavior, bit-identical)
 extern int T2_DEPTH_GATE_STAGED;   // case-A staged depth gate: reject only in steady state
 extern double T2_STAGED_N_SEC;     // case-A post-init grace window (s) before arming rejection
+extern int T2_STREAM_GUARD;        // T2-v9.5: publish-side stream guard master switch (0 = legacy)
+extern double T2_PUB_SANE_P;       // publish sanity |P| bound (guard-armed rounds only)
+extern double T2_PUB_SANE_V;       // publish sanity |V| bound (guard-armed rounds only)
 extern double T2_W4_BGS_THRESH;    // case-B W4 pre-init gate Bgs line (default 0.5 = legacy hardcode)
 // T2 zeta-fix (odometry re-ignition, X-line trigger; absent keys = legacy bit-identical)
 extern int T2_PSEUDO_DROP;         // exclude pseudo-depth (INIT_DEPTH-injected) features from NON_LINEAR solves

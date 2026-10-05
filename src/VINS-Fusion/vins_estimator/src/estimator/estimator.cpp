@@ -253,8 +253,13 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
         // —— px4ctrl 直供链路(imu_propagate 无门控)已吃到 e6 级毒值引发
         // 飞逸(实测 1.6e6 m)。发布前做有界性检查(与 failureDetection 同
         // 阈), 越界即停发: 消费方按 odom 停流进各自 failsafe, 毒值不出门。
+        // T2-v9.5 A (prereg_reanchor_fix): sane-domain gate replaces the loose
+        // poison bound when the stream guard is armed; insane walk frames are
+        // withheld (stop-flow doctrine, same escape as T1-E2 C03-A4).
+        double t2_sane_p = T2_STREAM_GUARD ? T2_PUB_SANE_P : 1e3;
+        double t2_sane_v = T2_STREAM_GUARD ? T2_PUB_SANE_V : 50.0;
         if (latest_P.allFinite() && latest_V.allFinite() &&
-            latest_P.norm() < 1e3 && latest_V.norm() < 50.0)
+            latest_P.norm() < t2_sane_p && latest_V.norm() < t2_sane_v)
         {
             // T1-D1 (2026-09-29): publish-side smooth reanchor -- published
             // value overlays the amortizing reanchor offset; estimator kernel
@@ -262,7 +267,35 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
             // raw states (poison values are caught before smoothing).
             // REANCHOR_SMOOTH=0 (default; real-machine yaml has no key) keeps
             // the exact legacy publish behavior.
-            if (REANCHOR_SMOOTH)
+            if (T2_STREAM_GUARD)
+            {
+                // T2-v9.5 B: resume continuity -- a publish-stream gap (reboot
+                // blackout, sane-hold release, IMU stall) means the stream
+                // resumes on a re-anchored solution; compensate the delta
+                // (last published - now) through the smoother with adaptive
+                // frames so no single published frame steps over 0.4 m.
+                if (StreamGuardLogic::resume_needed(t2_pub_had, t - t2_pub_last_t))
+                {
+                    Eigen::Vector3d dP = t2_pub_last_P - latest_P;
+                    Eigen::Vector3d dV = t2_pub_last_V - latest_V;
+                    int fr = StreamGuardLogic::resume_frames(dP.norm());
+                    reanchor_smoother.frames = fr;
+                    reanchor_smoother.addJump(dP, dV);
+                    fprintf(stderr, "[T2RESUME] gap=%.3fs dP=%.3f dV=%.3f frames=%d\n",
+                            t - t2_pub_last_t, dP.norm(), dV.norm(), fr);
+                    fflush(stderr);
+                }
+                // T2-v9.5 C: D1 smoothing publish path active with the guard
+                Eigen::Vector3d P_pub = latest_P + reanchor_smoother.offset_P;
+                Eigen::Vector3d V_pub = latest_V + reanchor_smoother.offset_V;
+                pubLatestOdometry(P_pub, latest_Q, V_pub, t);
+                reanchor_smoother.step();
+                t2_pub_last_P = P_pub;
+                t2_pub_last_V = V_pub;
+                t2_pub_last_t = t;
+                t2_pub_had = true;
+            }
+            else if (REANCHOR_SMOOTH)
             {
                 Eigen::Vector3d P_pub = latest_P + reanchor_smoother.offset_P;
                 Eigen::Vector3d V_pub = latest_V + reanchor_smoother.offset_V;
@@ -417,6 +450,15 @@ void Estimator::processMeasurements()
             header.frame_id = "world";
             header.stamp = ros::Time(feature.first);
 
+            // T2-v9.5 D: snapshot smoother offsets for the 10Hz odometry path
+            // under the existing mProcess->mPropagate lock order.
+            if (T2_STREAM_GUARD)
+            {
+                mPropagate.lock();
+                t2_odom_off_P = reanchor_smoother.offset_P;
+                t2_odom_off_V = reanchor_smoother.offset_V;
+                mPropagate.unlock();
+            }
             pubOdometry(*this, header);
             pubKeyPoses(*this, header);
             pubCameraPose(*this, header);
@@ -2197,7 +2239,7 @@ void Estimator::updateLatestStates(bool set_flag)
         Eigen::Vector3d acc = tmp_accBuf.front().second;
         Eigen::Vector3d gyr = tmp_gyrBuf.front().second;
         fastPredictIMU(t, acc, gyr);
-        if (REANCHOR_SMOOTH && solver_flag == NON_LINEAR)
+        if ((REANCHOR_SMOOTH || T2_STREAM_GUARD) && solver_flag == NON_LINEAR)
             propagateOnce(sh_t, sh_P, sh_V, sh_Q, sh_acc_0, sh_gyr_0, sh_Ba, sh_Bg, t, acc, gyr);
         tmp_accBuf.pop();
         tmp_gyrBuf.pop();
@@ -2206,7 +2248,7 @@ void Estimator::updateLatestStates(bool set_flag)
     // shadow chain and the first replay sample -> skip the capture (count
     // it) instead of feeding a meter-scale garbage delta into the smoother;
     // D2 position jump gate remains the raw-stream backstop.
-    if (REANCHOR_SMOOTH && solver_flag == NON_LINEAR)
+    if ((REANCHOR_SMOOTH || T2_STREAM_GUARD) && solver_flag == NON_LINEAR)
     {
         bool gap = !tmp_accBuf.empty() &&
                    PropagateGuard::gap_skip_needed(sh_t, tmp_accBuf.front().first);

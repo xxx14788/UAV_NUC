@@ -8,6 +8,7 @@
  *******************************************************/
 
 #include "parameters.h"
+#include "stream_guard_logic.h"  // T2-v9.5: [T2SGCFG] banner RESUME_GAP
 
 double INIT_DEPTH;
 // T2-WA1G: depth-domain gate globals
@@ -58,6 +59,9 @@ double SOLVER_TIME;
 int NUM_ITERATIONS;
 bool REANCHOR_SMOOTH = false;       // T1-D1: publish-side smooth reanchor (default off = legacy)
 int REANCHOR_SMOOTH_FRAMES = 15;    // T1-D1: amortize frames @125Hz (0.12s)
+int T2_STREAM_GUARD = 0;            // T2-v9.5 stream guard (prereg_reanchor_fix): 0 = legacy bit-identical
+double T2_PUB_SANE_P = 1e3;         // sane |P| bound; experiment cfg sets 50 (normal-domain max ~10m)
+double T2_PUB_SANE_V = 50.0;        // sane |V| bound; experiment cfg sets 15 (normal-domain max ~5m/s)
 int ESTIMATE_EXTRINSIC;
 int ESTIMATE_TD;
 int ROLLING_SHUTTER;
@@ -149,6 +153,14 @@ void readParameters(std::string config_file)
         REANCHOR_SMOOTH = (int)fsSettings["reanchor_smooth"];
     if (!fsSettings["reanchor_smooth_frames"].empty())
         REANCHOR_SMOOTH_FRAMES = (int)fsSettings["reanchor_smooth_frames"];
+    // T2-v9.5 stream guard (absent key = 0 = legacy; real-machine configs
+    // without these keys are bit-identical to the pre-guard behavior)
+    if (!fsSettings["t2_stream_guard"].empty())
+        T2_STREAM_GUARD = (int)fsSettings["t2_stream_guard"];
+    if (!fsSettings["t2_pub_sane_p"].empty())
+        T2_PUB_SANE_P = (double)fsSettings["t2_pub_sane_p"];
+    if (!fsSettings["t2_pub_sane_v"].empty())
+        T2_PUB_SANE_V = (double)fsSettings["t2_pub_sane_v"];
     // T2-WA1G: depth-domain gate knobs (absent key = gate OFF = legacy behavior;
     // real-machine configs without these keys are bit-identical to upstream)
     if (!fsSettings["t2_depth_gate"].empty())
@@ -243,6 +255,8 @@ void readParameters(std::string config_file)
            T2_PRIOR_GATE, T2_PRIOR_COST_THR, T2_PRIOR_DBAS_THR, T2_PRIOR_SHARE_THR,
            T2_PRIOR_COOLDOWN, T2_PRIOR_STRATEGY, T2_COST_TRACE);
     printf("REANCHOR_SMOOTH: %d frames: %d\n", REANCHOR_SMOOTH, REANCHOR_SMOOTH_FRAMES);
+    printf("[T2SGCFG] guard=%d sane_p=%.1f sane_v=%.1f resume_gap=%.2f\n",
+           T2_STREAM_GUARD, T2_PUB_SANE_P, T2_PUB_SANE_V, StreamGuardLogic::RESUME_GAP);
 
     fsSettings["output_path"] >> OUTPUT_FOLDER;
     VINS_RESULT_PATH = OUTPUT_FOLDER + "/vio.csv";

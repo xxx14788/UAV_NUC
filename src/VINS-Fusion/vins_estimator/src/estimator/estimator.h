@@ -30,6 +30,7 @@
 #include "../initial/initial_ex_rotation.h"
 #include "reanchor_smoother.h"
 #include "propagate_guard.h"
+#include "stream_guard_logic.h"
 #include "../factor/imu_factor.h"
 #include "../factor/pose_local_parameterization.h"
 #include "../factor/marginalization_factor.h"
@@ -194,6 +195,17 @@ class Estimator
     int t2_cost_streak = 0;
     double t2_t_init_finish = 0;  // T2-v8.9 case-A: init-finish stamp (grace window origin; 0 = fill-window)
     PropagateGuard propagate_guard;       // T1-E2: dt-clamp hold / gap-skip counters (C03 A3/A4)
+
+    // T2-v9.5 stream guard (prereg_reanchor_fix): publish-side continuity
+    // bookkeeping. t2_pub_* owned by the spinner thread inside mPropagate;
+    // t2_odom_off_* written by the process thread under the existing
+    // mProcess->mPropagate lock order (see updateLatestStates).
+    Eigen::Vector3d t2_pub_last_P = Eigen::Vector3d::Zero();
+    Eigen::Vector3d t2_pub_last_V = Eigen::Vector3d::Zero();
+    double t2_pub_last_t = -1.0;
+    bool t2_pub_had = false;
+    Eigen::Vector3d t2_odom_off_P = Eigen::Vector3d::Zero();  // snapshot for pubOdometry
+    Eigen::Vector3d t2_odom_off_V = Eigen::Vector3d::Zero();
 
     bool initFirstPoseFlag;
     bool initThreadFlag;

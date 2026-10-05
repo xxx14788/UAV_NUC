@@ -182,22 +182,29 @@ void pubOdometry(const Estimator &estimator, const std_msgs::Header &header)
 {
     if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
     {
+        // T2-v9.5 D: withhold the 10Hz stream on insane window states (same
+        // thresholds as the 125Hz publish gate; guard-armed rounds only).
+        if (T2_STREAM_GUARD &&
+            (!estimator.Ps[WINDOW_SIZE].allFinite() || !estimator.Vs[WINDOW_SIZE].allFinite() ||
+             estimator.Ps[WINDOW_SIZE].norm() >= T2_PUB_SANE_P ||
+             estimator.Vs[WINDOW_SIZE].norm() >= T2_PUB_SANE_V))
+            return;
         nav_msgs::Odometry odometry;
         odometry.header = header;
         odometry.header.frame_id = "world";
         odometry.child_frame_id = "world";
         Quaterniond tmp_Q;
         tmp_Q = Quaterniond(estimator.Rs[WINDOW_SIZE]);
-        odometry.pose.pose.position.x = estimator.Ps[WINDOW_SIZE].x();
-        odometry.pose.pose.position.y = estimator.Ps[WINDOW_SIZE].y();
-        odometry.pose.pose.position.z = estimator.Ps[WINDOW_SIZE].z();
+        odometry.pose.pose.position.x = estimator.Ps[WINDOW_SIZE].x() + estimator.t2_odom_off_P.x();
+        odometry.pose.pose.position.y = estimator.Ps[WINDOW_SIZE].y() + estimator.t2_odom_off_P.y();
+        odometry.pose.pose.position.z = estimator.Ps[WINDOW_SIZE].z() + estimator.t2_odom_off_P.z();
         odometry.pose.pose.orientation.x = tmp_Q.x();
         odometry.pose.pose.orientation.y = tmp_Q.y();
         odometry.pose.pose.orientation.z = tmp_Q.z();
         odometry.pose.pose.orientation.w = tmp_Q.w();
-        odometry.twist.twist.linear.x = estimator.Vs[WINDOW_SIZE].x();
-        odometry.twist.twist.linear.y = estimator.Vs[WINDOW_SIZE].y();
-        odometry.twist.twist.linear.z = estimator.Vs[WINDOW_SIZE].z();
+        odometry.twist.twist.linear.x = estimator.Vs[WINDOW_SIZE].x() + estimator.t2_odom_off_V.x();
+        odometry.twist.twist.linear.y = estimator.Vs[WINDOW_SIZE].y() + estimator.t2_odom_off_V.y();
+        odometry.twist.twist.linear.z = estimator.Vs[WINDOW_SIZE].z() + estimator.t2_odom_off_V.z();
         g_w2bb_mon.on_odom(header.stamp.toSec(), estimator.Ps[WINDOW_SIZE].z());
         pub_odometry.publish(odometry);
 
