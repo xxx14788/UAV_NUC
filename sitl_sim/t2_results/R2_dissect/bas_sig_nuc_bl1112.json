@@ -1,0 +1,36 @@
+[
+ {
+  "dir": "run_T2BL11_210851",
+  "n": 1526,
+  "t_end": 169.1,
+  "bas_max": 2.615,
+  "bas_tmax": 60.8,
+  "bas_early_med": 1.7635,
+  "bas_late_med": 1.4314,
+  "n_over05": 1459,
+  "win": [
+   13.2,
+   169.1
+  ],
+  "trk_med_in_win": 139,
+  "p_max": 1.33,
+  "v_max": 2.38
+ },
+ {
+  "dir": "run_T2BL12_211153",
+  "n": 1521,
+  "t_end": 168.9,
+  "bas_max": 2.883,
+  "bas_tmax": 60.8,
+  "bas_early_med": 1.7228,
+  "bas_late_med": 2.4322,
+  "n_over05": 1249,
+  "win": [
+   15.1,
+   168.9
+  ],
+  "trk_med_in_win": 146,
+  "p_max": 42.54,
+  "v_max": 19.7
+ }
+]

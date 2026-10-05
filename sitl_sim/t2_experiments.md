@@ -2073,3 +2073,10 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 - **ENV**：launch 已复原 canonical（grep 验命中）；锁空零残留；gzserver/px4 双 0；df 661G（带图轮 2×13G 在盘）；T1-V1 僵尸锁（PID 50003 死）由锁 v2 死亡接管通道合规处置。
 - **坑（本会话新增 2）**：①3090 运行区台账为 rsync 时点快照（缺 NUC 尾部章）——跨机台账迁移必先 md5 对账再补差；②campaign 摘要行 anchor 与 fail 计数分置 RESULT/simvins 两文件，判读脚本须双源提取。
 - 产物：R2_dissect/{prereg_machine_ab.md, mach_verdict.md, mach_campaign_summary.log}+vins_smoke_runs/run_T2M{0,ACH1-12}_*+t2_mach_campaign.sh。
+
+
+**T2 v9.3 追加单元：B1 机理解释章（j0_decomp 消费）+B3 机器对照 Bas 签名判读（2026-10-05 02:5x-03:1x；0 锁纯分析；v9.2 遗留 B1/B3 双闭）**
+
+- **B1 机理解释章（阻塞解除后消费）**：T3 j0_decomp v1.0 产出的 BL5 分解=**j0 0.6641 = jump 0.0179（2.67%）+transit 0.6525（98.2%）**——干净形态轮锚差几乎不含 ζ 型一次性跳变分量，到位地板主体=transit 期累计慢漂；与 C 域标度律（a=0.05-0.10×8m 航程=0.40-0.80m 预测带）**定量闭合**（实测 transit 0.6525 落带中央）。"0.75 门 0.664 杀手"机理归因链完整=架构级 transit 慢漂（jump≈0+尺度残差带吻合双证）；X7 注记素材强化；修复面状态不变（架构级挂起）。产物=R2_dissect/b1_mechanism_chapter.md。
+- **B3+机器对照 Bas 签名（双机 25 轮 [T2diag] 10Hz 提取，t2_bas_signature.py）**：四条判读——①**起飞窗 Bas 慢性化=机器层指纹候选（强分离）**：NUC 12/12 early_med ≥0.43（11/12 ≥0.90）vs 3090 12/13 ≤0.37（唯 MACH3 例外 1.84）；发作窗起点 NUC 13-18s（贴起飞）vs 3090 32-48s（transit 中后段）同向。②**|Bas| 轮级标量无类间判别力（负结果）**：NUC 含干净轮全类同带 2.18-3.20——"Bas 爆型"定名的"爆"不可作轮级独立判别器，判别力在 P/V 发散幅值与失控形态。③**高 Bas 与稳定输出解耦双证**：BL5（bas 1.80/2.21×j0 0.664 到位）+MACH3（bas 1.84/2.50×j0=0.008 p_max=1.3 帧超稳）——Bas 慢性高是背景非开关。④**3090 残余软件病与 Bas 通路部分解耦**：MACH2/8 静默发散（2.7/4.2m）bas_max 仅 1.12/1.00——残余 92% 大漂移主体=transit 尺度残差族（与 B1 闭合互证）。定名精细化：A3"进程内病灶"维持+"触发面含机器层输入"为 D-1005-T2-01 后修正画像；Bas 写点审计不启动（H-machine 支持支）。产物=R2_dissect/{b3_bas_signature_machine.md,bas_sig_nuc_bl.json,bas_sig_nuc_bl1112.json,bas_sig_3090_mach.json}。
+- **跨线**：@T1 机器指纹候选（起飞窗 early_med 两带可直接对表其探针坐标系）；@T3 MACH2/8=静默大发散两新标本（3090 域，MACH8 带图可回放）。BL11/12 签名自 NUC 归档侧只读补齐（对照机用法合规）。
