@@ -226,40 +226,102 @@ def nuc_host_configured():
     return re.search(r'(?im)^\s*Host\s+nuc\s*$', txt) is not None
 
 
+# Base-dir candidates for UNanchored tokens on the NUC — mirrors the 3090
+# local resolve_path() bases 1:1 ([REPO, REPO/sitl_sim, SITL, doc_dir,
+# REPO/sitl_sim/analysis, REPO/sitl_sim/t4_evidence, HOME]).
+NUC_BASES = (
+    '$HOME/catkin_ws',
+    '$HOME/catkin_ws/sitl_sim',
+    '$HOME/sitl_sim',
+    '$HOME/catkin_ws/docs',
+    '$HOME/catkin_ws/sitl_sim/analysis',
+    '$HOME/catkin_ws/sitl_sim/t4_evidence',
+    '$HOME',
+)
+
+
+def build_nuc_probe_script(items):
+    """Build the read-only sh probe run on the NUC. Two phases:
+    P1 per-token [ -e ] over the mirrored candidate bases (anchored ~/x is
+    expanded via $HOME — literal "~" inside double quotes never expands,
+    which is exactly the v1 bug that turned existing ~/... refs into false
+    'absent'); P2 one batched `find` basename fallback whose bare-path
+    output is paired to P1-absent tokens by basename (parse side)."""
+    lines = []
+    for tok, anchored in items:
+        if tok.startswith('~/'):
+            cand = '[ -e "$HOME/%s" ]' % tok[2:]
+        elif tok.startswith('./'):
+            # local semantics: resolve against the docs dir (repo-synced)
+            cand = '[ -e "$HOME/catkin_ws/docs/%s" ]' % tok[2:]
+        elif tok.startswith('/'):
+            cand = '[ -e "%s" ]' % tok
+        else:
+            cand = ' || '.join('[ -e "%s/%s" ]' % (b, tok) for b in NUC_BASES)
+        lines.append('if %s; then echo "OK %s"; else echo "NO %s"; fi'
+                     % (cand, tok, tok))
+    basenames = sorted({os.path.basename(t) for t, a in items
+                        if '/' in t and not t.startswith('/')})
+    for i in range(0, len(basenames), 50):
+        chunk = basenames[i:i + 50]
+        pats = ' -o '.join("-name '%s'" % b for b in chunk)
+        lines.append(
+            'find "$HOME/sitl_sim" "$HOME/catkin_ws" -maxdepth 7 '
+            "\\( -path '*/.git' -o -path '*/build' -o -path '*/devel' "
+            "-o -path '*/logs' \\) -prune -o -type f \\( %s \\) -print "
+            '2>/dev/null | head -100' % pats)
+    return '\n'.join(lines) + '\n'
+
+
+def parse_nuc_probe_output(stdout, items):
+    """Map probe output back to token -> status string. P1 lines are
+    'OK/NO <token>'; P2 find output is bare paths, paired to P1-absent
+    tokens by basename (evidence path kept in the status string)."""
+    direct = {}
+    paths = []
+    for line in stdout.splitlines():
+        line = line.strip()
+        if line.startswith('OK '):
+            direct[line[3:]] = 'present'
+        elif line.startswith('NO '):
+            direct[line[3:]] = 'absent'
+        elif line.startswith('/'):
+            paths.append(line)
+    by_base = {}
+    for p in paths:
+        by_base.setdefault(os.path.basename(p), p)
+    res = {}
+    for tok, _ in items:
+        if direct.get(tok) == 'absent':
+            b = os.path.basename(tok)
+            if b in by_base:
+                res[tok] = 'present (basename hit: %s)' % by_base[b]
+                continue
+        res[tok] = direct.get(tok, 'skip: no answer from nuc')
+    return res
+
+
 def nuc_check_batch(items):
     """ssh read-only existence check on nuc for missing refs.
-    items: list of (token, anchored). Relative tokens are tested against the
-    same base-dir candidates as on 3090. Tokens are filesystem-safe charset
-    only ([A-Za-z0-9_-.~/], no spaces/quotes), so inline shell quoting is safe.
-    Returns dict token -> 'present' | 'absent' | 'skip: reason'."""
+    items: list of (token, anchored). Tokens are filesystem-safe charset
+    only ([A-Za-z0-9_-.~/], no spaces/quotes), so inline shell quoting is
+    safe. v2 (2026-10-05 fix, [T1 代持 T4 域]): ~/ tilde expansion via
+    $HOME; candidate bases mirrored 1:1 with the 3090 local leg; batched
+    basename find fallback. Returns dict token -> 'present[ (basename
+    hit: path)]' | 'absent' | 'skip: reason'."""
     res = {}
     if not items:
         return res
     tokens = [t for t, _ in items]
     if not nuc_host_configured():
         return {t: 'skip: no ssh host alias nuc on 3090' for t in tokens}
-    lines = []
-    for tok, anchored in items:
-        if anchored:
-            cond = '[ -e "%s" ]' % tok
-        else:
-            cond = ('[ -e "$HOME/%s" ] || [ -e "$HOME/catkin_ws/%s" ] || '
-                    '[ -e "$HOME/sitl_sim/%s" ] || '
-                    '[ -e "$HOME/catkin_ws/sitl_sim/%s" ]'
-                    % (tok, tok, tok, tok))
-        lines.append('if %s; then echo "OK %s"; else echo "NO %s"; fi'
-                     % (cond, tok, tok))
+    script = build_nuc_probe_script(items)
     cmd = ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8',
            '-o', 'StrictHostKeyChecking=no', 'nuc', 'sh', '-s']
     try:
-        r = subprocess.run(cmd, input='\n'.join(lines) + '\n',
-                           capture_output=True, text=True, timeout=45)
-        for line in r.stdout.splitlines():
-            line = line.strip()
-            if line.startswith('OK '):
-                res[line[3:]] = 'present'
-            elif line.startswith('NO '):
-                res[line[3:]] = 'absent'
+        r = subprocess.run(cmd, input=script,
+                           capture_output=True, text=True, timeout=180)
+        res = parse_nuc_probe_output(r.stdout, items)
     except subprocess.TimeoutExpired:
         return {t: 'skip: ssh timeout' for t in tokens}
     except OSError as e:
@@ -369,7 +431,7 @@ def main():
     for r in missing:
         n = nuc_res.get(r['token'], 'skip: nuc check disabled')
         r['nuc'] = n
-        if n == 'present':
+        if str(n).startswith('present'):
             r['category'] = 'nuc-only'
         elif str(n).startswith('skip'):
             r['category'] = 'nuc-check-skip'
