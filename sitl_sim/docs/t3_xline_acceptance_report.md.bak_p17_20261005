@@ -19,12 +19,6 @@
   x4judge v1.1（counting_pass/controlled.state 两键接线,4e02bddb,SYN_CTRL×5 模板电池）;
   18 样本 re-regression 判值面零漂移+U3″ 舰队表 v1.3 仅 035509 翻 controlled。逐轮表
   [DATA:*] 槽增受控层两列槽位:controlled_state 五态/counting_pass。
-  **J0 双口径分解 v1.0(2026-10-05 增,v9.6 单元 2)**=判读行自动携带 j0d 两分量列
-  (jump 单帧跳变贡献/transit 平滑漂移分量→dominant;判读器 1f5a806d;纯归因标注列,
-  无门读,判值零变动——四样本重判既有键逐位零漂移实证);逐轮表 [DATA:*] 槽增 j0d
-  三列槽位:jump_m/transit_m/dominant。
-  【勘误 2026-10-05】x4judge v1.1 md5 实读=**8c767d35**(上文 4e02bddb 无实体对应,
-  commit 0db4eb8 自报值与提交内容不符;两机四处逐位核验在册,判读功能面不受影响)。
 - **架构红线**：纯视觉（VINS 唯一位置源，R1-R6 同构）；zb 轴姿态判读；帧跳变测法双注明
   （帧间 |dp| vs 锚差）；J0 修订+出生点对齐（不对齐=+0.65m 级假误差）。
 - **栈代一致性凭据**：[DATA: git HEAD + sim_stereo/*.yaml md5 快照（runbook §0.5）]
@@ -80,11 +74,6 @@ end_state.final_drift_prop_truth_m，--leg2 轮不重启 ATE 用锚差漂移替�
 
 - 到位指标（min_truth）：n=[DATA]，mean±[DATA]，CI95=[DATA]
 - 跳变计数（fj_raw/fj_smj/j0_jump）：n=[DATA]，分布与 CI=[DATA]
-- J0 双口径分解（j0d jump_m/transit_m→dominant）：n=[DATA]，分布与 CI=[DATA]；
-  标本汇总表=`analysis/t3_j0d_specimen_table_v1.md`（P17,2026-10-05;X7 成稿时并入）
-  【预填·2026-10-05 证据面】干净轮 transit 地板=0.65（BL5,98%主导）/静默大发散
-  transit=46（BL7）=70 倍分离（「fail 门平滑虚构盲区」的度量衡,T2 零fail≠健康纪律
-  的判读工具面）;route C 到位地板 0.79-1.10 与 anchor z 污染带的关系见 R11。
 - 样本充分性声明：n=5 的 CI 不足以支撑预判时按 T2 U3 统计扩容条款联动（触发判定记录 [DATA]）
 - 【预填·对照组基线（U3′ 五轮+历史在线轮，供 §3 差值解读框架）】
   对照表=`docs/t3_xline_u3p_baseline.md`（T3 v8.3 单元 3 产出：ground/hover/obstacles/route×2
@@ -120,10 +109,6 @@ end_state.final_drift_prop_truth_m，--leg2 轮不重启 ATE 用锚差漂移替�
      但恢复无证据+物理摔机，见 xline_dryrun_v11_report.md S1）——若 X4 五连飞全零触发，
      则"受控兜底"语义的证据力=空集，声明须降格为"受控路径已部署未实战"
      （判读器就位=干跑四样本全链验证，语义声明如实分层）。
-  7. **【预填 v0.2+·2026-10-05】transit 地板条**：纯视觉无回环架构的 transit 漂移
-     地板实测=温和带 0.6-1.0m（cauchy 压跳变后）/未修激烈 2.6m（T2 剂量包 2026-10-04
-     21:16;j0d 分解实证=BL5 transit 98% 主导,与 cauchy 只压 jump 分量的机理一致）;
-     上游同形态无回环（用户裁定①注记素材）;tag 证明力语义不含 transit 地板消除承诺。
 
 ## 8. 已知残余风险清单（模板；逐项：风险|证据|缓解/看门|状态）
 
@@ -139,13 +124,11 @@ end_state.final_drift_prop_truth_m，--leg2 轮不重启 ATE 用锚差漂移替�
 | R8 | 【预填 v0.2·2026-10-03】急冻族载体未隔离+cost 门对其零证据：T2 配对实验未发生（两臂抽两味=在线非确定性，inconclusive-for-pairing）；route 域在线爆率 4/4 跨夜跨栈而 cost 门 route 触发 0 次 | T2 U3pp 终判（c7a4750）+R2F 判别格（回放域不可判=红线 11 最强实例） | X 线 route 轮按 prereg v1.1 §2.6-e 冻结型边界条款执行（只能零 fail 段过门，受控路径不适用）；载体隔离回挖挂 R3 线 | 开放 |
 | R9 | 【预填 v0.2·2026-10-03】受控路径（触发+恢复）存档零正样本+数据面三限（failure 后日志静默/紧凑袋 odom 结构性截断/prop 流不可作恢复证据） | xline_dryrun_v11_report.md S1/S3/S4/S5（A3=触发真实+恢复无证据+物理摔机三重取证；A1/A4 同族） | 判读器 L2 落袋侧求解器流+X 线全程袋（prereg §2.6/seam 三条冻结）；首个带触发的 X 线轮=首次实证，阈值不适配=新版本号 | 开放 |
 | R10 | [DATA: 新增风险（X 线轮回挖中发现时追加，逐项带证据）] | | | |
-| R11 | 【预填 2026-10-05】到位判读锚（goal+5s 动态窗）被 VINS 瞬时 z 高估污染——route C 到位地板 0.79-1.10=量测伪影带，非飞行能力缺陷 | P18 两批探针 22/22 全污染（静止窗锚逐位=出生偏移 (1.01,0.98,0.10)，动态窗 z 抬 +0.18~+0.71;BL5/BL2 另有 xy 面污染=不限 z 轴）;X2g3 三口径=动态锚 0.849 FAIL/静止锚 0.036 深绿/ARRIVE_WATCH 0.099 独立背书 | 修正三案（窗改 goal 前静止段/z 钳 ±0.2/双锚取稳）待用户裁定（prereg 冻结面禁私改）;影响面已量化=修正仅翻 X2g3 绿，不制造虚假绿;裁定后回归基线=`analysis/t3_anchor_survey_v1.csv` | 裁定中 |
 
 ## 9. 图表再生（全部脚本可再生；数据源=各轮 wa_gate_online.json+汇总 CSV）
 
 - 生成器：`analysis/t3_xline_report_figs.py --csv <xline_wa_gate.csv> [--out-dir docs/figs]`
-  （CSV 由 `t3_wa_gate.py --online --csv <csv> <run_dir>...` 批量产出;j0d 两分量列
-  自判读器 1f5a806d 起随 wa_gate_online.json 自动携带,fig1/fig4 判读行同源含之）
+  （CSV 由 `t3_wa_gate.py --online --csv <csv> <run_dir>...` 批量产出）
 - fig1 X 线逐轮判决面板（四指标+j0+vins 域行）；fig2 ATE 出生点对齐时间线；
   fig3 Bas/Bgs 时间线；fig4 帧跳变双口径分布；fig5 特征数（track_med）分布；
   fig6 X5 场景-通过率地图
