@@ -145,3 +145,8 @@
 
 ## 尾注（单元 6 登记随带·他线锚注册表清查结论，主会话已核）
 - 全 docs 面（~/catkin_ws/docs/*.md + sitl_sim/docs/*.md）仅 t3_xline_runbook.md §9.2 一张结构化“删袋前必查”注册表；T2/T1 无同类机制（t2_experiments/t3_experiments 为逐行裁定台账非注册表；vision_materials.md 为截图材料规范）。
+
+## 尾注补记（09:06 主会话定性）
+
+- 文件引用失配 1 条（L306 "derived/d3"）=**假阳性**：系 d3 系列产物缩写指称（实指 v54_20261002/derived/d3_truncation.md/d3_sensitivity.csv/_d3_mid.json 系列，"§1"为其文档节号），非字面路径；verdicts 正本无破损。脚本口径限制=缩写指称形态不可机判，列"不可判"类即可，后续版本可将"derived/<系列名> §N"模式归入该类。
+- 锚表清查（单元 6）结论在册：全 docs 面仅 t3_xline_runbook §9.2 一张结构化删袋前必查注册表，T2/T1 无同类机制。
