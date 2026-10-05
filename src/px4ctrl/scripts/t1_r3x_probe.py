@@ -304,6 +304,10 @@ class Probe:
         self.spike_max = 0.0
         # face 2a
         self.age = {"imu_propagate": Ring(RING), "odometry": Ring(RING)}
+        # v11.4 pool: per-stream frame-jump counters (A.4-recount3 downstream)
+        self.jump = {s: {"t": None, "x": 0.0, "y": 0.0, "z": 0.0,
+                         "n05": 0, "max": 0.0, "big": []}
+                     for s in ("imu_propagate", "odometry")}
         self.age_n = {"imu_propagate": 0, "odometry": 0}
         # face 3
         self.clock_wall0 = None
@@ -367,13 +371,27 @@ class Probe:
         if age_ms is not None and age_ms >= 0:
             self.age[name].push(age_ms)
             self.age_n[name] += 1
+        # v11.4 pool: per-stream frame-jump face (A.4-recount3 downstream —
+        # MACH1-type 293.7m single-frame jumps become capturable online;
+        # discovery face only, thresholds mirror a4_recount3 prereg 0.5/5m)
+        p = msg.pose.pose.position
+        jp = self.jump[name]
+        if jp["t"] is not None and st > jp["t"]:
+            dP = ((p.x - jp["x"]) ** 2 + (p.y - jp["y"]) ** 2 +
+                  (p.z - jp["z"]) ** 2) ** 0.5
+            if dP > jp["max"]:
+                jp["max"] = dP
+            if dP > 0.5:
+                jp["n05"] += 1
+                if dP > 5.0:
+                    jp["big"].append((round(st, 2), round(dP, 1)))
+        jp["t"] = st
+        jp["x"], jp["y"], jp["z"] = p.x, p.y, p.z
         if name == "odometry":
-            p = msg.pose.pose.position
             v = msg.twist.twist.linear
             self.w2bb.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
         elif name == "imu_propagate":
             # v11.4 unit 4: prop stream feeds the second W2BB instance
-            p = msg.pose.pose.position
             v = msg.twist.twist.linear
             self.w2bbp.feed(st, p.z, (v.x * v.x + v.y * v.y + v.z * v.z) ** 0.5)
         _ = wall, now_t  # wall kept for future mixed-domain analysis
@@ -430,6 +448,17 @@ class Probe:
                                        "max_ms": round(vals[-1], 3)})
             self.age[name].clear()
             self.age_n[name] = 0
+        # v11.4 pool: frame-jump face (per stream, 5s window aggregates)
+        for name in ("imu_propagate", "odometry"):
+            jp = self.jump[name]
+            if jp["t"] is not None:
+                rec = {"stream": name, "n_gt_0p5": jp["n05"],
+                       "max_dP": round(jp["max"], 3)}
+                if jp["big"]:
+                    rec["big_gt_5m"] = jp["big"][:10]
+                self.emit("jump", rec)
+            self.jump[name] = {"t": None, "x": 0.0, "y": 0.0, "z": 0.0,
+                               "n05": 0, "max": 0.0, "big": []}
         # face 3
         if self.rtf_win and len(self.rtf_win) >= 2:
             w0, w1 = self.rtf_win[0], self.rtf_win[-1]
