@@ -340,3 +340,6 @@
 - `/home/uav/...` 形态引用为旧 NUC 时代绝对路径（NUC 用户 uav；3090 用户 ghj），3090 侧按路径原文判缺，由 NUC 查证给出归宿。
 - `run_*` staging 目录为重放期临时 ln -s 结构，其引用判缺属预期态（原始袋在位即闭环），已在备注列标注 basename 归宿。
 - 本报告不产 PASS/FAIL 判读，不含任何判据阈值；缺失清单不触发任何修复动作。
+
+## 尾注勘误（10-05 主会话 relay 抽验定性）
+- 抽验 19 项：absent 声明 10/10 一致；present 声明 9/9 实测 GONE（全 /tmp 易失件）——NUC 腿分类属**查证时点快照**，/tmp 件时效失效非正本破损（正本=本地镜像 pool4/5_audit+入仓 commit b9cad3e 系+效果转录在册）。nuc-only 类引用闭环口径补充 volatile 维度；verdicts I5 章定案在册。
