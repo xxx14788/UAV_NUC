@@ -1,0 +1,32 @@
+# NUC 侧工具 md5 凭据补全（T4-poolref 20261006）
+
+- 生成：2026-10-06（3090 本机时间）；执行：T4 线池件执行员（引用闭环常态化 + NUC 工具 md5 凭据补全）
+- 通道：3090(ghj-System-Product-Name) --ssh nuc--> 旧 NUC(uav4, /home/uav)；中继腿 BatchMode 只读探测
+- ask 点名命令：ssh nuc 'md5sum ~/catkin_ws/sitl_sim/analysis/j3_*.py'
+- 实跑结果（2026-10-06，exit 0，原样输出）：
+
+```
+18a71153f9020b86d6237a93369906a6  /home/uav/catkin_ws/sitl_sim/analysis/j3_extract_frames.py
+e9873f5a09f47a105a3dcc3246a9c541  /home/uav/catkin_ws/sitl_sim/analysis/j3_extract_queue.py
+08cb8829d180dad91445f1d436d547a2  /home/uav/catkin_ws/sitl_sim/analysis/j3_fb_residual.py
+7f45974b3a2a81e60c6293865ac3eb5e  /home/uav/catkin_ws/sitl_sim/analysis/j3_feature_density.py
+3721399e7a78e42f6e1cd81a2680286e  /home/uav/catkin_ws/sitl_sim/analysis/j3_image_metrics.py
+```
+
+## 与 3090 正源对照（正源 md5 为本次当场实读 md5sum，非凭记忆）
+
+| 文件 | 3090 正源 /home/ghj/... | NUC /home/uav/... | 判定 |
+|---|---|---|---|
+| j3_image_metrics.py   | 3721399e7a78e42f6e1cd81a2680286e | 3721399e7a78e42f6e1cd81a2680286e | 一致 |
+| j3_fb_residual.py     | 08cb8829d180dad91445f1d436d547a2 | 08cb8829d180dad91445f1d436d547a2 | 一致 |
+| j3_feature_density.py | 7f45974b3a2a81e60c6293865ac3eb5e | 7f45974b3a2a81e60c6293865ac3eb5e | 一致 |
+| j3_extract_frames.py  | 18a71153f9020b86d6237a93369906a6 | 18a71153f9020b86d6237a93369906a6 | 一致 |
+| j3_extract_queue.py   | e9873f5a09f47a105a3dcc3246a9c541 | e9873f5a09f47a105a3dcc3246a9c541 | 一致 |
+
+## 结论
+
+- 四注册工具（image_metrics / fb_residual / feature_density / extract_frames）NUC 侧同路径全部在位，md5 与 3090 正源逐字节一致；其前 8 位 3721399e / 08cb8829 / 7f45974b / 18a711 与在册凭据（本册"工具正源 md5 前 8"条目）相符。
+- absent = 0；mismatch = 0。附带的 j3_extract_queue.py 亦两侧一致（正源对照，非四注册件，如实记）。
+- j3_replay_features.sh 两侧同在（本次 ask 未点名其 md5，仅记存在性，未采集 md5）。
+- 关联：同日引用闭环报告 t4_ref_closure_20261006_reg.md 跑通（refs_total=262 / present=191 / missing=71 / nuc_skip=0，中继腿稳定，未启用 --no-nuc）。
+- 性质：凭据登记（只读采集，未改动两侧任何工具文件；verdicts 正本未触碰）。
