@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# T1 v11.4 随轮附着守护: 自动检测 T2 机器对照轮 (run_T2MACH*) 并挂 r3x 探针
+# 用法: nohup bash t1_autoattach.sh </dev/null > log 2>&1 &
+# 时限 2h; 探针自身 --max-run 480s 自退; 本脚本只挂不杀
+source /opt/ros/noetic/setup.bash
+LOG=~/sitl_sim/t1_evidence/v11_4_2026-10-05/autoattach.log
+echo "[$(date +%T)] autoattach start" >> "$LOG"
+LAST=""
+DEADLINE=$(( $(date +%s) + 7200 ))
+while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+  CUR=$(ls -t ~/sitl_sim/vins_smoke_runs/ 2>/dev/null | grep '^run_T2MACH' | head -1)
+  if [ -n "$CUR" ] && [ "$CUR" != "$LAST" ]; then
+    NEW=1
+    for f in ~/sitl_sim/vins_smoke_runs/$CUR/probe_r3x.jsonl; do
+      [ -f "$f" ] && NEW=0
+    done
+    if [ "$NEW" = "1" ]; then
+      # 等 vins_node (栈宽限最长 90s)
+      VPID=""
+      for i in $(seq 1 45); do
+        VPID=$(pgrep -f '[v]ins_node' | head -1)
+        [ -n "$VPID" ] && break
+        sleep 2
+      done
+      if [ -n "$VPID" ]; then
+        D=~/sitl_sim/vins_smoke_runs/$CUR
+        nohup python3 ~/catkin_ws/src/px4ctrl/scripts/t1_r3x_probe.py "$D/probe_r3x.jsonl" --mode online --vins-pid "$VPID" --max-run 480 > "$D/probe_stdout.log" 2>&1 </dev/null &
+        echo "[$(date +%T)] attached $CUR vins_pid=$VPID probe_pid=$!" >> "$LOG"
+      else
+        echo "[$(date +%T)] SKIP $CUR (vins_node 90s 未现身)" >> "$LOG"
+      fi
+      LAST="$CUR"
+    fi
+  fi
+  sleep 5
+done
+echo "[$(date +%T)] autoattach deadline exit" >> "$LOG"

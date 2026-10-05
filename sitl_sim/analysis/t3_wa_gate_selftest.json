@@ -121,6 +121,57 @@
      "pass": true
     }
    ]
+  },
+  {
+   "cell": "anchor_R2_X2g1",
+   "ok": true,
+   "line": "DUAL-ANCHOR run_X2g1_024637 rule=R2 flag=DUAL-ANCHOR-DIVERGENT",
+   "checks": [
+    {
+     "check": "rule==R2",
+     "got": "R2",
+     "pass": true
+    },
+    {
+     "check": "flag==DUAL-ANCHOR-DIVERGENT",
+     "got": "DUAL-ANCHOR-DIVERGENT",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "anchor_R1_X2g3",
+   "ok": true,
+   "line": "DUAL-ANCHOR run_X2g3_025529 rule=R1 flag=AGREE",
+   "checks": [
+    {
+     "check": "rule==R1",
+     "got": "R1",
+     "pass": true
+    },
+    {
+     "check": "flag==AGREE",
+     "got": "AGREE",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "cell": "anchor_R5_SUPHV2a",
+   "ok": true,
+   "line": "DUAL-ANCHOR run_SUPHV2a_230310 rule=R5 flag=DUAL-ANCHOR-UNSTABLE",
+   "checks": [
+    {
+     "check": "rule==R5",
+     "got": "R5",
+     "pass": true
+    },
+    {
+     "check": "flag==DUAL-ANCHOR-UNSTABLE",
+     "got": "DUAL-ANCHOR-UNSTABLE",
+     "pass": true
+    }
+   ]
   }
  ],
  "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;CTRL2 复放(E7 pass1)ATE 0.223(撕裂抖动窗,老目录 0.144 袋失)/Bas 0.11 稳/滑窗 cost 收敛;e7b125=125Hz Bas over 21.9% 跨频不可移植活校准"

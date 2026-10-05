@@ -104,8 +104,8 @@ DEFAULT_THRESH = {
 RE_DIAG = re.compile(
     r"T2diag.*?\st=(-?[\d.]+).*?\|Bas\|=([\d.eE+-]+).*?\|Bgs\|=([\d.eE+-]+)"
     r".*?tic0=\[([^\]]+)\].*?track=(\d+)")
-RE_SLV1 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=1 init_cost=([\d.eE+-]+)")
-RE_SLV0 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=0 init_cost=([\d.eE+-]+)")
+RE_SLV1 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=1 init_cost=([-+]?[\d.eE]+|[-+]?(?:nan|inf))")
+RE_SLV0 = re.compile(r"T2slv.*?\st=(-?[\d.]+) phase=0 init_cost=([-+]?[\d.eE]+|[-+]?(?:nan|inf))")
 RE_DUR = re.compile(r"Duration:\s*[\d.]+\s*/\s*([\d.]+)")
 # ---- 受控失败分层 v1.1(prereg §2.6;L1 触发行与 WARN 头 sim 时刻) ----
 RE_COSTFIRE = re.compile(
@@ -124,10 +124,12 @@ def parse_vins_log(path):
                 continue
             m = RE_SLV1.search(line)
             if m:
+                if m.group(2).lstrip('+-') in ('nan', 'inf'):  continue  # VRFY1 face: unconverged solver -nan rows carry no numeric info; skip to not poison stats
                 slv1.append((float(m.group(1)), float(m.group(2))))
                 continue
             m = RE_SLV0.search(line)
             if m:
+                if m.group(2).lstrip('+-') in ('nan', 'inf'):  continue
                 slv0.append((float(m.group(1)), float(m.group(2))))
     return diag, slv1, slv0
 
@@ -1085,6 +1087,17 @@ SELFTEST = {
 }
 
 
+
+# ---------------- anchor 双锚取稳 selftest 钉值(v1.4 判读面;T1 v11.9 单元 5) ----------------
+# 判读器=round_result.sh v1.4(c708151f);三轮钉值=其 RESULT.txt DUAL-ANCHOR 行实测在册。
+# 任一锚值漂移=判读器回归,修到对上为止(红线 24 口径)。
+ANCHOR_SELFTEST = {
+    "anchor_R2_X2g1":  {"round": "run_X2g1_024637",  "goal": "7.0 -4.0 1.0",  "rule": "R2", "flag": "DUAL-ANCHOR-DIVERGENT"},
+    "anchor_R1_X2g3":  {"round": "run_X2g3_025529",  "goal": "8.0 -1.0 1.0",  "rule": "R1", "flag": "AGREE"},
+    "anchor_R5_SUPHV2a": {"round": "run_SUPHV2a_230310", "goal": "0.0 0.0 1.0", "rule": "R5", "flag": "DUAL-ANCHOR-UNSTABLE"},
+}
+
+
 def run_selftest(th):
     base = os.path.expanduser("~/sitl_sim/t3_results")
     results, ok_all = [], True
@@ -1148,6 +1161,30 @@ def run_selftest(th):
             ok = chk(f"{key} {'~' if tol else '>=' if key.endswith('_ge') else '<='} {ref}",
                      cond, got) and ok
         results.append({"cell": name, "ok": bool(ok), "line": one_line(rep), "checks": checks})
+        ok_all = ok_all and ok
+    # anchor 双锚钉值单元(v1.4):重跑 round_result 于在册袋,断言 DUAL-ANCHOR rule/flag
+    # (X2g1/X2g3 的飞行时 RESULT.txt 为旧判读器产物无 DUAL 行——钉值走重跑而非读文件)
+    import re as _re, subprocess as _sp
+    for name, spec in ANCHOR_SELFTEST.items():
+        rd = os.path.expanduser("~/sitl_sim/vins_smoke_runs/%s" % spec["round"])
+        checks, ok = [], True
+        def chk2(label, cond, got):
+            checks.append({"check": label, "got": got, "pass": bool(cond)})
+            return cond
+        try:
+            r = _sp.run(["bash", os.path.expanduser("~/sitl_sim/round_result.sh"),
+                         os.path.join(rd, "flight.bag")] + spec["goal"].split() +
+                        ["sitl_world_obstacles", rd, "-", "-", "0", "0", "0", "0"],
+                        capture_output=True, timeout=600, encoding="utf-8", errors="replace")
+            m = _re.search(r"DUAL-ANCHOR v1\.4: A\*=\([^)]*\) rule=(\S+) gap=([\d.]+) flag=(\S+)", r.stdout)
+            got_rule, got_flag = (m.group(1), m.group(3)) if m else (None, None)
+        except Exception:
+            got_rule = got_flag = None
+        ok = chk2("rule==%s" % spec["rule"], got_rule == spec["rule"], got_rule) and ok
+        ok = chk2("flag==%s" % spec["flag"], got_flag == spec["flag"], got_flag) and ok
+        results.append({"cell": name, "ok": bool(ok),
+                        "line": "DUAL-ANCHOR %s rule=%s flag=%s" % (spec["round"], got_rule, got_flag),
+                        "checks": checks})
         ok_all = ok_all and ok
     out = {"pass": bool(ok_all), "cells": results,
            "note": "对账基准=883c75c 台账(X 线根因包):R_CAN t*=11/ATE 1.564/cost>1e4 含 16871;"
