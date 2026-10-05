@@ -1296,3 +1296,14 @@ FAIL four=0/1/1/0:leg1 4.031/leg2 3.019 双未到位(**leg2 真值 0.998 与 VIN
 **P17a(j0d 标本汇总表)**:`analysis/t3_j0d_specimen_table.py`(扫盘 standalone+online-embedded 两源,独立件包装结构解包)+`t3_j0d_specimen_table_v1.{csv,md}`(19 标本,j0_total 升序:X2g3 0.092→MACH3 0.0076 最净→BL5 0.664 transit 地板→…→X3l2b 368 数值溢出;主导分布=transit 3/mixed 14/jump 1/negligible 1)。再生=一条命令。
 
 **P17b(X7 骨架对齐,.bak_p17_20261005)**:五处唯一命中补丁——§1 判决面接 j0d 三列槽位(jump_m/transit_m/dominant)+**x4judge md5 勘误注记(8c767d35 实读,4e02bddb 无实体)**;§6 统计口径增 j0d 分解行+BL5/BL7 70 倍分离证据;§7 sim2real 预填第 7 条=**transit 地板条**(温和 0.6-1.0/未修 2.6/j0d 实证+用户裁定①注记素材+tag 语义不含地板消除承诺);§8 增 **R11=anchor 污染(裁定中)**(22/22 证据+三修正案+影响面量化+回归基线指针);§9 figs 注 j0d 列同源。零数字预填纪律维持([DATA:] 槽未动,新增=列定义+【预填】证据条,沿 R4/R8/R9 先例)。
+
+### 池刷新(P17/P18 已耗;恒≥3 维持)
+
+- P16(第二刀):静默大发散 cf 层归类口径(素材=BL7/9 j0d+19 标本表;候选=morph 级标注,红线 24)。
+- P15:R3090 腐烂轮袋 7.1G 处置(腾位候选)。
+- P19(新):BL2/4/8 goal 话题 UTM 型异常溯源(T2 敌对轮 goal 发布面;@T2 域线索,纸面)。
+- P5/P12 承接旧池;anchor 三案裁定后=P18 回归基线即战(工具+CSV 已在库)。
+
+### 任务书 v9.7 完成清账版落盘(2026-10-05 10:5x;用户指令款)
+
+Windows 权威 plans/2026-10-05_T3_planner_vision_acceptance_v9.7.md+3090 备份 ~/sitl_sim/plans_T3_v9.7.md,md5 00ab80df 双端一致;v9.6 弃读。结构=A 完成清账五单元(单元 1/2/4/5 ✅+单元 3 ◐ 位形全毕/X4 未启动;两勘误+三新坑+撞门机理定案+22/22 铁证+git 裁决事故全录)+B 剩余四件(敌对分母标注[0 锁需 T2 回执]/X4→tag→X5→X6→X7 全链[阻塞 C]/anchor 裁定后重判/池)+C 卡点七条客观(**K-E X4 四前置逐项未达实数**/**K-F anchor 裁定悬置[冻结判据面+三案+影响面]**/K-G X2 系真实导航偏差 3.2-3.4m 未归因/K-D/K-C/3090 运营域)+D 资产现值(判读器 1f5a806d 等 md5 实读+X 线五轮带图袋 ~54G 保全)+E 等待登记(W-disarm/W-D/W-anchor/W-T2sig 新格;W-P3 注销)。
