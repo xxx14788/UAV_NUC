@@ -32,13 +32,33 @@ struct StreamGuardLogic
         return had_last && gap_s > RESUME_GAP;
     }
 
-    // Adaptive ramp: <=6 m over the default 15 frames keeps each step <=0.4 m;
-    // larger resume deltas stretch the ramp (cap 750 frames ~ 6 s @125Hz).
+    // Adaptive ramp (v4): the released stream is sampled at 125 Hz (prop) AND
+    // 10 Hz (odometry topic). Per-frame step <=0.4 m needs duration >= dP/50s;
+    // per-10Hz-sample step <=0.5 m needs duration >= dP/5 s -- the odom rate is
+    // binding (RA15: 26-frame ramp sampled as 8.5 m odom steps). Cap 20 s.
     static int resume_frames(double dP_norm)
     {
-        if (dP_norm <= 6.0)
+        if (dP_norm <= 0.3)
             return 15;
-        int fr = (int)std::ceil(dP_norm / 0.4);
-        return fr > 750 ? 750 : fr;
+        int fr = (int)std::ceil(dP_norm / 5.0 / 0.008);   // 25*dP: 5 m/s release
+        return fr > 2500 ? 2500 : fr;
+    }
+
+    // v2 (RA3 forensics): post-reboot first optimizations swing wildly
+    // (published P walked -1037 -> +12.2 m/frame from poisoned offsets).
+    // Hold publishing for a settle window after mid-flight init-finish
+    // (first init of a round: had_last=false -> legacy timing untouched).
+    static constexpr double POST_INIT_SETTLE = 2.0;   // s
+
+    static bool settle_hold(bool had_last, double t_now, double t_init_finish)
+    {
+        return had_last && (t_now - t_init_finish) < POST_INIT_SETTLE;
+    }
+
+    // v2: the publish gate must also cover the offset-corrected values --
+    // kernel latest_* can be sane while a poisoned smoother offset is not.
+    static bool published_sane(double p_pub_norm, double v_pub_norm, double sane_p, double sane_v)
+    {
+        return p_pub_norm < sane_p && v_pub_norm < sane_v;
     }
 };

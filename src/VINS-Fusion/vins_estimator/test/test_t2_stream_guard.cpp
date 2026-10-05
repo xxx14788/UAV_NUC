@@ -27,13 +27,13 @@ TEST(StreamGuard, ResumeGapDetection)
 TEST(StreamGuard, AdaptiveFramesCapPerFrameStep)
 {
     EXPECT_EQ(StreamGuardLogic::resume_frames(0.0), 15);
-    EXPECT_EQ(StreamGuardLogic::resume_frames(6.0), 15);    // 6/15 = 0.4 exactly
-    EXPECT_EQ(StreamGuardLogic::resume_frames(2.6), 15);    // constant family: 0.173/frame
-    EXPECT_EQ(StreamGuardLogic::resume_frames(5.4), 15);    // MACH1-class resume w/ sane-hold: 0.36/frame
-    int fr = StreamGuardLogic::resume_frames(294.0);        // monster delta (guard-bypassed path)
-    EXPECT_EQ(fr, 735);
-    EXPECT_LE(294.0 / fr, 0.4 + 1e-12);
-    EXPECT_EQ(StreamGuardLogic::resume_frames(400.0), 750); // clamped
+    EXPECT_EQ(StreamGuardLogic::resume_frames(0.3), 15);    // micro deltas: default ramp
+    EXPECT_EQ(StreamGuardLogic::resume_frames(2.6), 65);    // constant family: 0.52 s, 5 m/s release
+    EXPECT_EQ(StreamGuardLogic::resume_frames(5.4), 135);   // MACH1-class w/ sane-hold: 1.08 s
+    EXPECT_EQ(StreamGuardLogic::resume_frames(50.0), 1250); // 10 s release
+    int fr = StreamGuardLogic::resume_frames(294.0);        // monster (guard-bypassed path)
+    EXPECT_EQ(fr, 2500);                                    // clamped at 20 s
+    EXPECT_LE(294.0 / (2500 * 0.008), 15.0 + 1e-9);         // bounded release rate even clamped
 }
 
 TEST(StreamGuard, ResumeRampConservationWithSmoother)
@@ -86,6 +86,27 @@ TEST(StreamGuard, OverlappingResumeFoldsConservation)
     }
     EXPECT_LT((released - (d1 + d2)).norm(), 1e-12);
     EXPECT_DOUBLE_EQ(s.offset_P.norm(), 0.0);
+}
+
+TEST(StreamGuard, PostInitSettleWindow)
+{
+    // mid-flight re-init: hold until the window passes
+    EXPECT_TRUE(StreamGuardLogic::settle_hold(true, 1.0, 0.0));
+    EXPECT_TRUE(StreamGuardLogic::settle_hold(true, 1.999, 0.0));
+    EXPECT_FALSE(StreamGuardLogic::settle_hold(true, 2.0, 0.0));   // window over
+    EXPECT_FALSE(StreamGuardLogic::settle_hold(true, 5.0, 0.0));
+    // first init of a round: no last publish -> legacy timing untouched
+    EXPECT_FALSE(StreamGuardLogic::settle_hold(false, 0.001, 0.0));
+}
+
+TEST(StreamGuard, PublishedValueGateCatchesPoisonedOffset)
+{
+    // kernel latest_* sane but offset-poisoned published value must be held
+    EXPECT_FALSE(StreamGuardLogic::published_sane(1037.0, 68.0, 50.0, 15.0));
+    EXPECT_FALSE(StreamGuardLogic::published_sane(60.0, 5.0, 50.0, 15.0));
+    EXPECT_FALSE(StreamGuardLogic::published_sane(5.0, 20.0, 50.0, 15.0));
+    // legitimate resume ramp: published values interpolate toward last_pub (sane)
+    EXPECT_TRUE(StreamGuardLogic::published_sane(5.4, 7.6, 50.0, 15.0));
 }
 
 int main(int argc, char **argv)

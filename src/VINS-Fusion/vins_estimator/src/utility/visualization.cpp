@@ -182,13 +182,41 @@ void pubOdometry(const Estimator &estimator, const std_msgs::Header &header)
 {
     if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
     {
-        // T2-v9.5 D: withhold the 10Hz stream on insane window states (same
-        // thresholds as the 125Hz publish gate; guard-armed rounds only).
-        if (T2_STREAM_GUARD &&
-            (!estimator.Ps[WINDOW_SIZE].allFinite() || !estimator.Vs[WINDOW_SIZE].allFinite() ||
-             estimator.Ps[WINDOW_SIZE].norm() >= T2_PUB_SANE_P ||
-             estimator.Vs[WINDOW_SIZE].norm() >= T2_PUB_SANE_V))
+        // T2-v9.5 D (v3): guard-armed rounds publish the continuous chain
+        // snapshot (same values/timeline as the 125Hz stream) with the same
+        // sane bounds; insane snapshots are withheld.
+        if (T2_STREAM_GUARD)
+        {
+            if (!estimator.t2_odom_pub_P.allFinite() || !estimator.t2_odom_pub_V.allFinite() ||
+                estimator.t2_odom_pub_P.norm() >= T2_PUB_SANE_P ||
+                estimator.t2_odom_pub_V.norm() >= T2_PUB_SANE_V)
+                return;
+            nav_msgs::Odometry odometry;
+            odometry.header = header;
+            odometry.header.frame_id = "world";
+            odometry.child_frame_id = "world";
+            odometry.pose.pose.position.x = estimator.t2_odom_pub_P.x();
+            odometry.pose.pose.position.y = estimator.t2_odom_pub_P.y();
+            odometry.pose.pose.position.z = estimator.t2_odom_pub_P.z();
+            odometry.pose.pose.orientation.x = estimator.t2_odom_pub_Q.x();
+            odometry.pose.pose.orientation.y = estimator.t2_odom_pub_Q.y();
+            odometry.pose.pose.orientation.z = estimator.t2_odom_pub_Q.z();
+            odometry.pose.pose.orientation.w = estimator.t2_odom_pub_Q.w();
+            odometry.twist.twist.linear.x = estimator.t2_odom_pub_V.x();
+            odometry.twist.twist.linear.y = estimator.t2_odom_pub_V.y();
+            odometry.twist.twist.linear.z = estimator.t2_odom_pub_V.z();
+            pub_odometry.publish(odometry);
+
+            geometry_msgs::PoseStamped pose_stamped;
+            pose_stamped.header = header;
+            pose_stamped.header.frame_id = "world";
+            pose_stamped.pose = odometry.pose.pose;
+            path.header = header;
+            path.header.frame_id = "world";
+            path.poses.push_back(pose_stamped);
+            pub_path.publish(path);
             return;
+        }
         nav_msgs::Odometry odometry;
         odometry.header = header;
         odometry.header.frame_id = "world";

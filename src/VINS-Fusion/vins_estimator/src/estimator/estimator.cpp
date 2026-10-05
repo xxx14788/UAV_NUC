@@ -269,6 +269,12 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
             // the exact legacy publish behavior.
             if (T2_STREAM_GUARD)
             {
+                // T2-v9.5 v2: post-reboot settle hold -- the first
+                // optimizations after a mid-flight init-finish swing wildly;
+                // hold the stream (consumers failsafe on stop-flow) until the
+                // window passes. First init of a round: no last_pub, legacy.
+                if (!StreamGuardLogic::settle_hold(t2_pub_had, t, t2_sg_init_finish))
+                {
                 // T2-v9.5 B: resume continuity -- a publish-stream gap (reboot
                 // blackout, sane-hold release, IMU stall) means the stream
                 // resumes on a re-anchored solution; compensate the delta
@@ -288,12 +294,19 @@ void Estimator::inputIMU(double t, const Vector3d &linearAcceleration, const Vec
                 // T2-v9.5 C: D1 smoothing publish path active with the guard
                 Eigen::Vector3d P_pub = latest_P + reanchor_smoother.offset_P;
                 Eigen::Vector3d V_pub = latest_V + reanchor_smoother.offset_V;
-                pubLatestOdometry(P_pub, latest_Q, V_pub, t);
-                reanchor_smoother.step();
-                t2_pub_last_P = P_pub;
-                t2_pub_last_V = V_pub;
-                t2_pub_last_t = t;
-                t2_pub_had = true;
+                // v2: sane-gate the PUBLISHED values too (kernel latest_* can
+                // be sane while a poisoned offset is not -- RA3 lesson).
+                if (StreamGuardLogic::published_sane(P_pub.norm(), V_pub.norm(),
+                                                     t2_sane_p, t2_sane_v))
+                {
+                    pubLatestOdometry(P_pub, latest_Q, V_pub, t);
+                    reanchor_smoother.step();
+                    t2_pub_last_P = P_pub;
+                    t2_pub_last_V = V_pub;
+                    t2_pub_last_t = t;
+                    t2_pub_had = true;
+                }
+                }
             }
             else if (REANCHOR_SMOOTH)
             {
@@ -450,11 +463,17 @@ void Estimator::processMeasurements()
             header.frame_id = "world";
             header.stamp = ros::Time(feature.first);
 
-            // T2-v9.5 D: snapshot smoother offsets for the 10Hz odometry path
-            // under the existing mProcess->mPropagate lock order.
+            // T2-v9.5 D (v3): snapshot the continuous published chain for the
+            // 10Hz odometry topic under mProcess->mPropagate. v2 sampled the
+            // 125Hz ramp at 10Hz and showed 5 m steps (RA9 43 m single frame
+            // at resume); publishing the same continuous values as the 125Hz
+            // stream unifies both topics onto one timeline.
             if (T2_STREAM_GUARD)
             {
                 mPropagate.lock();
+                t2_odom_pub_P = latest_P + reanchor_smoother.offset_P;
+                t2_odom_pub_V = latest_V + reanchor_smoother.offset_V;
+                t2_odom_pub_Q = latest_Q;
                 t2_odom_off_P = reanchor_smoother.offset_P;
                 t2_odom_off_V = reanchor_smoother.offset_V;
                 mPropagate.unlock();
@@ -2209,7 +2228,13 @@ void Estimator::updateLatestStates(bool set_flag)
     // (init delta captured) and pins the flag write under the same lock the
     // publisher reads under (TOCTOU window closed at the init path).
     if (set_flag)
+    {
         solver_flag = NON_LINEAR;
+        // T2-v9.5 v2: mid-flight init-finish clears any stale/poisoned smoother
+        // offsets and opens the settle window (publish hold + capture skip).
+        reanchor_smoother.reset();
+        t2_sg_init_finish = 0.0;  // stamped below once latest_time is current
+    }
     // T1-D1 (2026-09-29): shadow chain -- snapshot the continuous propagation
     // state before the overwrite, integrate it alongside the re-anchored chain
     // over the replayed IMU buffer, yielding the simultaneous PURE reanchor
@@ -2229,6 +2254,8 @@ void Estimator::updateLatestStates(bool set_flag)
     latest_Bg = Bgs[frame_count];
     latest_acc_0 = acc_0;
     latest_gyr_0 = gyr_0;
+    if (set_flag)
+        t2_sg_init_finish = latest_time;   // v2: settle origin (mPropagate held)
     mBuf.lock();
     queue<pair<double, Eigen::Vector3d>> tmp_accBuf = accBuf;
     queue<pair<double, Eigen::Vector3d>> tmp_gyrBuf = gyrBuf;
@@ -2250,6 +2277,17 @@ void Estimator::updateLatestStates(bool set_flag)
     // D2 position jump gate remains the raw-stream backstop.
     if ((REANCHOR_SMOOTH || T2_STREAM_GUARD) && solver_flag == NON_LINEAR)
     {
+        // T2-v9.5 v2: suspend capture during the post-reboot settle window --
+        // RA3 forensics: convergence-phase solution swings fed 10-1000 m-scale
+        // (shadow - latest) deltas into the smoother and poisoned the stream.
+        if (StreamGuardLogic::settle_hold(true, latest_time, t2_sg_init_finish))
+        {
+            if (reanchor_dbg)
+                fprintf(stderr, "[E2settle] sh_t=%.3f skip capture (post-init %.2fs)\n",
+                        sh_t, latest_time - t2_sg_init_finish);
+        }
+        else
+        {
         bool gap = !tmp_accBuf.empty() &&
                    PropagateGuard::gap_skip_needed(sh_t, tmp_accBuf.front().first);
         if (gap)
@@ -2268,6 +2306,7 @@ void Estimator::updateLatestStates(bool set_flag)
                         (sh_P - latest_P).norm(),
                         tmp_accBuf.empty() ? -1.0 : (tmp_accBuf.front().first - sh_t));
             reanchor_smoother.addJump(sh_P - latest_P, sh_V - latest_V);
+        }
         }
     }
     // T1-E2 C03-A4 escape (b): ULS finished (overwrite+replay done) -> the

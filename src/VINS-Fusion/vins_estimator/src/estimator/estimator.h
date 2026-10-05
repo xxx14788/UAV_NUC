@@ -206,6 +206,12 @@ class Estimator
     bool t2_pub_had = false;
     Eigen::Vector3d t2_odom_off_P = Eigen::Vector3d::Zero();  // snapshot for pubOdometry
     Eigen::Vector3d t2_odom_off_V = Eigen::Vector3d::Zero();
+    double t2_sg_init_finish = 0.0;  // v2: settle-window origin (init-finish, mPropagate domain)
+    // v3: continuous-chain snapshot for the 10Hz odometry topic (written under
+    // mPropagate at the pubOdometry call site; process thread is sole reader)
+    Eigen::Vector3d t2_odom_pub_P = Eigen::Vector3d::Zero();
+    Eigen::Vector3d t2_odom_pub_V = Eigen::Vector3d::Zero();
+    Eigen::Quaterniond t2_odom_pub_Q = Eigen::Quaterniond::Identity();
 
     bool initFirstPoseFlag;
     bool initThreadFlag;
