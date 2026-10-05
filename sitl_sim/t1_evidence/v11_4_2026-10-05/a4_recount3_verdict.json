@@ -1,0 +1,6 @@
+{
+ "n_rounds": 10,
+ "rounds_with_big_flight_jump": 1,
+ "median_odom_flight_jumps_0p5": 0,
+ "branch": "mixed"
+}
