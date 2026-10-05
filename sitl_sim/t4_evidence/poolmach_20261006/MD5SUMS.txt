@@ -1,0 +1,11 @@
+76aa7d5593c427ff1ce197d5e2d4268f  ./compare_leaves_full.py
+16e595ec97a414eb2c64c3d8af4a1cfc  ./compare_leaves.py
+6caab210ed20685266d8094b3c958ec6  ./logs/compare_leaves_3090inreg_vs_nucrun.txt
+6caab210ed20685266d8094b3c958ec6  ./logs/compare_leaves_full_3090inreg_vs_nucrun.txt
+f0710a0a690aa319af2a4b15328cb365  ./logs/pnglist_mach3_3090.md5
+f0710a0a690aa319af2a4b15328cb365  ./logs/pnglist_mach3_nuc.md5
+0041458b67fb0ae5290bda961ed5f2a2  ./metrics_T2MACH3_011804_3090inreg.json
+95aedf79fd775b915d6b481a7e9192b7  ./metrics_T2MACH3_011804_nucrun.json
+d20a373b668e5bdf895ee0eb46f9311c  ./norm/metrics_3090inreg.norm.json
+d20a373b668e5bdf895ee0eb46f9311c  ./norm/metrics_nucrun.norm.json
+5651f1f67b434b9881dcadce8a9d2ad2  ./t4_poolmach_20261006.md

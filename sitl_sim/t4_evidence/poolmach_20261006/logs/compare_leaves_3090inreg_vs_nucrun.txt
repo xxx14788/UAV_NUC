@@ -1,0 +1,13 @@
+LOADED a=/home/ghj/sitl_sim/vision_inputs/metrics_T2MACH3_011804.json b=/tmp/t4machbit/metrics_T2MACH3_011804_nucrun.json
+TOP_KEYS_EQ=True
+LEAF_COUNT_A=4745 LEAF_COUNT_B=4745 COMMON=4745
+ONLY_IN_A=0 ONLY_IN_B=0
+LEAF_DIFF=1
+DIFF frames_dir: '/tmp/t4w1_reception/frames_mach3' vs '/tmp/t4machbit/frames_mach3'
+DIFFLIB_HUNKS=5
+UDIFF --- a
+UDIFF +++ b
+UDIFF @@ -3 +3 @@
+UDIFF - "frames_dir": "/tmp/t4w1_reception/frames_mach3",
+UDIFF + "frames_dir": "/tmp/t4machbit/frames_mach3",
+VERDICT=DIFF
