@@ -1,0 +1,147 @@
+# P-N2 verdicts 引用闭环自动核对报告
+
+- 生成时刻：2026-10-05 09:02:07（NUC uav4 本地时钟）
+- 脚本：sitl_sim/t4_evidence/v55_20261003/tools/verify_verdicts_refs.py（幂等，重跑覆盖本报告）
+- 对象：~/catkin_ws/docs/t4_verdicts_v2.md（530 行；69138 B；md5 前 8 位=b2412d08；全值=b2412d08eb42ab6c65282e44ea9831b4）
+- 性质：在位性自动核对，只报告；失配≠改文件，本核对未对 verdicts 与任何被引文件做修改。
+
+## 正本漂移面结论行
+- verdicts 现文件 md5 前 8 位 = b2412d08；演进链注记：2f4323f1 → b2412d08（b2412d08 为 2026-10-04 夜 H 章定稿后现值）。
+- 实测 verdicts md5 前 8 位 = b2412d08 == 演进链现值 b2412d08 → 与 2f4323f1→b2412d08 演进链一致，未发现漂移（如实登记，未对 verdicts 做任何修改）。
+
+## a) commit 短哈希引用（7-8 位十六进制）
+- 口径：边界约束的 7-8 位十六进制；关键词=commit/哈希/链，取锚点前 24/后 12 字符窗口（防全行远距巧合命中）；入锚集=窗口含关键词或 git cat-file -t 可解析；纯数字与『md5 前 8』形态（行含 md5前8 标注且窗口无关键词）不可解析者不入锚集（疑误报）。40 位全哈希与 30-32 位 md5 全串形态按池件规格（7-8 位）不在扫描面（边界约束排除，内截不取）。
+- 计数：候选命中共 84 处；入锚集 48（在位 48 / 失配 0）；不可判排除 36（纯数字 8 + 无关键词不可解析 28）。计数口径=出现次数（同一哈希多处引用逐处计）。
+- 明细（在位/失配）：
+  - L49 锚=`6f54ad4` 关键词=无 cat-file=commit 判定=在位
+  - L90 锚=`0775211` 关键词=有 cat-file=commit 判定=在位
+  - L91 锚=`b53324a` 关键词=无 cat-file=commit 判定=在位
+  - L91 锚=`ea68579` 关键词=无 cat-file=commit 判定=在位
+  - L114 锚=`1172beb` 关键词=无 cat-file=commit 判定=在位
+  - L163 锚=`d44a0cb` 关键词=有 cat-file=commit 判定=在位
+  - L251 锚=`682dc3a` 关键词=无 cat-file=commit 判定=在位
+  - L251 锚=`ff9cfad` 关键词=无 cat-file=commit 判定=在位
+  - L254 锚=`682dc3a` 关键词=有 cat-file=commit 判定=在位
+  - L254 锚=`ff9cfad` 关键词=有 cat-file=commit 判定=在位
+  - L294 锚=`8c5392e` 关键词=有 cat-file=commit 判定=在位
+  - L339 锚=`e0484cc` 关键词=无 cat-file=commit 判定=在位
+  - L339 锚=`fda4f5c` 关键词=无 cat-file=commit 判定=在位
+  - L339 锚=`25c0502` 关键词=无 cat-file=commit 判定=在位
+  - L339 锚=`fce7c7f` 关键词=无 cat-file=commit 判定=在位
+  - L339 锚=`49d2ac3` 关键词=无 cat-file=commit 判定=在位
+  - L339 锚=`38ef1fb` 关键词=无 cat-file=commit 判定=在位
+  - L350 锚=`fce7c7f` 关键词=无 cat-file=commit 判定=在位
+  - L403 锚=`21db0db` 关键词=无 cat-file=commit 判定=在位
+  - L404 锚=`2b808a5` 关键词=无 cat-file=commit 判定=在位
+  - L438 锚=`18f2313` 关键词=无 cat-file=commit 判定=在位
+  - L445 锚=`4664951` 关键词=无 cat-file=commit 判定=在位
+  - L446 锚=`e6dab84` 关键词=无 cat-file=commit 判定=在位
+  - L447 锚=`b9cad3e` 关键词=无 cat-file=commit 判定=在位
+  - L448 锚=`e0484cc` 关键词=无 cat-file=commit 判定=在位
+  - L448 锚=`fda4f5c` 关键词=无 cat-file=commit 判定=在位
+  - L448 锚=`25c0502` 关键词=无 cat-file=commit 判定=在位
+  - L455 锚=`3a2722f` 关键词=有 cat-file=commit 判定=在位
+  - L455 锚=`60e8b98` 关键词=有 cat-file=commit 判定=在位
+  - L456 锚=`682dc3a` 关键词=无 cat-file=commit 判定=在位
+  - L459 锚=`f2f530e` 关键词=无 cat-file=commit 判定=在位
+  - L459 锚=`c257ed0` 关键词=无 cat-file=commit 判定=在位
+  - L475 锚=`21db0db` 关键词=无 cat-file=commit 判定=在位
+  - L475 锚=`60e8b98` 关键词=无 cat-file=commit 判定=在位
+  - L477 锚=`7032a2d` 关键词=无 cat-file=commit 判定=在位
+  - L481 锚=`709530f` 关键词=无 cat-file=commit 判定=在位
+  - L483 锚=`682dc3a` 关键词=无 cat-file=commit 判定=在位
+  - L489 锚=`3a2722f` 关键词=无 cat-file=commit 判定=在位
+  - L490 锚=`9d810aa` 关键词=无 cat-file=commit 判定=在位
+  - L490 锚=`8c5392e` 关键词=无 cat-file=commit 判定=在位
+  - L494 锚=`17b4fb5` 关键词=无 cat-file=commit 判定=在位
+  - L494 锚=`48b9215` 关键词=无 cat-file=commit 判定=在位
+  - L510 锚=`38ef1fb` 关键词=无 cat-file=commit 判定=在位
+  - L510 锚=`4664951` 关键词=无 cat-file=commit 判定=在位
+  - L514 锚=`b9cad3e` 关键词=无 cat-file=commit 判定=在位
+  - L515 锚=`f504cf2` 关键词=无 cat-file=commit 判定=在位
+  - L517 锚=`5434b5a` 关键词=有 cat-file=commit 判定=在位
+  - L519 锚=`5434b5a` 关键词=无 cat-file=commit 判定=在位
+- 不可判排除面明细（未采信，仅留痕）：
+  - L29 `20260929` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L172 `285278cc` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L183 `285278cc` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L228 `285278cc` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L255 `20261002` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L255 `20261002` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L293 `abcc5fc8` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L293 `c23d4287` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L293 `9e45f981` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L294 `20261002` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L350 `8779920d` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L404 `29f48d39` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L430 `285278cc` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L445 `6784d008` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L456 `6784d008` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L502 `20261002` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L502 `fe7b2656` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `1ea476b7` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `0e43afe8` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `d98ed69b` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `52a6a746` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `2afd3d55` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `754d3630` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `748f36c8` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `9db26ef0` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L502 `d9a09f93` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L504 `20261004` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L505 `20261004` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L505 `bd871051` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L506 `3721399e` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L506 `08cb8829` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L506 `7f45974b` 不可判(md5 前8 形态锚，非 commit 语境，未采信)
+  - L515 `8720a1f2` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L519 `20261004` 不可判(纯数字，疑似时间戳/尺寸误报，未采信)
+  - L529 `eea4cb2e` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+  - L529 `9b88345b` 不可判(窗口内无关键词且 cat-file 不可解析，未采信)
+
+## b) 自引用行号（verdicts v2:NNN / LNNN→本文件）
+- 口径：冒号形态（verdicts v2:NNN / verdicts:NNN / t4_verdicts_v2.md:NNN）、区间形态（v2:NNN-NNN，与冒号形态重叠去重）与上下文含 verdicts 指向本文件的 LNNN；核对目标行（区间则逐行）存在性 + 目标内容与引用锚前后 40 字符窗口首 4 个汉字词粗匹配，分级=全文串→4 字头→2 字头（宽松档如实标注）。LNNN 紧邻他文件名者=非自引用排除；指向不明者=不可判。
+- 计数：自引用锚 1（匹配 1〔其中严格 1〕/ 失配 0 / 不可判 0）；LNNN 非自引用排除 0；LNNN 指向不明不可判 3。
+- 自引用明细：
+  - L515 锚=`v2:127-141` → 目标 L127-L141 判定=匹配 关键词=判读逻辑零变动/如实登记/侧判读面零损伤/判读资产三面全保留在册
+- 目标内容：
+  - L127-L141 ← `- 轮1 run_WC2OBS1_030927: manifest=vision_inputs/WC2OBS1_030927_j3/manife ⏐ 72 主帧, t25.86-402.1s）; features.bag=vision_inputs/jr3_replay_WC2OBS1_030…(共 15 行)`
+- LNNN 指向不明不可判面（本行及前一行未见 verdicts 指向）：
+  - L487 `L6`：### D. C-14 修复归档确认（L6 主会话裁决）
+  - L498 `L8`：- T1 09:50 E-4 复排窗（~2h 禁 rosbag play/vins 重放）：本线重放级件全部让窗（W1 重放级前提本缺，无实际冲突）；L8 命名防混淆采纳——后续通报 T4 侧用全称"E4 帧级复核"，T1 侧"E-4 复排"。
+  - L510 `L81`：- 扫描面=STATUS 尾 200 行（收口时点 06:12 读取，末行=05:58 扩样回执）。本夜 T4 判读草稿四件经 grep 原样输出核验：m1_crossside_conversion.md 与 t4_e4_scenario_appendix_draft.md 零 T2/T3 引用；J2 附录（38ef1
+
+## c) 文件引用（docs/ 与 derived/ 路径形态，扩 sitl_sim/ t4_evidence/ 前缀）
+- 口径：前缀 docs/ derived/ sitl_sim/ t4_evidence/ 的路径引用；基目录依序=catkin_ws → v55_20261003 → v54_20261002 → catkin_ws/sitl_sim → ~/sitl_sim，首个全命中基记为在位；{a,b} 花括号展开逐体核对（部分缺=失配并注缺失体）；* 通配形态=不可判；目录形态命中注(目录)。
+- 计数：总数 25（在位 23 / 失配 1 / 不可判 1）。
+- 明细：
+  - L11 `t4_evidence/e1_lock_tests_0250.log` 判定=在位 基=home_sitl_sim 注=t4_evidence/e1_lock_tests_0250.log
+  - L29 `t4_evidence/disk_manifest_20260929.md` 判定=在位 基=home_sitl_sim 注=t4_evidence/disk_manifest_20260929.md
+  - L44 `docs/vision_materials.md` 判定=在位 基=catkin_ws 注=docs/vision_materials.md
+  - L64 `docs/sim2real_runbook.md` 判定=在位 基=catkin_ws 注=docs/sim2real_runbook.md
+  - L64 `docs/t4_j3_e1e2_evidence.md` 判定=在位 基=catkin_ws 注=docs/t4_j3_e1e2_evidence.md
+  - L77 `sitl_sim/analysis/j3_{extract_frames,image_metrics,fb_residual}.py` 判定=在位 基=catkin_ws 注=sitl_sim/analysis/j3_extract_frames.py sitl_sim/analysis/j3_image_metrics.py sitl_sim/analysis/j3_fb_residual.py
+  - L91 `docs/p3_gap_decision_pack.md` 判定=在位 基=catkin_ws 注=docs/p3_gap_decision_pack.md
+  - L97 `docs/t4_jr3_pipeline_dryrun.md` 判定=在位 基=catkin_ws 注=docs/t4_jr3_pipeline_dryrun.md
+  - L111 `docs/t4_j2_threshold_prep.md` 判定=在位 基=catkin_ws 注=docs/t4_j2_threshold_prep.md
+  - L253 `docs/t4_e4_bimodal_prereg.md` 判定=在位 基=catkin_ws 注=docs/t4_e4_bimodal_prereg.md
+  - L255 `t4_evidence/v54_20261002` 判定=在位(目录) 基=catkin_ws_sitl_sim 注=t4_evidence/v54_20261002
+  - L274 `derived/exfail_matrix_*.md` 判定=不可判(通配形态) 基=- 注=derived/exfail_matrix_*.md
+  - L294 `sitl_sim/t4_evidence/v54_20261002/derived/exfail_matrix_synthetic.md` 判定=在位 基=catkin_ws 注=sitl_sim/t4_evidence/v54_20261002/derived/exfail_matrix_synthetic.md
+  - L300 `derived/d4_j2_plane.md` 判定=在位 基=v54_20261002 注=derived/d4_j2_plane.md
+  - L306 `derived/d3` 判定=失配 基=- 注=所有基目录均不存在
+  - L323 `derived/d4_saturation_dual.csv` 判定=在位 基=v54_20261002 注=derived/d4_saturation_dual.csv
+  - L324 `derived/d4_j2_plane.md` 判定=在位 基=v54_20261002 注=derived/d4_j2_plane.md
+  - L339 `docs/t4_j2_seg_judgment_prereg_v1.md` 判定=在位 基=catkin_ws 注=docs/t4_j2_seg_judgment_prereg_v1.md
+  - L339 `docs/t4_j2_scenario_appendix_draft.md` 判定=在位 基=catkin_ws 注=docs/t4_j2_scenario_appendix_draft.md
+  - L350 `derived/j2_seg_judgment_v1.{csv,md}` 判定=在位 基=v55_20261003 注=derived/j2_seg_judgment_v1.csv derived/j2_seg_judgment_v1.md
+  - L367 `docs/t4_e4_bimodal_prereg.md` 判定=在位 基=catkin_ws 注=docs/t4_e4_bimodal_prereg.md
+  - L404 `docs/t4_e4_scenario_appendix_draft.md` 判定=在位 基=catkin_ws 注=docs/t4_e4_scenario_appendix_draft.md
+  - L449 `docs/t4_t2_handoff_tracking.md` 判定=在位 基=catkin_ws 注=docs/t4_t2_handoff_tracking.md
+  - L514 `docs/t4_exfail5_consumption_audit.md` 判定=在位 基=catkin_ws 注=docs/t4_exfail5_consumption_audit.md
+  - L519 `docs/t4_w1_reception_20261004.md` 判定=在位 基=catkin_ws 注=docs/t4_w1_reception_20261004.md
+- 失配行原文：
+  - L306 `derived/d3` 所有基目录均不存在：verdicts 在册 43.7/102.0 三方差异已登记 derived/d3 §1）：
+
+## 尾注（单元 6 登记随带·他线锚注册表清查结论，主会话已核）
+- 全 docs 面（~/catkin_ws/docs/*.md + sitl_sim/docs/*.md）仅 t3_xline_runbook.md §9.2 一张结构化“删袋前必查”注册表；T2/T1 无同类机制（t2_experiments/t3_experiments 为逐行裁定台账非注册表；vision_materials.md 为截图材料规范）。
