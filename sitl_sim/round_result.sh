@@ -39,21 +39,63 @@ with rosbag.Bag(bag,'r') as b:
             p = msg.pose.position; goals.append((ts,p.x,p.y,p.z))
 if not prop: print('RESULT=FAIL 无 imu_propagate'); sys.exit()
 def near(arr, tt): return min(arr, key=lambda p: abs(p[0]-tt))
-p0 = prop[0]; a = None
-# 锚点取 goal 后 5s 窗的均值对(目标生效帧;VINS 帧中途跳变时早期锚会误判,X1_234437 实证)
+p0 = prop[0]
+# ---- v1.4 双锚取稳（prereg xline_prereg §2.8;2026-10-05 冻结;用户裁定案③）----
+# C_dyn=goal+5s 窗(逐字旧口径保位等价);C_sta=goal-15~-5s 窗(探针口径);
+# 稳态=窗内配对差逐轴 std<=0.03 ∧ IQR<=0.06(评估预算150样本,锚值仍前50构造)+
+# 可用性 n>=50 ∧ 跨度>=0.4s;R1-R5 取稳;A* 供到位判;旧 a 变量=A*(双列输出兼容)。
 g1_ts0 = next((g[0] for g in goals if abs(g[1]-gx)<0.01 and abs(g[2]-gy)<0.01 and abs(g[3]-gz)<0.01), prop[0][0])
-aw_from, aw_to = g1_ts0, g1_ts0 + 5
-pw = [p for p in prop if aw_from <= p[0] <= aw_to]
-if pw:
-    tw = [near(truth, p[0]) for p in pw[:50]]
-    if tw:
-        a = (sum(t[1] for t in tw)/len(tw) - sum(p[1] for p in pw[:50])/len(pw),
-             sum(t[2] for t in tw)/len(tw) - sum(p[2] for p in pw[:50])/len(pw),
-             sum(t[3] for t in tw)/len(tw) - sum(p[3] for p in pw[:50])/len(pw))
-if a is None:
-    for t in truth:
-        if t[0] >= p0[0]: a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3]); break
-if a is None and truth: t = truth[0]; a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3])
+
+def win_anchor(f, to):
+    """窗锚(v1.1 位等价构造):窗内前 50 prop 配最近 truth 的逐轴均值差。"""
+    pw = [p for p in prop if f <= p[0] <= to]
+    if not pw: return None, []
+    sw = pw[:50]
+    tw = [near(truth, p[0]) for p in sw]
+    if not truth or len(tw) != len(sw): return None, []
+    anc = tuple(sum(t[k] for t in tw)/len(tw) - sum(p[k] for p in sw)/len(sw) for k in (1,2,3))
+    return anc, sw
+
+def win_stable(f, to):
+    """稳态判据:窗内配对差(预算150)逐轴 std<=0.03 ∧ IQR<=0.06 ∧ n>=50 ∧ 跨度>=0.4s。"""
+    pw = [p for p in prop if f <= p[0] <= to][:150]
+    if len(pw) < 50: return False, len(pw), 0.0
+    tw = [near(truth, p[0]) for p in pw]
+    d = [[t[k]-p[k] for k in (1,2,3)] for t, p in zip(tw, pw)]
+    span = pw[-1][0] - pw[0][0]
+    if span < 0.4: return False, len(pw), span
+    for k in range(3):
+        col = sorted(x[k] for x in d)
+        n = len(col); mean = sum(col)/n
+        std = math.sqrt(sum((x-mean)**2 for x in col)/n)
+        q1, q3 = col[int(0.25*n)], col[min(int(0.75*n), n-1)]
+        if std > 0.03 or (q3-q1) > 0.06: return False, n, span
+    return True, len(pw), span
+
+c_dyn, _ = win_anchor(g1_ts0, g1_ts0 + 5)
+c_sta, _ = win_anchor(g1_ts0 - 15, g1_ts0 - 5)
+st_dyn, n_dyn, sp_dyn = win_stable(g1_ts0, g1_ts0 + 5) if c_dyn else (False, 0, 0.0)
+st_sta, n_sta, sp_sta = win_stable(g1_ts0 - 15, g1_ts0 - 5) if c_sta else (False, 0, 0.0)
+# F 兜底锚(出生锚;=旧 a_pre 构造)
+a_fb = None
+for t in truth:
+    if t[0] >= p0[0]: a_fb = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3]); break
+gap = 99.9; rule = 'R5'; flag = 'DUAL-ANCHOR-UNSTABLE'
+if c_sta and st_sta and c_dyn and st_dyn:
+    gap = math.hypot(*(x-y for x,y in zip(c_sta, c_dyn)))
+    if gap <= 0.15: rule, flag = 'R1', 'AGREE'
+    else:           rule, flag = 'R2', 'DUAL-ANCHOR-DIVERGENT'
+    a = c_sta
+elif c_sta and st_sta:
+    rule, flag = 'R3', ''; a = c_sta
+elif c_dyn and st_dyn:
+    rule, flag = 'R4', 'STA-UNSTABLE'; a = c_dyn
+elif c_dyn is not None:
+    rule, flag = 'R5', 'DUAL-ANCHOR-UNSTABLE'; a = a_fb if a_fb else c_dyn
+else:
+    rule, flag = 'R5', 'DUAL-ANCHOR-UNSTABLE'; a = a_fb
+if a is None and truth:
+    t = truth[0]; a = (t[1]-p0[1], t[2]-p0[2], t[3]-p0[3])
 # 帧稳定性:goal前锚 vs 末段锚(差>0.5m=VINS帧中途跳变→任务物理未完成,FAIL 定性)
 a_pre = None
 for t in truth:
@@ -66,8 +108,17 @@ if prop and truth:
 jump = 99.9
 if a_pre and a_post:
     jump = math.hypot(*(x-y for x,y in zip(a_pre, a_post)))
-print('anchor(goal+5s窗): (%.3f, %.3f, %.3f) | 帧稳定性 |pre-post|=%.3f m%s'
+# 勘误(prereg §2.8a,2026-10-05 夜):历史锚构造(本文件旧版+探针同源)prop 侧均值为
+# sum(前50)/len(全窗)——静态窗 prop≈VINS 原点故隐身;动态窗 prop 达 5-10m 时被系统性
+# 缩放污染(在册"动态窗 z 污染 +0.18~+0.71"含此算术伪影成分)。v1.4 两侧均值同用前50
+# 样本(C_sta 与历史位等价因静态窗隐身性;A* 判决面不受影响——两种构造下 A* 同选)。
+print('anchor(双锚取稳A*): (%.3f, %.3f, %.3f) | 帧稳定性 |pre-post|=%.3f m%s'
       % (a[0], a[1], a[2], jump, '  <-- VINS 帧中途跳变!' if jump > 0.5 else ''))
+# v1.4 双锚取稳双列(prereg §2.8):A* 已用于到位判;gap=‖C_sta−C_dyn‖(未评估=99.9)
+def _fmt(x): return ('(%.3f, %.3f, %.3f)' % x) if x else 'N/A'
+print('DUAL-ANCHOR v1.4: A*=%s rule=%s gap=%.3f flag=%s | sta=%s(n=%d,span=%.1fs,stable=%d) dyn=%s(n=%d,span=%.1fs,stable=%d)'
+      % (_fmt(a), rule, gap, flag or '-', _fmt(c_sta), n_sta, sp_sta, 1 if st_sta else 0,
+         _fmt(c_dyn), n_dyn, sp_dyn, 1 if st_dyn else 0))
 t2_start = None
 if hasl2:
     for g in goals:
