@@ -136,10 +136,13 @@
    G-off 臂——本包差距声明只覆盖 VINS 闭环面,EKF2-GPS-off 域差距引用 T1 证据
    (E-4 八轮矩阵:载爆未复现 7 轮零 T2fail+撕裂形态#5=EKF2 z 98m 发散而 GT 恒稳
    →红线候选 GPS 在场禁高频 EV)。
-6. **Z1.2 未接线**:odom_sanity_v2 门双轨已绿(gtest 77 绿,flag-off 在 src/px4ctrl/),
-   翻转权归 T3-Z1.2(常规化三步在排程,build 窗错峰);接线前 odom 毒输入防线=
-   px4ctrl cmd 超时+D2 odom 门+streamguard v4 发布侧防线(真重启对消费者不可见,
-   权威 odom 流穿真重启 max step 0.073m 实测)。
+6. **Z1.2 已接线（10-07 措辞更新;接线本体 10-06 19:19 build 窗收官）**:odom_sanity_v2
+   v1+v2 叠加层上线（enabled_v2 参数贯通+PX4CtrlParam 读取+input.cpp v2 增强层叠加于
+   v1 ACCEPT 之后;运行时实证=REGCHK1 px4ctrl banner enabled=1 v2=1;缺省面零调用=
+   v1 逐位不变）;常规化三步全绿（5 个 gtest 二进制 77/77,T3 v10.0 05:08）。残留=
+   v2 门帧级行为差（263/40000 边际拒,轮级结局不变,可接受性未裁=T1 v11.18 卡点 9 在册）。
+   （历史叙述保留:接线前防线三元组=px4ctrl cmd 超时+D2 odom 门+streamguard v4 发布侧
+   ——真重启对消费者不可见,权威 odom 流穿真重启 max step 0.073m 实测。）
 7. **EV 暂定不启用**:用户 Q1 裁决 2026-10-01(SITL/实机同构);EV_CTRL=0 参数级实锤
    (E1 全历史考古);禁用侧残余风险=local_position 参考链无冗余(监控面,不吃控制主环)。
 8. **袋口径**:判读正源=帧包(原始 bag)优先;帧样/紧凑袋仅图像侧与审计面;X1final
