@@ -82,6 +82,7 @@ FLOWN=()                     # 已飞格清单(X4_TAG_PENDING 判读指针正源
 GATEHIT_LOG="$EVD/x4_gatehit_stats.log"
 
 w() { echo "[$(date '+%F %T')] $*" | tee -a "$SUM"; }
+wl() { echo "[$(date '+%F %T')] $*" >> "$SUM"; }  # 判读内部专用(文件写;$( ) 捕获多行坑热修)
 status_line() { python3 "$L/status_append.py" "$*" >/dev/null 2>&1 || true; }
 
 force_cleanup() {  # rosmaster 域过滤(私有 master 回放件保护;1e 共存),余 pkill -x 名字级
@@ -142,18 +143,18 @@ judge_round() {  # $1=tag $2=run_dir → class（T3 v10.3：trichotomy 权威+le
   CF=$(echo "$WA" | grep -oE "cf=[a-z-]+" | head -1 | cut -d= -f2)
   ANCH=$(grep -m1 "DUAL-ANCHOR" "$D/RESULT.txt" 2>/dev/null | cut -c1-120)
   DISARM=$(grep -m1 -oE "auto_disarm->[01]" "$D/RESULT.txt" 2>/dev/null || echo "?")
-  w "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
-  w "  ${ANCH:-no-dual-anchor}"
-  w "  ${WA:0:200}"
+  wl "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
+  wl "  ${ANCH:-no-dual-anchor}"
+  wl "  ${WA:0:200}"
   TRI=$(python3 "$WS/sitl_sim/analysis/t3_trichotomy.py" "$D" --cf "${CF:-none}" 2>/dev/null || true)
   TGATE=$(echo "$TRI" | grep -m1 'GATEHIT-STAT')
   TCLASS=$(echo "$TRI" | grep -m1 -oE 'class=[a-z_-]+' | cut -d= -f2)
   if [ -n "$TGATE" ]; then
     echo "[$(date '+%F %T')] $TAG $TGATE" >> "$GATEHIT_LOG"
-    w "  $TGATE"
-    w "  $(echo "$TRI" | grep -m1 'TRICHOTOMY')"
+    wl "  $TGATE"
+    wl "  $(echo "$TRI" | grep -m1 'TRICHOTOMY')"
   else
-    w "  GATEHIT-STAT: unavailable(分类器缺失→legacy 兜底,如实降级)"
+    wl "  GATEHIT-STAT: unavailable(分类器缺失→legacy 兜底,如实降级)"
   fi
   live_row "$TAG" "RES=$RES jump=$JUMP arr=$ARR cf=${CF:-?} tri=${TCLASS:-na}"
   if [ "$RES" = "ENV-FAIL" ]; then echo "env"; return; fi
