@@ -30,6 +30,7 @@ SUM="$EVD/x4_batch_report.md"
 HEARTBEAT_MIN=10
 ARM_EXPECT=""; EXPECT_NODE=""; EXPECT_LIB=""; EXPECT_CFG=""
 GATE_PARAMS="$L/t1_gate_params.json"
+GATE_ON=1
 DRY=0
 PHYS_FLOOR=3
 PHY_ROUNDS_CAP=15
@@ -40,6 +41,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --expect-lib) EXPECT_LIB="$2"; shift 2;;
   --expect-cfg) EXPECT_CFG="$2"; shift 2;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
+  --no-gate) GATE_ON=0; shift;;
   --phys-floor) PHYS_FLOOR="$2"; shift 2;;
   --dry) DRY=1; shift;;
   --skip) SKIP_TAGS=",$2,"; shift 2;;
@@ -52,10 +54,12 @@ esac; done
 BX=1.01; BY=0.98; BZ=1.0
 POSITIONS=()
 add() { # tag dist world ux uy → 追加队尾(替补动态入队可见)
-  local tag="$1" dist="$2" world="$3" ux="$4" uy="$5" gx gy
+  local tag="$1" dist="$2" world="$3" ux="$4" uy="$5" gx gy GA
   gx=$(python3 -c "print('%.3f' % ($BX + $ux*$dist))")
   gy=$(python3 -c "print('%.3f' % ($BY + $uy*$dist))")
-  POSITIONS+=("${tag}|--world $world --goal $gx $gy $BZ --budget 200 --gate --gate-params $GATE_PARAMS")
+  GA=""
+  [ "$GATE_ON" = "1" ] && GA=" --gate --gate-params $GATE_PARAMS"
+  POSITIONS+=("${tag}|--world $world --goal $gx $gy $BZ --budget 200$GA")
 }
 SQ=0.7071067811865476
 add X4_E12O  12 sitl_world_obstacles 1  0
@@ -101,8 +105,12 @@ preflight() {
   M_CFG=$(md5sum "$WS/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml" | cut -c1-8)
   [ "$M_NODE" = "$EXPECT_NODE" ] && [ "$M_LIB" = "$EXPECT_LIB" ] || { w "ABORT_STACK md5=$M_NODE/$M_LIB expect=$EXPECT_NODE/$EXPECT_LIB(纯脚本面红线:门工程零栈改动)"; exit 9; }
   [ "$M_CFG" = "$EXPECT_CFG" ] || { w "ABORT_CONFIG md5=$M_CFG expect=$EXPECT_CFG(X5 批同款臂,批前恢复未完成?)"; exit 9; }
-  python3 -c "import json,sys;sys.exit(0 if json.load(open('$GATE_PARAMS')).get('frozen') else 1)" \
-    || { w "ABORT_GATE_PARAMS 未冻结(ROC 通过后冻结版才可上真轮——任务书单元3前置)"; exit 9; }
+  if [ "$GATE_ON" = "1" ]; then
+    python3 -c "import json,sys;sys.exit(0 if json.load(open('$GATE_PARAMS')).get('frozen') else 1)" \
+      || { w "ABORT_GATE_PARAMS 未冻结(ROC 通过后冻结版才可上真轮——任务书单元3前置)"; exit 9; }
+  else
+    w "  --no-gate 模式(预注册分支:门不可靠→无门基线,判读不带门语义,5/5 全物理才算数)"
+  fi
   DF_G=$(df -BG --output=avail "$HOME" | tail -1 | grep -oE "[0-9]+")
   [ "$DF_G" -lt 20 ] && { w "ABORT_DISK ${DF_G}G"; exit 9; }
   pgrep -x gzserver >/dev/null 2>&1 && { w "ABORT_RESIDUE gzserver alive"; exit 9; }
