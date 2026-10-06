@@ -114,10 +114,10 @@ def classify(run_dir, cf_state=None):
     if trig == 0:
         if res == 'PASS':
             out['class'] = 'phys_green'
-            out['detail'].append('无门干预全绿')
+            out['detail'].append('无门干预全绿;chain 四条=不适用(行内显示 0=n/a 非未达成)')
         else:
             out['class'] = 'true_fail'
-            out['detail'].append('无门干预的非 PASS(红面)')
+            out['detail'].append('无门干预的非 PASS(红面);chain 四条=不适用(行内显示 0=n/a)')
         return out
 
     # 门干预≥1 → 四条恢复链判定
