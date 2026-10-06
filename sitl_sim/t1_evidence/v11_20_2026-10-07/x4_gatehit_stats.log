@@ -1,0 +1,6 @@
+# GATEHIT 拦截统计行(冻结格式;三列分账 v1 正源) 2026-10-07 03:18:17
+[2026-10-07 03:20:59] X4_E12O GATEHIT-STAT: n=0 ts=NA val=NA kind=NA chain=abort:0,land:0,disarm:0,not2fail:0
+[2026-10-07 03:23:30] X4_NE8O GATEHIT-STAT: n=0 ts=NA val=NA kind=NA chain=abort:0,land:0,disarm:0,not2fail:0
+[2026-10-07 03:26:10] X4_NE12O GATEHIT-STAT: n=0 ts=NA val=NA kind=NA chain=abort:0,land:0,disarm:0,not2fail:0
+[2026-10-07 03:32:32] X4_S12P GATEHIT-STAT: n=0 ts=NA val=NA kind=NA chain=abort:0,land:0,disarm:0,not2fail:0
+[2026-10-07 03:35:02] X4_E8O GATEHIT-STAT: n=0 ts=NA val=NA kind=NA chain=abort:0,land:0,disarm:0,not2fail:0

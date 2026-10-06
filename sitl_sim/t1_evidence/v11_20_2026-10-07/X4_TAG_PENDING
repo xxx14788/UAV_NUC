@@ -1,0 +1,10 @@
+X4 TAG PENDING (batch 2026-10-07 03:18-03:49; arm=guard=1 sane_p=50.0 sane_v=15.0) — 五轮判读指针(达成面=物理绿5+门拦截计入0):
+  /home/ghj/sitl_sim/vins_smoke_runs/run_X4_E12O_031818   phys_green (jump 0.252 arr 0.278)
+  /home/ghj/sitl_sim/vins_smoke_runs/run_X4_NE8O_032059   phys_green (jump 0.034 arr 0.037)
+  /home/ghj/sitl_sim/vins_smoke_runs/run_X4_NE12O_032330  phys_green (jump 0.234 arr 0.220)
+  /home/ghj/sitl_sim/vins_smoke_runs/run_X4_E8O_033233    phys_green (jump 0.081 arr 0.156)
+  /home/ghj/sitl_sim/vins_smoke_runs/run_X4_N8P_034553    phys_green (jump 0.094 arr 0.083, 替补#2)
+红面(非达成面,如实): run_X4_S12P_032611 true_fail(jump 4.7 B型,换格#1触发) / run_X4_S8O_033810 true_fail(starve恢复+TIMEOUT慢 C型,替补#1)
+复核口径：各达成轮 phys_green(RESULT=PASS+四指标+无门干预证据)即可——本批=无门基线(ROC 零工作点分支),零 gatehit 文件为预期;
+可复算=python3 sitl_sim/analysis/t3_trichotomy.py <run_dir> --cf <state>(cf 来自 t3_wa_gate --online,或 none);
+确认写本目录 X4_T3_REVIEW_CONFIRM（含行 "T3-REVIEW: 5/5 CONFIRM"）
