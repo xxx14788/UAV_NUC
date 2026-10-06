@@ -1,0 +1,88 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_X1final_040931/flight.bag",
+ "tag": "run_X1final_040931",
+ "sources": {
+  "vins": {
+   "n": 2632,
+   "t0": 24.38,
+   "t1": 300.676,
+   "dur_s": 276.3,
+   "pz_min": -5.5186,
+   "pz_max": 1.4343,
+   "start": [
+    -0.0002,
+    0.0002,
+    -0.0004
+   ],
+   "end": [
+    1.6657,
+    -1.8302,
+    -5.5171
+   ],
+   "disp_end_start": 6.0465,
+   "jump_gt05": 20,
+   "max_dp": 1.8551
+  },
+  "mav": {
+   "n": 8293,
+   "t0": 24.372,
+   "t1": 300.768,
+   "dur_s": 276.4,
+   "pz_min": -0.453,
+   "pz_max": 2.9376,
+   "start": [
+    -0.0034,
+    0.0199,
+    -0.0123
+   ],
+   "end": [
+    2.5511,
+    -0.4015,
+    -0.0667
+   ],
+   "disp_end_start": 2.5896,
+   "jump_gt05": 0,
+   "max_dp": 0.0549
+  },
+  "truth_iris": null,
+  "truth_iris_stereo_vins": {
+   "n": 69107,
+   "t0": 24.348,
+   "t1": 300.768,
+   "dur_s": 276.42,
+   "pz_min": 0.1025,
+   "pz_max": 4.8285,
+   "start": [
+    1.01,
+    0.9799,
+    0.1044
+   ],
+   "end": [
+    3.5427,
+    0.5813,
+    0.1048
+   ],
+   "disp_end_start": 2.5639,
+   "jump_gt05": 0,
+   "max_dp": 0.0066
+  }
+ },
+ "other_iris_names": [],
+ "cross_end_diff": {
+  "vins_vs_truth_iris": null,
+  "vins_vs_truth_isv": 6.3989,
+  "mav_vs_truth_iris": null,
+  "mav_vs_truth_isv": 1.4066,
+  "vins_vs_mav": 5.7037
+ },
+ "j0d": {
+  "ref": "/home/ghj/sitl_sim/vins_smoke_runs/run_X1final_040931/j0_decomp.json",
+  "j0_total_m": 5.7655,
+  "dominant": "transit",
+  "n_jump_frames": 15,
+  "top_keys": [
+   "dir",
+   "j0_decomp"
+  ]
+ }
+}

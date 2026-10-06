@@ -1,0 +1,410 @@
+### /home/ghj/sitl_sim/vins_smoke_runs/run_RAREP1_051826/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_RAREP1_051826/flight.bag
+version:     2.0
+duration:    1:33s (93s)
+start:       Jan 01 1970 08:00:25.39 (25.39)
+end:         Jan 01 1970 08:01:58.42 (118.42)
+size:        50.9 MB
+messages:    120310
+compression: none [66/66 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          23258 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                    9295 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state            93 msgs    : std_msgs/String               
+             /gazebo/model_states            23257 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 4651 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            21121 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      2791 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude    9296 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                      94 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             14 msgs    : geometry_msgs/PoseStamped      (2 connections)
+             /position_cmd                    4414 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   21121 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry          889 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_HVNET2_051401/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_HVNET2_051401/flight.bag
+version:     2.0
+duration:    1:33s (93s)
+start:       Jan 01 1970 08:00:24.59 (24.59)
+end:         Jan 01 1970 08:01:57.82 (117.82)
+size:        51.7 MB
+messages:    121872
+compression: none [67/67 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          23311 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                    9314 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state            93 msgs    : std_msgs/String               
+             /gazebo/model_states            23309 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 4662 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            21811 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      2797 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude    9315 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                      94 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             14 msgs    : geometry_msgs/PoseStamped      (2 connections)
+             /position_cmd                    4416 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   21810 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry          910 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_HVNET1_050936/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_HVNET1_050936/flight.bag
+version:     2.0
+duration:    1:43s (103s)
+start:       Jan 01 1970 08:00:25.37 (25.37)
+end:         Jan 01 1970 08:02:08.51 (128.51)
+size:        56.2 MB
+messages:    132609
+compression: none [73/73 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          25786 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                   10306 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state           103 msgs    : std_msgs/String               
+             /gazebo/model_states            25784 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 5157 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            23263 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      3095 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude   10307 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                     104 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             15 msgs    : geometry_msgs/PoseStamped      (3 connections)
+             /position_cmd                    4403 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              21 msgs    : quadrotor_msgs/TakeoffLand     (3 connections)
+             /vins_estimator/imu_propagate   23263 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry         1002 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X2g3R_050113/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X2g3R_050113/flight.bag
+version:     2.0
+duration:    4:25s (265s)
+start:       Jan 01 1970 08:00:25.18 (25.18)
+end:         Jan 01 1970 08:04:50.27 (290.27)
+size:        146.7 MB
+messages:    350926
+compression: none [190/190 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          66274 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                   26513 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state           263 msgs    : std_msgs/String               
+             /gazebo/model_states            66273 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                13254 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            59911 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      7953 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude   26514 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                     266 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             15 msgs    : geometry_msgs/PoseStamped      (3 connections)
+             /position_cmd                   21198 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   59911 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry         2565 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X2g1R_045147/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X2g1R_045147/flight.bag
+version:     2.0
+duration:    5:03s (303s)
+start:       Jan 01 1970 08:00:24.49 (24.49)
+end:         Jan 01 1970 08:05:28.01 (328.01)
+size:        161.9 MB
+messages:    376840
+compression: none [210/210 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped   [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          75883 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   30355 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           301 msgs    : std_msgs/String            
+             /gazebo/model_states            75881 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                15176 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            68263 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      9106 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   30356 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     305 msgs    : mavros_msgs/State          
+             /move_base_simple/goal             28 msgs    : geometry_msgs/PoseStamped   (4 connections)
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand  (2 connections)
+             /vins_estimator/imu_propagate   68263 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry         2907 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2b_043724/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2b_043724/flight.bag
+version:     2.0
+duration:    9:42s (582s)
+start:       Jan 01 1970 08:00:25.19 (25.19)
+end:         Jan 01 1970 08:10:08.03 (608.03)
+size:        324.7 MB
+messages:    779412
+compression: none [421/421 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          145712 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                    58314 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state            578 msgs    : std_msgs/String               
+             /gazebo/model_states            145711 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 29142 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            132370 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      17485 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude    58315 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                      584 msgs    : mavros_msgs/State             
+             /move_base_simple/goal              29 msgs    : geometry_msgs/PoseStamped      (5 connections)
+             /position_cmd                    53193 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land               16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   132370 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry          5593 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2a_042631/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2a_042631/flight.bag
+version:     2.0
+duration:    9:42s (582s)
+start:       Jan 01 1970 08:00:24.46 (24.46)
+end:         Jan 01 1970 08:10:07.31 (607.31)
+size:        302.5 MB
+messages:    749655
+compression: none [392/392 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          145716 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                    58322 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state            578 msgs    : std_msgs/String               
+             /gazebo/model_states            145716 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                 29144 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            133617 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      17486 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude    58323 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                      584 msgs    : mavros_msgs/State             
+             /move_base_simple/goal              29 msgs    : geometry_msgs/PoseStamped      (5 connections)
+             /position_cmd                    53195 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land               16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   102431 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry          4498 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X2g3_042025/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X2g3_042025/flight.bag
+version:     2.0
+duration:    5:03s (303s)
+start:       Jan 01 1970 08:00:24.24 (24.24)
+end:         Jan 01 1970 08:05:27.46 (327.46)
+size:        160.6 MB
+messages:    374385
+compression: none [209/209 chunks]
+types:       gazebo_msgs/ModelStates     [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped   [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget  [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State           [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry           [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/Px4ctrlDebug [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand  [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock         [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu             [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String             [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          75809 msgs    : rosgraph_msgs/Clock        
+             /debugPx4ctrl                   30330 msgs    : quadrotor_msgs/Px4ctrlDebug
+             /debugPx4ctrl/fsm_state           301 msgs    : std_msgs/String            
+             /gazebo/model_states            75808 msgs    : gazebo_msgs/ModelStates    
+             /mavros/imu/data                15162 msgs    : sensor_msgs/Imu            
+             /mavros/imu/data_raw            67150 msgs    : sensor_msgs/Imu            
+             /mavros/local_position/odom      9097 msgs    : nav_msgs/Odometry          
+             /mavros/setpoint_raw/attitude   30331 msgs    : mavros_msgs/AttitudeTarget 
+             /mavros/state                     305 msgs    : mavros_msgs/State          
+             /move_base_simple/goal             28 msgs    : geometry_msgs/PoseStamped   (4 connections)
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand  (2 connections)
+             /vins_estimator/imu_propagate   67150 msgs    : nav_msgs/Odometry          
+             /vins_estimator/odometry         2898 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X2g1_041509/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X2g1_041509/flight.bag
+version:     2.0
+duration:    4:18s (258s)
+start:       Jan 01 1970 08:00:24.17 (24.17)
+end:         Jan 01 1970 08:04:42.22 (282.22)
+size:        128.9 MB
+messages:    322059
+compression: none [167/167 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          64515 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                   26138 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state           256 msgs    : std_msgs/String               
+             /gazebo/model_states            64506 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                12901 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            55925 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      7742 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude   26138 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                     259 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             15 msgs    : geometry_msgs/PoseStamped      (3 connections)
+             /position_cmd                   20920 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              16 msgs    : quadrotor_msgs/TakeoffLand     (2 connections)
+             /vins_estimator/imu_propagate   40921 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry         1807 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X1final_040931/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X1final_040931/flight.bag
+version:     2.0
+duration:    4:36s (276s)
+start:       Jan 01 1970 08:00:24.35 (24.35)
+end:         Jan 01 1970 08:05:00.77 (300.77)
+size:        151.6 MB
+messages:    362884
+compression: none [197/197 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                          69108 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                   27641 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state           274 msgs    : std_msgs/String               
+             /gazebo/model_states            69107 msgs    : gazebo_msgs/ModelStates       
+             /mavros/imu/data                13821 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw            61420 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom      8293 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude   27641 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                     278 msgs    : mavros_msgs/State             
+             /move_base_simple/goal             16 msgs    : geometry_msgs/PoseStamped      (3 connections)
+             /position_cmd                   21206 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land              27 msgs    : quadrotor_msgs/TakeoffLand     (3 connections)
+             /vins_estimator/imu_propagate   61420 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry         2632 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2b_032653/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2b_032653/flight.bag
+version:     2.0
+duration:    6:44s (404s)
+start:       Jan 01 1970 08:00:24.88 (24.88)
+end:         Jan 01 1970 08:07:09.06 (429.06)
+size:        13.6 GB
+messages:    558704
+compression: none [15573/15573 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Image              [060021388200f6f0f447d0fcd9c64743]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                                       101047 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                                 40432 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state                         401 msgs    : std_msgs/String               
+             /gazebo/model_states                         101046 msgs    : gazebo_msgs/ModelStates       
+             /iris_stereo_vins/vins_cam_left/image_raw      7786 msgs    : sensor_msgs/Image             
+             /iris_stereo_vins/vins_cam_right/image_raw     7786 msgs    : sensor_msgs/Image             
+             /mavros/imu/data                              20209 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw                          92498 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom                   12125 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude                 40432 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                                   405 msgs    : mavros_msgs/State             
+             /move_base_simple/goal                           31 msgs    : geometry_msgs/PoseStamped      (5 connections)
+             /position_cmd                                 38337 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land                            60 msgs    : quadrotor_msgs/TakeoffLand     (6 connections)
+             /vins_estimator/imu_propagate                 92228 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry                       3881 msgs    : nav_msgs/Odometry
+### /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2a_031040/flight.bag
+path:        /home/ghj/sitl_sim/vins_smoke_runs/run_X3l2a_031040/flight.bag
+version:     2.0
+duration:    6:44s (404s)
+start:       Jan 01 1970 08:00:25.41 (25.41)
+end:         Jan 01 1970 08:07:09.52 (429.52)
+size:        13.5 GB
+messages:    563276
+compression: none [15507/15507 chunks]
+types:       gazebo_msgs/ModelStates        [48c080191eb15c41858319b4d8a609c2]
+             geometry_msgs/PoseStamped      [d3812c3cbc69362b77dc0b19b345f8f5]
+             mavros_msgs/AttitudeTarget     [456f3af666b22ccd0222ea053a86b548]
+             mavros_msgs/State              [65cd0a9fff993b062b91e354554ec7e9]
+             nav_msgs/Odometry              [cd5e73d190d741a2f92e81eda573aca7]
+             quadrotor_msgs/PositionCommand [2809eb0c779bbce5b8d66b95a05bd27b]
+             quadrotor_msgs/Px4ctrlDebug    [ec51948a34b1f5853c601eaeeb47bb27]
+             quadrotor_msgs/TakeoffLand     [b30b3b93263aae01746755d3b8ff620f]
+             rosgraph_msgs/Clock            [a9c97c1d230cfc112e270351a944ee47]
+             sensor_msgs/Image              [060021388200f6f0f447d0fcd9c64743]
+             sensor_msgs/Imu                [6a62c6daae103f4ff57a132d6f95cec2]
+             std_msgs/String                [992ce8a1687cec8c8bd883ec73ca41d1]
+topics:      /clock                                       101029 msgs    : rosgraph_msgs/Clock           
+             /debugPx4ctrl                                 40419 msgs    : quadrotor_msgs/Px4ctrlDebug   
+             /debugPx4ctrl/fsm_state                         401 msgs    : std_msgs/String               
+             /gazebo/model_states                         101027 msgs    : gazebo_msgs/ModelStates       
+             /iris_stereo_vins/vins_cam_left/image_raw      7753 msgs    : sensor_msgs/Image             
+             /iris_stereo_vins/vins_cam_right/image_raw     7753 msgs    : sensor_msgs/Image             
+             /mavros/imu/data                              20205 msgs    : sensor_msgs/Imu               
+             /mavros/imu/data_raw                          94727 msgs    : sensor_msgs/Imu               
+             /mavros/local_position/odom                   12123 msgs    : nav_msgs/Odometry             
+             /mavros/setpoint_raw/attitude                 40419 msgs    : mavros_msgs/AttitudeTarget    
+             /mavros/state                                   405 msgs    : mavros_msgs/State             
+             /move_base_simple/goal                           30 msgs    : geometry_msgs/PoseStamped      (5 connections)
+             /position_cmd                                 38323 msgs    : quadrotor_msgs/PositionCommand
+             /px4ctrl/takeoff_land                            60 msgs    : quadrotor_msgs/TakeoffLand     (6 connections)
+             /vins_estimator/imu_propagate                 94727 msgs    : nav_msgs/Odometry             
+             /vins_estimator/odometry                       3875 msgs    : nav_msgs/Odometry

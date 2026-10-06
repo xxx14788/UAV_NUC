@@ -1,0 +1,82 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_RAREP1_051826/flight.bag",
+ "tag": "run_RAREP1_051826",
+ "sources": {
+  "vins": {
+   "n": 889,
+   "t0": 25.424,
+   "t1": 118.404,
+   "dur_s": 92.98,
+   "pz_min": -0.151,
+   "pz_max": 0.9749,
+   "start": [
+    -0.0003,
+    0.0025,
+    -0.0
+   ],
+   "end": [
+    7.7506,
+    -0.7648,
+    -0.1198
+   ],
+   "disp_end_start": 7.7897,
+   "jump_gt05": 0,
+   "max_dp": 0.16
+  },
+  "mav": {
+   "n": 2791,
+   "t0": 25.404,
+   "t1": 118.404,
+   "dur_s": 93.0,
+   "pz_min": -0.0157,
+   "pz_max": 1.0608,
+   "start": [
+    0.004,
+    0.0158,
+    -0.0121
+   ],
+   "end": [
+    7.752,
+    -0.94,
+    0.0296
+   ],
+   "disp_end_start": 7.8069,
+   "jump_gt05": 0,
+   "max_dp": 0.0269
+  },
+  "truth_iris": null,
+  "truth_iris_stereo_vins": {
+   "n": 23257,
+   "t0": 25.388,
+   "t1": 118.412,
+   "dur_s": 93.02,
+   "pz_min": 0.1043,
+   "pz_max": 1.1994,
+   "start": [
+    1.01,
+    0.9799,
+    0.1044
+   ],
+   "end": [
+    8.7577,
+    0.099,
+    0.1047
+   ],
+   "disp_end_start": 7.7976,
+   "jump_gt05": 0,
+   "max_dp": 0.0028
+  }
+ },
+ "other_iris_names": [],
+ "cross_end_diff": {
+  "vins_vs_truth_iris": null,
+  "vins_vs_truth_isv": 1.3457,
+  "mav_vs_truth_iris": null,
+  "mav_vs_truth_isv": 1.4479,
+  "vins_vs_mav": 0.2302
+ },
+ "j0d": {
+  "ref": null,
+  "note": "无在册（T3 产出后增列）"
+ }
+}
