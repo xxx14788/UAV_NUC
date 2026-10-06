@@ -8,7 +8,7 @@ ROOT = os.path.expanduser("~/sitl_sim/vins_smoke_runs")
 OUT = os.path.expanduser("~/sitl_sim/t1_evidence/v11_17_2026-10-06/x5_passmap.csv")
 DIRS = {"E":(1,0),"W":(-1,0),"N":(0,1),"S":(0,-1),"SE":(0.7071067811865476,-0.7071067811865476),"NE":(0.7071067811865476,0.7071067811865476)}
 def parse_tag(tag):
-    m = re.match(r"X5_([A-Z]+)(\d+)([OP])(?:_(R2|L2H))?", tag)
+    m = re.match(r"X5_([A-Z]+?)(\d+)([OP])(?:_(R2|L2))?$", tag)
     if not m: return None
     return m.group(1), int(m.group(2)), m.group(3), m.group(4) or ""
 def peak_imu(bagp):
@@ -31,7 +31,7 @@ for d in sorted(glob.glob(os.path.join(ROOT, "run_X5_*"))):
     def g1(pat, default=-1):
         mm = re.search(pat, txt)
         return float(mm.group(1)) if mm else default
-    jump = g1(r"pre-post\|=[0-9.]+")
+    jump = g1(r"pre-post\|=([0-9.]+)")
     arr = g1(r"leg1 到位\(真值\) min=([0-9.-]+)")
     avd = g1(r"避障 min_dist=([0-9.-]+)")
     hz = g1(r"poscmd ([0-9.]+) Hz")

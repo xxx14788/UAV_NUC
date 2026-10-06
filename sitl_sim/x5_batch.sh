@@ -153,6 +153,9 @@ passmap_row() {  # $1=tag $2=class $3=RESULT行摘要
 }
 
 judge_round() {  # $1=tag $2=run_dir -> echoes classification（沿 x4_batch 修复版逐字）
+  # HOTFIX(19:35): 诊断行改 wl(只写报告文件)——w 经 tee 回 stdout 会被 $( ) 捕获,
+  # CLASS 变多行致 case 永落 fail(绿数/重试/撞门保护三失能;E8O/S8O 两 PASS 误判在案)
+  wl() { echo "[$(date '+%F %T')] $*" >> "$SUM"; }
   local TAG="$1" D="$2" RES FAILN ANCH JUMP ARR CF WA NEVER
   RES=$(grep -m1 -oE "RESULT=(PASS|FAIL|ENV-FAIL)" "$D/RESULT.txt" 2>/dev/null | head -1 | cut -d= -f2)
   [ -n "$RES" ] || RES="NO-RESULT"
@@ -164,9 +167,9 @@ judge_round() {  # $1=tag $2=run_dir -> echoes classification（沿 x4_batch 修
   CF=$(echo "$WA" | grep -oE "cf=[a-z-]+" | head -1 | cut -d= -f2)
   ANCH=$(grep -m1 "DUAL-ANCHOR" "$D/RESULT.txt" 2>/dev/null | cut -c1-120)
   DISARM=$(grep -m1 -oE "auto_disarm->[01]" "$D/RESULT.txt" 2>/dev/null || echo "?")
-  w "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
-  w "  ${ANCH:-no-dual-anchor}"
-  w "  ${WA:0:200}"
+  wl "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
+  wl "  ${ANCH:-no-dual-anchor}"
+  wl "  ${WA:0:200}"
   passmap_row "$TAG" "?" "$RES jump=$JUMP arr=$ARR"
   if [ "$RES" = "ENV-FAIL" ]; then echo "env"; return; fi
   if [ "$NEVER" -ge 1 ] || [ "$FAILN" -ge 3 ]; then echo "hostile"; return; fi
@@ -192,6 +195,12 @@ run_position() {  # $1=tag $2=args
   [ "$RC" = "124" ] && force_cleanup
   D=$(ls -dt "$L"/vins_smoke_runs/run_${TAG}_* 2>/dev/null | head -1)
   if [ -z "$D" ]; then w "  NO-RUNDIR rc=$RC (timeout-suicide?)"; CLASS="timeout"; else
+    # HOTFIX(22:05): ENV 早死判别先行——simvins.log 缺席/轮 log 有 FATAL 环境门
+    # =SITL/相机未起(SE12P 实证:双目话题未出现→banner 空→误 ABORT_ARM 杀批),归 env 走重试
+    if [ ! -s "$D/simvins.log" ] || grep -aq "FATAL" "$D/round.log" 2>/dev/null; then
+      w "  ENV-EARLY-DEATH: simvins.log 缺席/轮 FATAL 环境门(非臂面)→env 类"
+      CLASS="env"
+    else
     BANNER=$(grep -m1 -oE "\[T2SGCFG\][^]]*" "$D/simvins.log" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g')
     if ! echo "$BANNER" | grep -qF "$ARM_EXPECT"; then
       w "  ABORT_ARM banner='$BANNER' expect='$ARM_EXPECT'"; exit 8
@@ -200,6 +209,7 @@ run_position() {  # $1=tag $2=args
     echo "$KNOBS" | grep -q "loss=0" || { w "  ABORT_ARM_KNOBS '$KNOBS' (expect loss=0; CauchyLoss(0) 防线)"; exit 8; }
     w "  banner: $BANNER | knobs: $KNOBS"
     CLASS=$(judge_round "$TAG" "$D")
+    fi
   fi
   w "  class=$CLASS"
   case "$CLASS" in
