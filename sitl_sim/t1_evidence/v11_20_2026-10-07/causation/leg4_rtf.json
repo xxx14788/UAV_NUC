@@ -1,0 +1,104 @@
+{
+ "hypothesis": "H4 负载过载(RTF)",
+ "per_round": {
+  "X5_N8O": {
+   "group": "jump6",
+   "rtf": 1.016,
+   "bag_sim_s": 302.1
+  },
+  "X5_SE8O": {
+   "group": "jump6",
+   "rtf": 1.017,
+   "bag_sim_s": 282.0
+  },
+  "X5_E5O": {
+   "group": "jump6",
+   "rtf": 1.034,
+   "bag_sim_s": 134.2
+  },
+  "X5_E8P": {
+   "group": "jump6",
+   "rtf": null,
+   "bag_sim_s": 607.2
+  },
+  "X5_E5P": {
+   "group": "jump6",
+   "rtf": 1.017,
+   "bag_sim_s": 282.0
+  },
+  "X5_E12P": {
+   "group": "jump6",
+   "rtf": 1.017,
+   "bag_sim_s": 280.3
+  },
+  "X5_E12O": {
+   "group": "green11",
+   "rtf": 1.045,
+   "bag_sim_s": 109.1
+  },
+  "X5_E12O_R2": {
+   "group": "green11",
+   "rtf": 1.049,
+   "bag_sim_s": 106.6
+  },
+  "X5_NE8O": {
+   "group": "green11",
+   "rtf": 1.047,
+   "bag_sim_s": 94.3
+  },
+  "X5_NE12O": {
+   "group": "green11",
+   "rtf": 1.043,
+   "bag_sim_s": 104.3
+  },
+  "X5_S12P": {
+   "group": "green11",
+   "rtf": 1.047,
+   "bag_sim_s": 93.9
+  },
+  "X5_E8O": {
+   "group": "green11",
+   "rtf": 1.044,
+   "bag_sim_s": 103.1
+  },
+  "X5_S8O": {
+   "group": "green11",
+   "rtf": 1.055,
+   "bag_sim_s": 94.5
+  },
+  "X5_N8P": {
+   "group": "green11",
+   "rtf": 1.051,
+   "bag_sim_s": 94.5
+  },
+  "X5_N12O": {
+   "group": "green11",
+   "rtf": 1.05,
+   "bag_sim_s": 104.2
+  },
+  "X5_S5O": {
+   "group": "green11",
+   "rtf": 1.054,
+   "bag_sim_s": 94.4
+  },
+  "X5_W5P": {
+   "group": "green11",
+   "rtf": 1.054,
+   "bag_sim_s": 94.3
+  },
+  "X5_E8P_a": {
+   "group": "heldout",
+   "rtf": null,
+   "bag_sim_s": 385.4
+  },
+  "X5_E8P_L2": {
+   "group": "heldout",
+   "rtf": 1.015,
+   "bag_sim_s": 324.5
+  }
+ },
+ "verdict": "排除(跳组中位 1.017 vs 绿组 1.049,差<10pct 且无<0.80 轮)",
+ "slack_note": "RTF_global=bag_sim_span/(wall_disarm-wall_recstart); disarm↔bag_end 滞后 0-15s 未扣(低估 RTF ~0-5pct);连续 sim/wall 曲线历史轮未录(X4 批 rtf 探针=前瞻)",
+ "jump_median": 1.017,
+ "green_median": 1.049
+}

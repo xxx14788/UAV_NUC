@@ -1,0 +1,150 @@
+{
+ "hypothesis": "H3 机器态(hwmon)",
+ "green_window_stats": {
+  "freq_avg_med": {
+   "n": 11,
+   "p25/50/75": [
+    1944762.0,
+    2036004.0,
+    2149918.0
+   ]
+  },
+  "load1_med": {
+   "n": 11,
+   "p25/50/75": [
+    5.5,
+    7.2,
+    8.9
+   ]
+  },
+  "ctxt_rate": {
+   "n": 11,
+   "p25/50/75": [
+    114837.0,
+    115936.0,
+    119085.0
+   ]
+  }
+ },
+ "per_jump_round": {
+  "X5_N8O": {
+   "t_prodrome": 30.516,
+   "t_jump": 278.74,
+   "lead_s": 248.2,
+   "early": {
+    "freq_avg_med": 1525445.0,
+    "load1_med": 6.44,
+    "ctxt_rate": 120697.0,
+    "thm_any": 0,
+    "n": 9
+   },
+   "window": {
+    "freq_avg_med": 1768472.5,
+    "load1_med": 7.27,
+    "ctxt_rate": 113298.0,
+    "thm_any": 0,
+    "n": 158
+   },
+   "freq_ratio_self": 1.159,
+   "candidate": false,
+   "thm_flag": 0
+  },
+  "X5_SE8O": {
+   "t_prodrome": 46.932,
+   "t_jump": 168.11,
+   "lead_s": 121.2,
+   "early": {
+    "freq_avg_med": 1649644.0,
+    "load1_med": 7.64,
+    "ctxt_rate": 116351.0,
+    "thm_any": 0,
+    "n": 9
+   },
+   "window": {
+    "freq_avg_med": 1514660.5,
+    "load1_med": 8.71,
+    "ctxt_rate": 114409.0,
+    "thm_any": 0,
+    "n": 80
+   },
+   "freq_ratio_self": 0.918,
+   "candidate": false,
+   "thm_flag": 0
+  },
+  "X5_E5O": {
+   "t_prodrome": 31.276,
+   "t_jump": 92.73,
+   "lead_s": 61.5,
+   "early": {
+    "freq_avg_med": 1757993.0,
+    "load1_med": 3.1,
+    "ctxt_rate": 117641.0,
+    "thm_any": 0,
+    "n": 9
+   },
+   "window": {
+    "freq_avg_med": 1783494.0,
+    "load1_med": 6.43,
+    "ctxt_rate": 117869.0,
+    "thm_any": 0,
+    "n": 43
+   },
+   "freq_ratio_self": 1.015,
+   "candidate": false,
+   "thm_flag": 0
+  },
+  "X5_E8P": {
+   "t_prodrome": 33.544,
+   "t_jump": 444.56,
+   "lead_s": 411.0,
+   "early": null,
+   "window": null
+  },
+  "X5_E5P": {
+   "t_prodrome": 38.688,
+   "t_jump": 88.94,
+   "lead_s": 50.3,
+   "early": {
+    "freq_avg_med": 1754485.0,
+    "load1_med": 7.03,
+    "ctxt_rate": 132115.0,
+    "thm_any": 0,
+    "n": 9
+   },
+   "window": {
+    "freq_avg_med": 1771935.0,
+    "load1_med": 7.17,
+    "ctxt_rate": 112142.0,
+    "thm_any": 0,
+    "n": 37
+   },
+   "freq_ratio_self": 1.01,
+   "candidate": false,
+   "thm_flag": 0
+  },
+  "X5_E12P": {
+   "t_prodrome": null,
+   "t_jump": 48.46,
+   "lead_s": null,
+   "early": {
+    "freq_avg_med": 1631908.0,
+    "load1_med": 7.51,
+    "ctxt_rate": 126990.0,
+    "thm_any": 1,
+    "n": 9
+   },
+   "window": {
+    "freq_avg_med": 1733759.0,
+    "load1_med": 10.42,
+    "ctxt_rate": 121117.0,
+    "thm_any": 0,
+    "n": 18
+   },
+   "freq_ratio_self": 1.062,
+   "candidate": false,
+   "thm_flag": 0
+  }
+ },
+ "verdict": "排除(0/6 跳轮过预注册门;窗中位 freq/ctxt/load 均在绿格带内)",
+ "window_def": "跳轮窗=[t_prodrome-10,t_jump](sim→wall 用 record 锚+RTF_global 线性映射);绿格参考窗=[goal0,goal0+40]s 同飞行段;判别门=预注册(freq<0.85×自身前段基线∧(ctxt_rate|load1>绿p75×1.5));thm_flag 单独 flag"
+}

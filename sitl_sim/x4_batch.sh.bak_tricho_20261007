@@ -14,16 +14,8 @@
 #   cost_gate/staged/guard=原口径保留；装载=arm_xline.sh arm，preflight 校验 config，轮内校验 T2 knobs 行）
 #  ②tag=双链核验制：5/5 内嵌全绿 ∧ T3 独立复核（X4_T3_REVIEW_CONFIRM）两链都在才打 sitl-v0.4；
 #   复核未到=批暂停于 tag 前轮询（60s×60），禁单链发证。
-# v10.3 修订（T3 2026-10-07；红线 24 全流程，.bak_tricho_20261007 双树）：三列分账计数口径 v1
-#   （prereg xline_prereg §2.9）：judge 分类 green 拆 phys_green；新增 gate_intercept（门触发+
-#   完整恢复四条[受控中止/完整降落/disarm=1/无T2fail]全齐=位形达成，计入 5/5+成色注记）与
-#   intercept_incomplete（四条不齐=不计红不计绿，换轮重试占门拦截预算 ≤3/格，批总物理轮 ≤15）；
-#   5/5 判定=（物理绿+门拦截计入 ≥5）∧ 物理绿 ≥PHYS_FLOOR（默认 3，--phys-floor 可调=用户窗内
-#   可改；两案材料见门设计冻结呈报件）。历史轮零重判（口径只对 2026-10-07 后新批生效，在册注记）。
-#   分类权威=analysis/t3_trichotomy.py（单点实现，selftest 锚）；本脚本消费其 stdout。
-# 用法: bash x4_batch.sh --arm-banner "guard=1 sane_p=50.0 sane_v=15.0" [--dry] [--phys-floor N]
+# 用法: bash x4_batch.sh --arm-banner "guard=1 sane_p=50.0 sane_v=15.0" [--dry]
 #   --arm-banner = 本批臂的 [T2SGCFG] 期望子串（v2 臂装载须先跑 arm_xline.sh arm；不符=ABORT_ARM 不起飞）
-#   --phys-floor = 物理绿下限（默认 3=默认案；用户窗内可改的落码面）
 # 坑位：source ROS 必须在 set -u 之前（ROS profile 链未绑变量爆炸，本会话坑表在册）
 L="$HOME/sitl_sim"
 WS="$HOME/catkin_ws"
@@ -35,13 +27,10 @@ set -u
 HEARTBEAT_MIN=10
 ARM_EXPECT=""
 DRY=0
-PHYS_FLOOR=3
-PHY_ROUNDS_CAP=15
 SKIP_TAGS=""  # 逗号分隔已定案位形（批中断续跑用；X1final 真 FAIL 计分母后跳过重飞=预注册"真FAIL不重试"续跑面）
 while [ $# -gt 0 ]; do case "$1" in
   --arm-banner) ARM_EXPECT="$2"; shift 2;;
   --dry) DRY=1; shift;;
-  --phys-floor) PHYS_FLOOR="$2"; shift 2;;
   --skip) SKIP_TAGS=",$2,"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
@@ -60,10 +49,7 @@ POSITIONS=(
 retry_budget=3
 consec_door=0
 declare -A retried
-declare -A gate_retried      # 门拦截重试计数（intercept_incomplete 换轮；≤3/格，独立于 env/hostile 预算）
-GREENS=0; TOTAL=0            # GREENS=物理绿（v10.3 语义收窄：无门干预全绿；legacy 变量名保留）
-GATE_INTERCEPTS=0            # 门拦截计入（完整恢复四条全齐）
-GATEHIT_LOG="$EVD/x4_gatehit_stats.log"   # 拦截统计行（冻结格式，成色注记正源）
+GREENS=0; TOTAL=0
 
 w() { echo "[$(date '+%F %T')] $*" | tee -a "$SUM"; }
 status_line() { python3 "$L/status_append.py" "$*" >/dev/null 2>&1 || true; }
@@ -111,26 +97,11 @@ judge_round() {  # $1=tag $2=run_dir  -> echoes classification
   w "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
   w "  ${ANCH:-no-dual-anchor}"
   w "  ${WA:0:200}"
-  # 三列分账 v1（T3 v10.3 单元 1）：分类权威=t3_trichotomy.py（--cf 传现场 wa_gate 判读）
-  TRI=$(python3 "$WS/sitl_sim/analysis/t3_trichotomy.py" "$D" --cf "${CF:-none}" 2>/dev/null || true)
-  TGATE=$(echo "$TRI" | grep -m1 'GATEHIT-STAT')
-  TCLASS=$(echo "$TRI" | grep -m1 -oE 'class=[a-z_-]+' | cut -d= -f2)
-  if [ -n "$TGATE" ]; then
-    echo "[$(date '+%F %T')] $TAG $TGATE" >> "$GATEHIT_LOG"
-    w "  $TGATE"
-    w "  $(echo "$TRI" | grep -m1 'TRICHOTOMY')"
-  else
-    w "  GATEHIT-STAT: unavailable(分类器缺失→legacy 兜底,如实降级)"
-  fi
   # 分支预注册逻辑
   if [ "$RES" = "ENV-FAIL" ]; then echo "env"; return; fi
   if [ "$NEVER" -ge 1 ] || [ "$FAILN" -ge 3 ]; then echo "hostile"; return; fi
-  case "$TCLASS" in
-    phys_green|gate_intercept|intercept_incomplete) echo "$TCLASS"; return;;
-  esac
-  # legacy 兜底（分类器不可用；v10.3 语义收窄：PASS=phys_green，cf=controlled=gate_intercept）
-  if [ "$RES" = "PASS" ]; then echo "phys_green"; return; fi
-  if [ "${CF:-}" = "controlled" ]; then echo "gate_intercept"; return; fi
+  if [ "$RES" = "PASS" ]; then echo "green"; return; fi
+  if [ "${CF:-}" = "controlled" ]; then echo "green"; return; fi
   if [ "$RES" = "FAIL" ]; then
     local doorok
     doorok=$(python3 -c "print(1 if float('$JUMP')<=0.5 and 0.75<=float('$ARR')<=1.2 else 0)" 2>/dev/null || echo 0)
@@ -142,10 +113,6 @@ judge_round() {  # $1=tag $2=run_dir  -> echoes classification
 
 run_position() {  # $1=tag $2=args
   local TAG="$1" ARGS="$2" D RC CLASS BANNER
-  if [ "$TOTAL" -ge "$PHY_ROUNDS_CAP" ]; then
-    w "== position $TAG SKIPPED (批物理轮上限 $PHY_ROUNDS_CAP 达到;预注册防凑数终止)"
-    return 0
-  fi
   TOTAL=$((TOTAL+1))
   w ""
   w "== position $TAG (attempt $(( ${retried[$TAG]:-0} + 1 )))"
@@ -167,23 +134,8 @@ run_position() {  # $1=tag $2=args
   fi
   w "  class=$CLASS"
   case "$CLASS" in
-    phys_green)
-      GREENS=$((GREENS+1)); consec_door=0
-      status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 物理绿($GREENS 物理+${GATE_INTERCEPTS} 拦截=$((GREENS+GATE_INTERCEPTS))/5) | 批处理 | 三列分账v1(phys-floor=$PHYS_FLOOR)";;
-    gate_intercept)
-      GATE_INTERCEPTS=$((GATE_INTERCEPTS+1)); consec_door=0
-      w "  门拦截计入:恢复链四条全齐=位形达成(成色注记=非物理绿;GATEHIT-STAT 在案)"
-      status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 门拦截计入($GREENS 物理+${GATE_INTERCEPTS} 拦截=$((GREENS+GATE_INTERCEPTS))/5) | 批处理 | 明细=$GATEHIT_LOG";;
-    intercept_incomplete)
-      consec_door=0
-      if [ "${gate_retried[$TAG]:-0}" -lt 3 ] && [ "$TOTAL" -lt "$PHY_ROUNDS_CAP" ]; then
-        gate_retried[$TAG]=$(( ${gate_retried[$TAG]:-0} + 1 ))
-        w "  retry scheduled (intercept_incomplete;gate-retry ${gate_retried[$TAG]}/3, 物理轮 $TOTAL/$PHY_ROUNDS_CAP;不计红不计绿)"
-        status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 拦截不完整→换轮重试(门拦截预算 ${gate_retried[$TAG]}/3) | 批处理"
-        run_position "$TAG" "$ARGS"
-      else
-        w "  no gate-retry left for $TAG (intercept_incomplete;cap ${gate_retried[$TAG]:-0}/3 或物理轮上限 $PHY_ROUNDS_CAP)——位形未达成,如实计未达"
-      fi;;
+    green)
+      GREENS=$((GREENS+1)); consec_door=0; status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 绿($GREENS/5) | 批处理 | 自动判读,规则预注册";;
     door)
       consec_door=$((consec_door+1))
       status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 撞门型($consec_door/2 连续) | 批处理 | 到位 $ARR@jump$JUMP"
@@ -206,14 +158,9 @@ run_position() {  # $1=tag $2=args
 }
 
 tag_if_5_5() {
-  # 5/5 判定 v1（T3 v10.3 三列分账口径）：物理绿+门拦截计入 ≥5 ∧ 物理绿 ≥PHYS_FLOOR（默认 3）
-  if [ $((GREENS + GATE_INTERCEPTS)) -ge 5 ] && [ "$GREENS" -ge "$PHYS_FLOOR" ]; then
+  if [ "$GREENS" -ge 5 ]; then
     w ""
-    w "== 5/5 达成（物理绿 $GREENS + 门拦截计入 $GATE_INTERCEPTS；phys-floor ≥$PHYS_FLOOR 满足）— pre-tag five checks =="
-    w "== 成色注记（三列分账 v1;prereg §2.9）== 物理绿=$GREENS / 门拦截计入=$GATE_INTERCEPTS / 物理绿下限 ≥$PHYS_FLOOR(默认案,生效) / 拦截统计行如下 =="
-    if [ -f "$GATEHIT_LOG" ]; then
-      while IFS= read -r _gl; do w "  $_gl"; done < "$GATEHIT_LOG"
-    fi
+    w "== 5/5 GREEN — pre-tag five checks =="
     local M_NODE M_LIB DF_G UNRES
     M_NODE=$(md5sum "$WS/devel/.private/vins/lib/vins/vins_node" | cut -c1-8)
     M_LIB=$(md5sum "$WS/devel/lib/libvins_lib.so" | cut -c1-8)
@@ -228,7 +175,7 @@ tag_if_5_5() {
       for t in X1final X2g1 X2g3 X3l2a X3l2b; do
         echo "  $(ls -dt "$L"/vins_smoke_runs/run_${t}_* 2>/dev/null | head -1)"
       done
-      echo "复核口径：各轮 phys_green ∨ gate_intercept(恢复链四条全齐)+四指标；可复算=python3 sitl_sim/analysis/t3_trichotomy.py <run_dir> --cf <state>(cf 来自 t3_wa_gate --online)；确认写本目录 X4_T3_REVIEW_CONFIRM（含行 'T3-REVIEW: 5/5 CONFIRM'）"
+      echo "复核口径：各轮 RESULT=PASS∨cf=controlled + 到位/避障/poscmd/disarm 四指标；确认写本目录 X4_T3_REVIEW_CONFIRM（含行 'T3-REVIEW: 5/5 CONFIRM'）"
     } > "$EVD/X4_TAG_PENDING"
     status_line "$(date +%H:%M) | T1 | x4_batch 5/5 内嵌全绿——tag 前暂停等 T3 独立复核(双链核验制,禁单链发证;确认件=X4_TAG_PENDING→X4_T3_REVIEW_CONFIRM) @T3 | 待复核 | 轮询 60s×60 上限 1h"
     local n=0
@@ -243,26 +190,21 @@ tag_if_5_5() {
       exit 6
     fi
     w "  T3 复核确认收到: $(grep -m1 'T3-REVIEW' "$EVD/X4_T3_REVIEW_CONFIRM")"
-    git tag -a sitl-v0.4 -m "X4 five-position 5/5 green (phys=$GREENS + gate-intercept=$GATE_INTERCEPTS; batch $ARM_EXPECT arm; $(date '+%F %T')). Tag semantics: VINS closed-loop + incident controlled fallback; trichotomy v1 (prereg s2.9, phys-floor>=$PHYS_FLOOR); dual-chain verification (batch embedded + T3 independent review)." && w "  TAG sitl-v0.4 CREATED (双链核验制;成色=物理绿$GREENS+拦截计入$GATE_INTERCEPTS)" || w "  TAG FAILED"
+    git tag -a sitl-v0.4 -m "X4 five-position 5/5 green (batch $ARM_EXPECT arm; $(date '+%F %T')). Tag semantics: VINS closed-loop + incident controlled fallback; transit-floor annotation per unified wording; dual-chain verification (batch embedded + T3 independent review)." && w "  TAG sitl-v0.4 CREATED (双链核验制)" || w "  TAG FAILED"
     git push UAV_NUC main --tags 2>&1 | tail -1 >> "$SUM"
     rm -f "$EVD/X4_TAG_PENDING"
-    status_line "$(date +%H:%M) | T1 | **X4 五连飞 5/5 达成+T3 复核双链闭合 → tag sitl-v0.4 已打**(臂=$ARM_EXPECT) | 里程碑 | 成色=物理绿$GREENS+门拦截计入$GATE_INTERCEPTS(phys-floor=$PHYS_FLOOR;三列分账v1)"
+    status_line "$(date +%H:%M) | T1 | **X4 五连飞 5/5 全绿+T3 复核双链闭合 → tag sitl-v0.4 已打**(臂=$ARM_EXPECT) | 里程碑 | 成色=纯绿(带 transit 统一注记;剖面注记未触发除非撞门预案走过)"
   else
     w ""
-    if [ $((GREENS + GATE_INTERCEPTS)) -ge 5 ] && [ "$GREENS" -lt "$PHYS_FLOOR" ]; then
-      w "== 总数 $((GREENS+GATE_INTERCEPTS))/5 达成但物理绿 $GREENS < 下限 $PHYS_FLOOR（默认案 ≥3 生效）——按预注册口径 tag 不打（防'全靠拦截凑 5'成色滑坡），待用户窗 =="
-    fi
-    w "== BATCH END 物理绿=$GREENS 门拦截计入=$GATE_INTERCEPTS 合计=$((GREENS+GATE_INTERCEPTS))/5 (PAUSE=$([ -f "$EVD/X4_BATCH_PAUSE" ] && echo yes || echo no)) — FAIL/PAUSE 汇总待人工 =="
-    w "== 成色注记（三列分账 v1）== 物理绿=$GREENS / 门拦截计入=$GATE_INTERCEPTS / 物理绿下限 ≥$PHYS_FLOOR(默认案) / 明细=$GATEHIT_LOG =="
-    status_line "$(date +%H:%M) | T1 | x4_batch 收束:物理绿$GREENS+拦截$GATE_INTERCEPTS=$((GREENS+GATE_INTERCEPTS))/5($( [ -f "$EVD/X4_BATCH_PAUSE" ] && echo PAUSE-撞门 || echo FAIL-汇总))待人工 | 批处理 | 三列分账v1;详见 x4_batch_report.md"
+    w "== BATCH END greens=$GREENS/5 (PAUSE=$([ -f "$EVD/X4_BATCH_PAUSE" ] && echo yes || echo no)) — FAIL/PAUSE 汇总待人工 =="
+    status_line "$(date +%H:%M) | T1 | x4_batch 收束:$GREENS/5 绿($( [ -f "$EVD/X4_BATCH_PAUSE" ] && echo PAUSE-撞门 || echo FAIL-汇总))待人工 | 批处理 | 详见 x4_batch_report.md"
   fi
 }
 
 rm -f "$EVD/X4_BATCH_PAUSE"
-: > "$GATEHIT_LOG"; echo "# GATEHIT 拦截统计行(冻结格式;三列分账 v1 正源) $(date '+%F %T')" >> "$GATEHIT_LOG"
-w "# X4 五位形批处理报告（$(date '+%F %T')；臂=$ARM_EXPECT；规则预注册见脚本头；三列分账 v1=prereg §2.9）"
+w "# X4 五位形批处理报告（$(date '+%F %T')；臂=$ARM_EXPECT；规则预注册见脚本头）"
 preflight
-status_line "$(date +%H:%M) | T1 | x4_batch 启动(臂=$ARM_EXPECT,五连飞,禁人工干预,心跳自写) | 批处理 | 重试预算=3(env/hostile 共用,≤1/位形)+门拦截重试≤3/格;撞门×2 连续=PAUSE;900s 超时自杀;三列分账v1(物理绿+门拦截计入≥5∧物理绿≥$PHYS_FLOOR)"
+status_line "$(date +%H:%M) | T1 | x4_batch 启动(臂=$ARM_EXPECT,五连飞,禁人工干预,心跳自写) | 批处理 | 重试预算=3(env/hostile 共用,≤1/位形);撞门×2 连续=PAUSE;900s 超时自杀"
 for pos in "${POSITIONS[@]}"; do
   TAG="${pos%%|*}"; ARGS="${pos#*|}"
   if [[ "$SKIP_TAGS" == *",$TAG,"* ]]; then

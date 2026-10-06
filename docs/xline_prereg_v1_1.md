@@ -109,6 +109,17 @@ odometry（受控层）。GPS 口径：SITL GPS 喂 EKF2 不关（EKF2 无 GPS �
 
 - 定标与 selftest 三层（L1 R1-R5 合成用例含压线样本/L2 X 五轮 C_sta 与探针在册值逐位等/L3 全库重算回归）详见冻结底稿 t1_evidence/v11_7_2026-10-05/prereg_v14_dual_anchor_draft.md（NUC 袋定标：净窗 std≤0.007 vs 污染≥0.072；同意带 gap≤0.12 vs 分歧带≥0.18）。
 
+### 2.9 三列分账计数口径 v1（2026-10-07 冻结；T3 v10.3 单元 1；用户 10-07 tag 口径裁定落地）
+
+- **三列定义**：①**物理绿** phys_green = RESULT=PASS ∧ 门干预证据=0（gatehit_*.json / pregate-block / COSTGATE-FIRE 行 / failure detection! 全无）；②**门拦截计入** gate_intercept = 门干预≥1 ∧ **完整恢复四条全齐**[受控中止（gatehit.action∈受控中止链[goal-stop+land/land-fallback 降级预案] ∨ cf=controlled 栈内双证）/完整降落（gatehit.landed=1 ∨ LANDING z_end<0.15m ∨ PASS∧disarm）/disarm=1/auto_disarm->1/无 T2fail（faildet=0；legacy 门轮豁免=触发即 faildet ∧ cf=controlled）]=位形达成，计入 5/5+成色注记；③**真 FAIL** true_fail = 其余（§2.5 红面；door 撞门型另注不属门拦截）。
+- **5/5 判定** = 物理绿+门拦截计入 ≥5 **∧ 物理绿 ≥3（默认案，--phys-floor 可调=用户窗内可改；防"全靠拦截凑 5"成色滑坡。两案材料：默认案下限生效 vs 不设限纯注记分级——默认案 ≥3 生效）**。
+- **拦截统计行格式冻结**：`GATEHIT-STAT: n=<触发数> ts=<首触发时刻> val=<触发值> kind=<watchdog|cost|legacy> chain=abort:<b>,land:<b>,disarm:<b>,not2fail:<b>`——round_result 单轮输出（证据面）+x4_batch 逐轮 append 至 x4_gatehit_stats.log（成色注记正源，汇总进 batch_report）。
+- **批语义**：intercept_incomplete（四条不齐）=不计红不计绿，换轮重试占**门拦截预算 ≤3/格**（独立于 env/hostile 预算）；批总物理轮 ≤15（防凑数终止）；gate_intercept 轮=位形达成不重试。
+- **cf=controlled 轮语义收紧**：legacy green（PASS∨cf=controlled 并集）中 cf 轮若四条不齐→intercept_incomplete（重试域）；RES=PASS∧有门干预（如 cost-fire 后自愈完成）→gate_intercept（计入+成色注记，非物理绿）。
+- **实施面（红线 24 全流程）**：分类权威=analysis/t3_trichotomy.py（单点，selftest 6/6[三类各≥1+legacy/cost 兼容+incomplete 边界]）；x4_batch 消费其 stdout（judge 分类 green→phys_green 拆分+gate_intercept/intercept_incomplete 新分支+5/5 新判定+成色注记段）；round_result 增 LANDING/GATEHIT-STAT/TRICHOTOMY 三行（旧行零变动，VRFY2 历史轮回归 diff=仅新增 3 行实证）；.bak_tricho_20261007 双树备份；md5：round_result 7e907b7d/x4_batch 5e9df0a1/t3_trichotomy 252ee661（双树一致）。
+- **历史轮零重判（§2.9-b）**：本口径只对 2026-10-07 后新批生效；历史轮判读保持原账（RESULT 行与 green 定义不变），历史批引用时注记"三列分账前口径"。
+- **契约对接（@T1）**：gatehit_\<round\>.json 字段=t_trig/metric/value/baseline/gate/action/landed；pregate_\<round\>.json 字段=verdict(pass|block)/action/metrics/restart_chain——T1 双门工程（v11.20 单元 1）按此落盘，本判读面即消费。
+
 ## 3. 判读流水（每轮，锁窗内；v1.1 增 3.2/3.3）
 
 1. 轮毕 vins_smoke.sh 自动跑 round_result.sh（参数与 §1 表逐字核对）；RESULT.txt 双源判读。
@@ -162,6 +173,9 @@ route 域 cost 门 0 触发、配对未发生=inconclusive-for-pairing）+T3 三
 → §2.6-e 边界条款与 §2.6-f 覆盖均有实证支点；受控路径在 X 线轮=首次真实检验。
 
 ## 7. 修正记录（冻结前并入，尚无 X 轮消费本预注册）
+
+### v1.5（2026-10-07 冻结；T3 v10.3 单元 1；红线 24 全流程）
+- 增 §2.9 三列分账计数口径 v1（phys_green/gate_intercept[恢复链四条]/true_fail+5/5 双条件判定+物理绿下限默认案 ≥3+GATEHIT-STAT 行格式冻结+门拦截重试预算/物理轮上限）；判读器已实施（t3_trichotomy+x4_batch+round_result 三件，selftest 6/6+VRFY2 回归 diff 仅新增行）；历史轮零重判条款（§2.9-b）。本版先于 X4 新批冻结（判据未预注册不出 PASS/FAIL 纪律）。
 
 ### v1.4（2026-10-05 晚冻结；[T1 代持 T3 域] 单元 3）
 - 增 §2.8 双锚取稳到位锚（用户裁定案③落地）；栈槽换代行已由 v11.7 单元 2 增补（streamguard v4 b7de133d/59548c6a）。

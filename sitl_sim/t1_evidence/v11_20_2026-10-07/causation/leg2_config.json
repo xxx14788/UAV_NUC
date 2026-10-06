@@ -1,0 +1,30 @@
+{
+ "hypothesis": "H1 config 漂移",
+ "per_round": {
+  "X5_N8O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_SE8O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E5O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E8P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E5P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E12P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E12O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E12O_R2": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_NE8O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_NE12O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_S12P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E8O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_S8O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_N8P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_N12O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_S5O": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_W5P": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E8P_a": "054ddc8db65c74dca1d741ae58f37fd4",
+  "X5_E8P_L2": "054ddc8db65c74dca1d741ae58f37fd4"
+ },
+ "verdict": "排除(全轮同一 md5=054ddc8db65c=批内零漂移;当前仓库=5c98dc0dd376 异=批后 canonical restore 所致(v11.17 收官在册'canonical 已 restore 5c98dc0d'),非飞行窗写回 — git log 可验)",
+ "distinct_md5": [
+  "054ddc8db65c74dca1d741ae58f37fd4"
+ ],
+ "current_repo_md5": "5c98dc0dd376312324521b7a5594ea00",
+ "current_diff_note": "批后恢复注记,非 H1 证据"
+}

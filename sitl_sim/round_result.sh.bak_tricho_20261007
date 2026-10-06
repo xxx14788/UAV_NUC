@@ -145,9 +145,6 @@ for c in cmd:
         p = prop[j]; dev.append(math.hypot(c[1]-p[1],c[2]-p[2],c[3]-p[3]))
 dev.sort(); p95 = dev[int(0.95*len(dev))] if dev else -1
 disarm_ok = (not armed[-1]) if armed else False
-# 完整降落证据（三列分账 v1 恢复链[2];T3 v10.3 单元 1）：真值末 50 帧 z 均值 <0.15m
-z_end = (sum(t[3] for t in truth[-50:])/min(50, len(truth))) if truth else -1.0
-land_ok = z_end < 0.15
 GATE = 0.75 if 'obstacles' in world else 0.5   # 到位场景门(正源=world 参数)
 ok = [dt1 < GATE, mind > 0.349, hz >= 50, disarm_ok]
 if jump > 0.5:
@@ -162,7 +159,6 @@ if hasl2 and t2_start:
 print('避障 min_dist=%.3f m (>0.349)->%d' % (mind, ok[1]))
 print('poscmd %.1f Hz (>=50)->%d' % (hz, ok[2]))
 print('auto_disarm->%d' % ok[3])
-print('LANDING: z_end=%.3f m (<0.15)->%d' % (z_end, 1 if land_ok else 0))
 print('跟踪 p95=%.3f m (cmd-odom, 信息项)' % p95)
 print('ARRIVE_WATCH1: %s' % arr)
 print('ARRIVE_WATCH2: %s' % arr2)
@@ -171,7 +167,6 @@ import os as _os, glob as _glob
 # v1.1 受控失败标注(纯标注,不改任何判值;prereg xline_prereg_v1_1.md §3.2)
 # COSTGATE-FIRE=L1 触发行证据(first_t=WARN 头 sim 时刻,与袋时戳同钟);FAILDET=failure 计数
 import re as _re
-_fires = []; _nfd = 0; _m = None
 _cl = _os.path.join(ev, 'simvins.log')
 if _os.path.exists(_cl):
     try:
@@ -186,51 +181,6 @@ if _os.path.exists(_cl):
     _nfd = _lt.count('failure detection!')
     if _nfd:
         print('FAILDET n=%d' % _nfd)
-# ---- 三列分账 v1 单轮证据面（T3 v10.3 单元 1；prereg §2.9）----
-# 格式冻结：GATEHIT-STAT 行=批计数正源素材;分类权威=analysis/t3_trichotomy.py(x4_batch 消费,
-# cf 状态由 t3_wa_gate --online 现场传入)。此处内联版供单轮人读+背书链;cost-fire 轮 abort 初判
-# =0(cf 面在 wa_gate 权威,批面补齐)。
-import json as _json
-_ghs = sorted(_glob.glob(_os.path.join(ev, 'gatehit_*.json')))
-_gh = None
-if _ghs:
-    try: _gh = _json.load(open(_ghs[0]))
-    except (OSError, ValueError): _gh = None
-_pgb = 0
-for _p in sorted(_glob.glob(_os.path.join(ev, 'pregate_*.json'))):
-    try:
-        if _json.load(open(_p)).get('verdict') == 'block': _pgb = 1
-    except (OSError, ValueError): pass
-if _gh is not None:
-    _kind, _ts, _val = 'watchdog', _gh.get('t_trig'), _gh.get('value')
-    _abort = 1 if any(k in str(_gh.get('action', '')) for k in
-                      ('goal-stop', 'controlled-abort', 'land-fallback', 'land', 'goal_stop')) else 0
-    _land = 1 if (_gh.get('landed') == 1 or land_ok) else 0
-elif _fires:
-    _kind, _ts = 'cost', (_m.group(1) if _m else None)
-    _val = 'streak=%s,ratio=%s' % _fires[0]
-    _abort, _land = 0, (1 if land_ok else 0)
-elif _nfd > 0:
-    _kind, _ts, _val = 'legacy', None, 'faildet_n=%d' % _nfd
-    _abort, _land = 0, (1 if land_ok else 0)
-else:
-    _kind = _ts = _val = None
-    _abort = _land = 0
-_trig_n = (1 if _gh is not None else 0) + len(_fires) + (1 if _nfd > 0 else 0)
-_dis = 1 if disarm_ok else 0
-_n2f = 1 if _nfd == 0 else 0
-print('GATEHIT-STAT: n=%d ts=%s val=%s kind=%s chain=abort:%d,land:%d,disarm:%d,not2fail:%d'
-      % (_trig_n, _ts if _ts is not None else 'NA',
-         _val if _val is not None else 'NA', _kind or 'NA', _abort, _land, _dis, _n2f))
-if _pgb:
-    print('PREGATE-BLOCK: 1 (起飞前门拒绝;轮未起飞域→分母外重试)')
-if _trig_n == 0:
-    _tri = 'phys_green' if all(ok) else 'true_fail'
-elif _abort and _land and _dis and _n2f:
-    _tri = 'gate_intercept(初判;cf面待wa_gate权威)'
-else:
-    _tri = 'intercept_incomplete(初判;cf面待wa_gate权威)'
-print('TRICHOTOMY: class=%s [门干预n=%d]' % (_tri, _trig_n))
 _envfail = False
 for _lg in [ _os.path.join(ev, 'sitl.log'), _os.path.join(ev, 'round.log') ] + _glob.glob(_os.path.join(ev, '*.log')):
     try:
