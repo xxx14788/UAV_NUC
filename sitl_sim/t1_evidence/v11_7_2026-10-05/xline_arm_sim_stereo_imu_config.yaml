@@ -103,8 +103,8 @@ t2_staged_depth_gate: 1
 t2_staged_n_sec: 80
 
 # T2 zeta probe: Cauchy robust loss (outlier observation driver test)
-t2_vision_loss: 1
-t2_cauchy_delta: 0.0
+t2_vision_loss: 0
+t2_cauchy_delta: 4.0
 
 # T2-v9.5 stream guard (prereg_reanchor_fix): resume continuity + sane hold
 t2_stream_guard: 1
