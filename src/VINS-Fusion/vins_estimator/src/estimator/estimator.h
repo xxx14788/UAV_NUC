@@ -194,6 +194,13 @@ class Estimator
     std::deque<double> t2_cost_hist;
     int t2_cost_streak = 0;
     double t2_t_init_finish = 0;  // T2-v8.9 case-A: init-finish stamp (grace window origin; 0 = fill-window)
+    // T2NANDEF (v11.17 2.1, prereg nan_defense_v1): NaN 防线状态面
+    double t2_last_initial_cost = -1.0; // optimization() 求解快照(D3 init 后置门消费)
+    int t2_last_term = -1;              // termination_type 快照
+    int t2_last_iters = 0;              // iterations 快照
+    int t2_med_degen_n = 0;             // D4: cost-gate median 退化计数
+    int t2_prior_drop_n = 0;            // D5: prior NaN 丢弃计数
+    bool t2PriorNan(MarginalizationInfo *mi); // D5: prior 块有限性校验
     PropagateGuard propagate_guard;       // T1-E2: dt-clamp hold / gap-skip counters (C03 A3/A4)
 
     // T2-v9.5 stream guard (prereg_reanchor_fix): publish-side continuity

@@ -36,8 +36,11 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	nh.param("odom_gate/max_vel", odom_gate.max_vel, 5.0);
 	nh.param("odom_gate/max_acc", odom_gate.max_acc, 10.0);
 	nh.param("odom_gate/max_jump", odom_gate.max_jump, 1.0);
-	ROS_WARN("[px4ctrl] odom sanity gate: enabled=%d max_vel=%.1f max_acc=%.1f max_jump=%.2f",
-	         (int)odom_gate.enabled, odom_gate.max_vel, odom_gate.max_acc, odom_gate.max_jump);
+	// Z1.2 (v11.17 2.2): v2 总开关参数读取(缺键=false=v1 行为逐位不变)
+	nh.param("odom_gate/enabled_v2", odom_gate.enabled_v2, false);
+	ROS_WARN("[px4ctrl] odom sanity gate: enabled=%d v2=%d max_vel=%.1f max_acc=%.1f max_jump=%.2f",
+	         (int)odom_gate.enabled, (int)odom_gate.enabled_v2,
+	         odom_gate.max_vel, odom_gate.max_acc, odom_gate.max_jump);
 
 	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate (default OFF = legacy;
 	// SITL yaml enables). gap_sec 2.0 >> healthy 223Hz gaps (ms-level) and

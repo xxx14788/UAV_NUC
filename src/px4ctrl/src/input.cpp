@@ -147,6 +147,20 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
                           (int)verdict, v_in.norm(), p_in.norm(), sanity_st.rejected);
             return;  // state untouched: freshness clock runs on last healthy frame
         }
+        // Z1.2 (v11.17 2.2 接线本体): v2 增强层——v1 ACCEPT 后叠加(运动学残差 R/
+        // 戳龄/时戳回退);enabled_v2=false 时零调用=v1 行为逐位不变(回归口径)
+        if (sanity_cfg_v2.enabled && sanity_cfg_v2.enabled_v2)
+        {
+            OdomSanityVerdictV2 v2 = odom_sanity_check_v2(sanity_cfg_v2, sanity_st_v2,
+                                                          pMsg->header.stamp.toSec(), now.toSec(), p_in, v_in);
+            if (v2 != OdomSanityVerdictV2::ACCEPT)
+            {
+                if (sanity_st_v2.rejected % sanity_cfg_v2.warn_every == 1)
+                    ROS_ERROR("[px4ctrl] odom sanity v2 REJECTED frame (v=%d): |v|=%.2f |p|=%.2f, total=%ld",
+                              (int)v2, v_in.norm(), p_in.norm(), sanity_st_v2.rejected);
+                return;
+            }
+        }
         // T1-P1 (v11.0 unit 2): rebirth birth-offset check. Gap counted
         // on ACCEPTED frames only (poison frames expire freshness, so a
         // gap here = true supply loss e.g. VINS restart). Uses p (last

@@ -67,6 +67,9 @@ public:
 		double max_vel = 5.0;
 		double max_acc = 10.0;
 		double max_jump = 1.0;
+		// Z1.2 (v11.17 2.2 接线本体): v2 总开关参数面贯通——默认 false=v1 行为
+		// 逐位不变;SITL yaml 显式置位翻入运行时(三步常规化 77/77 绿在册后置件)。
+		bool enabled_v2 = false;
 	};
 
 	Gain gain;

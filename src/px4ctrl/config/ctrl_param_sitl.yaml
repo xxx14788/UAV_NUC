@@ -72,6 +72,7 @@ msg_timeout:
 
 #odom sanity gate（T1-D2 2026-09-29 flyaway 防线；实机 yaml 不含此 key=默认关闭旧行为, README §3 登记）
 odom_gate:
+  enabled_v2: true  # Z1.2 (v11.17 2.2) v2 总开关翻入运行时;缺省面已保 v1 逐位不变
   enabled: true
   max_vel: 5.0
   max_acc: 10.0

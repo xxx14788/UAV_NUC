@@ -257,6 +257,15 @@ void readParameters(std::string config_file)
     printf("REANCHOR_SMOOTH: %d frames: %d\n", REANCHOR_SMOOTH, REANCHOR_SMOOTH_FRAMES);
     printf("[T2SGCFG] guard=%d sane_p=%.1f sane_v=%.1f resume_gap=%.2f\n",
            T2_STREAM_GUARD, T2_PUB_SANE_P, T2_PUB_SANE_V, StreamGuardLogic::RESUME_GAP);
+    // T2NANDEF-2 (v11.17 2.1, prereg nan_defense_v1): 参数域断言——loss=1(Cauchy) 而
+    // cauchy<=0 = CauchyLoss(0/负) NaN 风暴根因组合(D-1006-T1-09),fail-fast 拒启
+    if (T2_VISION_LOSS == 1 && T2_CAUCHY_DELTA <= 0.0)
+    {
+        fprintf(stderr, "[T2NANDEF] FATAL: t2_vision_loss=1 requires t2_cauchy_delta>0 (got %.3f) — NaN storm root combo, refusing to start\n",
+                T2_CAUCHY_DELTA);
+        std::exit(2);
+    }
+    printf("[T2NANDEF] def=2/3/4/5 armed\n");
 
     fsSettings["output_path"] >> OUTPUT_FOLDER;
     VINS_RESULT_PATH = OUTPUT_FOLDER + "/vio.csv";

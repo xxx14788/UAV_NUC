@@ -49,6 +49,8 @@ if [ -x "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" ]; then
   setsid nohup bash "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" "$EV" </dev/null >/dev/null 2>&1 &
   HWPID=$!
 fi
+# VINS config 全键 md5 随轮落盘(任务书 v11.17 1.2:不只四键,跨轮漂移永久可对账)
+md5sum "$HOME/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml" > "$EV/vins_config.md5" 2>/dev/null || true
 exec > >(tee "$EV/round.log") 2>&1
 
 # ---------- 锁(T4-E1 v2 统一仲裁:死主自动接管/心跳/磁盘水位线门;流名载体=权序标签) ----------
@@ -338,6 +340,10 @@ for k in 1 2 3 4 5; do
 done
 [ $disarmed = 1 ] && LOG "已 disarm" || LOG "WARN 降落未确认 disarmed"
 sleep 3
+# PX4 全参数随轮 dump(任务书 v11.17 1.2;口径预注册:dump 点=disarm 后飞行末态——
+# MAVLink 带宽不与起飞投递窗竞争;boot 态漂移由 disarm 态跨轮一致对比代理;60s 预算非致命)
+timeout 60 rosrun mavros mavparam dump "$EV/px4_params_$(date +%H%M%S).txt" >/dev/null 2>&1 \
+  || LOG "WARN px4 param dump 失败/超时(对账面注记)"
 kill -INT $REC 2>/dev/null; sleep 3
 
 # ---------- 轮中环境死亡活体检查(E4.2;清场前栈应在,缺=崩) ----------

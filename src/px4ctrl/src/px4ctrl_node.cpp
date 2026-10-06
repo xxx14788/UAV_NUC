@@ -133,6 +133,12 @@ int main(int argc, char *argv[])
     fsm.odom_data.sanity_cfg.max_vel = param.odom_gate.max_vel;
     fsm.odom_data.sanity_cfg.max_acc = param.odom_gate.max_acc;
     fsm.odom_data.sanity_cfg.max_jump = param.odom_gate.max_jump;
+    // Z1.2 (v11.17 2.2 接线本体): v2 总开关映射入运行时 cfg(v2 层在 v1 ACCEPT 后叠加)
+    fsm.odom_data.sanity_cfg_v2.enabled = param.odom_gate.enabled;
+    fsm.odom_data.sanity_cfg_v2.max_vel = param.odom_gate.max_vel;
+    fsm.odom_data.sanity_cfg_v2.max_acc = param.odom_gate.max_acc;
+    fsm.odom_data.sanity_cfg_v2.max_jump = param.odom_gate.max_jump;
+    fsm.odom_data.sanity_cfg_v2.enabled_v2 = param.odom_gate.enabled_v2;
     // T1-P1 (v11.0 unit 2)
     fsm.odom_data.p1_cfg.enabled = param.p1_rebirth.enabled;
     fsm.odom_data.p1_cfg.gap_sec = param.p1_rebirth.gap_sec;

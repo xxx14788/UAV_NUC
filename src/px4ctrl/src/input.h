@@ -14,8 +14,7 @@
 #include <uav_utils/utils.h>
 #include "PX4CtrlParam.h"
 #include "odom_sanity.h"
-#include "odom_sanity.h"
-#include "odom_sanity.h"
+#include "odom_sanity_v2.h"  // Z1.2 (v11.17 2.2)
 
 class RC_Data_t
 {
@@ -69,6 +68,10 @@ public:
   // from params in node main; default disabled = legacy behavior.
   OdomSanityConfig sanity_cfg;
   OdomSanityState sanity_st;
+  // Z1.2 (v11.17 2.2 接线本体): v2 增强层状态——分层叠加于 v1 ACCEPT 之后
+  // (运动学残差 R/戳龄/时戳回退;enabled_v2=false 时零调用=v1 行为逐位不变)
+  OdomSanityConfigV2 sanity_cfg_v2;
+  OdomSanityStateV2 sanity_st_v2;
   // T1-P1 (2026-10-04, v11.0 unit 2): rebirth birth-offset gate.
   // U9 forensics: VINS restart rebirths odom with a constant offset
   // (+1.01,+0.99,+0.10)|1.42| (1.42-1.46m across three stack generations,

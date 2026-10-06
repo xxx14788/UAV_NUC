@@ -14,6 +14,11 @@
 static const bool reanchor_dbg = (getenv("REANCHOR_DEBUG") != nullptr);
 #include "../utility/visualization.h"
 #include "../factor/initial_bias_factor.h"  // T2-WA7G
+#include "t2_nan_defense.h"                 // T2NANDEF (v11.17 2.1)
+
+// T2NANDEF: 纯函数助手里的 ceres FAILURE 常量必须与真枚举对齐(漂移=编译期暴露)
+static_assert(static_cast<int>(ceres::FAILURE) == t2nandef::CERES_FAILURE,
+              "ceres::TerminationType::FAILURE enum drift — update t2_nan_defense.h");
 #include <cstdio>
 #include <algorithm>  // w2b A-path nth_element
 #include <cstdlib>  // T1-E2: REANCHOR_DEBUG env gate
@@ -707,6 +712,11 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 }
                 optimization();
                 bool init_sane_post = true;
+                // T2NANDEF-3 (v11.17 2.1): init 后置门求解面扩展——initial_cost 有限∧
+                // 非 FAILURE∧iters>=1(成员快照=optimization() 每解后写入;VRFY1 111/111
+                // 风暴轮被此门拦截于源头,轮面=never-init FAIL 而非风暴;C.1 §5.3)
+                if (!t2nandef::init_solve_ok(t2_last_initial_cost, t2_last_term, t2_last_iters))
+                    init_sane_post = false;
                 for (int i = 0; i <= WINDOW_SIZE; i++)
                 {
                     if (!Ps[i].allFinite() || !Vs[i].allFinite() ||
@@ -1627,6 +1637,10 @@ void Estimator::optimization()
                  static_cast<int>(summary.iterations.size()), static_cast<int>(summary.termination_type));
     }
     //cout << summary.BriefReport() << endl;
+    // T2NANDEF-3 (v11.17 2.1): 求解快照成员——init 后置门消费(isfinite∧非 FAILURE∧iters>=1)
+    t2_last_initial_cost = summary.initial_cost;
+    t2_last_term = static_cast<int>(summary.termination_type);
+    t2_last_iters = static_cast<int>(summary.iterations.size());
     // T2-R1.5/R3 插桩:全阶段求解器健康(printf+fflush)
     printf("[T2slv] t=%.4f phase=%d init_cost=%.6g final_cost=%.6g iters=%d term=%d slv_ms=%.1f\n",
            Headers[frame_count], solver_flag,
@@ -1644,7 +1658,17 @@ void Estimator::optimization()
         {
             std::vector<double> hs(t2_cost_hist.begin(), t2_cost_hist.end());
             std::nth_element(hs.begin(), hs.begin() + hs.size() / 2, hs.end());
-            if (summary.initial_cost > T2_COST_RATIO * hs[hs.size() / 2])
+            // T2NANDEF-4 (v11.17 2.1): median 退化守卫——median<=0/非有限时 streak 清零
+            // +计数告警(恢复 gate "cost 暴涨" 设计语义,-1 帧不再假触发;C.1 §5.4)
+            double t2_med = hs[hs.size() / 2];
+            if (t2nandef::med_degenerate(t2_med))
+            {
+                t2_cost_streak = 0;
+                t2_med_degen_n++;
+                ROS_WARN_THROTTLE(5.0, "[T2NANDEF] cost-gate median degenerate (%.4g, n=%d) — streak cleared",
+                                  t2_med, t2_med_degen_n);
+            }
+            else if (summary.initial_cost > T2_COST_RATIO * t2_med)
                 t2_cost_streak++;
             else
                 t2_cost_streak = 0;
@@ -1831,7 +1855,18 @@ void Estimator::optimization()
         TicToc t_pre_margin;
         marginalization_info->preMarginalize();
         ROS_DEBUG("pre marginalization %f ms", t_pre_margin.toc());
-        
+
+        // T2NANDEF-5 (v11.17 2.1): prior NaN 防线——prior 块残差/雅可比非有限=丢弃本次
+        // marginalization(保留上次干净 prior,下帧重做;防 prior 污染跨帧传播,C.1 §5.5)
+        if (t2PriorNan(marginalization_info))
+        {
+            ROS_WARN("[T2NANDEF] prior residual/jacobian non-finite — drop marginalization #%d (keep last clean prior)",
+                     t2_prior_drop_n);
+            t2_prior_drop_n++;
+            delete marginalization_info;
+        }
+        else
+        {
         TicToc t_margin;
         marginalization_info->marginalize();
         ROS_DEBUG("marginalization %f ms", t_margin.toc());
@@ -1854,7 +1889,8 @@ void Estimator::optimization()
             delete last_marginalization_info;
         last_marginalization_info = marginalization_info;
         last_marginalization_parameter_blocks = parameter_blocks;
-        
+        }
+
     }
     else if (!t2_marg_skip)  // T2-WA2G: skip covers BOTH marginalization branches
     {
@@ -1887,6 +1923,16 @@ void Estimator::optimization()
             marginalization_info->preMarginalize();
             ROS_DEBUG("end pre marginalization, %f ms", t_pre_margin.toc());
 
+            // T2NANDEF-5: 第二 marg 分支同防线(见首分支注释)
+            if (t2PriorNan(marginalization_info))
+            {
+                ROS_WARN("[T2NANDEF] prior residual/jacobian non-finite — drop marginalization #%d (keep last clean prior)",
+                         t2_prior_drop_n);
+                t2_prior_drop_n++;
+                delete marginalization_info;
+            }
+            else
+            {
             TicToc t_margin;
             ROS_DEBUG("begin marginalization");
             marginalization_info->marginalize();
@@ -1921,12 +1967,26 @@ void Estimator::optimization()
                 delete last_marginalization_info;
             last_marginalization_info = marginalization_info;
             last_marginalization_parameter_blocks = parameter_blocks;
-            
+            }
+
         }
     }
     //printf("whole marginalization costs: %f \n", t_whole_marginalization.toc());
     //printf("whole time for ceres: %f \n", t_whole.toc());
     t2_restore_vision_si();  // T2 zeta-fix: restore vision sqrt_info (prior already baked the scale)
+}
+
+// T2NANDEF-5 (v11.17 2.1, prereg nan_defense_v1): prior 块有限性校验——在 factors 中
+// 找 MarginalizationFactor 构造块(prior 的唯一载体),residuals/jacobians 任一非有限
+// = true。健康轮恒 false(先验由干净 marg 生成,数值有限)。
+bool Estimator::t2PriorNan(MarginalizationInfo *mi)
+{
+    for (auto *rb : mi->factors)
+    {
+        if (dynamic_cast<MarginalizationFactor *>(rb->cost_function) != nullptr)
+            return !t2nandef::block_finite(rb->residuals, rb->jacobians);  // prior 只有一块,查毕即返
+    }
+    return false;  // 无 prior 块(首帧)不拦
 }
 
 void Estimator::slideWindow()
