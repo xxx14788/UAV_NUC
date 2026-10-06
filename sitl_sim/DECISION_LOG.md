@@ -415,3 +415,10 @@
 - 伴随事故四件如实入册：①judge_round 三 bug（RES 前缀失配/grep -c 双 0/NEVER 未 local——dry-run 不跑 judge 故首真轮暴露；修复 9592f96c+补判制 rejudge_rounds.sh 权威）②批进程死于启动会话关闭连带（setsid 不足，BATCH END 手动补）③串行补飞链被 pkill 自匹配杀（cmdline 含 vins_smoke.sh 字样；改单轮发射制）④T3 04:12-04:16 NUC 轮拷贝窗与本批 X1final/X2g1 窗重叠（撞车嫌疑窗在册；run_X2g1_041203=/home/uav 路径 NUC 历史轮副本混入 3090 runs 目录，证据保全非撞机）。
 - 对照批（单元 3）：hover 净轮×2（v2 臂，goal 0,0,1，SUPHV 口径）→复刻轮（cfg_streamguard 原版 cauchy=4.0 loss=1 全家桶=RA13/14 精确复刻，X2③ 位形，v4 栈 never-init 线判别材料@T2）→完成后 restore canonical。
 - 禁放宽自查：是（判据零变动；X4 FAIL 如实收卷不粉饰）。
+
+### D-1006-T1-11 | T1 | 任务书 v11.15 改写（用户指令款：客观卡点版）+ Windows LAN 腿中断事件登记
+
+- 用户指令：按完成情况改写任务书（完成/未做/卡点客观描述，问题描述与方案建议分离）。v11.14 弃读。
+- 内容：A=六单元完成清账（风暴根因定案/VRFY2 闭环/X4 0/5 诚实收卷三病灶分离/对照批三证/域件闭/交还毕）；B=六项未做（X4 目标未达/未定案轮补判/starve 修复/autoattach 补名/双链零实弹/历史遗留）；C=八条客观卡点（X4 待裁/跳变族阻塞于 T2 定案/starve 间歇竞态/批无人值守不可靠/dry-judge 坑/goal.txt 坑跨线未确认/环境面/控制侧 LAN 中断）。
+- 网络事件：09:40 实测 Windows→3090 断（WLAN 掉线+uav123-5G 不在扫描+无凭据）；3090 本体存活（NUC LAN 内 ping 通）；3090 不在 tailnet、NUC→3090 无免密。本件经 NUC 腿 push 交付；3090 恢复后首件=pull+运行时副本同步+STATUS 补行。
+- 禁放宽自查：是（纯文档+事件登记）。
