@@ -215,6 +215,10 @@ def main():
         if not os.path.isdir(d):
             continue
         name = os.path.basename(d)
+        # T1 v11.17(10-06): 注入/验证测试轮排除面——STARVE*(starve DoD 注入)/
+        # PLAINCHK*(world 特征工程验证)/REGCHK(build 回归)非科学样本,禁入矩阵
+        if re.match(r"run_(STARVE|PLAINCHK|REGCHK)", name):
+            continue
         # 时间: bag mtime 优先, 否则目录 mtime
         bag = os.path.join(d, "flight.bag")
         ts_src = bag if os.path.exists(bag) else d
