@@ -22,6 +22,17 @@ while [ $# -gt 0 ]; do case "$1" in
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
 
+# v11.17 1.2: vins_node 按 master 域过滤杀(私有 master 回放件保护,04:26 事故机理)
+kill_vins_my_domain() {
+  local my_m="${ROS_MASTER_URI:-http://localhost:11311}" p m
+  for p in $(pgrep -f "lib/vins/vins_nod[e]" 2>/dev/null); do
+    m=$(tr '\0' '\n' < "/proc/$p/environ" 2>/dev/null | grep '^ROS_MASTER_URI=' | cut -d= -f2-)
+    m="${m:-http://localhost:11311}"
+    [ "$m" = "$my_m" ] && kill -9 "$p" 2>/dev/null
+  done
+  return 0
+}
+
 # -- dual-copy deploy guard (T1 2026-10-01; probe-copy-fork case d55c710 lesson) --
 # repo copy = source of truth; runtime copy must md5-match repo at launch, else refuse to run.
 _REPO_SH="$HOME/catkin_ws/sitl_sim/vins_smoke.sh"
@@ -32,6 +43,12 @@ fi
 L="$HOME/sitl_sim"
 EV="$L/vins_smoke_runs/run_${TAG}_$(date +%H%M%S)"
 mkdir -p "$EV"
+# ---------- hwmon 随轮遥测(任务书 v11.17 §1.3;采样面预注册冻结,纯取证;历史轮缺口不回填) ----------
+HWPID=""
+if [ -x "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" ]; then
+  setsid nohup bash "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" "$EV" </dev/null >/dev/null 2>&1 &
+  HWPID=$!
+fi
 exec > >(tee "$EV/round.log") 2>&1
 
 # ---------- 锁(T4-E1 v2 统一仲裁:死主自动接管/心跳/磁盘水位线门;流名载体=权序标签) ----------
@@ -42,9 +59,11 @@ MYSTREAM="${SMOKE_OWNER:-T3-$TAG}"
 MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
 "$SL" hbloop "$MYSTREAM" & HBPID=$!
 cleanup() {
+  [ -n "$HWPID" ] && kill "$HWPID" 2>/dev/null
+  pkill -f "t1_hwmon_prob[e] $EV" 2>/dev/null
   kill "$HBPID" 2>/dev/null
   pkill -f "tee $EV/round.lo[g]" 2>/dev/null   # exec>(tee) 进程替换会让 bash 退出时等 tee,tee 等 stdout 写者→挂壳;杀之解锁(E2 验收实测)
-  pkill -f 'vins_nod[e]' 2>/dev/null; pkill -f 'vins_to_mavro[s]' 2>/dev/null
+  pkill -f 'vins_to_mavro[s]' 2>/dev/null; kill_vins_my_domain
   pkill -f 'px4ctrl_nod[e]' 2>/dev/null; pkill -f 'rosbag recor[d]' 2>/dev/null
   pkill -f 'simulator_mavlin[k]' 2>/dev/null; pkill -f 'sitl_run.s[h]' 2>/dev/null
   pkill -9 -f 'bin/px[4]' 2>/dev/null; pkill -9 -x gzserver 2>/dev/null
@@ -64,7 +83,10 @@ B=$(pgrep -xc gzserver 2>/dev/null || true); B=${B:-0}
 [ "$A" = "0" ] && [ "$B" = "0" ] || { LOG "FATAL SITL 未清(px4=$A gz=$B),先清场再跑"; exit 1; }
 
 # ---------- fresh master + 域配方 ----------
-pkill -f 'vins_nod[e]' 2>/dev/null; pkill -f 'vins_to_mavro[s]' 2>/dev/null
+# v11.17 1.2 加固: 孤儿 planner 二进制路径清杀(异常死轮遗留 traj_server 持续回放
+# poscmd→起飞卫兵拒飞=注入测试期 NEVER-FLEW 三连实测根因)
+bash "$HOME/sitl_sim/kill_planner_all.sh" >/dev/null 2>&1
+kill_vins_my_domain
 pkill -f 'px4ctrl_nod[e]' 2>/dev/null; pkill -f 'rosbag recor[d]' 2>/dev/null
 pkill -f 'arr_prob[e]' 2>/dev/null
 pkill -f 'roslaunc[h]' 2>/dev/null; pkill -f 'roscor[e]' 2>/dev/null; sleep 3
@@ -169,27 +191,57 @@ if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
 fi
 LOG "已等离地稳定(truth z=$LZ)"
 
-# ---------- goal(重发两轮吸收竞态) ----------
+# ---------- goal（v11.17 starve 修复：订阅就绪门+停摆一次性重启，任务书 1.1a/1.1b） ----------
+# 病灶（X4 批 2/8 轮；X2g3_042025=189B planner.log 实证）：FSM 事件循环停摆——
+# "[FSM]: state:" 1s 心跳缺席=回调链死（timer stop/start 自愈路径失灵面）,goal 重发无效；
+# 旧 /position_cmd publisher 检查只验 traj_server,对 FSM 死活结构性失明。
+# 修复（harness 面,不改 planner 源码）：a) 首发前订阅就绪门=/move_base_simple/goal 有
+# ego_planner 订阅者 ∧ FSM 心跳首行在册；b) 首发 8s 无 target 变更（FSM 未离
+# WAIT_TARGET ∧ poscmd≤1Hz）→ planner 整栈重启一次再投递（sick log 保全为
+# planner_starved_1.log）；重启后仍死=WARN 注记（判读面如实,勿盲续口径不变）。
 echo "goal: $GX $GY $GZ leg2: $HASL2 $L2X $L2Y $L2Z" > "$EV/goal.txt"
-for k in 1 2; do
+goal_pub() {
   timeout 8 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped \
     "{header: {frame_id: 'world'}, pose: {position: {x: $GX, y: $GY, z: $GZ}}}" >/dev/null 2>&1
-  sleep 2
-done
+}
+fsm_beat()      { grep -q "\[FSM\]: state:" "$EV/planner.log" 2>/dev/null; }
+goal_sub_ok()   { rostopic info /move_base_simple/goal 2>/dev/null | sed -n '/Subscribers:/,$p' | grep -q "ego_planner_node"; }
+planner_ready() { goal_sub_ok && fsm_beat; }
+target_moved()  { grep -q "from WAIT_TARGET to" "$EV/planner.log" 2>/dev/null; }
+poscmd_rate()   { timeout 4 rostopic hz /position_cmd 2>&1 | grep -o 'average rate: [0-9.]*' | head -1 | grep -o '[0-9.]*$' || echo 0; }
+wait_planner_ready() {  # $1=秒; 0=就绪
+  local k; for ((k=0; k<$1; k++)); do planner_ready && return 0; sleep 1; done
+  planner_ready
+}
+# a) 订阅就绪门（首发前；超时不 abort——转入 b 重启路径处置）
+if ! wait_planner_ready 15; then LOG "订阅就绪门超时(15s 无 goal 订阅者或 FSM 心跳)——直入停摊重启路径"; fi
+for k in 1 2; do goal_pub; sleep 2; done
 LOG "goal 已发(2×8s)"
-# ---------- goal 送达验证门(2026-10-04 加固;X2g1=planner 饿死 WAIT_TARGET 189B 启动日志实证) ----------
-for k in 1 2 3; do
+# b) 首发 8s 无 target 变更→一次性重启再投递
+sleep 8
+PC=$(poscmd_rate); case "$PC" in ''|*[!0-9.]*) PC=0;; esac
+if ! target_moved && ! awk "BEGIN{exit !($PC > 1.0)}"; then
+  LOG "STARVE-DETECT: 首发 8s 无 target 变更(poscmd=${PC}Hz,FSM 未离 WAIT_TARGET)→ planner 重启#1(sick log 保全)"
+  echo "$(date '+%F %T') STARVE-DETECT poscmd=${PC}Hz target_moved=no" >> "$EV/starve_fix_events.txt"
+  mv "$EV/planner.log" "$EV/planner_starved_1.log"
+  bash "$L/kill_planner_all.sh" > "$EV/planner_kill_starve.log" 2>&1
+  sleep 2
+  nohup roslaunch ego_planner run_planner_sitl_vins.launch > "$EV/planner.log" 2>&1 &
+  if ! wait_planner_ready 25; then LOG "重启后订阅就绪门仍超时(25s)——二次停摆,按 WARN 走"; fi
+  for k in 1 2; do goal_pub; sleep 2; done
+  LOG "goal 再发(重启后 2×8s)"
   sleep 8
-  PC=$(timeout 4 rostopic hz /position_cmd 2>&1 | grep -o 'average rate: [0-9.]*' | head -1 | grep -o '[0-9.]*$' || echo 0)
-  [ -n "$PC" ] || PC=0
-  if awk "BEGIN{exit !($PC > 1.0)}"; then LOG "poscmd 存活门通过(第${k}查 rate=${PC}Hz)"; break; fi
-  if [ "$k" = 3 ]; then
-    LOG "WARN PLANNER-STARVED: 三查 poscmd~=0(末次=${PC}Hz)=goal 未达/规划器死——本轮判读面注记,勿盲续"
+  PC=$(poscmd_rate); case "$PC" in ''|*[!0-9.]*) PC=0;; esac
+  if ! target_moved && ! awk "BEGIN{exit !($PC > 1.0)}"; then
+    LOG "WARN PLANNER-STARVED: 重启后再 8s 无变更(末次 poscmd=${PC}Hz)=goal 未达/规划器死——本轮判读面注记,勿盲续"
+    echo "$(date '+%F %T') RESTART-FAILED poscmd=${PC}Hz" >> "$EV/starve_fix_events.txt"
   else
-    LOG "poscmd 门未过(第${k}查 rate=${PC}Hz),goal 再重发 8s"
-    timeout 8 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped       "{header: {frame_id: 'world'}, pose: {position: {x: $GX, y: $GY, z: $GZ}}}" >/dev/null 2>&1
+    LOG "poscmd 存活门通过(重启后 rate=${PC}Hz)"
+    echo "$(date '+%F %T') RESTART-OK poscmd=${PC}Hz" >> "$EV/starve_fix_events.txt"
   fi
-done
+else
+  LOG "poscmd 存活门通过(首发 rate=${PC}Hz)"
+fi
 
 # ---------- 到位监视(真值口径,锚点自推导;外部wall超时+异常吞噬) ----------
 arrive_watch() {  # $1..3 goal; $4 tag后缀
@@ -297,6 +349,9 @@ fi
 bash "$HOME/sitl_sim/round_result.sh" "$BAG" "$GX" "$GY" "$GZ" "$WORLD" "$EV" "$ARR" "$ARR2" "$HASL2" "$L2X" "$L2Y" "$L2Z" > "$EV/RESULT.txt" 2>&1
 tail -10 "$EV/RESULT.txt"
 grep -q "RESULT=ENV-FAIL" "$EV/RESULT.txt" && LOG "ENV-FAIL 环境性崩溃口径(E4.2):重试不计入飞行预算"
+
+# ---------- 留痕落盘(任务书 v11.17 §1.1d): goal 发布 vs FSM 状态变化对表 ----------
+python3 "$HOME/catkin_ws/sitl_sim/t1_goal_trace.py" "$EV" >/dev/null 2>&1 || LOG "WARN goal_trace 失败(留痕面注记)"
 
 # ---------- 清场(函数已前置+EXIT trap;正常路径显式调一遍) ----------
 cleanup
