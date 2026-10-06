@@ -1,0 +1,13 @@
+{
+  "version": "PLACEHOLDER-T2-PENDING-v0",
+  "frozen": false,
+  "_doc": "T1 v11.20 双门参数正源。null=该判据不激活(OBSERVE 观察面)。T2 门阈值科学包到货后填参并置 frozen=true(冻结版 STATUS 异步呈报,用户窗内可改)。pregate: init 终值 cost/|Bas| 中位/track 三指标带。inflight.abs: 绝对门包络;inflight.adapt: 轮内自适应门(起飞稳定窗基线+偏离倍数持续窗);to_det_*=起飞检测(V 面)。判别侧证: 绿格 cost 瞬态峰比 10-104→单峰不触发,判别力在平台持续性(滚动中位+持续窗)。",
+  "pregate": {"init_cost_max": null, "bas_med_max": null, "track_min": null},
+  "inflight": {
+    "abs": {"cost_max": null, "bas_max": null, "sustain_s": 5.0},
+    "adapt": {"to_det_v": 0.5, "to_det_s": 3.0,
+              "base_off_a": 8.0, "base_off_b": 28.0, "dev_after_off": 32.0,
+              "cost_ratio": null, "bas_ratio": null,
+              "sustain_s": 5.0, "roll_med_s": 5.0}
+  }
+}

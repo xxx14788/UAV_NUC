@@ -11,6 +11,7 @@ source /opt/ros/noetic/setup.bash          # 先 source 再 set -u(V3 教训)
 source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会覆盖掉 ws 包路径(X1轮1教训)
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
+GATE=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -18,6 +19,8 @@ while [ $# -gt 0 ]; do case "$1" in
   --tag)   TAG="$2"; shift 2;;
   --budget) BUDGET="$2"; shift 2;;
   --probecheck) PROBECHECK=1; shift;;
+  --gate) GATE=1; shift;;
+  --gate-params) GATE_PARAMS="$2"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -63,6 +66,10 @@ MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
 cleanup() {
   [ -n "$HWPID" ] && kill "$HWPID" 2>/dev/null
   pkill -f "t1_hwmon_prob[e] $EV" 2>/dev/null
+  [ -n "$GATEPID" ] && kill "$GATEPID" 2>/dev/null
+  [ -n "$RTFPID" ] && kill "$RTFPID" 2>/dev/null
+  pkill -f "t1_gate_watc[h] --inflight $EV" 2>/dev/null
+  pkill -f "t1_rtf_prob[e] $EV" 2>/dev/null
   kill "$HBPID" 2>/dev/null
   pkill -f "tee $EV/round.lo[g]" 2>/dev/null   # exec>(tee) 进程替换会让 bash 退出时等 tee,tee 等 stdout 写者→挂壳;杀之解锁(E2 验收实测)
   pkill -f 'vins_to_mavro[s]' 2>/dev/null; kill_vins_my_domain
@@ -131,6 +138,66 @@ while [ $(( $(date +%s) - T0G )) -lt 300 ]; do
 done
 [ $ok = 1 ] || { LOG "FATAL 300s 内 VINS 未 init"; exit 1; }
 LOG "VINS init 完成 (+$(( $(date +%s) - T0G ))s)"
+# ---------- 1a 起飞前门(v11.20 单元1a;--gate 1 启用;纯脚本面) ----------
+# init 健康度三指标(init 终值 cost/|Bas| 中位/track) vs 健康分位带(t1_gate_params.json,
+# T2 科学包填参冻结;null=OBSERVE 直通)。不健康→vins 重启再 init(≤2)→仍不健康→
+# ENV-ABORT 轮作废(不计红不计入,留痕 pregate_<tag>.json)。
+if [ "$GATE" = "1" ]; then
+  pg_try=0
+  while :; do
+    PGOUT=$(python3 "$HOME/catkin_ws/sitl_sim/t1_gate_watch.py" --pregate "$EV" --params "$GATE_PARAMS" 2>&1)
+    PGV=$(echo "$PGOUT" | head -1 | python3 -c "import json,sys
+try: print(json.loads(sys.stdin.readline()).get('verdict','ABORT'))
+except Exception: print('ABORT')" 2>/dev/null || echo ABORT)
+    LOG "pregate[$pg_try]: $PGV"
+    case "$PGV" in
+      PASS*) break;;
+      block|ABORT*)
+        LOG "pregate ABORT(硬缺陷/解析失败)→ENV-ABORT 轮作废"
+        python3 - "$EV" "$PGOUT" <<'PYEOF'
+import json, glob, sys
+rd, why = sys.argv[1], sys.argv[2][:200]
+for f in glob.glob(rd + "/pregate_*.json"):
+    try:
+        j = json.load(open(f)); j["verdict"] = "block"; j["block_reason"] = why
+        json.dump(j, open(f, "w"), ensure_ascii=False, indent=1)
+    except Exception:
+        pass
+PYEOF
+        echo "RESULT=ENV-ABORT (pregate: $(echo "$PGOUT" | head -c 300))" > "$EV/RESULT.txt"
+        exit 6;;
+      *)
+        if [ "$pg_try" -ge 2 ]; then
+          LOG "pregate 重试耗尽(2)→ENV-ABORT(不健康 init 三连=环境域,不计红不计入)"
+          python3 - "$EV" "$PGOUT" <<'PYEOF'
+import json, glob, sys
+rd, why = sys.argv[1], sys.argv[2][:200]
+for f in glob.glob(rd + "/pregate_*.json"):
+    try:
+        j = json.load(open(f)); j["verdict"] = "block"; j["block_reason"] = "retries exhausted: " + why
+        json.dump(j, open(f, "w"), ensure_ascii=False, indent=1)
+    except Exception:
+        pass
+PYEOF
+          echo "RESULT=ENV-ABORT (pregate retries exhausted: $(echo "$PGOUT" | head -c 300))" > "$EV/RESULT.txt"
+          exit 6
+        fi
+        pg_try=$((pg_try+1))
+        LOG "pregate REINIT → vins 重启 #${pg_try}(sick log 保全=simvins_pregate_fail_${pg_try}.log)"
+        mv "$EV/simvins.log" "$EV/simvins_pregate_fail_${pg_try}.log" 2>/dev/null
+        kill_vins_my_domain
+        pkill -f 'src/launch/sim_vins.launc[h]' 2>/dev/null; sleep 3
+        nohup roslaunch "$HOME/catkin_ws/src/launch/sim_vins.launch" > "$EV/simvins.log" 2>&1 &
+        ok=0; T0G=$(date +%s)
+        while [ $(( $(date +%s) - T0G )) -lt 300 ]; do
+          sleep 2
+          if timeout 3 rostopic echo -n1 /vins_estimator/imu_propagate 2>/dev/null | grep -qE 'frame_id: "?world"?'; then ok=1; break; fi
+        done
+        [ $ok = 1 ] || { LOG "FATAL pregate 重启后 300s 未 init"; echo "RESULT=ENV-ABORT (pregate reinit no-init)" > "$EV/RESULT.txt"; exit 6; }
+        LOG "pregate reinit 完成 (+$(( $(date +%s) - T0G ))s)";;
+    esac
+  done
+fi
 if [ "$PROBECHECK" = "1" ]; then
   E2ULS=$(grep -c "E2uls" "$EV/simvins.log" 2>/dev/null || true); E2ULS=${E2ULS:-0}
   E2CLAMP=$(grep -c "E2clamp" "$EV/simvins.log" 2>/dev/null || true); E2CLAMP=${E2CLAMP:-0}
@@ -173,6 +240,85 @@ nohup rosbag record -O "$BAG" \
 REC=$!
 sleep 3
 
+# ---------- 1b 飞行中前兆门 watchdog+RTF 探针(v11.20 单元1b;--gate 1;纯脚本面) ----------
+# 数据源=simvins.log([T2slv] cost 主+[T2diag] |Bas| 副,10Hz);双门=绝对+轮内自适应;
+# 触发→gatehit.flag;本脚本各相位轮询点收到→gate_abort 受控中止(预注册降级序)。
+if [ "$GATE" = "1" ]; then
+  setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_gate_watch.py" --inflight "$EV" --params "$GATE_PARAMS" >/dev/null 2>&1 &
+  GATEPID=$!
+  setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_rtf_probe.py" "$EV" >/dev/null 2>&1 &
+  RTFPID=$!
+  PGVER=$(python3 -c "import json;p=json.load(open('$GATE_PARAMS'));print(p.get('version','?'),'frozen' if p.get('frozen') else 'OBSERVE')" 2>/dev/null || echo unreadable)
+  LOG "inflight gate watchdog up(pid=$GATEPID)+rtf probe(pid=$RTFPID);params=$PGVER"
+  export GATE_FLAG="$EV/gatehit.flag"
+fi
+gate_hit() { [ -f "$EV/gatehit.flag" ]; }
+gate_abort() {  # $1=相位标签;完整恢复=受控中止+完整降落+disarm=1+无T2fail(预注册)
+  local PH="${1:-?}" DISARMED=0 STREAM_OK=1 K J
+  LOG "GATE-HIT@$PH 前兆门触发→goal 停发+受控中止链(预注册降级序①odom可信段LAND②流断→悬停+kill)"
+  echo "$(date '+%F %T') GATE-ABORT@$PH" >> "$EV/gatehit_actions.txt"
+  bash "$HOME/sitl_sim/kill_planner_all.sh" > "$EV/planner_kill.log" 2>&1; sleep 2
+  STREAM_OK=$(python3 - "$EV" <<'PYEOF'
+import json, glob, sys, os
+ok = 1
+for f in glob.glob(os.path.join(sys.argv[1], "gatehit_*.json")):
+    try:
+        j = json.load(open(f)); gap = (j.get("vins_stream") or {}).get("gap_s")
+    except Exception:
+        continue
+    if gap is not None and gap > 10:
+        ok = 0
+print(ok)
+PYEOF
+)
+  if [ "$STREAM_OK" = "1" ]; then
+    LOG "降级①: odom 可信段完成 LAND(5 轮重掷,60s 上限)"
+    for K in 1 2 3 4 5; do
+      timeout 12 rostopic pub -r 1 /px4ctrl/takeoff_land quadrotor_msgs/TakeoffLand "takeoff_land_cmd: 2" >/dev/null 2>&1 &
+      for J in $(seq 1 12); do
+        timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: False' && { DISARMED=1; break 2; }
+        sleep 1
+      done
+    done
+    if [ "$DISARMED" != "1" ]; then
+      LOG "LAND 未 disarm(60s)→降级②兜底: 悬停 5s+kill 电机(SITL 可接受;实机语义=需人工接管协议)"
+      sleep 5
+      for K in 1 2 3; do rosrun mavros mavcmd long 400 0 1 0 0 0 0 0 >/dev/null 2>&1; sleep 1; done
+      for J in $(seq 1 8); do
+        timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: False' && { DISARMED=1; break; }
+        sleep 1
+      done
+    fi
+  else
+    LOG "降级②: VINS 流断/滞后>10s(中止依赖 odom 而门触发=VINS 正在病)→悬停 5s+kill 电机"
+    sleep 5
+    for K in 1 2 3; do rosrun mavros mavcmd long 400 0 1 0 0 0 0 0 >/dev/null 2>&1; sleep 1; done
+    for J in $(seq 1 8); do
+      timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: False' && { DISARMED=1; break; }
+      sleep 1
+    done
+  fi
+  REC=$([ $DISARMED = 1 ] && echo COMPLETE || echo DEGRADED)
+  PTH=$([ "$STREAM_OK" = 1 ] && echo LAND || echo KILL)
+  echo "RECOVERY=$REC path=$PTH phase=$PH" > "$EV/gatehit_outcome.txt"
+  # gatehit json 回写 landed/disarm(T3 trichotomy 契约:landed=1 ∧ RESULT 带 auto_disarm)
+  python3 - "$EV" "$DISARMED" <<'PYEOF'
+import json, glob, sys
+landed = int(sys.argv[2])
+for f in glob.glob(sys.argv[1] + "/gatehit_*.json"):
+    try:
+        j = json.load(open(f)); j["landed"] = landed; j["disarm"] = landed
+        j["recovery"] = "COMPLETE" if landed else "DEGRADED"; j["recovery_path"] = "recorded"
+        json.dump(j, open(f, "w"), ensure_ascii=False, indent=1)
+    except Exception:
+        pass
+PYEOF
+  echo "RESULT=GATE-INTERCEPT (前兆门@$PH; recovery=$REC; auto_disarm->$DISARMED; 留痕=gatehit_<tag>.json+gate_timeline+actions; $([ "$REC" = COMPLETE ] && echo '完整恢复=计入分子' || echo '降级=不完整恢复不计入分子,如实'))" > "$EV/RESULT.txt"
+  LOG "GATE-INTERCEPT 收束 recovery=$REC path=$PTH"
+  cleanup
+  exit 42
+}
+
 # ---------- 起飞 ----------
 LOG "起飞触发 (04_takeoff 120s 预算,重启后首boot慢投递余量)"
 if ! bash "$L/04_takeoff.sh" 120 > "$EV/takeoff.log" 2>&1; then
@@ -192,6 +338,7 @@ if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
   exit 1
 fi
 LOG "已等离地稳定(truth z=$LZ)"
+[ "$GATE" = "1" ] && gate_hit && gate_abort hover
 
 # ---------- goal（v11.17 starve 修复：订阅就绪门+停摆一次性重启，任务书 1.1a/1.1b） ----------
 # 病灶（X4 批 2/8 轮；X2g3_042025=189B planner.log 实证）：FSM 事件循环停摆——
@@ -244,18 +391,20 @@ if ! target_moved && ! awk "BEGIN{exit !($PC > 1.0)}"; then
 else
   LOG "poscmd 存活门通过(首发 rate=${PC}Hz)"
 fi
+[ "$GATE" = "1" ] && gate_hit && gate_abort pursuit-start
 
 # ---------- 到位监视(真值口径,锚点自推导;外部wall超时+异常吞噬) ----------
 arrive_watch() {  # $1..3 goal; $4 tag后缀
   local WX="$1" WY="$2" WZ="$3" WTAG="$4"
   timeout -s INT $BUDGET python3 - "$WX" "$WY" "$WZ" "$BUDGET" > "$EV/arrive_watch${WTAG}.txt" 2>&1 <<'PYEOF'
-import sys, math, time
+import sys, math, time, os
 import rospy
 from nav_msgs.msg import Odometry
 from gazebo_msgs.msg import ModelStates
 gx, gy, gz, budget = sys.argv[1], sys.argv[2], sys.argv[3], float(sys.argv[4])
 gx, gy, gz = float(gx), float(gy), float(gz)
 rospy.init_node('vsmoke_arrive', disable_signals=True)
+gf = os.environ.get('GATE_FLAG')
 st = {'anchor': None, 'p0': None, 'min_t': 1e9, 'min_v': 1e9,
       'last': None, 'ok_since': None, 'arrived': False,
       'n_odom': 0, 'n_truth': 0}  # V8-DEF-1: sample counters for diagnostics
@@ -287,6 +436,8 @@ rospy.Subscriber('/gazebo/model_states', ModelStates, truth_cb, queue_size=2)
 t_end = time.monotonic() + budget - 10
 r = rospy.Rate(10)
 while time.monotonic() < t_end and not st['arrived'] and not rospy.is_shutdown():
+    if gf and os.path.exists(gf):
+        print('GATE-FLAG-BREAK (前兆门触发,到位监视让位中止链)'); break
     try: r.sleep()
     except Exception: time.sleep(0.1)
 # V8-DEF-1: triage the zero-sample cases (E-4 window root cause: VINS stopped streaming post-burst)
@@ -304,6 +455,7 @@ PYEOF
 }
 arrive_watch "$GX" "$GY" "$GZ" ""
 ARR=$(tail -1 "$EV/arrive_watch.txt")
+[ "$GATE" = "1" ] && gate_hit && gate_abort pursuit
 
 # ---------- leg2(两段式返程,X3②⑤) ----------
 ARR2="N/A"

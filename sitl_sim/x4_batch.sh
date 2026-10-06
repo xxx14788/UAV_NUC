@@ -1,103 +1,129 @@
 #!/usr/bin/env bash
-# x4_batch.sh — T1 v11.9 单元 3 X4 五位形批处理（用户 10-06 建议款；0 锁写码备重裁）
-# 设计约束（任务书原文）：本机自跑全程；预注册分支逻辑编码；两次短连接（装载+启动 / 取汇总）；
-# 运行期间禁人工干预；心跳/日志自写；5/5 全绿自动 tag（打前五查内嵌），否则 PAUSE/FAIL 汇总。
-# 分支预注册（编码于 judge_round()；依据=xline prereg §2.6/§2.8 + v11.9 单元 3 原文）：
-#   ENV-FAIL（环境三签名）→ 重试同位形（每位形 ≤1，全程累计 ≤3）
-#   风暴/敌对轮（never-flew 或 T2fail≥3）→ X1prime 域模式：不计分母，重试占同一预算（≤1/位形,≤3 累计）
-#   连续 2 轮同型到位撞门（到位 FAIL ∧ jump≤0.5 ∧ 到位值≤1.2）→ PAUSE 标记停批（撞门预案人工段）
-#   单轮墙钟 >900s → 超时自杀清场，记 timeout 后跳过（占位形一次机会）
-#   真 FAIL（非上述类）→ 计入分母红色，不重试，继续后续位形（证据完整性）
-# 绿色定义（5/5 计数）= RESULT=PASS ∨ cf=controlled（prereg §2.6 受控失败并集；报告双列呈现）
-# P2 姿态：X4 五轮 P2 off（冻结判据面纯净性；P2-A 严格版挂批后独立轮）
-# v11.13 修订（D-1006-T1-09）：①臂=v2 修复臂（vision_loss=0/Huber；CauchyLoss(0)=NaN 风暴根因已除，
-#   cost_gate/staged/guard=原口径保留；装载=arm_xline.sh arm，preflight 校验 config，轮内校验 T2 knobs 行）
-#  ②tag=双链核验制：5/5 内嵌全绿 ∧ T3 独立复核（X4_T3_REVIEW_CONFIRM）两链都在才打 sitl-v0.4；
-#   复核未到=批暂停于 tag 前轮询（60s×60），禁单链发证。
-# v10.3 修订（T3 2026-10-07；红线 24 全流程，.bak_tricho_20261007 双树）：三列分账计数口径 v1
-#   （prereg xline_prereg §2.9）：judge 分类 green 拆 phys_green；新增 gate_intercept（门触发+
-#   完整恢复四条[受控中止/完整降落/disarm=1/无T2fail]全齐=位形达成，计入 5/5+成色注记）与
-#   intercept_incomplete（四条不齐=不计红不计绿，换轮重试占门拦截预算 ≤3/格，批总物理轮 ≤15）；
-#   5/5 判定=（物理绿+门拦截计入 ≥5）∧ 物理绿 ≥PHYS_FLOOR（默认 3，--phys-floor 可调=用户窗内
-#   可改；两案材料见门设计冻结呈报件）。历史轮零重判（口径只对 2026-10-07 后新批生效，在册注记）。
-#   分类权威=analysis/t3_trichotomy.py（单点实现，selftest 锚）；本脚本消费其 stdout。
-# 用法: bash x4_batch.sh --arm-banner "guard=1 sane_p=50.0 sane_v=15.0" [--dry] [--phys-floor N]
-#   --arm-banner = 本批臂的 [T2SGCFG] 期望子串（v2 臂装载须先跑 arm_xline.sh arm；不符=ABORT_ARM 不起飞）
-#   --phys-floor = 物理绿下限（默认 3=默认案；用户窗内可改的落码面）
-# 坑位：source ROS 必须在 set -u 之前（ROS profile 链未绑变量爆炸，本会话坑表在册）
+# x4_batch.sh — T1 v11.20 单元1d/3 X4 五位形冲刺批（**融合版**：T3 v10.3 三列分账/trichotomy
+# 权威/双链 tag 为基 + T1 v11.20 双门挂载/新五位形/替补/带图条件件/凭据换代；两线共建,注记在案）
+# ——T3 v10.3 基座(2026-10-07 夜,经 5bfdeee 入库)：三列分账 v1(prereg xline §2.9)：judge 分类
+#   权威=analysis/t3_trichotomy.py(单点实现,selftest 锚)；green 拆 phys_green;gate_intercept=
+#   门触发+完整恢复四条(受控中止/完整降落/disarm=1/无T2fail)全齐=计入5/5+成色注记;
+#   intercept_incomplete=四条不齐=不计红绿,换轮重试占门拦截预算 ≤3/格,批总物理轮 ≤15;
+#   5/5 判定=(物理绿+门拦截计入 ≥5)∧物理绿 ≥PHYS_FLOOR(默认 3,--phys-floor 用户窗内可改);
+#   历史轮零重判;tag=双链核验制(5/5 内嵌全绿 ∧ T3 独立复核 X4_T3_REVIEW_CONFIRM,60s×60 轮询)。
+# ——T1 v11.20 增量(本融合提交)：①新五位形=绿格 11 gyr 升序前 5 E12O(1.28)/NE8O(1.36)/
+#   NE12O(1.39)/S12P(1.48)/E8O(1.50),goal=出生锚定(1.01,0.98,1.0)+dir_unit×dist,方向分布
+#   E/NE/NE/S/E,同格双绿 E12O 保留;替补顺位 6/7=S8O(1.54)/N8P(1.56),真 FAIL 格换格 ≤2/批;
+#   ②双门挂载=vins_smoke --gate --gate-params(ROC 通过后冻结版,preflight 校验 frozen);
+#   ③带图条件件=批内首例跳变族真 FAIL(JUMP>0.5)∧定因全排除(10-07 在册)→后续 ≤2 轮带图
+#   (1e 输入面裁决素材,13.9G/轮);④栈+config 凭据换代制(--expect-node/lib/cfg,零栈改动红线);
+#   ⑤ENV-ABORT(pregate block)分支=pregate-block 类,env 重试域(不计三列);⑥force_cleanup=
+#   rosmaster 域过滤(1e 回放共存保护,x5 面);⑦X4_TAG_PENDING 判读指针=动态已飞格清单。
+# 碰撞注记：10-07 03:1x T1 曾误覆写 T3 工作树版(其 staged 版经 5bfdeee 已保全);本融合以
+#   T3 入库版为基,T1 增量以上;两线 STATUS 在案。
+# 用法: bash x4_batch.sh --arm-banner "guard=1 sane_p=50.0 sane_v=15.0" \
+#   --expect-node <md5> --expect-lib <md5> --expect-cfg <md5> --gate-params <冻结版json> \
+#   [--phys-floor N] [--dry] [--skip TAG,...]
+source /opt/ros/noetic/setup.bash
+source "$HOME/catkin_ws/devel/setup.bash"
+set -u
 L="$HOME/sitl_sim"
 WS="$HOME/catkin_ws"
-EVD="$WS/sitl_sim/t1_evidence/v11_7_2026-10-05"
+EVD="$HOME/sitl_sim/t1_evidence/v11_20_2026-10-07"
 SUM="$EVD/x4_batch_report.md"
-source /opt/ros/noetic/setup.bash
-source "$WS/devel/setup.bash"
-set -u
 HEARTBEAT_MIN=10
-ARM_EXPECT=""
+ARM_EXPECT=""; EXPECT_NODE=""; EXPECT_LIB=""; EXPECT_CFG=""
+GATE_PARAMS="$L/t1_gate_params.json"
 DRY=0
 PHYS_FLOOR=3
 PHY_ROUNDS_CAP=15
-SKIP_TAGS=""  # 逗号分隔已定案位形（批中断续跑用；X1final 真 FAIL 计分母后跳过重飞=预注册"真FAIL不重试"续跑面）
+SKIP_TAGS=""
 while [ $# -gt 0 ]; do case "$1" in
   --arm-banner) ARM_EXPECT="$2"; shift 2;;
-  --dry) DRY=1; shift;;
+  --expect-node) EXPECT_NODE="$2"; shift 2;;
+  --expect-lib) EXPECT_LIB="$2"; shift 2;;
+  --expect-cfg) EXPECT_CFG="$2"; shift 2;;
+  --gate-params) GATE_PARAMS="$2"; shift 2;;
   --phys-floor) PHYS_FLOOR="$2"; shift 2;;
+  --dry) DRY=1; shift;;
   --skip) SKIP_TAGS=",$2,"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 [ -z "$ARM_EXPECT" ] && { echo "need --arm-banner"; exit 2; }
-EXPECT_NODE="b7de133d"; EXPECT_LIB="59548c6a"
-source /opt/ros/noetic/setup.bash
-source "$WS/devel/setup.bash"
+[ -z "$EXPECT_NODE" ] || [ -z "$EXPECT_LIB" ] || [ -z "$EXPECT_CFG" ] && { echo "need --expect-node/--expect-lib/--expect-cfg(栈+config 凭据换代制)"; exit 2; }
 
-POSITIONS=(
-  "X1final|--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180"
-  "X2g1|--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --budget 180"
-  "X2g3|--world sitl_world_obstacles --goal 8.0 -1.0 1.0 --budget 180"
-  "X3l2a|--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 1.0 0.0 1.0 --budget 240"
-  "X3l2b|--world sitl_world_obstacles --goal 7.0 -4.0 1.0 --leg2 0.0 0.0 1.0 --budget 240"
-)
+# ---------- 五位形(goal=出生锚定 1.01,0.98,1.0+dir_unit×dist;O=obstacles/P=plain) ----------
+BX=1.01; BY=0.98; BZ=1.0
+POSITIONS=()
+add() { # tag dist world ux uy → 追加队尾(替补动态入队可见)
+  local tag="$1" dist="$2" world="$3" ux="$4" uy="$5" gx gy
+  gx=$(python3 -c "print('%.3f' % ($BX + $ux*$dist))")
+  gy=$(python3 -c "print('%.3f' % ($BY + $uy*$dist))")
+  POSITIONS+=("${tag}|--world $world --goal $gx $gy $BZ --budget 200 --gate --gate-params $GATE_PARAMS")
+}
+SQ=0.7071067811865476
+add X4_E12O  12 sitl_world_obstacles 1  0
+add X4_NE8O   8 sitl_world_obstacles $SQ $SQ
+add X4_NE12O 12 sitl_world_obstacles $SQ $SQ
+add X4_S12P  12 sitl_world_plain     0  -1
+add X4_E8O    8 sitl_world_obstacles 1  0
+# 替补顺位 6/7(真 FAIL 格处置,默认不飞;换格 ≤2/批 预注册)
+SUBS=("X4_S8O|8|sitl_world_obstacles|0|-1" "X4_N8P|8|sitl_world_plain|0|1")
+GOALS_MD5=$(for pos in "${POSITIONS[@]}"; do echo "$pos"; done | md5sum | cut -c1-8)
+
 retry_budget=3
 consec_door=0
-declare -A retried
-declare -A gate_retried      # 门拦截重试计数（intercept_incomplete 换轮；≤3/格，独立于 env/hostile 预算）
-GREENS=0; TOTAL=0            # GREENS=物理绿（v10.3 语义收窄：无门干预全绿；legacy 变量名保留）
-GATE_INTERCEPTS=0            # 门拦截计入（完整恢复四条全齐）
-GATEHIT_LOG="$EVD/x4_gatehit_stats.log"   # 拦截统计行（冻结格式，成色注记正源）
+subs_used=0
+declare -A retried gate_retried
+GREENS=0; TOTAL=0            # GREENS=物理绿;TOTAL=物理轮
+GATE_INTERCEPTS=0
+IMAGES_LEFT=0                # 带图条件件余量(首例跳变族真 FAIL 置 2)
+FLOWN=()                     # 已飞格清单(X4_TAG_PENDING 判读指针正源)
+GATEHIT_LOG="$EVD/x4_gatehit_stats.log"
 
 w() { echo "[$(date '+%F %T')] $*" | tee -a "$SUM"; }
 status_line() { python3 "$L/status_append.py" "$*" >/dev/null 2>&1 || true; }
 
+force_cleanup() {  # rosmaster 域过滤(私有 master 回放件保护;1e 共存),余 pkill -x 名字级
+  local p my_m="${ROS_MASTER_URI:-http://localhost:11311}" pm m
+  for p in gzserver px4 roslaunch vins_node px4ctrl_node traj_server rostopic rosbag; do
+    pkill -x "$p" 2>/dev/null
+  done
+  for pm in $(pgrep -x rosmaster 2>/dev/null); do
+    m=$(tr '\0' '\n' < "/proc/$pm/environ" 2>/dev/null | grep '^ROS_MASTER_URI=' | cut -d= -f2-)
+    m="${m:-http://localhost:11311}"
+    [ "$m" = "$my_m" ] && kill -9 "$pm" 2>/dev/null
+  done
+  sleep 3
+  w "  force_cleanup done (timeout residue; rosmaster domain-filtered)"
+}
+
 preflight() {
-  local M_NODE M_LIB DF_G CFG
+  local M_NODE M_LIB M_CFG DF_G CFG PXW
   M_NODE=$(md5sum "$WS/devel/.private/vins/lib/vins/vins_node" 2>/dev/null | cut -c1-8)
   M_LIB=$(md5sum "$WS/devel/lib/libvins_lib.so" 2>/dev/null | cut -c1-8)
-  [ "$M_NODE" = "$EXPECT_NODE" ] && [ "$M_LIB" = "$EXPECT_LIB" ] || { w "ABORT_STACK md5=$M_NODE/$M_LIB"; exit 9; }
+  M_CFG=$(md5sum "$WS/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml" | cut -c1-8)
+  [ "$M_NODE" = "$EXPECT_NODE" ] && [ "$M_LIB" = "$EXPECT_LIB" ] || { w "ABORT_STACK md5=$M_NODE/$M_LIB expect=$EXPECT_NODE/$EXPECT_LIB(纯脚本面红线:门工程零栈改动)"; exit 9; }
+  [ "$M_CFG" = "$EXPECT_CFG" ] || { w "ABORT_CONFIG md5=$M_CFG expect=$EXPECT_CFG(X5 批同款臂,批前恢复未完成?)"; exit 9; }
+  python3 -c "import json,sys;sys.exit(0 if json.load(open('$GATE_PARAMS')).get('frozen') else 1)" \
+    || { w "ABORT_GATE_PARAMS 未冻结(ROC 通过后冻结版才可上真轮——任务书单元3前置)"; exit 9; }
   DF_G=$(df -BG --output=avail "$HOME" | tail -1 | grep -oE "[0-9]+")
   [ "$DF_G" -lt 20 ] && { w "ABORT_DISK ${DF_G}G"; exit 9; }
   pgrep -x gzserver >/dev/null 2>&1 && { w "ABORT_RESIDUE gzserver alive"; exit 9; }
-  # 臂装载校验（D-1006-T1-09 v2 臂：loss=0 + cost_gate/staged/guard=1；banner 对这些键盲，必须查 config 文件）
+  for wf in sitl_world_obstacles sitl_world_plain; do
+    [ -f "$WS/sitl_sim/worlds/$wf.world" ] || { w "ABORT_WORLD $wf.world missing(repo)"; exit 9; }
+    PXW="$HOME/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/worlds/$wf.world"
+    [ -f "$PXW" ] || { w "ABORT_WORLD $wf.world not staged in PX4 worlds dir"; exit 9; }
+    [ "$(md5sum "$WS/sitl_sim/worlds/$wf.world" | cut -d" " -f1)" = "$(md5sum "$PXW" | cut -d" " -f1)" ] \
+      || { w "ABORT_WORLD $wf.world repo!=PX4-staged (md5 drift)"; exit 9; }
+  done
   CFG="$WS/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml"
   grep -q '^t2_vision_loss: 0' "$CFG" && grep -q '^t2_cost_gate: 1' "$CFG" \
     && grep -q '^t2_staged_depth_gate: 1' "$CFG" && grep -q '^t2_stream_guard: 1' "$CFG" \
     || { w "ABORT_ARM_CONFIG canonical 未处 v2 臂态(须 loss=0/cost_gate=1/staged=1/guard=1): $(grep -E '^t2_(vision_loss|cost_gate|staged_depth_gate|stream_guard)' "$CFG" | tr '\n' ' ')"; exit 9; }
-  w "preflight OK stack=$M_NODE/$M_LIB df=${DF_G}G arm_banner='$ARM_EXPECT' arm_cfg_v2=verified"
+  w "preflight OK stack=$M_NODE/$M_LIB cfg=$M_CFG gate=$GATE_PARAMS df=${DF_G}G arm_banner='$ARM_EXPECT' goals_md5=$GOALS_MD5 cells=${#POSITIONS[@]}"
 }
 
-force_cleanup() {  # 超时自杀后清场（pkill -x 精确名,禁 -f 自匹配坑）
-  local p
-  for p in gzserver px4 rosmaster rosout roslaunch vins_node px4ctrl_node traj_server rostopic rosbag; do
-    pkill -x "$p" 2>/dev/null
-  done
-  sleep 3
-  w "  force_cleanup done (timeout residue)"
-}
+live_row() { echo -e "$(date '+%F %T')\t$1\t$2" >> "$EVD/x4_passmap_live.log"; }
 
-judge_round() {  # $1=tag $2=run_dir  -> echoes classification
-  local TAG="$1" D="$2" RES FAILN ANCH JUMP ARR CF WA NEVER
-  # 修复 2026-10-06（首真轮暴露，dry 不跑 judge 故未现）：
-  # ① grep -c 零匹配输出 0 且退出码 1 → "|| echo 0" 造成 "0\n0" 双行 → [ 需要整数表达式
-  # ② RES 含 "RESULT=" 前缀 → PASS/FAIL/ENV-FAIL 分支全失配（全落 fail，绿轮永不计绿）
+judge_round() {  # $1=tag $2=run_dir → class（T3 v10.3：trichotomy 权威+legacy 兜底）
+  local TAG="$1" D="$2" RES FAILN ANCH JUMP ARR CF WA NEVER TRI TGATE TCLASS
   RES=$(grep -m1 -oE "RESULT=(PASS|FAIL|ENV-FAIL)" "$D/RESULT.txt" 2>/dev/null | head -1 | cut -d= -f2)
   [ -n "$RES" ] || RES="NO-RESULT"
   FAILN=$(grep -c "failure detection" "$D/simvins.log" 2>/dev/null); case "$FAILN" in ''|*[!0-9]*) FAILN=0;; esac
@@ -111,7 +137,6 @@ judge_round() {  # $1=tag $2=run_dir  -> echoes classification
   w "  RESULT=$RES T2fail=$FAILN neverflew=$NEVER jump=$JUMP arrive=$ARR $DISARM cf=${CF:-?}"
   w "  ${ANCH:-no-dual-anchor}"
   w "  ${WA:0:200}"
-  # 三列分账 v1（T3 v10.3 单元 1）：分类权威=t3_trichotomy.py（--cf 传现场 wa_gate 判读）
   TRI=$(python3 "$WS/sitl_sim/analysis/t3_trichotomy.py" "$D" --cf "${CF:-none}" 2>/dev/null || true)
   TGATE=$(echo "$TRI" | grep -m1 'GATEHIT-STAT')
   TCLASS=$(echo "$TRI" | grep -m1 -oE 'class=[a-z_-]+' | cut -d= -f2)
@@ -122,13 +147,13 @@ judge_round() {  # $1=tag $2=run_dir  -> echoes classification
   else
     w "  GATEHIT-STAT: unavailable(分类器缺失→legacy 兜底,如实降级)"
   fi
-  # 分支预注册逻辑
+  live_row "$TAG" "RES=$RES jump=$JUMP arr=$ARR cf=${CF:-?} tri=${TCLASS:-na}"
   if [ "$RES" = "ENV-FAIL" ]; then echo "env"; return; fi
   if [ "$NEVER" -ge 1 ] || [ "$FAILN" -ge 3 ]; then echo "hostile"; return; fi
   case "$TCLASS" in
-    phys_green|gate_intercept|intercept_incomplete) echo "$TCLASS"; return;;
+    phys_green|gate_intercept|intercept_incomplete|pregate-block) echo "$TCLASS"; return;;
   esac
-  # legacy 兜底（分类器不可用；v10.3 语义收窄：PASS=phys_green，cf=controlled=gate_intercept）
+  # legacy 兜底（分类器不可用）
   if [ "$RES" = "PASS" ]; then echo "phys_green"; return; fi
   if [ "${CF:-}" = "controlled" ]; then echo "gate_intercept"; return; fi
   if [ "$RES" = "FAIL" ]; then
@@ -141,25 +166,37 @@ judge_round() {  # $1=tag $2=run_dir  -> echoes classification
 }
 
 run_position() {  # $1=tag $2=args
-  local TAG="$1" ARGS="$2" D RC CLASS BANNER
+  local TAG="$1" ARGS="$2" D RC CLASS BANNER KNOBS IMGENV
   if [ "$TOTAL" -ge "$PHY_ROUNDS_CAP" ]; then
     w "== position $TAG SKIPPED (批物理轮上限 $PHY_ROUNDS_CAP 达到;预注册防凑数终止)"
     return 0
   fi
-  TOTAL=$((TOTAL+1))
+  TOTAL=$((TOTAL+1)); FLOWN+=("$TAG")
   w ""
-  w "== position $TAG (attempt $(( ${retried[$TAG]:-0} + 1 )))"
-  if [ "$DRY" = "1" ]; then w "  DRY: would run vins_smoke $ARGS --tag $TAG"; return 0; fi
-  timeout 900 bash "$L/vins_smoke.sh" $ARGS --tag "$TAG" </dev/null > "/tmp/${TAG}_console.log" 2>&1
+  w "== position $TAG (物理轮 #$TOTAL/$PHY_ROUNDS_CAP;满足 $((GREENS+GATE_INTERCEPTS))/5|phy=$GREENS gate=$GATE_INTERCEPTS)"
+  if [ "$DRY" = "1" ]; then w "  DRY: would run vins_smoke $ARGS"; return 0; fi
+  IMGENV=""
+  if [ "$IMAGES_LEFT" -gt 0 ]; then
+    IMGENV="VINS_SMOKE_IMAGES=1"; IMAGES_LEFT=$((IMAGES_LEFT-1))
+    w "  带图轮启用(1e 输入面裁决素材,余 $IMAGES_LEFT)"
+  fi
+  eval "${IMGENV} timeout 900 bash $L/vins_smoke.sh $ARGS --tag $TAG" </dev/null > "/tmp/${TAG}_console.log" 2>&1
   RC=$?
   [ "$RC" = "124" ] && force_cleanup
   D=$(ls -dt "$L"/vins_smoke_runs/run_${TAG}_* 2>/dev/null | head -1)
-  if [ -z "$D" ]; then w "  NO-RUNDIR rc=$RC (timeout-suicide?)"; CLASS="timeout"; else
+  if [ -z "$D" ]; then
+    w "  NO-RUNDIR rc=$RC (timeout-suicide?)"; CLASS="timeout"
+  elif grep -aq "RESULT=ENV-ABORT" "$D/RESULT.txt" 2>/dev/null; then
+    w "  ENV-ABORT(pregate block/重试耗尽)→pregate-block 类(分母外,env 重试域)"
+    CLASS="pregate-block"
+  elif [ ! -s "$D/simvins.log" ] || grep -aq "FATAL" "$D/round.log" 2>/dev/null; then
+    w "  ENV-EARLY-DEATH: simvins.log 缺席/轮 FATAL 环境门(非臂面)→env 类"
+    CLASS="env"
+  else
     BANNER=$(grep -m1 -oE "\[T2SGCFG\][^]]*" "$D/simvins.log" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g')
     if ! echo "$BANNER" | grep -qF "$ARM_EXPECT"; then
       w "  ABORT_ARM banner='$BANNER' expect='$ARM_EXPECT'"; exit 8
     fi
-    # 运行时生效键二次校验（banner 盲区修复，D-1006-T1-09）：v2 臂必须 loss=0（NaN 源关闭）
     KNOBS=$(grep -m1 "T2 knobs" "$D/simvins.log" 2>/dev/null | grep -oE "loss=[0-9]+ cauchy=[0-9.]+" || echo "KNOBS-MISSING")
     echo "$KNOBS" | grep -q "loss=0" || { w "  ABORT_ARM_KNOBS '$KNOBS' (expect loss=0; CauchyLoss(0) 防线)"; exit 8; }
     w "  banner: $BANNER | knobs: $KNOBS"
@@ -174,15 +211,15 @@ run_position() {  # $1=tag $2=args
       GATE_INTERCEPTS=$((GATE_INTERCEPTS+1)); consec_door=0
       w "  门拦截计入:恢复链四条全齐=位形达成(成色注记=非物理绿;GATEHIT-STAT 在案)"
       status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 门拦截计入($GREENS 物理+${GATE_INTERCEPTS} 拦截=$((GREENS+GATE_INTERCEPTS))/5) | 批处理 | 明细=$GATEHIT_LOG";;
-    intercept_incomplete)
+    intercept_incomplete|pregate-block)
       consec_door=0
       if [ "${gate_retried[$TAG]:-0}" -lt 3 ] && [ "$TOTAL" -lt "$PHY_ROUNDS_CAP" ]; then
         gate_retried[$TAG]=$(( ${gate_retried[$TAG]:-0} + 1 ))
-        w "  retry scheduled (intercept_incomplete;gate-retry ${gate_retried[$TAG]}/3, 物理轮 $TOTAL/$PHY_ROUNDS_CAP;不计红不计绿)"
-        status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG 拦截不完整→换轮重试(门拦截预算 ${gate_retried[$TAG]}/3) | 批处理"
+        w "  retry scheduled ($CLASS;gate-retry ${gate_retried[$TAG]}/3, 物理轮 $TOTAL/$PHY_ROUNDS_CAP;不计红不计绿)"
+        status_line "$(date +%H:%M) | T1 | x4_batch 心跳: $TAG $CLASS→换轮重试(门拦截预算 ${gate_retried[$TAG]}/3) | 批处理"
         run_position "$TAG" "$ARGS"
       else
-        w "  no gate-retry left for $TAG (intercept_incomplete;cap ${gate_retried[$TAG]:-0}/3 或物理轮上限 $PHY_ROUNDS_CAP)——位形未达成,如实计未达"
+        w "  no gate-retry left for $TAG ($CLASS;cap ${gate_retried[$TAG]:-0}/3 或物理轮上限 $PHY_ROUNDS_CAP)——位形未达成,如实计未达"
       fi;;
     door)
       consec_door=$((consec_door+1))
@@ -201,12 +238,25 @@ run_position() {  # $1=tag $2=args
       fi;;
     fail)
       consec_door=0
-      w "  real FAIL -> 计入分母红色,不重试";;
+      w "  real FAIL -> 计入分母红色,不重试;处置=换格(预注册)"
+      awk "BEGIN{exit !($JUMP>0.5)}" 2>/dev/null && echo "$TAG $JUMP $(date '+%F %T')" >> "$EVD/x4_jump_events.txt"
+      if [ "$IMAGES_LEFT" = "0" ] && [ -s "$EVD/x4_jump_events.txt" ]; then
+        IMAGES_LEFT=2; w "  跳变族真 FAIL 在册+定因全排除(10-07 在册)→带图条件件激活:后续 2 轮带图(1e)"
+      fi
+      if [ "$subs_used" -lt 2 ]; then
+        IFS='|' read -r ST SD SW SUX SUY <<< "${SUBS[$subs_used]}"
+        subs_used=$((subs_used+1))
+        w "  换格 #$subs_used/2: $ST 替补 $TAG(STATUS 呈报=通知非请示,替补即飞)"
+        status_line "$(date +%H:%M) | T1 | x4_batch: $TAG 真 FAIL→换格 $ST(#$subs_used/2,预注册处置) | 批处理"
+        add "$ST" "$SD" "$SW" "$SUX" "$SUY"
+      else
+        w "  换格耗尽(2/2)——真 FAIL 格不再替补"
+      fi;;
   esac
 }
 
 tag_if_5_5() {
-  # 5/5 判定 v1（T3 v10.3 三列分账口径）：物理绿+门拦截计入 ≥5 ∧ 物理绿 ≥PHYS_FLOOR（默认 3）
+  # 5/5 判定 v1（T3 v10.3 三列分账口径）：物理绿+门拦截计入 ≥5 ∧ 物理绿 ≥PHYS_FLOOR
   if [ $((GREENS + GATE_INTERCEPTS)) -ge 5 ] && [ "$GREENS" -ge "$PHYS_FLOOR" ]; then
     w ""
     w "== 5/5 达成（物理绿 $GREENS + 门拦截计入 $GATE_INTERCEPTS；phys-floor ≥$PHYS_FLOOR 满足）— pre-tag five checks =="
@@ -222,15 +272,15 @@ tag_if_5_5() {
     w "  stack=$M_NODE/$M_LIB df=${DF_G}G residue=$UNRES STATUS-自写心跳在册"
     cd "$WS" || exit 9
     git status --porcelain | head -3 >> "$SUM"
-    # 双链核验制（v11.13 单元2 终审：单点判读禁发证）——链1=本批内嵌判读(已全绿)；链2=T3 独立复核行
+    # 双链核验制（v11.13 单元2 终审：单点判读禁发证）——链1=本批内嵌判读;链2=T3 独立复核行
     rm -f "$EVD/X4_T3_REVIEW_CONFIRM"
-    { echo "X4 TAG PENDING (batch $(date '+%F %T'); arm=$ARM_EXPECT) — 五轮判读指针："
-      for t in X1final X2g1 X2g3 X3l2a X3l2b; do
+    { echo "X4 TAG PENDING (batch $(date '+%F %T'); arm=$ARM_EXPECT) — 本批判读指针(动态已飞格):"
+      for t in "${FLOWN[@]}"; do
         echo "  $(ls -dt "$L"/vins_smoke_runs/run_${t}_* 2>/dev/null | head -1)"
       done
       echo "复核口径：各轮 phys_green ∨ gate_intercept(恢复链四条全齐)+四指标；可复算=python3 sitl_sim/analysis/t3_trichotomy.py <run_dir> --cf <state>(cf 来自 t3_wa_gate --online)；确认写本目录 X4_T3_REVIEW_CONFIRM（含行 'T3-REVIEW: 5/5 CONFIRM'）"
     } > "$EVD/X4_TAG_PENDING"
-    status_line "$(date +%H:%M) | T1 | x4_batch 5/5 内嵌全绿——tag 前暂停等 T3 独立复核(双链核验制,禁单链发证;确认件=X4_TAG_PENDING→X4_T3_REVIEW_CONFIRM) @T3 | 待复核 | 轮询 60s×60 上限 1h"
+    status_line "$(date +%H:%M) | T1 | x4_batch 5/5 内嵌全绿——tag 前 T3 独立复核(双链核验制,禁单链发证;确认件=X4_TAG_PENDING→X4_T3_REVIEW_CONFIRM) @T3 | 待复核 | 轮询 60s×60 上限 1h"
     local n=0
     while [ $n -lt 60 ]; do
       [ -f "$EVD/X4_T3_REVIEW_CONFIRM" ] && grep -q "T3-REVIEW: 5/5 CONFIRM" "$EVD/X4_T3_REVIEW_CONFIRM" && break
@@ -258,18 +308,23 @@ tag_if_5_5() {
   fi
 }
 
-rm -f "$EVD/X4_BATCH_PAUSE"
+rm -f "$EVD/X4_BATCH_PAUSE" "$EVD/x4_jump_events.txt"
 : > "$GATEHIT_LOG"; echo "# GATEHIT 拦截统计行(冻结格式;三列分账 v1 正源) $(date '+%F %T')" >> "$GATEHIT_LOG"
-w "# X4 五位形批处理报告（$(date '+%F %T')；臂=$ARM_EXPECT；规则预注册见脚本头；三列分账 v1=prereg §2.9）"
+w "# X4 五位形冲刺批报告($(date '+%F %T');臂=$ARM_EXPECT;栈=$EXPECT_NODE/$EXPECT_LIB cfg=$EXPECT_CFG;gate=$GATE_PARAMS;goals_md5=$GOALS_MD5;规则预注册=任务书 v11.20 单元1d/3+T3 v10.3 三列分账v1;融合版注记见脚本头)"
 preflight
-status_line "$(date +%H:%M) | T1 | x4_batch 启动(臂=$ARM_EXPECT,五连飞,禁人工干预,心跳自写) | 批处理 | 重试预算=3(env/hostile 共用,≤1/位形)+门拦截重试≤3/格;撞门×2 连续=PAUSE;900s 超时自杀;三列分账v1(物理绿+门拦截计入≥5∧物理绿≥$PHYS_FLOOR)"
-for pos in "${POSITIONS[@]}"; do
+status_line "$(date +%H:%M) | T1 | x4_batch 启动(五位形 E12O/NE8O/NE12O/S12P/E8O 绿格 gyr 前 5,双门挂载,三列分账,物理轮上限 15,禁人工干预) | 批处理 | 门重试≤3/格;换格≤2;撞门×2=PAUSE;900s 超时自杀;批飞行窗 T2/T3/T4 禁回放大IO(互斥纪律升格)"
+# 动态队消费(替补追加可见;for 数组展开一次坑规避)
+qi=0
+while [ "$qi" -lt "${#POSITIONS[@]}" ]; do
+  pos="${POSITIONS[$qi]}"; qi=$((qi+1))
   TAG="${pos%%|*}"; ARGS="${pos#*|}"
   if [[ "$SKIP_TAGS" == *",$TAG,"* ]]; then
     TOTAL=$((TOTAL+1)); w "== position $TAG SKIPPED (续跑条款:已定案,attempt 1 计分母在案)"
     continue
   fi
   run_position "$TAG" "$ARGS"
+  if [ $((GREENS + GATE_INTERCEPTS)) -ge 5 ] && [ "$GREENS" -ge "$PHYS_FLOOR" ]; then
+    break
+  fi
 done
 tag_if_5_5
-w "== batch complete $(date '+%F %T') =="
