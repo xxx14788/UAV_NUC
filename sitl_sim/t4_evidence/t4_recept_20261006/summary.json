@@ -17,5 +17,69 @@
   "partial": 0
  },
  "deferred_final": [],
- "batch_complete": true
+ "batch_complete": true,
+ "truthfix_20261006": {
+  "fix_id": "T4-truthfix",
+  "date": "2026-10-06",
+  "trigger": "独立复核发现: v519 compact_extract.py truth 模型名匹配 'iris'(list 精确成员等值) 漏 3090 袋实际模型名 'iris_stereo_vins' -> compact 袋 truth 全 null, 判读行\"末端位置差不可得\"=N/A 假阴性(odom 面完整)",
+  "rule_old": "'iris' in list(msg.name)",
+  "rule_new": "两值并集依序命中 ('iris' 优先, 兼容他域裸名): 'iris' or 'iris_stereo_vins'",
+  "rerun_total": 100,
+  "counts": {
+   "OK": 100
+  },
+  "end_diff_range_m": [
+   0.2237,
+   1014.4171
+  ],
+  "received10": [
+   {
+    "run": "run_T2MACH10_020846",
+    "end_diff_odom_vs_truth_m": 16.311
+   },
+   {
+    "run": "run_T2MACH11_021559",
+    "end_diff_odom_vs_truth_m": 4.3511
+   },
+   {
+    "run": "run_T2MACH12_022312",
+    "end_diff_odom_vs_truth_m": 8.0446
+   },
+   {
+    "run": "run_T2MACH1_010832",
+    "end_diff_odom_vs_truth_m": 5.1799
+   },
+   {
+    "run": "run_T2MACH2_011343",
+    "end_diff_odom_vs_truth_m": 1.3891
+   },
+   {
+    "run": "run_T2MACH4_012523",
+    "end_diff_odom_vs_truth_m": 12.8451
+   },
+   {
+    "run": "run_T2MACH5_013233",
+    "end_diff_odom_vs_truth_m": 3.0792
+   },
+   {
+    "run": "run_T2MACH6_013944",
+    "end_diff_odom_vs_truth_m": 65.037
+   },
+   {
+    "run": "run_T2MACH7_014657",
+    "end_diff_odom_vs_truth_m": 6.1269
+   },
+   {
+    "run": "run_T2MACH9_020133",
+    "end_diff_odom_vs_truth_m": 1014.4171
+   }
+  ],
+  "draft_backfill_rows": 100,
+  "artifacts": [
+   "perbag_truthfix/truthfix_manifest_20261006.json",
+   "perbag_truthfix/<run>.json x100",
+   "work/truthfix_20261006/"
+  ],
+  "note": "本键为增补段, 原键与原判读行未改动; 原判读行 N/A 仍保留, 修订值见 judging_draft.md 各段【口径修订补行】"
+ }
 }

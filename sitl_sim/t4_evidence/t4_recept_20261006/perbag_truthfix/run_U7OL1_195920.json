@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL1_195920/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 88770,
+ "truth_dur_s": 355.076,
+ "truth_pz_min": 0.1044,
+ "truth_pz_max": 1.1635,
+ "odom_n": 703,
+ "odom_last_xyz": [
+  -36.843,
+  -680.8767,
+  -273.114
+ ],
+ "truth_last_xyz": [
+  3.9555,
+  -0.4346,
+  0.2956
+ ],
+ "end_diff_odom_vs_truth_m": 734.4513,
+ "err": null,
+ "run": "run_U7OL1_195920",
+ "received": 0
+}

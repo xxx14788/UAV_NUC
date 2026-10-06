@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGGUARD2_233403/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 65727,
+ "truth_dur_s": 262.904,
+ "truth_pz_min": 0.1041,
+ "truth_pz_max": 1.5535,
+ "odom_n": 2517,
+ "odom_last_xyz": [
+  2.8381,
+  -2.0656,
+  -0.1848
+ ],
+ "truth_last_xyz": [
+  3.5357,
+  -1.2931,
+  0.1047
+ ],
+ "end_diff_odom_vs_truth_m": 1.0804,
+ "err": null,
+ "run": "run_DIAGGUARD2_233403",
+ "received": 0
+}

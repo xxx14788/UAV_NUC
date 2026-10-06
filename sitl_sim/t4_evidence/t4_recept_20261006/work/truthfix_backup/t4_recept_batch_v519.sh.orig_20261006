@@ -2,9 +2,6 @@
 # =============================================================================
 # t4_recept_batch_v519.sh -- T4 v5.19 backlog reception batch (3090-localized)
 # 2026-10-06
-# REVISION(T4-truthfix 2026-10-06): compact_extract.py truth 模型名匹配 'iris' -> {'iris','iris_stereo_vins'} 两值并集
-#   依据=独立复核发现全批 compact 袋 truth=null 假阴性; 3090 袋实测模型名 iris_stereo_vins
-#   (T2BL1/DIAGCAUCHY 两袋 model_states name 实查); 本文件原版备份于 work/truthfix_backup/
 #
 # Design (disconnect-tolerant):
 #   - launch: setsid nohup bash t4_recept_batch_v519.sh </dev/null >nohup.log 2>&1 &
@@ -130,20 +127,9 @@ for topic, msg, t in bag.read_messages(topics=sel):
         elif topic.startswith('/mavros/local_position'):
             p = msg.pose.pose.position; SRC['mavros'].append((t.to_sec(), p.x, p.y, p.z))
         elif topic == '/gazebo/model_states':
-            # T4-truthfix 2026-10-06 口径修订: truth 模型名匹配 'iris' -> {'iris','iris_stereo_vins'} 两值并集
-            #   实测依据=T2BL1_201552 / DIAGCAUCHY_231757 两袋 /gazebo/model_states name 字段实查,
-            #   name 联合集=['asphalt_plane','box_A','box_B','box_C','ground_plane','iris_stereo_vins'], 无裸 'iris';
-            #   旧规则 'iris' in list(name) 为 list 成员精确等值 -> 全部 truth=null 假阴性(独立复核发现);
-            #   现两值并集依序命中, 'iris' 优先(兼容他域裸名)
-            if hasattr(msg, 'name'):
-                _names = list(msg.name)
-                _i = None
-                for _cand in ('iris', 'iris_stereo_vins'):
-                    if _cand in _names:
-                        _i = _names.index(_cand); break
-                if _i is not None:
-                    p = msg.pose[_i].position
-                    SRC['truth'].append((t.to_sec(), p.x, p.y, p.z))
+            if hasattr(msg, 'name') and 'iris' in list(msg.name):
+                i = list(msg.name).index('iris'); p = msg.pose[i].position
+                SRC['truth'].append((t.to_sec(), p.x, p.y, p.z))
     except Exception:
         pass
 bag.close()

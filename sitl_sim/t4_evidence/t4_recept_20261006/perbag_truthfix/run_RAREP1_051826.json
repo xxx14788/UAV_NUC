@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_RAREP1_051826/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 23257,
+ "truth_dur_s": 93.024,
+ "truth_pz_min": 0.1043,
+ "truth_pz_max": 1.1994,
+ "odom_n": 889,
+ "odom_last_xyz": [
+  7.7506,
+  -0.7648,
+  -0.1198
+ ],
+ "truth_last_xyz": [
+  8.7577,
+  0.099,
+  0.1047
+ ],
+ "end_diff_odom_vs_truth_m": 1.3457,
+ "err": null,
+ "run": "run_RAREP1_051826",
+ "received": 0
+}

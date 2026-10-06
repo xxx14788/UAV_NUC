@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2a_230310/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 74095,
+ "truth_dur_s": 296.372,
+ "truth_pz_min": 0.0508,
+ "truth_pz_max": 17.7552,
+ "odom_n": 529,
+ "odom_last_xyz": [
+  -0.031,
+  0.022,
+  -0.0007
+ ],
+ "truth_last_xyz": [
+  -112.4751,
+  124.0869,
+  0.0545
+ ],
+ "end_diff_odom_vs_truth_m": 167.4388,
+ "err": null,
+ "run": "run_SUPHV2a_230310",
+ "received": 0
+}

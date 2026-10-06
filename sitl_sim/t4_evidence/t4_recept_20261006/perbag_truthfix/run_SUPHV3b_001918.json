@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3b_001918/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 35101,
+ "truth_dur_s": 140.396,
+ "truth_pz_min": 0.1043,
+ "truth_pz_max": 3.2827,
+ "odom_n": 1347,
+ "odom_last_xyz": [
+  0.6643,
+  0.3748,
+  -3.2463
+ ],
+ "truth_last_xyz": [
+  0.9069,
+  3.3897,
+  0.105
+ ],
+ "end_diff_odom_vs_truth_m": 4.5144,
+ "err": null,
+ "run": "run_SUPHV3b_001918",
+ "received": 0
+}

@@ -1,0 +1,2434 @@
+{
+ "fix_id": "T4-truthfix",
+ "date": "2026-10-06",
+ "trigger": "独立复核发现: v519 compact_extract.py truth 模型名匹配 'iris'(list 精确成员等值) 漏 3090 袋实际模型名 'iris_stereo_vins' -> compact 袋 truth 全 null, 判读行\"末端位置差不可得\"=N/A 假阴性(odom 面完整)",
+ "rule_old": "'iris' in list(msg.name)",
+ "rule_new": "两值并集依序命中 ('iris' 优先, 兼容他域裸名): 'iris' or 'iris_stereo_vins'",
+ "rule_evidence": "T2BL1_201552 / DIAGCAUCHY_231757 两袋 /gazebo/model_states name 字段实查, name 联合集=[asphalt_plane, box_A, box_B, box_C, ground_plane, iris_stereo_vins], 无裸 iris",
+ "revised_files": [
+  "t4_recept_batch_v519.sh",
+  "lib/compact_extract.py"
+ ],
+ "backups": "work/truthfix_backup/",
+ "rerun": {
+  "scope": "truth=null compact 袋全部 100 (含 W1 收货集 received=1 10 袋)",
+  "workspace": "/tmp/t4_truthfix (只读证据目录)",
+  "parallel": 3,
+  "per_bag_timeout_s": 300,
+  "end_diff_caliber": "不变=末帧 odom 采样 vs 末帧 truth 采样 (v519 原口径)",
+  "odom_crosscheck": "odom n 逐袋复核 100/100 与原 perbag 数据段一致"
+ },
+ "counts": {
+  "OK": 100
+ },
+ "end_diff_range_m": [
+  0.2237,
+  1014.4171
+ ],
+ "artifacts": {
+  "perbag": "perbag_truthfix/<run>.json x100",
+  "tools": "work/truthfix_20261006/"
+ },
+ "results": [
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGCAUCHY_231757/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90995,
+   "truth_dur_s": 363.976,
+   "truth_pz_min": 0.1025,
+   "truth_pz_max": 1.9319,
+   "odom_n": 485,
+   "odom_last_xyz": [
+    -29.4791,
+    -40.0707,
+    1.6331
+   ],
+   "truth_last_xyz": [
+    3.1721,
+    -1.4376,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 50.6059,
+   "err": null,
+   "run": "run_DIAGCAUCHY_231757",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_DIAGGUARD2_233403/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 65727,
+   "truth_dur_s": 262.904,
+   "truth_pz_min": 0.1041,
+   "truth_pz_max": 1.5535,
+   "odom_n": 2517,
+   "odom_last_xyz": [
+    2.8381,
+    -2.0656,
+    -0.1848
+   ],
+   "truth_last_xyz": [
+    3.5357,
+    -1.2931,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 1.0804,
+   "err": null,
+   "run": "run_DIAGGUARD2_233403",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 66492,
+   "truth_dur_s": 265.964,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 0.9851,
+   "odom_n": 2586,
+   "odom_last_xyz": [
+    2.2243,
+    -0.0823,
+    0.6645
+   ],
+   "truth_last_xyz": [
+    1.8781,
+    -0.1966,
+    0.1074
+   ],
+   "end_diff_odom_vs_truth_m": 0.6658,
+   "err": null,
+   "run": "run_E4R2-GOFF-D10-LODOM_100819",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10_095056/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 46964,
+   "truth_dur_s": 187.852,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.0859,
+   "odom_n": 1801,
+   "odom_last_xyz": [
+    -0.0464,
+    -0.0016,
+    0.9647
+   ],
+   "truth_last_xyz": [
+    0.8874,
+    1.011,
+    1.0527
+   ],
+   "end_diff_odom_vs_truth_m": 1.3803,
+   "err": null,
+   "run": "run_E4R2-GOFF-D10_095056",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30-I125_103836/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 16275,
+   "truth_dur_s": 65.096,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.9819,
+   "odom_n": 624,
+   "odom_last_xyz": [
+    -0.2619,
+    0.1174,
+    -0.0029
+   ],
+   "truth_last_xyz": [
+    0.7476,
+    1.0913,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 1.4069,
+   "err": null,
+   "run": "run_E4R2-GOFF-D30-I125_103836",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30_102511/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 47022,
+   "truth_dur_s": 188.076,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.0212,
+   "odom_n": 1814,
+   "odom_last_xyz": [
+    -0.0857,
+    0.0354,
+    0.9641
+   ],
+   "truth_last_xyz": [
+    0.9428,
+    1.0869,
+    0.9586
+   ],
+   "end_diff_odom_vs_truth_m": 1.4709,
+   "err": null,
+   "run": "run_E4R2-GOFF-D30_102511",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D60_103420/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 47005,
+   "truth_dur_s": 188.008,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.3078,
+   "odom_n": 1846,
+   "odom_last_xyz": [
+    0.2406,
+    0.1162,
+    0.9553
+   ],
+   "truth_last_xyz": [
+    1.2469,
+    1.1138,
+    1.0357
+   ],
+   "end_diff_odom_vs_truth_m": 1.4193,
+   "err": null,
+   "run": "run_E4R2-GOFF-D60_103420",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D10_095654/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 46616,
+   "truth_dur_s": 186.452,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.0688,
+   "odom_n": 1822,
+   "odom_last_xyz": [
+    -0.0707,
+    0.0518,
+    0.9633
+   ],
+   "truth_last_xyz": [
+    1.029,
+    1.1015,
+    1.0562
+   ],
+   "end_diff_odom_vs_truth_m": 1.5231,
+   "err": null,
+   "run": "run_E4R2-GON-D10_095654",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D30_101723/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 66001,
+   "truth_dur_s": 263.996,
+   "truth_pz_min": 0.0828,
+   "truth_pz_max": 2.2402,
+   "odom_n": 2535,
+   "odom_last_xyz": [
+    0.9118,
+    3.4039,
+    0.1873
+   ],
+   "truth_last_xyz": [
+    10.1934,
+    -1.4428,
+    0.0842
+   ],
+   "end_diff_odom_vs_truth_m": 10.4713,
+   "err": null,
+   "run": "run_E4R2-GON-D30_101723",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-REGRESS_104334/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 46800,
+   "truth_dur_s": 187.196,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.2136,
+   "odom_n": 1819,
+   "odom_last_xyz": [
+    -0.1437,
+    -0.0514,
+    0.9664
+   ],
+   "truth_last_xyz": [
+    0.8095,
+    0.8332,
+    0.9847
+   ],
+   "end_diff_odom_vs_truth_m": 1.3005,
+   "err": null,
+   "run": "run_E4R2-REGRESS_104334",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_193039/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 67733,
+   "truth_dur_s": 270.928,
+   "truth_pz_min": 0.0977,
+   "truth_pz_max": 0.3579,
+   "odom_n": 65,
+   "odom_last_xyz": [
+    -0.0001,
+    0.0296,
+    0.1755
+   ],
+   "truth_last_xyz": [
+    0.4173,
+    2.52,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 2.5262,
+   "err": null,
+   "run": "run_E4_GOFF_D10_193039",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_R2_194927/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 67803,
+   "truth_dur_s": 271.2,
+   "truth_pz_min": 0.0542,
+   "truth_pz_max": 2.1517,
+   "odom_n": 72,
+   "odom_last_xyz": [
+    1.0567,
+    0.6735,
+    -0.2641
+   ],
+   "truth_last_xyz": [
+    0.6007,
+    11.5281,
+    0.0548
+   ],
+   "end_diff_odom_vs_truth_m": 10.8689,
+   "err": null,
+   "run": "run_E4_GOFF_D10_R2_194927",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3-P1B_095639/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 81379,
+   "truth_dur_s": 325.512,
+   "truth_pz_min": 0.0916,
+   "truth_pz_max": 21.6032,
+   "odom_n": 2938,
+   "odom_last_xyz": [
+    44.4505,
+    -63.1291,
+    -17.0707
+   ],
+   "truth_last_xyz": [
+    7.0685,
+    -15.7061,
+    7.8433
+   ],
+   "end_diff_odom_vs_truth_m": 65.3227,
+   "err": null,
+   "run": "run_F3-P1B_095639",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B10_154733/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 29168,
+   "truth_dur_s": 116.668,
+   "truth_pz_min": 0.0519,
+   "truth_pz_max": 1.541,
+   "odom_n": 1062,
+   "odom_last_xyz": [
+    -233.3241,
+    619.4794,
+    101.9454
+   ],
+   "truth_last_xyz": [
+    -18.6518,
+    5.5766,
+    0.0545
+   ],
+   "end_diff_odom_vs_truth_m": 658.2877,
+   "err": null,
+   "run": "run_F3B10_154733",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B12_160420/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 61102,
+   "truth_dur_s": 244.404,
+   "truth_pz_min": 0.0505,
+   "truth_pz_max": 10.0395,
+   "odom_n": 2112,
+   "odom_last_xyz": [
+    -44.0641,
+    -8.2285,
+    2.1726
+   ],
+   "truth_last_xyz": [
+    -268.3188,
+    -246.5652,
+    0.0544
+   ],
+   "end_diff_odom_vs_truth_m": 327.2599,
+   "err": null,
+   "run": "run_F3B12_160420",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B13_161000/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 29153,
+   "truth_dur_s": 116.596,
+   "truth_pz_min": 0.1036,
+   "truth_pz_max": 1.1463,
+   "odom_n": 1107,
+   "odom_last_xyz": [
+    0.6502,
+    -1.8582,
+    0.0464
+   ],
+   "truth_last_xyz": [
+    -1.4621,
+    -0.9843,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 2.2867,
+   "err": null,
+   "run": "run_F3B13_161000",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B14_163613/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 36986,
+   "truth_dur_s": 147.94,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 23.7663,
+   "odom_n": 1451,
+   "odom_last_xyz": [
+    -2.9001,
+    0.9942,
+    -12.7946
+   ],
+   "truth_last_xyz": [
+    -8.8714,
+    -4.1382,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 15.1127,
+   "err": null,
+   "run": "run_F3B14_163613",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B15_190535/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 57539,
+   "truth_dur_s": 230.144,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.6708,
+   "odom_n": 2210,
+   "odom_last_xyz": [
+    -3.6113,
+    -1.6058,
+    0.2662
+   ],
+   "truth_last_xyz": [
+    -2.7392,
+    -0.4812,
+    0.1046
+   ],
+   "end_diff_odom_vs_truth_m": 1.4323,
+   "err": null,
+   "run": "run_F3B15_190535",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B2_035213/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 46731,
+   "truth_dur_s": 186.912,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.118,
+   "odom_n": 1823,
+   "odom_last_xyz": [
+    -0.0454,
+    0.0314,
+    0.9644
+   ],
+   "truth_last_xyz": [
+    1.0651,
+    1.0559,
+    1.108
+   ],
+   "end_diff_odom_vs_truth_m": 1.5177,
+   "err": null,
+   "run": "run_F3B2_035213",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B3_042444/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 9432,
+   "truth_dur_s": 37.724,
+   "truth_pz_min": 0.1033,
+   "truth_pz_max": 0.9268,
+   "odom_n": 371,
+   "odom_last_xyz": [
+    -0.0236,
+    0.8342,
+    -0.0076
+   ],
+   "truth_last_xyz": [
+    1.056,
+    1.862,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 1.4948,
+   "err": null,
+   "run": "run_F3B3_042444",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B4_043658/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 9428,
+   "truth_dur_s": 37.708,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.9485,
+   "odom_n": 367,
+   "odom_last_xyz": [
+    0.8447,
+    -0.1089,
+    0.0346
+   ],
+   "truth_last_xyz": [
+    1.8686,
+    0.8668,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 1.4161,
+   "err": null,
+   "run": "run_F3B4_043658",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B5_092608/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 29092,
+   "truth_dur_s": 116.364,
+   "truth_pz_min": 0.0498,
+   "truth_pz_max": 4.5457,
+   "odom_n": 997,
+   "odom_last_xyz": [
+    16.6544,
+    16.5039,
+    -2.2479
+   ],
+   "truth_last_xyz": [
+    -18.2582,
+    0.7197,
+    0.0543
+   ],
+   "end_diff_odom_vs_truth_m": 38.3839,
+   "err": null,
+   "run": "run_F3B5_092608",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B6_093203/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 42242,
+   "truth_dur_s": 168.964,
+   "truth_pz_min": 0.0539,
+   "truth_pz_max": 3.6593,
+   "odom_n": 1602,
+   "odom_last_xyz": [
+    1.0934,
+    -0.2699,
+    0.0774
+   ],
+   "truth_last_xyz": [
+    -8.3016,
+    12.4367,
+    0.0545
+   ],
+   "end_diff_odom_vs_truth_m": 15.8027,
+   "err": null,
+   "run": "run_F3B6_093203",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B7_093720/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 30775,
+   "truth_dur_s": 123.096,
+   "truth_pz_min": 0.0387,
+   "truth_pz_max": 6.2838,
+   "odom_n": 1167,
+   "odom_last_xyz": [
+    -0.0229,
+    0.0266,
+    -0.0564
+   ],
+   "truth_last_xyz": [
+    10.981,
+    3.6752,
+    0.0543
+   ],
+   "end_diff_odom_vs_truth_m": 11.5935,
+   "err": null,
+   "run": "run_F3B7_093720",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B8_094417/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 33397,
+   "truth_dur_s": 133.584,
+   "truth_pz_min": 0.1035,
+   "truth_pz_max": 0.9802,
+   "odom_n": 1281,
+   "odom_last_xyz": [
+    -0.1081,
+    0.2733,
+    -0.0067
+   ],
+   "truth_last_xyz": [
+    0.9268,
+    1.2623,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 1.4358,
+   "err": null,
+   "run": "run_F3B8_094417",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 29142,
+   "truth_dur_s": 116.564,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.2936,
+   "odom_n": 1108,
+   "odom_last_xyz": [
+    -1.4324,
+    -1.224,
+    -24.4245
+   ],
+   "truth_last_xyz": [
+    3.9556,
+    -0.4181,
+    0.2956
+   ],
+   "end_diff_odom_vs_truth_m": 25.3132,
+   "err": null,
+   "run": "run_F3B9_094909",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_HVNET1_050936/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 25784,
+   "truth_dur_s": 103.132,
+   "truth_pz_min": 0.104,
+   "truth_pz_max": 2.7567,
+   "odom_n": 1002,
+   "odom_last_xyz": [
+    -0.6101,
+    -0.1619,
+    -2.9701
+   ],
+   "truth_last_xyz": [
+    0.6134,
+    0.663,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 3.4107,
+   "err": null,
+   "run": "run_HVNET1_050936",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_HVNET2_051401/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 23309,
+   "truth_dur_s": 93.228,
+   "truth_pz_min": 0.1033,
+   "truth_pz_max": 1.1355,
+   "odom_n": 910,
+   "odom_last_xyz": [
+    -0.0362,
+    -0.0943,
+    -0.0014
+   ],
+   "truth_last_xyz": [
+    0.8535,
+    0.8284,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 1.2862,
+   "err": null,
+   "run": "run_HVNET2_051401",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_RAREP1_051826/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 23257,
+   "truth_dur_s": 93.024,
+   "truth_pz_min": 0.1043,
+   "truth_pz_max": 1.1994,
+   "odom_n": 889,
+   "odom_last_xyz": [
+    7.7506,
+    -0.7648,
+    -0.1198
+   ],
+   "truth_last_xyz": [
+    8.7577,
+    0.099,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 1.3457,
+   "err": null,
+   "run": "run_RAREP1_051826",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2a_230310/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 74095,
+   "truth_dur_s": 296.372,
+   "truth_pz_min": 0.0508,
+   "truth_pz_max": 17.7552,
+   "odom_n": 529,
+   "odom_last_xyz": [
+    -0.031,
+    0.022,
+    -0.0007
+   ],
+   "truth_last_xyz": [
+    -112.4751,
+    124.0869,
+    0.0545
+   ],
+   "end_diff_odom_vs_truth_m": 167.4388,
+   "err": null,
+   "run": "run_SUPHV2a_230310",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2b_230920/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 95990,
+   "truth_dur_s": 383.956,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 0.6063,
+   "odom_n": 2091,
+   "odom_last_xyz": [
+    -0.1994,
+    0.0393,
+    0.008
+   ],
+   "truth_last_xyz": [
+    3.9556,
+    -0.8882,
+    0.2967
+   ],
+   "end_diff_odom_vs_truth_m": 4.2671,
+   "err": null,
+   "run": "run_SUPHV2b_230920",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3a_001611/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 35149,
+   "truth_dur_s": 140.592,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 1.1382,
+   "odom_n": 1346,
+   "odom_last_xyz": [
+    0.5183,
+    -1.5624,
+    -0.5142
+   ],
+   "truth_last_xyz": [
+    0.7979,
+    -0.4332,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 1.3177,
+   "err": null,
+   "run": "run_SUPHV3a_001611",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3b_001918/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 35101,
+   "truth_dur_s": 140.396,
+   "truth_pz_min": 0.1043,
+   "truth_pz_max": 3.2827,
+   "odom_n": 1347,
+   "odom_last_xyz": [
+    0.6643,
+    0.3748,
+    -3.2463
+   ],
+   "truth_last_xyz": [
+    0.9069,
+    3.3897,
+    0.105
+   ],
+   "end_diff_odom_vs_truth_m": 4.5144,
+   "err": null,
+   "run": "run_SUPHV3b_001918",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPHVa_224750/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 39198,
+   "truth_dur_s": 156.784,
+   "truth_pz_min": 0.1035,
+   "truth_pz_max": 4.8859,
+   "odom_n": 1500,
+   "odom_last_xyz": [
+    0.6663,
+    2.0556,
+    -4.714
+   ],
+   "truth_last_xyz": [
+    1.8529,
+    2.6922,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 5.0035,
+   "err": null,
+   "run": "run_SUPHVa_224750",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2A_234133/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 64768,
+   "truth_dur_s": 259.06,
+   "truth_pz_min": 0.1031,
+   "truth_pz_max": 0.9698,
+   "odom_n": 2499,
+   "odom_last_xyz": [
+    4.4564,
+    -4.21,
+    0.192
+   ],
+   "truth_last_xyz": [
+    3.9963,
+    -5.0515,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 0.963,
+   "err": null,
+   "run": "run_SUPP2A_234133",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av2_235010/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 77235,
+   "truth_dur_s": 308.932,
+   "truth_pz_min": 0.1006,
+   "truth_pz_max": 1.3518,
+   "odom_n": 2411,
+   "odom_last_xyz": [
+    -0.7808,
+    -0.5109,
+    -0.317
+   ],
+   "truth_last_xyz": [
+    2.371,
+    -0.2175,
+    0.1044
+   ],
+   "end_diff_odom_vs_truth_m": 3.1934,
+   "err": null,
+   "run": "run_SUPP2Av2_235010",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av3_235735/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 65228,
+   "truth_dur_s": 260.904,
+   "truth_pz_min": 0.1033,
+   "truth_pz_max": 1.0271,
+   "odom_n": 2500,
+   "odom_last_xyz": [
+    3.2843,
+    -3.8229,
+    0.1308
+   ],
+   "truth_last_xyz": [
+    4.2019,
+    -3.6504,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 0.934,
+   "err": null,
+   "run": "run_SUPP2Av3_235735",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP3INJ_000528/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 65208,
+   "truth_dur_s": 260.824,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 1.1442,
+   "odom_n": 2484,
+   "odom_last_xyz": [
+    0.3287,
+    -0.2314,
+    -0.8727
+   ],
+   "truth_last_xyz": [
+    3.2686,
+    0.3331,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 3.1492,
+   "err": null,
+   "run": "run_SUPP3INJ_000528",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX1b_224122/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 79302,
+   "truth_dur_s": 317.2,
+   "truth_pz_min": 0.1014,
+   "truth_pz_max": 2.8449,
+   "odom_n": 2916,
+   "odom_last_xyz": [
+    -0.0003,
+    0.0006,
+    0.0006
+   ],
+   "truth_last_xyz": [
+    5.5358,
+    -4.1176,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 6.9006,
+   "err": null,
+   "run": "run_SUPX1b_224122",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 35823,
+   "truth_dur_s": 143.288,
+   "truth_pz_min": 0.0986,
+   "truth_pz_max": 0.4927,
+   "odom_n": 821,
+   "odom_last_xyz": [
+    -0.2879,
+    -0.1438,
+    -0.0187
+   ],
+   "truth_last_xyz": [
+    -0.6226,
+    -2.9489,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 2.8278,
+   "err": null,
+   "run": "run_SUPX2a_225543",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2b_230005/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 30376,
+   "truth_dur_s": 121.5,
+   "truth_pz_min": 0.1034,
+   "truth_pz_max": 0.452,
+   "odom_n": 724,
+   "odom_last_xyz": [
+    -0.001,
+    -0.0006,
+    0.0003
+   ],
+   "truth_last_xyz": [
+    -0.1583,
+    -2.0876,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 2.0955,
+   "err": null,
+   "run": "run_SUPX2b_230005",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL1_201552/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 9229,
+   "truth_dur_s": 36.904,
+   "truth_pz_min": 0.0994,
+   "truth_pz_max": 0.298,
+   "odom_n": 355,
+   "odom_last_xyz": [
+    0.0001,
+    0.0116,
+    0.0015
+   ],
+   "truth_last_xyz": [
+    0.405,
+    0.9877,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 1.0617,
+   "err": null,
+   "run": "run_T2BL1_201552",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL2_201729/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 104085,
+   "truth_dur_s": 416.328,
+   "truth_pz_min": 0.054,
+   "truth_pz_max": 3.0785,
+   "odom_n": 3897,
+   "odom_last_xyz": [
+    -446.1029,
+    -245.2623,
+    -2.4902
+   ],
+   "truth_last_xyz": [
+    -12.3901,
+    19.5722,
+    0.0544
+   ],
+   "end_diff_odom_vs_truth_m": 508.1836,
+   "err": null,
+   "run": "run_T2BL2_201729",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL3_202549/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 13656,
+   "truth_dur_s": 54.616,
+   "truth_pz_min": 0.0995,
+   "truth_pz_max": 0.3994,
+   "odom_n": 527,
+   "odom_last_xyz": [
+    0.0242,
+    0.0035,
+    -0.0047
+   ],
+   "truth_last_xyz": [
+    0.0755,
+    -0.1851,
+    0.1041
+   ],
+   "end_diff_odom_vs_truth_m": 0.2237,
+   "err": null,
+   "run": "run_T2BL3_202549",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL4_202722/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 85227,
+   "truth_dur_s": 340.9,
+   "truth_pz_min": 0.0495,
+   "truth_pz_max": 7.1226,
+   "odom_n": 3115,
+   "odom_last_xyz": [
+    8.7245,
+    67.8534,
+    -6.4709
+   ],
+   "truth_last_xyz": [
+    -78.1399,
+    7.3778,
+    0.0544
+   ],
+   "end_diff_odom_vs_truth_m": 106.0438,
+   "err": null,
+   "run": "run_T2BL4_202722",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL5_203404/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 63928,
+   "truth_dur_s": 255.708,
+   "truth_pz_min": 0.1031,
+   "truth_pz_max": 0.7317,
+   "odom_n": 2529,
+   "odom_last_xyz": [
+    6.5542,
+    -5.6463,
+    0.6395
+   ],
+   "truth_last_xyz": [
+    7.4006,
+    -4.7996,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 1.3113,
+   "err": null,
+   "run": "run_T2BL5_203404",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL6_203956/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 42321,
+   "truth_dur_s": 169.272,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 0.6866,
+   "odom_n": 1647,
+   "odom_last_xyz": [
+    -0.0055,
+    -0.0016,
+    0.0002
+   ],
+   "truth_last_xyz": [
+    -0.8906,
+    2.2533,
+    0.1044
+   ],
+   "end_diff_odom_vs_truth_m": 2.4246,
+   "err": null,
+   "run": "run_T2BL6_203956",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL7_204325/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 73932,
+   "truth_dur_s": 295.724,
+   "truth_pz_min": 0.053,
+   "truth_pz_max": 9.4661,
+   "odom_n": 2888,
+   "odom_last_xyz": [
+    -27.3847,
+    -1.3507,
+    -10.931
+   ],
+   "truth_last_xyz": [
+    45.4672,
+    -8.3006,
+    0.0545
+   ],
+   "end_diff_odom_vs_truth_m": 74.0026,
+   "err": null,
+   "run": "run_T2BL7_204325",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL8_204921/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 35820,
+   "truth_dur_s": 143.272,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.6915,
+   "odom_n": 1344,
+   "odom_last_xyz": [
+    0.0114,
+    0.0706,
+    -0.0048
+   ],
+   "truth_last_xyz": [
+    0.9534,
+    1.2886,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 1.5436,
+   "err": null,
+   "run": "run_T2BL8_204921",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2BL9_205405/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 73912,
+   "truth_dur_s": 295.64,
+   "truth_pz_min": 0.0543,
+   "truth_pz_max": 6.5038,
+   "odom_n": 2863,
+   "odom_last_xyz": [
+    5.2138,
+    -14.9358,
+    -5.9526
+   ],
+   "truth_last_xyz": [
+    2.8317,
+    -10.2732,
+    0.0549
+   ],
+   "end_diff_odom_vs_truth_m": 7.969,
+   "err": null,
+   "run": "run_T2BL9_205405",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2M0_010259/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 48592,
+   "truth_dur_s": 194.36,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.1379,
+   "odom_n": 1892,
+   "odom_last_xyz": [
+    -0.0153,
+    0.0131,
+    0.9674
+   ],
+   "truth_last_xyz": [
+    0.9277,
+    0.9291,
+    1.0757
+   ],
+   "end_diff_odom_vs_truth_m": 1.3191,
+   "err": null,
+   "run": "run_T2M0_010259",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90280,
+   "truth_dur_s": 361.112,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.3679,
+   "odom_n": 3473,
+   "odom_last_xyz": [
+    7.0303,
+    -4.0824,
+    0.9617
+   ],
+   "truth_last_xyz": [
+    -7.1329,
+    3.8854,
+    2.3639
+   ],
+   "end_diff_odom_vs_truth_m": 16.311,
+   "err": null,
+   "run": "run_T2MACH10_020846",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90433,
+   "truth_dur_s": 361.728,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 1.8846,
+   "odom_n": 3473,
+   "odom_last_xyz": [
+    0.0005,
+    0.0014,
+    0.0002
+   ],
+   "truth_last_xyz": [
+    3.7868,
+    -2.1399,
+    0.1043
+   ],
+   "end_diff_odom_vs_truth_m": 4.3511,
+   "err": null,
+   "run": "run_T2MACH11_021559",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90403,
+   "truth_dur_s": 361.6,
+   "truth_pz_min": 0.1017,
+   "truth_pz_max": 2.817,
+   "odom_n": 3451,
+   "odom_last_xyz": [
+    7.0242,
+    -4.2075,
+    0.9766
+   ],
+   "truth_last_xyz": [
+    4.2688,
+    -11.5595,
+    2.7292
+   ],
+   "end_diff_odom_vs_truth_m": 8.0446,
+   "err": null,
+   "run": "run_T2MACH12_022312",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 60649,
+   "truth_dur_s": 242.592,
+   "truth_pz_min": 0.1033,
+   "truth_pz_max": 1.2728,
+   "odom_n": 2319,
+   "odom_last_xyz": [
+    0.0021,
+    -0.0024,
+    -0.0007
+   ],
+   "truth_last_xyz": [
+    4.9122,
+    -1.6489,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 5.1799,
+   "err": null,
+   "run": "run_T2MACH1_010832",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 48443,
+   "truth_dur_s": 193.76,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.6556,
+   "odom_n": 1866,
+   "odom_last_xyz": [
+    7.1156,
+    -3.7937,
+    0.9618
+   ],
+   "truth_last_xyz": [
+    6.3243,
+    -4.7975,
+    1.5057
+   ],
+   "end_diff_odom_vs_truth_m": 1.3891,
+   "err": null,
+   "run": "run_T2MACH2_011343",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 89863,
+   "truth_dur_s": 359.444,
+   "truth_pz_min": 0.099,
+   "truth_pz_max": 0.7584,
+   "odom_n": 3428,
+   "odom_last_xyz": [
+    -0.0001,
+    0.0,
+    -0.0002
+   ],
+   "truth_last_xyz": [
+    7.8754,
+    -10.1471,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 12.8451,
+   "err": null,
+   "run": "run_T2MACH4_012523",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90023,
+   "truth_dur_s": 360.08,
+   "truth_pz_min": 0.098,
+   "truth_pz_max": 0.979,
+   "odom_n": 3436,
+   "odom_last_xyz": [
+    -0.0002,
+    -0.0025,
+    -0.0005
+   ],
+   "truth_last_xyz": [
+    2.6836,
+    -1.5083,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 3.0792,
+   "err": null,
+   "run": "run_T2MACH5_013233",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90514,
+   "truth_dur_s": 362.052,
+   "truth_pz_min": 0.1029,
+   "truth_pz_max": 4.3795,
+   "odom_n": 3470,
+   "odom_last_xyz": [
+    0.0039,
+    -0.0125,
+    -0.0022
+   ],
+   "truth_last_xyz": [
+    -49.0983,
+    42.6345,
+    0.1044
+   ],
+   "end_diff_odom_vs_truth_m": 65.037,
+   "err": null,
+   "run": "run_T2MACH6_013944",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90531,
+   "truth_dur_s": 362.12,
+   "truth_pz_min": 0.1028,
+   "truth_pz_max": 1.5385,
+   "odom_n": 3487,
+   "odom_last_xyz": [
+    -0.8722,
+    -0.7632,
+    0.033
+   ],
+   "truth_last_xyz": [
+    4.2218,
+    -4.167,
+    0.1047
+   ],
+   "end_diff_odom_vs_truth_m": 6.1269,
+   "err": null,
+   "run": "run_T2MACH7_014657",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90464,
+   "truth_dur_s": 361.848,
+   "truth_pz_min": 0.1039,
+   "truth_pz_max": 16.7953,
+   "odom_n": 3485,
+   "odom_last_xyz": [
+    -788.1495,
+    -448.2233,
+    -67.4282
+   ],
+   "truth_last_xyz": [
+    90.751,
+    51.259,
+    16.7953
+   ],
+   "end_diff_odom_vs_truth_m": 1014.4171,
+   "err": null,
+   "run": "run_T2MACH9_020133",
+   "received": 1
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA10_132515/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 171098,
+   "truth_dur_s": 684.384,
+   "truth_pz_min": 0.099,
+   "truth_pz_max": 1.1558,
+   "odom_n": 5094,
+   "odom_last_xyz": [
+    0.0022,
+    0.0013,
+    0.0013
+   ],
+   "truth_last_xyz": [
+    2.8624,
+    -0.5573,
+    0.1042
+   ],
+   "end_diff_odom_vs_truth_m": 2.9161,
+   "err": null,
+   "run": "run_T2RA10_132515",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA12hov_133845/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 48939,
+   "truth_dur_s": 195.752,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.005,
+   "odom_n": 1907,
+   "odom_last_xyz": [
+    -0.0108,
+    -0.0589,
+    0.9655
+   ],
+   "truth_last_xyz": [
+    0.9826,
+    0.8891,
+    0.9908
+   ],
+   "end_diff_odom_vs_truth_m": 1.3734,
+   "err": null,
+   "run": "run_T2RA12hov_133845",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA13_134733/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 91019,
+   "truth_dur_s": 364.072,
+   "truth_pz_min": 0.1041,
+   "truth_pz_max": 0.9685,
+   "odom_n": 3495,
+   "odom_last_xyz": [
+    3.7418,
+    -3.269,
+    0.9725
+   ],
+   "truth_last_xyz": [
+    4.7545,
+    -2.1384,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 1.7483,
+   "err": null,
+   "run": "run_T2RA13_134733",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA14_135448/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 91253,
+   "truth_dur_s": 365.004,
+   "truth_pz_min": 0.1041,
+   "truth_pz_max": 1.0486,
+   "odom_n": 3430,
+   "odom_last_xyz": [
+    3.2258,
+    -1.9116,
+    0.0589
+   ],
+   "truth_last_xyz": [
+    3.7516,
+    -0.9803,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 1.0705,
+   "err": null,
+   "run": "run_T2RA14_135448",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA15_140205/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 114129,
+   "truth_dur_s": 456.504,
+   "truth_pz_min": 0.1009,
+   "truth_pz_max": 7.3083,
+   "odom_n": 4378,
+   "odom_last_xyz": [
+    1.3992,
+    -0.5329,
+    0.9801
+   ],
+   "truth_last_xyz": [
+    -2.862,
+    -2.8838,
+    3.193
+   ],
+   "end_diff_odom_vs_truth_m": 5.3462,
+   "err": null,
+   "run": "run_T2RA15_140205",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA16_141056/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 170964,
+   "truth_dur_s": 683.852,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 3.9226,
+   "odom_n": 6598,
+   "odom_last_xyz": [
+    6.9641,
+    -3.9302,
+    0.9599
+   ],
+   "truth_last_xyz": [
+    1.3546,
+    1.8895,
+    3.1471
+   ],
+   "end_diff_odom_vs_truth_m": 8.3737,
+   "err": null,
+   "run": "run_T2RA16_141056",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA17hov_142425/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 49233,
+   "truth_dur_s": 196.92,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.2735,
+   "odom_n": 1923,
+   "odom_last_xyz": [
+    -0.0526,
+    0.0929,
+    0.9675
+   ],
+   "truth_last_xyz": [
+    0.4037,
+    0.9306,
+    0.9852
+   ],
+   "end_diff_odom_vs_truth_m": 0.954,
+   "err": null,
+   "run": "run_T2RA17hov_142425",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA19_143516/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 49060,
+   "truth_dur_s": 196.232,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.185,
+   "odom_n": 1901,
+   "odom_last_xyz": [
+    7.2279,
+    -3.9355,
+    0.9591
+   ],
+   "truth_last_xyz": [
+    4.3658,
+    -4.182,
+    1.1814
+   ],
+   "end_diff_odom_vs_truth_m": 2.8813,
+   "err": null,
+   "run": "run_T2RA19_143516",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA1_122012/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 48991,
+   "truth_dur_s": 195.96,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.1971,
+   "odom_n": 1845,
+   "odom_last_xyz": [
+    6.8479,
+    -3.8425,
+    0.9633
+   ],
+   "truth_last_xyz": [
+    5.3548,
+    0.2073,
+    1.9789
+   ],
+   "end_diff_odom_vs_truth_m": 4.4341,
+   "err": null,
+   "run": "run_T2RA1_122012",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA20_143940/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 91384,
+   "truth_dur_s": 365.528,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 1.4818,
+   "odom_n": 3255,
+   "odom_last_xyz": [
+    0.0083,
+    0.0309,
+    0.0041
+   ],
+   "truth_last_xyz": [
+    3.9551,
+    -0.5933,
+    0.2972
+   ],
+   "end_diff_odom_vs_truth_m": 4.0066,
+   "err": null,
+   "run": "run_T2RA20_143940",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA21_144657/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 171059,
+   "truth_dur_s": 684.232,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.1722,
+   "odom_n": 6630,
+   "odom_last_xyz": [
+    6.3639,
+    -3.6869,
+    0.9568
+   ],
+   "truth_last_xyz": [
+    5.1458,
+    -5.1686,
+    1.1198
+   ],
+   "end_diff_odom_vs_truth_m": 1.9251,
+   "err": null,
+   "run": "run_T2RA21_144657",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA22_145941/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 171365,
+   "truth_dur_s": 685.452,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.3406,
+   "odom_n": 6379,
+   "odom_last_xyz": [
+    0.0675,
+    3.345,
+    1.1324
+   ],
+   "truth_last_xyz": [
+    4.1669,
+    0.0345,
+    0.2947
+   ],
+   "end_diff_odom_vs_truth_m": 5.3355,
+   "err": null,
+   "run": "run_T2RA22_145941",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA23hov_151312/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 61008,
+   "truth_dur_s": 244.028,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.246,
+   "odom_n": 2363,
+   "odom_last_xyz": [
+    -0.5926,
+    0.2445,
+    0.9602
+   ],
+   "truth_last_xyz": [
+    -0.195,
+    1.5066,
+    1.0084
+   ],
+   "end_diff_odom_vs_truth_m": 1.3241,
+   "err": null,
+   "run": "run_T2RA23hov_151312",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA2_122435/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90992,
+   "truth_dur_s": 363.956,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.3073,
+   "odom_n": 3413,
+   "odom_last_xyz": [
+    7.0471,
+    -4.1092,
+    0.9717
+   ],
+   "truth_last_xyz": [
+    4.6436,
+    -4.7796,
+    1.6205
+   ],
+   "end_diff_odom_vs_truth_m": 2.5782,
+   "err": null,
+   "run": "run_T2RA2_122435",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA3_123151/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 171030,
+   "truth_dur_s": 684.112,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.4635,
+   "odom_n": 5818,
+   "odom_last_xyz": [
+    0.0306,
+    -0.0194,
+    -0.0329
+   ],
+   "truth_last_xyz": [
+    4.9552,
+    -2.2222,
+    0.2965
+   ],
+   "end_diff_odom_vs_truth_m": 5.4049,
+   "err": null,
+   "run": "run_T2RA3_123151",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA4_124434/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 170768,
+   "truth_dur_s": 683.068,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 4.8049,
+   "odom_n": 6542,
+   "odom_last_xyz": [
+    6.9142,
+    -3.6293,
+    0.9608
+   ],
+   "truth_last_xyz": [
+    4.0592,
+    -1.4554,
+    3.6763
+   ],
+   "end_diff_odom_vs_truth_m": 4.5001,
+   "err": null,
+   "run": "run_T2RA4_124434",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 48830,
+   "truth_dur_s": 195.312,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.075,
+   "odom_n": 1906,
+   "odom_last_xyz": [
+    -0.0665,
+    -0.0681,
+    0.9661
+   ],
+   "truth_last_xyz": [
+    0.7192,
+    0.8932,
+    1.0304
+   ],
+   "end_diff_odom_vs_truth_m": 1.2432,
+   "err": null,
+   "run": "run_T2RA5hover_121549",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA7_125801/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 91029,
+   "truth_dur_s": 364.108,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.9162,
+   "odom_n": 1911,
+   "odom_last_xyz": [
+    -24.5566,
+    43.4471,
+    -4.0556
+   ],
+   "truth_last_xyz": [
+    5.3245,
+    -2.6115,
+    2.2549
+   ],
+   "end_diff_odom_vs_truth_m": 55.2638,
+   "err": null,
+   "run": "run_T2RA7_125801",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA8_130517/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90972,
+   "truth_dur_s": 363.884,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.7922,
+   "odom_n": 3513,
+   "odom_last_xyz": [
+    7.0423,
+    -3.9253,
+    0.9672
+   ],
+   "truth_last_xyz": [
+    4.7482,
+    -3.8315,
+    1.5854
+   ],
+   "end_diff_odom_vs_truth_m": 2.3777,
+   "err": null,
+   "run": "run_T2RA8_130517",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2RA9_131232/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 171010,
+   "truth_dur_s": 684.032,
+   "truth_pz_min": 0.1029,
+   "truth_pz_max": 1.8011,
+   "odom_n": 6270,
+   "odom_last_xyz": [
+    6.7312,
+    -4.05,
+    0.964
+   ],
+   "truth_last_xyz": [
+    -11.8256,
+    -11.3034,
+    1.1971
+   ],
+   "end_diff_odom_vs_truth_m": 19.9254,
+   "err": null,
+   "run": "run_T2RA9_131232",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1_031909/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 43900,
+   "truth_dur_s": 175.588,
+   "truth_pz_min": 0.1041,
+   "truth_pz_max": 1.8202,
+   "odom_n": 1668,
+   "odom_last_xyz": [
+    2.3716,
+    -2.5015,
+    -0.3704
+   ],
+   "truth_last_xyz": [
+    2.3187,
+    -0.9508,
+    0.105
+   ],
+   "end_diff_odom_vs_truth_m": 1.6229,
+   "err": null,
+   "run": "run_T2U4OBS1_031909",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1r_032512/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 88383,
+   "truth_dur_s": 353.524,
+   "truth_pz_min": 0.052,
+   "truth_pz_max": 1.1342,
+   "odom_n": 3455,
+   "odom_last_xyz": [
+    -7.6246,
+    21.399,
+    0.4819
+   ],
+   "truth_last_xyz": [
+    -11.3118,
+    16.135,
+    0.0544
+   ],
+   "end_diff_odom_vs_truth_m": 6.4411,
+   "err": null,
+   "run": "run_T2U4OBS1r_032512",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS2_033232/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 88156,
+   "truth_dur_s": 352.612,
+   "truth_pz_min": 0.1016,
+   "truth_pz_max": 1.2871,
+   "odom_n": 3464,
+   "odom_last_xyz": [
+    0.0155,
+    -0.0461,
+    -0.013
+   ],
+   "truth_last_xyz": [
+    3.0038,
+    -2.4662,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 3.8471,
+   "err": null,
+   "run": "run_T2U4OBS2_033232",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA1_131820/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 66125,
+   "truth_dur_s": 264.492,
+   "truth_pz_min": 0.1037,
+   "truth_pz_max": 2.0622,
+   "odom_n": 2551,
+   "odom_last_xyz": [
+    -1.1232,
+    0.5507,
+    -1.0351
+   ],
+   "truth_last_xyz": [
+    -1.7363,
+    0.4143,
+    0.1049
+   ],
+   "end_diff_odom_vs_truth_m": 1.3016,
+   "err": null,
+   "run": "run_T2ZETA1_131820",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA2_132510/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 82329,
+   "truth_dur_s": 329.304,
+   "truth_pz_min": 0.1042,
+   "truth_pz_max": 8.7193,
+   "odom_n": 3163,
+   "odom_last_xyz": [
+    -0.6,
+    -4.7101,
+    -9.9545
+   ],
+   "truth_last_xyz": [
+    1.1178,
+    1.5264,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 11.9597,
+   "err": null,
+   "run": "run_T2ZETA2_132510",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA3_133227/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 67785,
+   "truth_dur_s": 271.128,
+   "truth_pz_min": 0.1041,
+   "truth_pz_max": 3.7341,
+   "odom_n": 2631,
+   "odom_last_xyz": [
+    -2.0079,
+    0.7261,
+    -4.4009
+   ],
+   "truth_last_xyz": [
+    -1.3415,
+    1.5115,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 4.622,
+   "err": null,
+   "run": "run_T2ZETA3_133227",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA4_135544/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 20502,
+   "truth_dur_s": 82.004,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.342,
+   "odom_n": 781,
+   "odom_last_xyz": [
+    -0.0405,
+    -0.0124,
+    0.0044
+   ],
+   "truth_last_xyz": [
+    -0.4597,
+    0.2127,
+    0.1044
+   ],
+   "end_diff_odom_vs_truth_m": 0.4862,
+   "err": null,
+   "run": "run_T2ZETA4_135544",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA5_140137/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 81776,
+   "truth_dur_s": 327.092,
+   "truth_pz_min": 0.1032,
+   "truth_pz_max": 1.7372,
+   "odom_n": 3114,
+   "odom_last_xyz": [
+    -1.4568,
+    0.6929,
+    -0.9867
+   ],
+   "truth_last_xyz": [
+    -5.0117,
+    -4.184,
+    0.1046
+   ],
+   "end_diff_odom_vs_truth_m": 6.1329,
+   "err": null,
+   "run": "run_T2ZETA5_140137",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETACTL2_134622/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 11474,
+   "truth_dur_s": 45.888,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 0.2383,
+   "odom_n": 427,
+   "odom_last_xyz": [
+    0.4769,
+    -0.5884,
+    0.0072
+   ],
+   "truth_last_xyz": [
+    -0.3099,
+    1.2822,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 2.0317,
+   "err": null,
+   "run": "run_T2ZETACTL2_134622",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T3U1V_023428/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90292,
+   "truth_dur_s": 361.16,
+   "truth_pz_min": 0.0975,
+   "truth_pz_max": 1.032,
+   "odom_n": 3446,
+   "odom_last_xyz": [
+    -0.0013,
+    -0.0006,
+    -0.0003
+   ],
+   "truth_last_xyz": [
+    3.8711,
+    -4.8215,
+    0.1046
+   ],
+   "end_diff_odom_vs_truth_m": 6.1844,
+   "err": null,
+   "run": "run_T3U1V_023428",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_U25FIX_035839/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 66137,
+   "truth_dur_s": 264.54,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 0.4277,
+   "odom_n": 2555,
+   "odom_last_xyz": [
+    -0.0494,
+    -0.0115,
+    0.0019
+   ],
+   "truth_last_xyz": [
+    -0.5816,
+    2.1916,
+    0.1044
+   ],
+   "end_diff_odom_vs_truth_m": 2.2688,
+   "err": null,
+   "run": "run_U25FIX_035839",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_U3PO_211438/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 90018,
+   "truth_dur_s": 360.064,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 2.2666,
+   "odom_n": 3520,
+   "odom_last_xyz": [
+    3.525,
+    -12.243,
+    -0.2618
+   ],
+   "truth_last_xyz": [
+    3.3429,
+    -8.9536,
+    0.1075
+   ],
+   "end_diff_odom_vs_truth_m": 3.3151,
+   "err": null,
+   "run": "run_U3PO_211438",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL1_195920/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 88770,
+   "truth_dur_s": 355.076,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.1635,
+   "odom_n": 703,
+   "odom_last_xyz": [
+    -36.843,
+    -680.8767,
+    -273.114
+   ],
+   "truth_last_xyz": [
+    3.9555,
+    -0.4346,
+    0.2956
+   ],
+   "end_diff_odom_vs_truth_m": 734.4513,
+   "err": null,
+   "run": "run_U7OL1_195920",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_U7OL2_202043/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 46835,
+   "truth_dur_s": 187.332,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.1505,
+   "odom_n": 1835,
+   "odom_last_xyz": [
+    -0.0345,
+    0.0165,
+    0.97
+   ],
+   "truth_last_xyz": [
+    0.6836,
+    0.9924,
+    0.8772
+   ],
+   "end_diff_odom_vs_truth_m": 1.2152,
+   "err": null,
+   "run": "run_U7OL2_202043",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY1_023908/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 53905,
+   "truth_dur_s": 215.616,
+   "truth_pz_min": 0.0978,
+   "truth_pz_max": 0.487,
+   "odom_n": 1301,
+   "odom_last_xyz": [
+    -0.0743,
+    -0.0537,
+    -0.099
+   ],
+   "truth_last_xyz": [
+    0.8407,
+    6.1445,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 6.2687,
+   "err": null,
+   "run": "run_VRFY1_023908",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_VRFY2_040542/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 23141,
+   "truth_dur_s": 92.56,
+   "truth_pz_min": 0.1044,
+   "truth_pz_max": 1.1426,
+   "odom_n": 882,
+   "odom_last_xyz": [
+    7.8038,
+    -0.5042,
+    -0.0947
+   ],
+   "truth_last_xyz": [
+    8.846,
+    0.4695,
+    0.1048
+   ],
+   "end_diff_odom_vs_truth_m": 1.4402,
+   "err": null,
+   "run": "run_VRFY2_040542",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_VRG1_025100/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 22724,
+   "truth_dur_s": 90.892,
+   "truth_pz_min": 0.1034,
+   "truth_pz_max": 0.9646,
+   "odom_n": 869,
+   "odom_last_xyz": [
+    8.3542,
+    -0.536,
+    0.1325
+   ],
+   "truth_last_xyz": [
+    9.4058,
+    0.445,
+    0.1046
+   ],
+   "end_diff_odom_vs_truth_m": 1.4384,
+   "err": null,
+   "run": "run_VRG1_025100",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 70987,
+   "truth_dur_s": 283.944,
+   "truth_pz_min": 0.1026,
+   "truth_pz_max": 0.9382,
+   "odom_n": 2716,
+   "odom_last_xyz": [
+    -0.0168,
+    -0.0086,
+    0.0004
+   ],
+   "truth_last_xyz": [
+    4.5246,
+    -1.3999,
+    0.1045
+   ],
+   "end_diff_odom_vs_truth_m": 4.7509,
+   "err": null,
+   "run": "run_health_smoke_1_220521",
+   "received": 0
+  },
+  {
+   "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_2_221729/flight.bag",
+   "status": "OK",
+   "model_name_used": "iris_stereo_vins",
+   "truth_n": 44718,
+   "truth_dur_s": 178.868,
+   "truth_pz_min": 0.1038,
+   "truth_pz_max": 1.1327,
+   "odom_n": 1728,
+   "odom_last_xyz": [
+    0.4488,
+    -9.9523,
+    -0.316
+   ],
+   "truth_last_xyz": [
+    4.289,
+    -2.0572,
+    0.1042
+   ],
+   "end_diff_odom_vs_truth_m": 8.7896,
+   "err": null,
+   "run": "run_health_smoke_2_221729",
+   "received": 0
+  }
+ ]
+}

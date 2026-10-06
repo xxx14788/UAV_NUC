@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30_102511/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 47022,
+ "truth_dur_s": 188.076,
+ "truth_pz_min": 0.1044,
+ "truth_pz_max": 1.0212,
+ "odom_n": 1814,
+ "odom_last_xyz": [
+  -0.0857,
+  0.0354,
+  0.9641
+ ],
+ "truth_last_xyz": [
+  0.9428,
+  1.0869,
+  0.9586
+ ],
+ "end_diff_odom_vs_truth_m": 1.4709,
+ "err": null,
+ "run": "run_E4R2-GOFF-D30_102511",
+ "received": 0
+}

@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 70987,
+ "truth_dur_s": 283.944,
+ "truth_pz_min": 0.1026,
+ "truth_pz_max": 0.9382,
+ "odom_n": 2716,
+ "odom_last_xyz": [
+  -0.0168,
+  -0.0086,
+  0.0004
+ ],
+ "truth_last_xyz": [
+  4.5246,
+  -1.3999,
+  0.1045
+ ],
+ "end_diff_odom_vs_truth_m": 4.7509,
+ "err": null,
+ "run": "run_health_smoke_1_220521",
+ "received": 0
+}

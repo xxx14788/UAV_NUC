@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av2_235010/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 77235,
+ "truth_dur_s": 308.932,
+ "truth_pz_min": 0.1006,
+ "truth_pz_max": 1.3518,
+ "odom_n": 2411,
+ "odom_last_xyz": [
+  -0.7808,
+  -0.5109,
+  -0.317
+ ],
+ "truth_last_xyz": [
+  2.371,
+  -0.2175,
+  0.1044
+ ],
+ "end_diff_odom_vs_truth_m": 3.1934,
+ "err": null,
+ "run": "run_SUPP2Av2_235010",
+ "received": 0
+}

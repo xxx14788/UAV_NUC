@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 35823,
+ "truth_dur_s": 143.288,
+ "truth_pz_min": 0.0986,
+ "truth_pz_max": 0.4927,
+ "odom_n": 821,
+ "odom_last_xyz": [
+  -0.2879,
+  -0.1438,
+  -0.0187
+ ],
+ "truth_last_xyz": [
+  -0.6226,
+  -2.9489,
+  0.1045
+ ],
+ "end_diff_odom_vs_truth_m": 2.8278,
+ "err": null,
+ "run": "run_SUPX2a_225543",
+ "received": 0
+}

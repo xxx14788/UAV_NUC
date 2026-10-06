@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_HVNET2_051401/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 23309,
+ "truth_dur_s": 93.228,
+ "truth_pz_min": 0.1033,
+ "truth_pz_max": 1.1355,
+ "odom_n": 910,
+ "odom_last_xyz": [
+  -0.0362,
+  -0.0943,
+  -0.0014
+ ],
+ "truth_last_xyz": [
+  0.8535,
+  0.8284,
+  0.1047
+ ],
+ "end_diff_odom_vs_truth_m": 1.2862,
+ "err": null,
+ "run": "run_HVNET2_051401",
+ "received": 0
+}

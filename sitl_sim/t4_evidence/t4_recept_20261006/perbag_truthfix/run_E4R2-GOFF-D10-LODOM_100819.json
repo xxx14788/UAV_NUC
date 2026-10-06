@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 66492,
+ "truth_dur_s": 265.964,
+ "truth_pz_min": 0.1044,
+ "truth_pz_max": 0.9851,
+ "odom_n": 2586,
+ "odom_last_xyz": [
+  2.2243,
+  -0.0823,
+  0.6645
+ ],
+ "truth_last_xyz": [
+  1.8781,
+  -0.1966,
+  0.1074
+ ],
+ "end_diff_odom_vs_truth_m": 0.6658,
+ "err": null,
+ "run": "run_E4R2-GOFF-D10-LODOM_100819",
+ "received": 0
+}

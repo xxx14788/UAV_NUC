@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS2_033232/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 88156,
+ "truth_dur_s": 352.612,
+ "truth_pz_min": 0.1016,
+ "truth_pz_max": 1.2871,
+ "odom_n": 3464,
+ "odom_last_xyz": [
+  0.0155,
+  -0.0461,
+  -0.013
+ ],
+ "truth_last_xyz": [
+  3.0038,
+  -2.4662,
+  0.1045
+ ],
+ "end_diff_odom_vs_truth_m": 3.8471,
+ "err": null,
+ "run": "run_T2U4OBS2_033232",
+ "received": 0
+}

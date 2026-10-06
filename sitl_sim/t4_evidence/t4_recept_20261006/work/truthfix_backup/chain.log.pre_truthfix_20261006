@@ -633,11 +633,3 @@
 [10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_032653 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
 [10-06 05:44:32] T1_ROUND_REGISTER run_X3l2b_043724 (T1 x4_batch 轮次袋, 判读权在 T1 补判版; X1final 特征重放=挂账禁重检索 -> 本批登记行, 不链不代判)
 [10-06 05:44:33] === BATCH_END normal (batch_complete 见 summary.json) ===
-[10-06 12:50:01] === T4-TRUTHFIX START (独立复核触发, 只修口径不碰判读行语义) ===
-[10-06 12:50:01] TRUTHFIX_TRIGGER 独立复核发现: v519 compact_extract.py truth 模型名匹配 'iris'(list 精确成员等值) 漏 3090 袋实际模型名 'iris_stereo_vins' -> compact 袋 truth 全 null, 判读行"末端位置差不可得"=N/A 假阴性(odom 面完整)
-[10-06 12:50:01] TRUTHFIX_RULE 口径修订: 'iris' in list(msg.name) -> 两值并集依序命中 ('iris' 优先, 兼容他域裸名): 'iris' or 'iris_stereo_vins'; 实测依据=T2BL1_201552/DIAGCAUCHY_231757 model_states name 实查; 修订文件=t4_recept_batch_v519.sh + lib/compact_extract.py; 原版备份=work/truthfix_backup/
-[10-06 12:50:01] TRUTHFIX_RERUN truth=null compact 袋 100 只读重提取(/tmp/t4_truthfix, 3 并发, 单袋 timeout 300); odom 面 n 逐袋复核 100/100 与原数据段一致; end_diff 口径不变
-[10-06 12:50:01] TRUTHFIX_RESULT OK=100 NO_MODEL_STATES=0 NO_NAME_MATCH=0 READ_ERR=0; end_diff 范围 0.2237-1014.4171 m; judging_draft.md 追加【口径修订补行】100 行(原 N/A 行不动)
-[10-06 12:50:01] TRUTHFIX_RECEIVED10 W1 收货集 MACH-comp 10 袋: run_T2MACH10_020846=16.3110m | run_T2MACH11_021559=4.3511m | run_T2MACH12_022312=8.0446m | run_T2MACH1_010832=5.1799m | run_T2MACH2_011343=1.3891m | run_T2MACH4_012523=12.8451m | run_T2MACH5_013233=3.0792m | run_T2MACH6_013944=65.0370m | run_T2MACH7_014657=6.1269m | run_T2MACH9_020133=1014.4171m
-[10-06 12:50:01] TRUTHFIX_ARTIFACTS perbag_truthfix/<run>.json x100 + perbag_truthfix/truthfix_manifest_20261006.json + work/truthfix_20261006/(重跑工具快照)
-[10-06 12:50:01] === T4-TRUTHFIX END ===

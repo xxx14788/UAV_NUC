@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D10_095654/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 46616,
+ "truth_dur_s": 186.452,
+ "truth_pz_min": 0.1044,
+ "truth_pz_max": 1.0688,
+ "odom_n": 1822,
+ "odom_last_xyz": [
+  -0.0707,
+  0.0518,
+  0.9633
+ ],
+ "truth_last_xyz": [
+  1.029,
+  1.1015,
+  1.0562
+ ],
+ "end_diff_odom_vs_truth_m": 1.5231,
+ "err": null,
+ "run": "run_E4R2-GON-D10_095654",
+ "received": 0
+}

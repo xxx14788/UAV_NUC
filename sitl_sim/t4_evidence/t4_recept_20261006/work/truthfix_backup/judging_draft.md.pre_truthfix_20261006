@@ -11,7 +11,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_DIAGCAUCHY_231757/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90995 pz=[0.1025,1.9319] | 末端位置差 odom-vs-truth = 50.6059 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=485 与原数据段一致; 产物=perbag_truthfix/run_DIAGCAUCHY_231757.json)
 
 ## [COMPACT] run_DIAGGUARD2_233403 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -21,7 +20,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_DIAGGUARD2_233403/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=65727 pz=[0.1041,1.5535] | 末端位置差 odom-vs-truth = 1.0804 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2517 与原数据段一致; 产物=perbag_truthfix/run_DIAGGUARD2_233403.json)
 
 ## [COMPACT] run_E4_GOFF_D10_193039 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -31,7 +29,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_193039/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=67733 pz=[0.0977,0.3579] | 末端位置差 odom-vs-truth = 2.5262 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=65 与原数据段一致; 产物=perbag_truthfix/run_E4_GOFF_D10_193039.json)
 
 ## [COMPACT] run_E4_GOFF_D10_R2_194927 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -41,7 +38,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4_GOFF_D10_R2_194927/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=67803 pz=[0.0542,2.1517] | 末端位置差 odom-vs-truth = 10.8689 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=72 与原数据段一致; 产物=perbag_truthfix/run_E4_GOFF_D10_R2_194927.json)
 
 ## [COMPACT] run_E4R2-GOFF-D10_095056 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -51,7 +47,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10_095056/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=46964 pz=[0.1044,1.0859] | 末端位置差 odom-vs-truth = 1.3803 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1801 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GOFF-D10_095056.json)
 
 ## [COMPACT] run_E4R2-GOFF-D10-LODOM_100819 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -61,7 +56,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=66492 pz=[0.1044,0.9851] | 末端位置差 odom-vs-truth = 0.6658 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2586 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GOFF-D10-LODOM_100819.json)
 
 ## [COMPACT] run_E4R2-GOFF-D30_102511 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -71,7 +65,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30_102511/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=47022 pz=[0.1044,1.0212] | 末端位置差 odom-vs-truth = 1.4709 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1814 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GOFF-D30_102511.json)
 
 ## [COMPACT] run_E4R2-GOFF-D30-I125_103836 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -81,7 +74,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D30-I125_103836/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=16275 pz=[0.1038,0.9819] | 末端位置差 odom-vs-truth = 1.4069 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=624 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GOFF-D30-I125_103836.json)
 
 ## [COMPACT] run_E4R2-GOFF-D60_103420 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -91,7 +83,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D60_103420/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=47005 pz=[0.1044,1.3078] | 末端位置差 odom-vs-truth = 1.4193 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1846 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GOFF-D60_103420.json)
 
 ## [COMPACT] run_E4R2-GON-D10_095654 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -101,7 +92,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D10_095654/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=46616 pz=[0.1044,1.0688] | 末端位置差 odom-vs-truth = 1.5231 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1822 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GON-D10_095654.json)
 
 ## [COMPACT] run_E4R2-GON-D30_101723 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -111,7 +101,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-GON-D30_101723/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=66001 pz=[0.0828,2.2402] | 末端位置差 odom-vs-truth = 10.4713 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2535 与原数据段一致; 产物=perbag_truthfix/run_E4R2-GON-D30_101723.json)
 
 ## [COMPACT] run_E4R2-REGRESS_104334 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -121,7 +110,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_E4R2-REGRESS_104334/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=46800 pz=[0.1044,1.2136] | 末端位置差 odom-vs-truth = 1.3005 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1819 与原数据段一致; 产物=perbag_truthfix/run_E4R2-REGRESS_104334.json)
 
 ## [COMPACT] run_F3B10_154733 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -132,7 +120,6 @@
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
 - D9 扩样腿: 无冻结窗(odom_z>5.0m 零窗) -> 跳过(如实注记, 判据册 §2 口径)
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=29168 pz=[0.0519,1.5410] | 末端位置差 odom-vs-truth = 658.2877 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1062 与原数据段一致; 产物=perbag_truthfix/run_F3B10_154733.json)
 
 ## [IMAGE] run_F3B11_155643 — 草稿·待主会话定稿
 - 分类: IMG_FULLCHAIN | 双目话题 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
@@ -296,7 +283,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B12_160420/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=61102 pz=[0.0505,10.0395] | 末端位置差 odom-vs-truth = 327.2599 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2112 与原数据段一致; 产物=perbag_truthfix/run_F3B12_160420.json)
 
 ## [COMPACT] run_F3B13_161000 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -306,7 +292,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B13_161000/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=29153 pz=[0.1036,1.1463] | 末端位置差 odom-vs-truth = 2.2867 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1107 与原数据段一致; 产物=perbag_truthfix/run_F3B13_161000.json)
 
 ## [COMPACT] run_F3B14_163613 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -316,7 +301,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B14_163613/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=36986 pz=[0.1032,23.7663] | 末端位置差 odom-vs-truth = 15.1127 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1451 与原数据段一致; 产物=perbag_truthfix/run_F3B14_163613.json)
 
 ## [COMPACT] run_F3B15_190535 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -327,7 +311,6 @@
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
 - D9 扩样腿: 无冻结窗(odom_z>5.0m 零窗) -> 跳过(如实注记, 判据册 §2 口径)
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=57539 pz=[0.1038,0.6708] | 末端位置差 odom-vs-truth = 1.4323 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2210 与原数据段一致; 产物=perbag_truthfix/run_F3B15_190535.json)
 
 ## [IMAGE] run_F3B16_191620 — 草稿·待主会话定稿
 - 分类: IMG_FULLCHAIN | 双目话题 L=/iris_stereo_vins/vins_cam_left/image_raw R=/iris_stereo_vins/vins_cam_right/image_raw
@@ -491,7 +474,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B2_035213/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=46731 pz=[0.1044,1.1180] | 末端位置差 odom-vs-truth = 1.5177 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1823 与原数据段一致; 产物=perbag_truthfix/run_F3B2_035213.json)
 
 ## [COMPACT] run_F3B3_042444 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -501,7 +483,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B3_042444/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=9432 pz=[0.1033,0.9268] | 末端位置差 odom-vs-truth = 1.4948 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=371 与原数据段一致; 产物=perbag_truthfix/run_F3B3_042444.json)
 
 ## [COMPACT] run_F3B4_043658 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -511,7 +492,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B4_043658/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=9428 pz=[0.1038,0.9485] | 末端位置差 odom-vs-truth = 1.4161 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=367 与原数据段一致; 产物=perbag_truthfix/run_F3B4_043658.json)
 
 ## [COMPACT] run_F3B5_092608 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -521,7 +501,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B5_092608/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=29092 pz=[0.0498,4.5457] | 末端位置差 odom-vs-truth = 38.3839 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=997 与原数据段一致; 产物=perbag_truthfix/run_F3B5_092608.json)
 
 ## [COMPACT] run_F3B6_093203 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -531,7 +510,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B6_093203/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=42242 pz=[0.0539,3.6593] | 末端位置差 odom-vs-truth = 15.8027 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1602 与原数据段一致; 产物=perbag_truthfix/run_F3B6_093203.json)
 
 ## [COMPACT] run_F3B7_093720 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -541,7 +519,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B7_093720/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=30775 pz=[0.0387,6.2838] | 末端位置差 odom-vs-truth = 11.5935 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1167 与原数据段一致; 产物=perbag_truthfix/run_F3B7_093720.json)
 
 ## [COMPACT] run_F3B8_094417 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -551,7 +528,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B8_094417/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=33397 pz=[0.1035,0.9802] | 末端位置差 odom-vs-truth = 1.4358 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1281 与原数据段一致; 产物=perbag_truthfix/run_F3B8_094417.json)
 
 ## [COMPACT] run_F3B9_094909 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -561,7 +537,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=29142 pz=[0.1044,2.2936] | 末端位置差 odom-vs-truth = 25.3132 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1108 与原数据段一致; 产物=perbag_truthfix/run_F3B9_094909.json)
 
 ## [COMPACT] run_F3-P1B_095639 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -571,7 +546,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_F3-P1B_095639/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=81379 pz=[0.0916,21.6032] | 末端位置差 odom-vs-truth = 65.3227 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2938 与原数据段一致; 产物=perbag_truthfix/run_F3-P1B_095639.json)
 
 ## [COMPACT] run_health_smoke_1_220521 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -581,7 +555,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_1_220521/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=70987 pz=[0.1026,0.9382] | 末端位置差 odom-vs-truth = 4.7509 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2716 与原数据段一致; 产物=perbag_truthfix/run_health_smoke_1_220521.json)
 
 ## [COMPACT] run_health_smoke_2_221729 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -591,7 +564,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_health_smoke_2_221729/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=44718 pz=[0.1038,1.1327] | 末端位置差 odom-vs-truth = 8.7896 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1728 与原数据段一致; 产物=perbag_truthfix/run_health_smoke_2_221729.json)
 
 ## [COMPACT] run_HVNET1_050936 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -601,7 +573,6 @@
 - j0d 引用: T3 工具产出后增列
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=25784 pz=[0.1040,2.7567] | 末端位置差 odom-vs-truth = 3.4107 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1002 与原数据段一致; 产物=perbag_truthfix/run_HVNET1_050936.json)
 
 ## [COMPACT] run_HVNET2_051401 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -611,7 +582,6 @@
 - j0d 引用: T3 工具产出后增列
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=23309 pz=[0.1033,1.1355] | 末端位置差 odom-vs-truth = 1.2862 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=910 与原数据段一致; 产物=perbag_truthfix/run_HVNET2_051401.json)
 
 ## [COMPACT] run_RAREP1_051826 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -621,7 +591,6 @@
 - j0d 引用: T3 工具产出后增列
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=23257 pz=[0.1043,1.1994] | 末端位置差 odom-vs-truth = 1.3457 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=889 与原数据段一致; 产物=perbag_truthfix/run_RAREP1_051826.json)
 
 ## [COMPACT] run_SUPHV2a_230310 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -631,7 +600,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2a_230310/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=74095 pz=[0.0508,17.7552] | 末端位置差 odom-vs-truth = 167.4388 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=529 与原数据段一致; 产物=perbag_truthfix/run_SUPHV2a_230310.json)
 
 ## [COMPACT] run_SUPHV2b_230920 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -641,7 +609,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV2b_230920/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=95990 pz=[0.1044,0.6063] | 末端位置差 odom-vs-truth = 4.2671 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2091 与原数据段一致; 产物=perbag_truthfix/run_SUPHV2b_230920.json)
 
 ## [COMPACT] run_SUPHV3a_001611 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -651,7 +618,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3a_001611/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=35149 pz=[0.1038,1.1382] | 末端位置差 odom-vs-truth = 1.3177 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1346 与原数据段一致; 产物=perbag_truthfix/run_SUPHV3a_001611.json)
 
 ## [COMPACT] run_SUPHV3b_001918 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -661,7 +627,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHV3b_001918/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=35101 pz=[0.1043,3.2827] | 末端位置差 odom-vs-truth = 4.5144 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1347 与原数据段一致; 产物=perbag_truthfix/run_SUPHV3b_001918.json)
 
 ## [COMPACT] run_SUPHVa_224750 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -671,7 +636,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPHVa_224750/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=39198 pz=[0.1035,4.8859] | 末端位置差 odom-vs-truth = 5.0035 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1500 与原数据段一致; 产物=perbag_truthfix/run_SUPHVa_224750.json)
 
 ## [COMPACT] run_SUPP2A_234133 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -681,7 +645,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2A_234133/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=64768 pz=[0.1031,0.9698] | 末端位置差 odom-vs-truth = 0.9630 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2499 与原数据段一致; 产物=perbag_truthfix/run_SUPP2A_234133.json)
 
 ## [COMPACT] run_SUPP2Av2_235010 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -691,7 +654,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av2_235010/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=77235 pz=[0.1006,1.3518] | 末端位置差 odom-vs-truth = 3.1934 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2411 与原数据段一致; 产物=perbag_truthfix/run_SUPP2Av2_235010.json)
 
 ## [COMPACT] run_SUPP2Av3_235735 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -701,7 +663,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPP2Av3_235735/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=65228 pz=[0.1033,1.0271] | 末端位置差 odom-vs-truth = 0.9340 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2500 与原数据段一致; 产物=perbag_truthfix/run_SUPP2Av3_235735.json)
 
 ## [COMPACT] run_SUPP3INJ_000528 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -711,7 +672,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPP3INJ_000528/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=65208 pz=[0.1032,1.1442] | 末端位置差 odom-vs-truth = 3.1492 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2484 与原数据段一致; 产物=perbag_truthfix/run_SUPP3INJ_000528.json)
 
 ## [COMPACT] run_SUPX1b_224122 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -721,7 +681,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPX1b_224122/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=79302 pz=[0.1014,2.8449] | 末端位置差 odom-vs-truth = 6.9006 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2916 与原数据段一致; 产物=perbag_truthfix/run_SUPX1b_224122.json)
 
 ## [COMPACT] run_SUPX2a_225543 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -731,7 +690,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2a_225543/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=35823 pz=[0.0986,0.4927] | 末端位置差 odom-vs-truth = 2.8278 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=821 与原数据段一致; 产物=perbag_truthfix/run_SUPX2a_225543.json)
 
 ## [COMPACT] run_SUPX2b_230005 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -741,7 +699,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_SUPX2b_230005/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=30376 pz=[0.1034,0.4520] | 末端位置差 odom-vs-truth = 2.0955 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=724 与原数据段一致; 产物=perbag_truthfix/run_SUPX2b_230005.json)
 
 ## [COMPACT] run_T2BL1_201552 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -751,7 +708,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL1_201552/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=9229 pz=[0.0994,0.2980] | 末端位置差 odom-vs-truth = 1.0617 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=355 与原数据段一致; 产物=perbag_truthfix/run_T2BL1_201552.json)
 
 ## [COMPACT] run_T2BL2_201729 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -761,7 +717,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL2_201729/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=104085 pz=[0.0540,3.0785] | 末端位置差 odom-vs-truth = 508.1836 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3897 与原数据段一致; 产物=perbag_truthfix/run_T2BL2_201729.json)
 
 ## [COMPACT] run_T2BL3_202549 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -771,7 +726,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL3_202549/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=13656 pz=[0.0995,0.3994] | 末端位置差 odom-vs-truth = 0.2237 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=527 与原数据段一致; 产物=perbag_truthfix/run_T2BL3_202549.json)
 
 ## [COMPACT] run_T2BL4_202722 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -781,7 +735,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL4_202722/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=85227 pz=[0.0495,7.1226] | 末端位置差 odom-vs-truth = 106.0438 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3115 与原数据段一致; 产物=perbag_truthfix/run_T2BL4_202722.json)
 
 ## [COMPACT] run_T2BL5_203404 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -791,7 +744,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL5_203404/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=63928 pz=[0.1031,0.7317] | 末端位置差 odom-vs-truth = 1.3113 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2529 与原数据段一致; 产物=perbag_truthfix/run_T2BL5_203404.json)
 
 ## [COMPACT] run_T2BL6_203956 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -801,7 +753,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL6_203956/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=42321 pz=[0.1032,0.6866] | 末端位置差 odom-vs-truth = 2.4246 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1647 与原数据段一致; 产物=perbag_truthfix/run_T2BL6_203956.json)
 
 ## [COMPACT] run_T2BL7_204325 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -811,7 +762,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL7_204325/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=73932 pz=[0.0530,9.4661] | 末端位置差 odom-vs-truth = 74.0026 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2888 与原数据段一致; 产物=perbag_truthfix/run_T2BL7_204325.json)
 
 ## [COMPACT] run_T2BL8_204921 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -821,7 +771,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL8_204921/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=35820 pz=[0.1038,0.6915] | 末端位置差 odom-vs-truth = 1.5436 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1344 与原数据段一致; 产物=perbag_truthfix/run_T2BL8_204921.json)
 
 ## [COMPACT] run_T2BL9_205405 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -831,7 +780,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2BL9_205405/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=73912 pz=[0.0543,6.5038] | 末端位置差 odom-vs-truth = 7.9690 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2863 与原数据段一致; 产物=perbag_truthfix/run_T2BL9_205405.json)
 
 ## [COMPACT] run_T2M0_010259 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -841,7 +789,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2M0_010259/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=48592 pz=[0.1044,1.1379] | 末端位置差 odom-vs-truth = 1.3191 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1892 与原数据段一致; 产物=perbag_truthfix/run_T2M0_010259.json)
 
 ## [COMPACT] run_T2MACH10_020846 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -851,7 +798,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH10_020846/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90280 pz=[0.1044,2.3679] | 末端位置差 odom-vs-truth = 16.3110 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3473 与原数据段一致; 产物=perbag_truthfix/run_T2MACH10_020846.json)
 
 ## [COMPACT] run_T2MACH1_010832 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -861,7 +807,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH1_010832/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=60649 pz=[0.1033,1.2728] | 末端位置差 odom-vs-truth = 5.1799 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2319 与原数据段一致; 产物=perbag_truthfix/run_T2MACH1_010832.json)
 
 ## [COMPACT] run_T2MACH11_021559 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -871,7 +816,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH11_021559/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90433 pz=[0.1032,1.8846] | 末端位置差 odom-vs-truth = 4.3511 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3473 与原数据段一致; 产物=perbag_truthfix/run_T2MACH11_021559.json)
 
 ## [COMPACT] run_T2MACH12_022312 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -881,7 +825,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH12_022312/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90403 pz=[0.1017,2.8170] | 末端位置差 odom-vs-truth = 8.0446 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3451 与原数据段一致; 产物=perbag_truthfix/run_T2MACH12_022312.json)
 
 ## [COMPACT] run_T2MACH2_011343 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -891,7 +834,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH2_011343/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=48443 pz=[0.1044,1.6556] | 末端位置差 odom-vs-truth = 1.3891 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1866 与原数据段一致; 产物=perbag_truthfix/run_T2MACH2_011343.json)
 
 ## [COMPACT] run_T2MACH4_012523 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -901,7 +843,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH4_012523/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=89863 pz=[0.0990,0.7584] | 末端位置差 odom-vs-truth = 12.8451 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3428 与原数据段一致; 产物=perbag_truthfix/run_T2MACH4_012523.json)
 
 ## [COMPACT] run_T2MACH5_013233 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -911,7 +852,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH5_013233/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90023 pz=[0.0980,0.9790] | 末端位置差 odom-vs-truth = 3.0792 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3436 与原数据段一致; 产物=perbag_truthfix/run_T2MACH5_013233.json)
 
 ## [COMPACT] run_T2MACH6_013944 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -921,7 +861,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90514 pz=[0.1029,4.3795] | 末端位置差 odom-vs-truth = 65.0370 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3470 与原数据段一致; 产物=perbag_truthfix/run_T2MACH6_013944.json)
 
 ## [COMPACT] run_T2MACH7_014657 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -931,7 +870,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH7_014657/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90531 pz=[0.1028,1.5385] | 末端位置差 odom-vs-truth = 6.1269 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3487 与原数据段一致; 产物=perbag_truthfix/run_T2MACH7_014657.json)
 
 ## [COMPACT] run_T2MACH9_020133 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | received=1(W1 收货集 MACH-compact, v5.19 补判读行) | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -941,7 +879,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH9_020133/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90464 pz=[0.1039,16.7953] | 末端位置差 odom-vs-truth = 1014.4171 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3485 与原数据段一致; 产物=perbag_truthfix/run_T2MACH9_020133.json)
 
 ## [COMPACT] run_T2RA10_132515 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -951,7 +888,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA10_132515/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=171098 pz=[0.0990,1.1558] | 末端位置差 odom-vs-truth = 2.9161 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=5094 与原数据段一致; 产物=perbag_truthfix/run_T2RA10_132515.json)
 
 ## [COMPACT] run_T2RA1_122012 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -961,7 +897,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA1_122012/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=48991 pz=[0.1044,2.1971] | 末端位置差 odom-vs-truth = 4.4341 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1845 与原数据段一致; 产物=perbag_truthfix/run_T2RA1_122012.json)
 
 ## [COMPACT] run_T2RA12hov_133845 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -971,7 +906,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA12hov_133845/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=48939 pz=[0.1044,1.0050] | 末端位置差 odom-vs-truth = 1.3734 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1907 与原数据段一致; 产物=perbag_truthfix/run_T2RA12hov_133845.json)
 
 ## [COMPACT] run_T2RA13_134733 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -981,7 +915,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA13_134733/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=91019 pz=[0.1041,0.9685] | 末端位置差 odom-vs-truth = 1.7483 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3495 与原数据段一致; 产物=perbag_truthfix/run_T2RA13_134733.json)
 
 ## [COMPACT] run_T2RA14_135448 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -991,7 +924,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA14_135448/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=91253 pz=[0.1041,1.0486] | 末端位置差 odom-vs-truth = 1.0705 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3430 与原数据段一致; 产物=perbag_truthfix/run_T2RA14_135448.json)
 
 ## [COMPACT] run_T2RA15_140205 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1001,7 +933,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA15_140205/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=114129 pz=[0.1009,7.3083] | 末端位置差 odom-vs-truth = 5.3462 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=4378 与原数据段一致; 产物=perbag_truthfix/run_T2RA15_140205.json)
 
 ## [COMPACT] run_T2RA16_141056 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1011,7 +942,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA16_141056/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=170964 pz=[0.1044,3.9226] | 末端位置差 odom-vs-truth = 8.3737 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=6598 与原数据段一致; 产物=perbag_truthfix/run_T2RA16_141056.json)
 
 ## [COMPACT] run_T2RA17hov_142425 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1021,7 +951,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA17hov_142425/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=49233 pz=[0.1044,1.2735] | 末端位置差 odom-vs-truth = 0.9540 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1923 与原数据段一致; 产物=perbag_truthfix/run_T2RA17hov_142425.json)
 
 ## [COMPACT] run_T2RA19_143516 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1031,7 +960,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA19_143516/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=49060 pz=[0.1044,1.1850] | 末端位置差 odom-vs-truth = 2.8813 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1901 与原数据段一致; 产物=perbag_truthfix/run_T2RA19_143516.json)
 
 ## [COMPACT] run_T2RA20_143940 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1041,7 +969,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA20_143940/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=91384 pz=[0.1032,1.4818] | 末端位置差 odom-vs-truth = 4.0066 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3255 与原数据段一致; 产物=perbag_truthfix/run_T2RA20_143940.json)
 
 ## [COMPACT] run_T2RA21_144657 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1051,7 +978,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA21_144657/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=171059 pz=[0.1044,1.1722] | 末端位置差 odom-vs-truth = 1.9251 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=6630 与原数据段一致; 产物=perbag_truthfix/run_T2RA21_144657.json)
 
 ## [COMPACT] run_T2RA2_122435 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1061,7 +987,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA2_122435/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90992 pz=[0.1044,2.3073] | 末端位置差 odom-vs-truth = 2.5782 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3413 与原数据段一致; 产物=perbag_truthfix/run_T2RA2_122435.json)
 
 ## [COMPACT] run_T2RA22_145941 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1071,7 +996,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA22_145941/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=171365 pz=[0.1044,1.3406] | 末端位置差 odom-vs-truth = 5.3355 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=6379 与原数据段一致; 产物=perbag_truthfix/run_T2RA22_145941.json)
 
 ## [COMPACT] run_T2RA23hov_151312 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1081,7 +1005,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA23hov_151312/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=61008 pz=[0.1044,1.2460] | 末端位置差 odom-vs-truth = 1.3241 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2363 与原数据段一致; 产物=perbag_truthfix/run_T2RA23hov_151312.json)
 
 ## [COMPACT] run_T2RA3_123151 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1091,7 +1014,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA3_123151/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=171030 pz=[0.1044,1.4635] | 末端位置差 odom-vs-truth = 5.4049 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=5818 与原数据段一致; 产物=perbag_truthfix/run_T2RA3_123151.json)
 
 ## [COMPACT] run_T2RA4_124434 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1101,7 +1023,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA4_124434/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=170768 pz=[0.1044,4.8049] | 末端位置差 odom-vs-truth = 4.5001 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=6542 与原数据段一致; 产物=perbag_truthfix/run_T2RA4_124434.json)
 
 ## [COMPACT] run_T2RA5hover_121549 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1111,7 +1032,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA5hover_121549/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=48830 pz=[0.1044,1.0750] | 末端位置差 odom-vs-truth = 1.2432 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1906 与原数据段一致; 产物=perbag_truthfix/run_T2RA5hover_121549.json)
 
 ## [COMPACT] run_T2RA7_125801 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1121,7 +1041,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA7_125801/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=91029 pz=[0.1044,2.9162] | 末端位置差 odom-vs-truth = 55.2638 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1911 与原数据段一致; 产物=perbag_truthfix/run_T2RA7_125801.json)
 
 ## [COMPACT] run_T2RA8_130517 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1131,7 +1050,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA8_130517/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90972 pz=[0.1044,1.7922] | 末端位置差 odom-vs-truth = 2.3777 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3513 与原数据段一致; 产物=perbag_truthfix/run_T2RA8_130517.json)
 
 ## [COMPACT] run_T2RA9_131232 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1141,7 +1059,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2RA9_131232/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=171010 pz=[0.1029,1.8011] | 末端位置差 odom-vs-truth = 19.9254 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=6270 与原数据段一致; 产物=perbag_truthfix/run_T2RA9_131232.json)
 
 ## [COMPACT] run_T2U4OBS1_031909 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1151,7 +1068,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1_031909/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=43900 pz=[0.1041,1.8202] | 末端位置差 odom-vs-truth = 1.6229 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1668 与原数据段一致; 产物=perbag_truthfix/run_T2U4OBS1_031909.json)
 
 ## [COMPACT] run_T2U4OBS1r_032512 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1161,7 +1077,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS1r_032512/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=88383 pz=[0.0520,1.1342] | 末端位置差 odom-vs-truth = 6.4411 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3455 与原数据段一致; 产物=perbag_truthfix/run_T2U4OBS1r_032512.json)
 
 ## [COMPACT] run_T2U4OBS2_033232 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1171,7 +1086,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2U4OBS2_033232/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=88156 pz=[0.1016,1.2871] | 末端位置差 odom-vs-truth = 3.8471 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3464 与原数据段一致; 产物=perbag_truthfix/run_T2U4OBS2_033232.json)
 
 ## [COMPACT] run_T2ZETA1_131820 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1181,7 +1095,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA1_131820/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=66125 pz=[0.1037,2.0622] | 末端位置差 odom-vs-truth = 1.3016 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2551 与原数据段一致; 产物=perbag_truthfix/run_T2ZETA1_131820.json)
 
 ## [COMPACT] run_T2ZETA2_132510 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1191,7 +1104,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA2_132510/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=82329 pz=[0.1042,8.7193] | 末端位置差 odom-vs-truth = 11.9597 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3163 与原数据段一致; 产物=perbag_truthfix/run_T2ZETA2_132510.json)
 
 ## [COMPACT] run_T2ZETA3_133227 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1201,7 +1113,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA3_133227/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=67785 pz=[0.1041,3.7341] | 末端位置差 odom-vs-truth = 4.6220 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2631 与原数据段一致; 产物=perbag_truthfix/run_T2ZETA3_133227.json)
 
 ## [COMPACT] run_T2ZETA4_135544 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1211,7 +1122,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA4_135544/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=20502 pz=[0.1038,0.3420] | 末端位置差 odom-vs-truth = 0.4862 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=781 与原数据段一致; 产物=perbag_truthfix/run_T2ZETA4_135544.json)
 
 ## [COMPACT] run_T2ZETA5_140137 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1221,7 +1131,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETA5_140137/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=81776 pz=[0.1032,1.7372] | 末端位置差 odom-vs-truth = 6.1329 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3114 与原数据段一致; 产物=perbag_truthfix/run_T2ZETA5_140137.json)
 
 ## [COMPACT] run_T2ZETACTL2_134622 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1231,7 +1140,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T2ZETACTL2_134622/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=11474 pz=[0.1044,0.2383] | 末端位置差 odom-vs-truth = 2.0317 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=427 与原数据段一致; 产物=perbag_truthfix/run_T2ZETACTL2_134622.json)
 
 ## [COMPACT] run_T3U1V_023428 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1241,7 +1149,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_T3U1V_023428/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90292 pz=[0.0975,1.0320] | 末端位置差 odom-vs-truth = 6.1844 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3446 与原数据段一致; 产物=perbag_truthfix/run_T3U1V_023428.json)
 
 ## [COMPACT] run_U25FIX_035839 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1251,7 +1158,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_U25FIX_035839/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=66137 pz=[0.1038,0.4277] | 末端位置差 odom-vs-truth = 2.2688 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=2555 与原数据段一致; 产物=perbag_truthfix/run_U25FIX_035839.json)
 
 ## [COMPACT] run_U3PO_211438 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1261,7 +1167,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_U3PO_211438/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=90018 pz=[0.1044,2.2666] | 末端位置差 odom-vs-truth = 3.3151 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=3520 与原数据段一致; 产物=perbag_truthfix/run_U3PO_211438.json)
 
 ## [COMPACT] run_U7OL1_195920 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1271,7 +1176,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_U7OL1_195920/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=88770 pz=[0.1044,1.1635] | 末端位置差 odom-vs-truth = 734.4513 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=703 与原数据段一致; 产物=perbag_truthfix/run_U7OL1_195920.json)
 
 ## [COMPACT] run_U7OL2_202043 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1281,7 +1185,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_U7OL2_202043/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=46835 pz=[0.1044,1.1505] | 末端位置差 odom-vs-truth = 1.2152 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1835 与原数据段一致; 产物=perbag_truthfix/run_U7OL2_202043.json)
 
 ## [COMPACT] run_VRFY1_023908 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1291,7 +1194,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_VRFY1_023908/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=53905 pz=[0.0978,0.4870] | 末端位置差 odom-vs-truth = 6.2687 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=1301 与原数据段一致; 产物=perbag_truthfix/run_VRFY1_023908.json)
 
 ## [COMPACT] run_VRFY2_040542 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1301,7 +1203,6 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_VRFY2_040542/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=23141 pz=[0.1044,1.1426] | 末端位置差 odom-vs-truth = 1.4402 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=882 与原数据段一致; 产物=perbag_truthfix/run_VRFY2_040542.json)
 
 ## [COMPACT] run_VRG1_025100 — 草稿·待主会话定稿
 - 分类: ③紧凑零图像 | 第五坑登记: EX-FAIL 零图像(W1 挂账, v5.19 本批补 odom/truth 机械面)
@@ -1311,4 +1212,3 @@
 - j0d 引用: /home/ghj/sitl_sim/vins_smoke_runs/run_VRG1_025100/j0_decomp.json (在册即引·不代判)
 - FAIL 两味素材: 末端漂移 N/A 对照健康带 0.79-1.10 m (T3 anchor v1.4 修正口径: t3_anchor_survey_v1.csv + round_result v1.4=c708151f) -> 末端位置差不可得(源缺失)——素材缺失·如实登记 (草稿素材·主会话定标)
 - 受控注记: cohort 外袋不出三态——本行不构成三态判定; 数值面=极值/普查+n, 无单帧结论
-- 【口径修订补行 T4-truthfix 2026-10-06】truth(命中模型名=iris_stereo_vins, 口径修订=两值并集{'iris','iris_stereo_vins'}, 实测依据=T2BL1/DIAGCAUCHY model_states name 实查) n=22724 pz=[0.1034,0.9646] | 末端位置差 odom-vs-truth = 1.4384 m (上行 N/A=v519 模型名口径缺陷假阴性, 原行不动; end_diff 口径不变=末帧 odom vs 末帧 truth; odom n=869 与原数据段一致; 产物=perbag_truthfix/run_VRG1_025100.json)

@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_VRG1_025100/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 22724,
+ "truth_dur_s": 90.892,
+ "truth_pz_min": 0.1034,
+ "truth_pz_max": 0.9646,
+ "odom_n": 869,
+ "odom_last_xyz": [
+  8.3542,
+  -0.536,
+  0.1325
+ ],
+ "truth_last_xyz": [
+  9.4058,
+  0.445,
+  0.1046
+ ],
+ "end_diff_odom_vs_truth_m": 1.4384,
+ "err": null,
+ "run": "run_VRG1_025100",
+ "received": 0
+}

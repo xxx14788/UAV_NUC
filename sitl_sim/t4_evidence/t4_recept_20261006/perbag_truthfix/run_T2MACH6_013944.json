@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_T2MACH6_013944/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 90514,
+ "truth_dur_s": 362.052,
+ "truth_pz_min": 0.1029,
+ "truth_pz_max": 4.3795,
+ "odom_n": 3470,
+ "odom_last_xyz": [
+  0.0039,
+  -0.0125,
+  -0.0022
+ ],
+ "truth_last_xyz": [
+  -49.0983,
+  42.6345,
+  0.1044
+ ],
+ "end_diff_odom_vs_truth_m": 65.037,
+ "err": null,
+ "run": "run_T2MACH6_013944",
+ "received": 1
+}

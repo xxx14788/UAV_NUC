@@ -1,0 +1,24 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_F3B9_094909/flight.bag",
+ "status": "OK",
+ "model_name_used": "iris_stereo_vins",
+ "truth_n": 29142,
+ "truth_dur_s": 116.564,
+ "truth_pz_min": 0.1044,
+ "truth_pz_max": 2.2936,
+ "odom_n": 1108,
+ "odom_last_xyz": [
+  -1.4324,
+  -1.224,
+  -24.4245
+ ],
+ "truth_last_xyz": [
+  3.9556,
+  -0.4181,
+  0.2956
+ ],
+ "end_diff_odom_vs_truth_m": 25.3132,
+ "err": null,
+ "run": "run_F3B9_094909",
+ "received": 0
+}
