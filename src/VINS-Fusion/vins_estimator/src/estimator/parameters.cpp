@@ -22,6 +22,14 @@ double T2_W4_BGS_THRESH = 0.5;    // T2-v8.9 case-B: W4 Bgs line, 0.5 = legacy h
 double T2_DEPTH_MIN = 0.15, T2_DEPTH_MAX = 30.0, T2_XCHECK_TOL = 0.30;
 // T2-WA23456G globals (defaults = legacy behavior)
 int T2_VISION_LOSS = 0;
+// T1-v1125 M2 腿B (INPUTFACE-SCREEN): frame-level input quality gate defaults (all OFF)
+int T2_IQG_GATE = 0;
+int T2_IQG_MIN_CORNERS = 80;
+double T2_IQG_MIN_DEPTH_RATIO = 0.5;
+double T2_IQG_MAX_DEPTH_M = 100.0;
+double T2_IQG_MIN_STEREO_RATIO = 0.3;
+double T2_IQG_STAGED_N_SEC = 80.0;
+int T2_IQG_MAX_CONSEC_REJECT = 30;
 double T2_CAUCHY_DELTA = 4.0;
 int T2_REJECT_F = 0;
 int T2_CHI2_GATE = 0;
@@ -169,6 +177,21 @@ void readParameters(std::string config_file)
         T2_DEPTH_GATE_STAGED = (int)fsSettings["t2_staged_depth_gate"];
     if (!fsSettings["t2_staged_n_sec"].empty())
         T2_STAGED_N_SEC = (double)fsSettings["t2_staged_n_sec"];
+    // T1-v1125 M2 腿B: frame-level input quality gate keys (absent = OFF = legacy)
+    if (!fsSettings["t2_input_quality_gate"].empty())
+        T2_IQG_GATE = (int)fsSettings["t2_input_quality_gate"];
+    if (!fsSettings["t2_iqg_min_corners"].empty())
+        T2_IQG_MIN_CORNERS = (int)fsSettings["t2_iqg_min_corners"];
+    if (!fsSettings["t2_iqg_min_depth_ratio"].empty())
+        T2_IQG_MIN_DEPTH_RATIO = (double)fsSettings["t2_iqg_min_depth_ratio"];
+    if (!fsSettings["t2_iqg_max_depth_m"].empty())
+        T2_IQG_MAX_DEPTH_M = (double)fsSettings["t2_iqg_max_depth_m"];
+    if (!fsSettings["t2_iqg_min_stereo_ratio"].empty())
+        T2_IQG_MIN_STEREO_RATIO = (double)fsSettings["t2_iqg_min_stereo_ratio"];
+    if (!fsSettings["t2_iqg_staged_n_sec"].empty())
+        T2_IQG_STAGED_N_SEC = (double)fsSettings["t2_iqg_staged_n_sec"];
+    if (!fsSettings["t2_iqg_max_consec_reject"].empty())
+        T2_IQG_MAX_CONSEC_REJECT = (int)fsSettings["t2_iqg_max_consec_reject"];
     if (!fsSettings["t2_w4_bgs_thresh"].empty())
         T2_W4_BGS_THRESH = (double)fsSettings["t2_w4_bgs_thresh"];
     if (!fsSettings["t2_pseudo_drop"].empty())
@@ -257,6 +280,10 @@ void readParameters(std::string config_file)
     printf("REANCHOR_SMOOTH: %d frames: %d\n", REANCHOR_SMOOTH, REANCHOR_SMOOTH_FRAMES);
     printf("[T2SGCFG] guard=%d sane_p=%.1f sane_v=%.1f resume_gap=%.2f\n",
            T2_STREAM_GUARD, T2_PUB_SANE_P, T2_PUB_SANE_V, StreamGuardLogic::RESUME_GAP);
+    // T1-v1125 M2 腿B banner (banner 自证约定,判读史 grep 面)
+    printf("[T2IQGCFG] gate=%d corners=%d depth_r=%.2f band=%.0fm stereo_r=%.2f staged_n=%.0f max_consec=%d\n",
+           T2_IQG_GATE, T2_IQG_MIN_CORNERS, T2_IQG_MIN_DEPTH_RATIO, T2_IQG_MAX_DEPTH_M,
+           T2_IQG_MIN_STEREO_RATIO, T2_IQG_STAGED_N_SEC, T2_IQG_MAX_CONSEC_REJECT);
     // T2NANDEF-2 (v11.17 2.1, prereg nan_defense_v1): 参数域断言——loss=1(Cauchy) 而
     // cauchy<=0 = CauchyLoss(0/负) NaN 风暴根因组合(D-1006-T1-09),fail-fast 拒启
     if (T2_VISION_LOSS == 1 && T2_CAUCHY_DELTA <= 0.0)

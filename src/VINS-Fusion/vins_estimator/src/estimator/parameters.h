@@ -83,6 +83,55 @@ inline bool t2_staged_steady_now(bool non_linear, double t_init_finish, double h
 {
     return non_linear && t_init_finish > 0 && header - t_init_finish >= n_sec;
 }
+
+// T1-v1125 M2 腿B (INPUTFACE-SCREEN, 58a4a027): frame-level input quality gate (staged).
+// 判读史: 1e 裁决=输入面实锤(verdict c2d75688)——跳变触发层=输入内容锚定;本门=稳态期
+// 拒收坏帧(init 期/宽限期全放行,保 Bgs 解=T2 depth-gate 活锁教训直接应用);
+// fail-open=连续拒收达上限后放行一帧(防门致盲飞,估计器留重锁采样)。
+// 默认全关=零栈改动(实机 config 无这些键=与上游逐位同)。
+extern int T2_IQG_GATE;               // master switch (default 0 = OFF)
+extern int T2_IQG_MIN_CORNERS;        // K1 供给: 帧特征数下限
+extern double T2_IQG_MIN_DEPTH_RATIO; // K2: 有效深(0<z<band)特征占比下限
+extern double T2_IQG_MAX_DEPTH_M;     // K2 band: 深度有效上界(m)
+extern double T2_IQG_MIN_STEREO_RATIO;// K3: cam0+cam1 配对特征占比下限
+extern double T2_IQG_STAGED_N_SEC;    // staging: init 完成后宽限期(s)
+extern int T2_IQG_MAX_CONSEC_REJECT;  // fail-open: 连续拒收上限(达则放行一帧)
+
+struct T2IQGMetrics
+{
+    int corners;
+    double depth_ok_ratio;
+    double stereo_pair_ratio;
+};
+
+// 纯逻辑(gtest 面): steady=staged 稳态位;返回 true=拒收该帧
+inline bool t2_iqg_should_reject(bool steady, const T2IQGMetrics &m,
+                                 int consec_rejects, const char **reason)
+{
+    if (!steady)
+        return false;  // init 期/宽限期全放行(保 Bgs 解)
+    if (consec_rejects >= T2_IQG_MAX_CONSEC_REJECT)
+    {
+        if (reason) *reason = "fail-open";
+        return false;  // 防门致盲飞:连续拒收超限放行一帧(计数随之清零)
+    }
+    if (m.corners < T2_IQG_MIN_CORNERS)
+    {
+        if (reason) *reason = "corners";
+        return true;
+    }
+    if (m.depth_ok_ratio < T2_IQG_MIN_DEPTH_RATIO)
+    {
+        if (reason) *reason = "depth";
+        return true;
+    }
+    if (m.stereo_pair_ratio < T2_IQG_MIN_STEREO_RATIO)
+    {
+        if (reason) *reason = "stereo";
+        return true;
+    }
+    return false;
+}
 // T2-WA23456G (defaults = legacy behavior)
 extern int T2_VISION_LOSS;
 extern double T2_CAUCHY_DELTA;

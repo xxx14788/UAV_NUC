@@ -574,6 +574,55 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
 {
     ROS_DEBUG("new image coming ------------------------------------------");
     ROS_DEBUG("Adding feature points %lu", image.size());
+    // T1-v1125 M2 腿B (INPUTFACE-SCREEN): 帧级输入质量门——稳态期拒收坏帧。
+    // staging 判定与 case-A 同核(NON_LINEAR ∧ 过宽限期);拒收=丢帧不入滑窗(preintegration
+    // 跨丢帧累计,数学无损);fail-open=连续拒收超限放行一帧。判读面=[T2IQG] 日志行可 grep。
+    static int t2_iqg_reject_total = 0, t2_iqg_consec = 0, t2_iqg_pass_total = 0;
+    if (T2_IQG_GATE)
+    {
+        bool t2_iqg_steady = t2_staged_steady_now(solver_flag == NON_LINEAR,
+                                                  t2_t_init_finish, header,
+                                                  T2_IQG_STAGED_N_SEC);
+        T2IQGMetrics t2_m;
+        int t2_depth_ok = 0, t2_stereo_pairs = 0;
+        for (const auto &t2_fp : image)
+        {
+            bool t2_has0 = false, t2_has1 = false, t2_dok = false;
+            for (const auto &t2_obs : t2_fp.second)
+            {
+                double t2_z = t2_obs.second(2);
+                if (t2_z == t2_z && t2_z > 0 && t2_z < T2_IQG_MAX_DEPTH_M)
+                    t2_dok = true;
+                if (t2_obs.first == 0) t2_has0 = true;
+                if (t2_obs.first == 1) t2_has1 = true;
+            }
+            if (t2_dok) t2_depth_ok++;
+            if (t2_has0 && t2_has1) t2_stereo_pairs++;
+        }
+        t2_m.corners = (int)image.size();
+        t2_m.depth_ok_ratio = t2_m.corners ? (double)t2_depth_ok / t2_m.corners : 0.0;
+        t2_m.stereo_pair_ratio = t2_m.corners ? (double)t2_stereo_pairs / t2_m.corners : 0.0;
+        const char *t2_reason = nullptr;
+        if (t2_iqg_should_reject(t2_iqg_steady, t2_m, t2_iqg_consec, &t2_reason))
+        {
+            t2_iqg_reject_total++;
+            t2_iqg_consec++;
+            ROS_WARN("[T2IQG] REJECT t=%.2f reason=%s corners=%d depth_r=%.2f stereo_r=%.2f consec=%d total=%d",
+                     header, t2_reason ? t2_reason : "?", t2_m.corners,
+                     t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio,
+                     t2_iqg_consec, t2_iqg_reject_total);
+            return;  // 丢帧:不入滑窗/不计关键帧(f_manager 与前端跟踪均不受染)
+        }
+        if (t2_iqg_steady)
+        {
+            t2_iqg_pass_total++;
+            t2_iqg_consec = 0;
+            if (t2_iqg_pass_total % 300 == 1)
+                ROS_WARN("[T2IQG] PASS-STAT t=%.2f passes=%d rejects=%d corners=%d depth_r=%.2f stereo_r=%.2f",
+                         header, t2_iqg_pass_total, t2_iqg_reject_total,
+                         t2_m.corners, t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio);
+        }
+    }
     if (f_manager.addFeatureCheckParallax(frame_count, image, td))
     {
         marginalization_flag = MARGIN_OLD;
