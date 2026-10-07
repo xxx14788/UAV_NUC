@@ -43,10 +43,11 @@ for D in "$@"; do
   NR=$(echo "$RR" | grep -m1 -oE 'RESULT=(PASS|FAIL|ENV-FAIL)' | cut -d= -f2)
   TG=$(echo "$TRI" | grep -m1 'GATEHIT-STAT')
   TC=$(echo "$TRI" | grep -m1 -oE 'class=[a-z_( ;cf面待wa_gate权威-]*' | cut -d= -f2)
-  OKJ=$([ "$OJ" = "$NJ" ] && echo ✓ || echo ✗); [ "$OJ" = "$NJ" ] || FAIL=1
-  OKA=$([ "$OA" = "$NA" ] && echo ✓ || echo ✗); [ "$OA" = "$NA" ] || FAIL=1
-  OKR=$([ "$OR" = "$NR" ] && echo ✓ || echo ✗); [ "$OR" = "$NR" ] || FAIL=1
-  echo "| $TAG | $GOAL | jump $OJ/$NJ$OKJ arrive $OA/$NA$OKA RES $OR/$NR$OKR | cf=${CF:-?} tri=$TC | $TG | $([ $FAIL = 0 ] && echo ✓ || echo 见上列) |"
+  PF=0  # 轮内逐位标志(末列缺陷修复 v1.1:原版用聚积 FAIL,首失配后后续轮末列全误显)
+  OKJ=$([ "$OJ" = "$NJ" ] && echo ✓ || echo ✗); { [ "$OJ" = "$NJ" ] || PF=1; FAIL=1; } 2>/dev/null
+  OKA=$([ "$OA" = "$NA" ] && echo ✓ || echo ✗); { [ "$OA" = "$NA" ] || PF=1; FAIL=1; } 2>/dev/null
+  OKR=$([ "$OR" = "$NR" ] && echo ✓ || echo ✗); { [ "$OR" = "$NR" ] || PF=1; FAIL=1; } 2>/dev/null
+  echo "| $TAG | $GOAL | jump $OJ/$NJ$OKJ arrive $OA/$NA$OKA RES $OR/$NR$OKR | cf=${CF:-?} tri=$TC | $TG | $([ $PF = 0 ] && echo ✓ || echo 见上列) |"
 done
 rm -rf "/tmp/t3_shadow_$$" 2>/dev/null
 exit $FAIL

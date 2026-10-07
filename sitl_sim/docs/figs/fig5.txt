@@ -1,0 +1,22 @@
+fig5(文本版) 特征数 track_med 分布
+  run_X1final_040643: 131
+  run_X1final_040931: 119.0
+  run_X1final_043355: 108
+  run_X1final_101627: 101
+  run_X1final_104720: 140.0
+  run_X1final_105449: 138
+  run_X1final_172424: 141
+  run_X2g1_024637: 101.0
+  run_X2g1_041203: 136.0
+  run_X2g3_025529: 128
+  run_X2g3_042025: 120
+  run_X2g4_030233: 128
+  run_X3l2a_031040: 115
+  run_X3l2b_032653: 127
+  run_X3l2b_043724: 122.0
+  run_X4_E12O_031818: 120
+  run_X4_N8P_034553: 121
+  run_X4_NE12O_032330: 120.0
+  run_X4_NE8O_032059: 123.0
+  run_X4_S12P_032611: 129.0
+  run_X4_S8O_033810: 123

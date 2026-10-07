@@ -1,3 +1,5 @@
+> [日期限定注记 2026-10-07 T1 v11.23] 本报告=X4 无门基线批(2026-10-07 03:15-04:00,终态 5/5 全物理+tag sitl-v0.4);正源终账=x4_final_tally.md(206506c5),wl-bug 批级账目失能段在册
+
 [2026-10-07 03:15:58] # X4 五位形冲刺批报告(2026-10-07 03:15:58;臂=guard=1 sane_p=50.0 sane_v=15.0;栈=721cad40/5bacc2e9 cfg=054ddc8d;gate=/home/ghj/sitl_sim/t1_gate_params.json;goals_md5=b8483c34;规则预注册=任务书 v11.20 单元1d/3+T3 v10.3 三列分账v1;融合版注记见脚本头)
 [2026-10-07 03:15:58]   --no-gate 模式(预注册分支:门不可靠→无门基线,判读不带门语义,5/5 全物理才算数)
 [2026-10-07 03:15:58] preflight OK stack=721cad40/5bacc2e9 cfg=054ddc8d gate=/home/ghj/sitl_sim/t1_gate_params.json df=568G arm_banner='guard=1 sane_p=50.0 sane_v=15.0' goals_md5=b8483c34 cells=5

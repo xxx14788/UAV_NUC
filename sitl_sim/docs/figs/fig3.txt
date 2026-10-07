@@ -1,0 +1,61 @@
+fig3(文本版) Bas/Bgs 时间线(30s 桶;旧栈无 T2diag 则记跳过)
+  run_X1_000718: 跳过(无 simvins.log)
+  run_X1_002244: 跳过(无 simvins.log)
+  run_X1_223836: 0 T2diag(旧栈)
+  run_X1final_040643: n=1921 Bas_pk=1.033@49s Bgs_pk=0.0175@174s Bas_tail_med=0.066
+    0s:Bas~0.16/Bgs~0.001 | 30s:Bas~0.34/Bgs~0.000 | 60s:Bas~0.08/Bgs~0.000 | 90s:Bas~0.08/Bgs~0.001 | 120s:Bas~0.06/Bgs~0.000 | 150s:Bas~0.06/Bgs~0.001 | 180s:Bas~0.07/Bgs~0.004 | 210s:Bas~0.07/Bgs~0.004
+  run_X1final_040931: n=2874 Bas_pk=1.393@47s Bgs_pk=0.0205@47s Bas_tail_med=0.152
+    0s:Bas~0.19/Bgs~0.001 | 30s:Bas~0.26/Bgs~0.001 | 60s:Bas~0.16/Bgs~0.001 | 90s:Bas~0.16/Bgs~0.001 | 120s:Bas~0.16/Bgs~0.000 | 150s:Bas~0.16/Bgs~0.000 | 180s:Bas~0.16/Bgs~0.000 | 210s:Bas~0.16/Bgs~0.000 | 240s:Bas~0.16/Bgs~0.000 | 270s:Bas~0.15/Bgs~0.000 | 300s:Bas~0.15/Bgs~0.000
+  run_X1final_043355: n=371 Bas_pk=0.823@39s Bgs_pk=0.0010@15s Bas_tail_med=0.146
+    0s:Bas~0.14/Bgs~0.001 | 30s:Bas~0.15/Bgs~0.001
+  run_X1final_101627: n=1421 Bas_pk=1.004@35s Bgs_pk=0.0196@117s Bas_tail_med=0.100
+    0s:Bas~0.27/Bgs~0.001 | 30s:Bas~0.27/Bgs~0.001 | 60s:Bas~0.12/Bgs~0.003 | 90s:Bas~0.09/Bgs~0.002 | 120s:Bas~0.05/Bgs~0.010 | 150s:Bas~0.10/Bgs~0.011
+  run_X1final_104445: 跳过(无 simvins.log)
+  run_X1final_104720: n=214 Bas_pk=2.981@33s Bgs_pk=0.3190@32s Bas_tail_med=0.340
+    0s:Bas~0.34/Bgs~0.001 | 30s:Bas~0.34/Bgs~0.005
+  run_X1final_105449: n=237 Bas_pk=2.607@35s Bgs_pk=0.0147@28s Bas_tail_med=0.700
+    0s:Bas~0.70/Bgs~0.001 | 30s:Bas~0.70/Bgs~0.001
+  run_X1final_172424: n=255 Bas_pk=2.649@37s Bgs_pk=0.9964@36s Bas_tail_med=0.325
+    0s:Bas~0.33/Bgs~0.002 | 30s:Bas~0.56/Bgs~0.185
+  run_X2g1R_045147: n=3159 Bas_pk=0.413@321s Bgs_pk=0.0199@309s Bas_tail_med=0.219
+    0s:Bas~0.11/Bgs~0.001 | 30s:Bas~0.26/Bgs~0.001 | 60s:Bas~0.26/Bgs~0.005 | 90s:Bas~0.26/Bgs~0.005 | 120s:Bas~0.26/Bgs~0.005 | 150s:Bas~0.26/Bgs~0.005 | 180s:Bas~0.26/Bgs~0.005 | 210s:Bas~0.26/Bgs~0.005 | 240s:Bas~0.26/Bgs~0.005 | 270s:Bas~0.26/Bgs~0.006 | 300s:Bas~0.26/Bgs~0.003 | 330s:Bas~0.22/Bgs~0.001
+  run_X2g1_024637: n=3006 Bas_pk=1.927@34s Bgs_pk=0.0073@26s Bas_tail_med=0.364
+    0s:Bas~0.52/Bgs~0.001 | 30s:Bas~0.77/Bgs~0.001 | 60s:Bas~0.36/Bgs~0.001 | 90s:Bas~0.38/Bgs~0.000 | 120s:Bas~0.36/Bgs~0.000 | 150s:Bas~0.36/Bgs~0.000 | 180s:Bas~0.36/Bgs~0.001 | 210s:Bas~0.37/Bgs~0.001 | 240s:Bas~0.38/Bgs~0.001 | 270s:Bas~0.38/Bgs~0.001 | 300s:Bas~0.37/Bgs~0.001
+  run_X2g1_041203: n=2910 Bas_pk=4.099@32s Bgs_pk=0.1719@32s Bas_tail_med=0.417
+    0s:Bas~0.17/Bgs~0.003 | 30s:Bas~0.31/Bgs~0.002 | 60s:Bas~0.43/Bgs~0.001 | 90s:Bas~0.41/Bgs~0.001 | 120s:Bas~0.42/Bgs~0.003 | 150s:Bas~0.42/Bgs~0.004 | 180s:Bas~0.42/Bgs~0.003 | 210s:Bas~0.42/Bgs~0.003 | 240s:Bas~0.43/Bgs~0.003 | 270s:Bas~0.42/Bgs~0.003 | 300s:Bas~0.42/Bgs~0.003
+  run_X2g1_041509: n=2648 Bas_pk=2.163@138s Bgs_pk=0.0582@46s Bas_tail_med=0.352
+    0s:Bas~0.10/Bgs~0.000 | 30s:Bas~0.27/Bgs~0.001 | 60s:Bas~0.59/Bgs~0.001 | 90s:Bas~0.58/Bgs~0.001 | 120s:Bas~0.60/Bgs~0.001 | 150s:Bas~0.49/Bgs~0.001 | 180s:Bas~0.44/Bgs~0.001 | 210s:Bas~0.42/Bgs~0.001 | 240s:Bas~0.38/Bgs~0.001 | 270s:Bas~0.35/Bgs~0.001
+  run_X2g3R_050113: n=2810 Bas_pk=1.508@62s Bgs_pk=0.0237@47s Bas_tail_med=0.098
+    0s:Bas~0.72/Bgs~0.001 | 30s:Bas~0.12/Bgs~0.001 | 60s:Bas~0.12/Bgs~0.002 | 90s:Bas~0.11/Bgs~0.001 | 120s:Bas~0.10/Bgs~0.001 | 150s:Bas~0.10/Bgs~0.001 | 180s:Bas~0.10/Bgs~0.000 | 210s:Bas~0.10/Bgs~0.000 | 240s:Bas~0.10/Bgs~0.000 | 270s:Bas~0.10/Bgs~0.000 | 300s:Bas~0.11/Bgs~0.000
+  run_X2g3_025529: n=2113 Bas_pk=0.659@61s Bgs_pk=0.0132@216s Bas_tail_med=0.490
+    0s:Bas~0.25/Bgs~0.001 | 30s:Bas~0.32/Bgs~0.000 | 60s:Bas~0.50/Bgs~0.000 | 90s:Bas~0.50/Bgs~0.005 | 120s:Bas~0.50/Bgs~0.005 | 150s:Bas~0.49/Bgs~0.004 | 180s:Bas~0.49/Bgs~0.006 | 210s:Bas~0.49/Bgs~0.005
+  run_X2g3_042025: n=3149 Bas_pk=0.662@311s Bgs_pk=0.0159@285s Bas_tail_med=0.438
+    0s:Bas~0.33/Bgs~0.001 | 30s:Bas~0.23/Bgs~0.001 | 60s:Bas~0.22/Bgs~0.005 | 90s:Bas~0.22/Bgs~0.005 | 120s:Bas~0.22/Bgs~0.005 | 150s:Bas~0.22/Bgs~0.005 | 180s:Bas~0.22/Bgs~0.005 | 210s:Bas~0.22/Bgs~0.005 | 240s:Bas~0.22/Bgs~0.005 | 270s:Bas~0.22/Bgs~0.006 | 300s:Bas~0.42/Bgs~0.001 | 330s:Bas~0.44/Bgs~0.000
+  run_X2g4_030233: n=3037 Bas_pk=0.796@123s Bgs_pk=0.0206@46s Bas_tail_med=0.695
+    0s:Bas~0.23/Bgs~0.001 | 30s:Bas~0.48/Bgs~0.001 | 60s:Bas~0.28/Bgs~0.001 | 90s:Bas~0.59/Bgs~0.008 | 120s:Bas~0.72/Bgs~0.008 | 150s:Bas~0.71/Bgs~0.008 | 180s:Bas~0.72/Bgs~0.008 | 210s:Bas~0.71/Bgs~0.007 | 240s:Bas~0.71/Bgs~0.007 | 270s:Bas~0.71/Bgs~0.007 | 300s:Bas~0.69/Bgs~0.007
+  run_X3l2a_031040: n=4259 Bas_pk=1.392@48s Bgs_pk=0.0194@140s Bas_tail_med=0.727
+    0s:Bas~0.11/Bgs~0.001 | 30s:Bas~0.23/Bgs~0.001 | 60s:Bas~0.51/Bgs~0.001 | 90s:Bas~0.51/Bgs~0.001 | 120s:Bas~0.50/Bgs~0.001 | 150s:Bas~0.50/Bgs~0.000 | 180s:Bas~0.50/Bgs~0.001 | 210s:Bas~0.50/Bgs~0.000 … 390s:Bas~0.73/Bgs~0.005 | 420s:Bas~0.73/Bgs~0.005 | 450s:Bas~0.73/Bgs~0.005
+  run_X3l2a_042631: n=5782 Bas_pk=5.135@151s Bgs_pk=0.6392@135s Bas_tail_med=0.563
+    0s:Bas~0.12/Bgs~0.001 | 30s:Bas~0.07/Bgs~0.001 | 60s:Bas~0.12/Bgs~0.001 | 90s:Bas~0.13/Bgs~0.001 | 120s:Bas~0.17/Bgs~0.004 | 150s:Bas~0.30/Bgs~0.004 | 180s:Bas~0.32/Bgs~0.004 | 210s:Bas~1.35/Bgs~0.008 … 540s:Bas~1.25/Bgs~0.001 | 570s:Bas~1.24/Bgs~0.002 | 600s:Bas~0.56/Bgs~0.002
+  run_X3l2b_032653: n=4267 Bas_pk=2.261@309s Bgs_pk=0.0156@146s Bas_tail_med=0.080
+    0s:Bas~0.31/Bgs~0.001 | 30s:Bas~0.32/Bgs~0.000 | 60s:Bas~0.42/Bgs~0.000 | 90s:Bas~0.15/Bgs~0.010 | 120s:Bas~0.38/Bgs~0.010 | 150s:Bas~0.38/Bgs~0.004 | 180s:Bas~0.40/Bgs~0.000 | 210s:Bas~0.41/Bgs~0.000 … 390s:Bas~0.09/Bgs~0.000 | 420s:Bas~0.08/Bgs~0.000 | 450s:Bas~0.08/Bgs~0.000
+  run_X3l2b_043724: n=5924 Bas_pk=0.682@48s Bgs_pk=0.0144@418s Bas_tail_med=0.043
+    0s:Bas~0.12/Bgs~0.001 | 30s:Bas~0.15/Bgs~0.000 | 60s:Bas~0.05/Bgs~0.000 | 90s:Bas~0.03/Bgs~0.000 | 120s:Bas~0.02/Bgs~0.000 | 150s:Bas~0.02/Bgs~0.001 | 180s:Bas~0.03/Bgs~0.001 | 210s:Bas~0.03/Bgs~0.000 … 540s:Bas~0.04/Bgs~0.000 | 570s:Bas~0.05/Bgs~0.001 | 600s:Bas~0.04/Bgs~0.000
+  run_X4_1e_E8P_035301: n=3734 Bas_pk=3.076@345s Bgs_pk=0.4744@126s Bas_tail_med=0.333
+    0s:Bas~0.10/Bgs~0.001 | 30s:Bas~0.34/Bgs~0.001 | 60s:Bas~0.08/Bgs~0.001 | 90s:Bas~0.15/Bgs~0.001 | 120s:Bas~0.40/Bgs~0.052 | 150s:Bas~0.11/Bgs~0.004 | 180s:Bas~0.06/Bgs~0.003 | 210s:Bas~0.05/Bgs~0.002 … 330s:Bas~0.10/Bgs~0.002 | 360s:Bas~0.33/Bgs~0.002 | 390s:Bas~0.33/Bgs~0.002
+  run_X4_1e_HVNET1_040009: n=3869 Bas_pk=1.176@48s Bgs_pk=0.0463@47s Bas_tail_med=0.186
+    0s:Bas~0.30/Bgs~0.001 | 30s:Bas~0.31/Bgs~0.001 | 60s:Bas~0.18/Bgs~0.001 | 90s:Bas~0.19/Bgs~0.000 | 120s:Bas~0.20/Bgs~0.000 | 150s:Bas~0.20/Bgs~0.000 | 180s:Bas~0.20/Bgs~0.000 | 210s:Bas~0.20/Bgs~0.000 … 330s:Bas~0.20/Bgs~0.000 | 360s:Bas~0.19/Bgs~0.000 | 390s:Bas~0.19/Bgs~0.000
+  run_X4_E12O_031818: n=1225 Bas_pk=0.472@135s Bgs_pk=0.0021@10s Bas_tail_med=0.456
+    0s:Bas~0.12/Bgs~0.001 | 30s:Bas~0.12/Bgs~0.000 | 60s:Bas~0.26/Bgs~0.000 | 90s:Bas~0.32/Bgs~0.000 | 120s:Bas~0.46/Bgs~0.000
+  run_X4_E8O_033233: n=1138 Bas_pk=0.529@31s Bgs_pk=0.0098@118s Bas_tail_med=0.088
+    0s:Bas~0.22/Bgs~0.001 | 30s:Bas~0.39/Bgs~0.000 | 60s:Bas~0.09/Bgs~0.000 | 90s:Bas~0.09/Bgs~0.001 | 120s:Bas~0.09/Bgs~0.003
+  run_X4_N8P_034553: n=1121 Bas_pk=0.707@48s Bgs_pk=0.0153@91s Bas_tail_med=0.046
+    0s:Bas~0.10/Bgs~0.001 | 30s:Bas~0.12/Bgs~0.000 | 60s:Bas~0.04/Bgs~0.000 | 90s:Bas~0.04/Bgs~0.001 | 120s:Bas~0.05/Bgs~0.000
+  run_X4_NE12O_032330: n=1200 Bas_pk=0.665@49s Bgs_pk=0.0140@110s Bas_tail_med=0.022
+    0s:Bas~0.28/Bgs~0.001 | 30s:Bas~0.29/Bgs~0.000 | 60s:Bas~0.03/Bgs~0.000 | 90s:Bas~0.03/Bgs~0.001 | 120s:Bas~0.02/Bgs~0.000
+  run_X4_NE8O_032059: n=1124 Bas_pk=0.755@49s Bgs_pk=0.0125@99s Bas_tail_med=0.037
+    0s:Bas~0.16/Bgs~0.001 | 30s:Bas~0.13/Bgs~0.000 | 60s:Bas~0.02/Bgs~0.000 | 90s:Bas~0.04/Bgs~0.003 | 120s:Bas~0.04/Bgs~0.004
+  run_X4_S12P_032611: n=3166 Bas_pk=1.938@48s Bgs_pk=0.0187@46s Bas_tail_med=0.076
+    0s:Bas~0.16/Bgs~0.001 | 30s:Bas~0.47/Bgs~0.001 | 60s:Bas~0.08/Bgs~0.000 | 90s:Bas~0.09/Bgs~0.000 | 120s:Bas~0.09/Bgs~0.000 | 150s:Bas~0.09/Bgs~0.000 | 180s:Bas~0.08/Bgs~0.001 | 210s:Bas~0.08/Bgs~0.000 | 240s:Bas~0.08/Bgs~0.000 | 270s:Bas~0.08/Bgs~0.000 | 300s:Bas~0.08/Bgs~0.000 | 330s:Bas~0.08/Bgs~0.004
+  run_X4_S8O_033810: n=3721 Bas_pk=1.563@113s Bgs_pk=0.0507@112s Bas_tail_med=0.090
+    0s:Bas~0.05/Bgs~0.001 | 30s:Bas~0.20/Bgs~0.001 | 60s:Bas~0.20/Bgs~0.005 | 90s:Bas~0.20/Bgs~0.005 | 120s:Bas~0.10/Bgs~0.000 | 150s:Bas~0.10/Bgs~0.000 | 180s:Bas~0.10/Bgs~0.000 | 210s:Bas~0.10/Bgs~0.000 … 330s:Bas~0.09/Bgs~0.000 | 360s:Bas~0.08/Bgs~0.000 | 390s:Bas~0.09/Bgs~0.001
