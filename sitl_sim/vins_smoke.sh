@@ -11,7 +11,8 @@ source /opt/ros/noetic/setup.bash          # 先 source 再 set -u(V3 教训)
 source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会覆盖掉 ws 包路径(X1轮1教训)
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
-GATE=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
+GATE=0
+STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -20,6 +21,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --budget) BUDGET="$2"; shift 2;;
   --probecheck) PROBECHECK=1; shift;;
   --gate) GATE=1; shift;;
+  --stoploss) STOPLOSS=1; shift;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
@@ -243,25 +245,35 @@ sleep 3
 # ---------- 1b 飞行中前兆门 watchdog+RTF 探针(v11.20 单元1b;--gate 1;纯脚本面) ----------
 # 数据源=simvins.log([T2slv] cost 主+[T2diag] |Bas| 副,10Hz);双门=绝对+轮内自适应;
 # 触发→gatehit.flag;本脚本各相位轮询点收到→gate_abort 受控中止(预注册降级序)。
+# [4c 常态化 v11.23] rtf 探针移出 GATE 块——--no-gate 路径亦随轮挂载
+setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_rtf_probe.py" "$EV" >/dev/null 2>&1 &
+RTFPID=$!
+LOG "rtf probe up(pid=$RTFPID) [常态化 v11.23 4c]"
 if [ "$GATE" = "1" ]; then
   setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_gate_watch.py" --inflight "$EV" --params "$GATE_PARAMS" >/dev/null 2>&1 &
   GATEPID=$!
-  setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_rtf_probe.py" "$EV" >/dev/null 2>&1 &
-  RTFPID=$!
   PGVER=$(python3 -c "import json;p=json.load(open('$GATE_PARAMS'));print(p.get('version','?'),'frozen' if p.get('frozen') else 'OBSERVE')" 2>/dev/null || echo unreadable)
-  LOG "inflight gate watchdog up(pid=$GATEPID)+rtf probe(pid=$RTFPID);params=$PGVER"
+  LOG "inflight gate watchdog up(pid=$GATEPID);params=$PGVER"
   export GATE_FLAG="$EV/gatehit.flag"
 fi
+# [4a 止损件挂点 v11.23] jump 后置止损(用户已批);thresh=1.0m(§3 预注册锚,无门值变动)
+if [ "$STOPLOSS" = "1" ]; then
+  setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_stoploss_watch.py" --inflight "$EV" >/dev/null 2>&1 &
+  SLPID=$!
+  LOG "stoploss watchdog up(pid=$SLPID);trichotomy=真 FAIL 提前终止形态(不重复判 jump 面)"
+fi
 gate_hit() { [ -f "$EV/gatehit.flag" ]; }
-gate_abort() {  # $1=相位标签;完整恢复=受控中止+完整降落+disarm=1+无T2fail(预注册)
-  local PH="${1:-?}" DISARMED=0 STREAM_OK=1 K J
+stoploss_hit() { [ -f "$EV/stoploss.flag" ]; }
+gate_abort() {  # $1=相位标签;$2=模式(gate|stoploss,默认gate);完整恢复=受控中止+完整降落+disarm=1+无T2fail(预注册)
+  local PH="${1:-?}" MODE="${2:-gate}" DISARMED=0 STREAM_OK=1 K J
+  local PFX=gatehit; [ "$MODE" = stoploss ] && PFX=stoploss
   LOG "GATE-HIT@$PH 前兆门触发→goal 停发+受控中止链(预注册降级序①odom可信段LAND②流断→悬停+kill)"
-  echo "$(date '+%F %T') GATE-ABORT@$PH" >> "$EV/gatehit_actions.txt"
+  echo "$(date '+%F %T') GATE-ABORT@$PH" >> "$EV/${PFX}_actions.txt"
   bash "$HOME/sitl_sim/kill_planner_all.sh" > "$EV/planner_kill.log" 2>&1; sleep 2
   STREAM_OK=$(python3 - "$EV" <<'PYEOF'
 import json, glob, sys, os
 ok = 1
-for f in glob.glob(os.path.join(sys.argv[1], "gatehit_*.json")):
+for f in glob.glob(os.path.join(sys.argv[1], sys.argv[3] + "_*.json")):
     try:
         j = json.load(open(f)); gap = (j.get("vins_stream") or {}).get("gap_s")
     except Exception:
@@ -300,12 +312,12 @@ PYEOF
   fi
   REC=$([ $DISARMED = 1 ] && echo COMPLETE || echo DEGRADED)
   PTH=$([ "$STREAM_OK" = 1 ] && echo LAND || echo KILL)
-  echo "RECOVERY=$REC path=$PTH phase=$PH" > "$EV/gatehit_outcome.txt"
+  echo "RECOVERY=$REC path=$PTH phase=$PH" > "$EV/${PFX}_outcome.txt"
   # gatehit json 回写 landed/disarm(T3 trichotomy 契约:landed=1 ∧ RESULT 带 auto_disarm)
-  python3 - "$EV" "$DISARMED" <<'PYEOF'
+  python3 - "$EV" "$DISARMED" "$PFX" <<'PYEOF'
 import json, glob, sys
 landed = int(sys.argv[2])
-for f in glob.glob(sys.argv[1] + "/gatehit_*.json"):
+for f in glob.glob(sys.argv[1] + "/" + sys.argv[3] + "_*.json"):
     try:
         j = json.load(open(f)); j["landed"] = landed; j["disarm"] = landed
         j["recovery"] = "COMPLETE" if landed else "DEGRADED"; j["recovery_path"] = "recorded"
@@ -313,6 +325,12 @@ for f in glob.glob(sys.argv[1] + "/gatehit_*.json"):
     except Exception:
         pass
 PYEOF
+  if [ "$MODE" = stoploss ]; then
+    echo "RESULT=FAIL (STOPLOSS-ABORT@$PH jump 后置止损触发; recovery=$REC; auto_disarm->$DISARMED; 留痕=stoploss_<tag>.json+actions; 真FAIL 提前终止形态——jump 面判读归 round_result 帧稳定性不重复判)" > "$EV/RESULT.txt"
+    LOG "STOPLOSS-ABORT 收束 recovery=$REC path=$PTH"
+    cleanup
+    exit 43
+  fi
   echo "RESULT=GATE-INTERCEPT (前兆门@$PH; recovery=$REC; auto_disarm->$DISARMED; 留痕=gatehit_<tag>.json+gate_timeline+actions; $([ "$REC" = COMPLETE ] && echo '完整恢复=计入分子' || echo '降级=不完整恢复不计入分子,如实'))" > "$EV/RESULT.txt"
   LOG "GATE-INTERCEPT 收束 recovery=$REC path=$PTH"
   cleanup
@@ -339,6 +357,7 @@ if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
 fi
 LOG "已等离地稳定(truth z=$LZ)"
 [ "$GATE" = "1" ] && gate_hit && gate_abort hover
+[ "$STOPLOSS" = "1" ] && stoploss_hit && gate_abort hover stoploss
 
 # ---------- goal（v11.17 starve 修复：订阅就绪门+停摆一次性重启，任务书 1.1a/1.1b） ----------
 # 病灶（X4 批 2/8 轮；X2g3_042025=189B planner.log 实证）：FSM 事件循环停摆——
@@ -392,6 +411,7 @@ else
   LOG "poscmd 存活门通过(首发 rate=${PC}Hz)"
 fi
 [ "$GATE" = "1" ] && gate_hit && gate_abort pursuit-start
+[ "$STOPLOSS" = "1" ] && stoploss_hit && gate_abort pursuit-start stoploss
 
 # ---------- 到位监视(真值口径,锚点自推导;外部wall超时+异常吞噬) ----------
 arrive_watch() {  # $1..3 goal; $4 tag后缀
@@ -456,6 +476,7 @@ PYEOF
 arrive_watch "$GX" "$GY" "$GZ" ""
 ARR=$(tail -1 "$EV/arrive_watch.txt")
 [ "$GATE" = "1" ] && gate_hit && gate_abort pursuit
+[ "$STOPLOSS" = "1" ] && stoploss_hit && gate_abort pursuit stoploss
 
 # ---------- leg2(两段式返程,X3②⑤) ----------
 ARR2="N/A"
