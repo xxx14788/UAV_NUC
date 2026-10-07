@@ -1,0 +1,74 @@
+{
+  "probed_at": "2026-10-07T18:23:47Z",
+  "duration_s": 12.0,
+  "carriers": {
+    "/mavros/estimator_status": {
+      "type": "mavros_msgs/EstimatorStatus",
+      "rate_hz": 1.0,
+      "samples": 12,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/imu/data": {
+      "type": "sensor_msgs/Imu",
+      "rate_hz": 50.02,
+      "samples": 601,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/imu/data_raw": {
+      "type": "sensor_msgs/Imu",
+      "rate_hz": 49.93,
+      "samples": 600,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/gps_rtk/rtk_baseline": {
+      "type": "mavros_msgs/RTKBaseline",
+      "rate_hz": 0.0,
+      "samples": 0,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/gpsstatus/gps1/rtk": {
+      "type": "mavros_msgs/GPSRTK",
+      "rate_hz": 0.0,
+      "samples": 0,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/gpsstatus/gps2/rtk": {
+      "type": "mavros_msgs/GPSRTK",
+      "rate_hz": 0.0,
+      "samples": 0,
+      "bias_fields": {},
+      "nonzero": false,
+      "plausible": true,
+      "valid": false
+    },
+    "/mavros/sys_status": {
+      "type": "mavros_msgs/SysStatus",
+      "rate_hz": 4.99,
+      "samples": 60,
+      "bias_fields": {
+        "voltage_battery": 16200,
+        "current_battery": -100,
+        "battery_remaining": 100
+      },
+      "nonzero": true,
+      "plausible": true,
+      "valid": false
+    }
+  },
+  "verdict": "NO_VALID_CARRIER"
+}

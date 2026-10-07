@@ -1,0 +1,19 @@
+# REGEN v2.0 FROZEN gate params (T2 v10.4; frozen 2026-10-08 04:15)
+# basis: 1a sampling pool n=22971 (draft-frozen numbers per recheck clause)
+domains:
+  global:
+    stereo_r:
+      L: 0.095
+      U: 0.895
+      p5: 0.150
+      p25: 0.700
+      p50: 0.780
+      p75: 0.810
+      p95: 0.840
+      n_frames: 22971
+    corners:
+      L: 80
+      note: "degenerate constant dist (p5=min=150 quota-saturated, IQR=0) -- quantile formula inapplicable, v1.1 value kept; min=41 frames below threshold = v1.1 behavior unchanged"
+    depth_r:
+      L: 0.5
+      note: "pool-wide constant 1.0 -- key carries no information, v1.1 value kept"
