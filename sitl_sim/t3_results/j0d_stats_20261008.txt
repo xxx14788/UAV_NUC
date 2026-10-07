@@ -1,16 +1,25 @@
 ================================================================================================
 j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor v1.4 口径)  生成 2026-10-07 (T1 v11.23)
-扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 185 袋轮 available
+扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 205 袋轮 available
 X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)
 分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577
 ================================================================================================
-总数 185: 风暴=84, 中漂移=54, 净轮=47
-  3090 135 轮: 净轮=36 中漂移=45 风暴=54
+总数 205: 风暴=86, 中漂移=63, 净轮=56
+  3090 154 轮: 净轮=45 中漂移=54 风暴=55
   NUC  37 轮: 净轮=9 中漂移=8 风暴=20
-  ?    13 轮: 净轮=2 中漂移=1 风暴=10
+  ?    14 轮: 净轮=2 中漂移=1 风暴=11
 
 -- 净轮名册 (T2fail=0 ∧ j0_total<0.5):
   run_DIAGGUARD2_233403        3090      B1005  j0=0.418 jump=0.000 transit=0.418 dom=transit 四绿=0 
+  run_M3RE12O_2_164230         3090      B1006  j0=0.121 jump=0.000 transit=0.121 dom=transit 四绿=1 
+  run_M3RE12O_3_164512         3090      B1006  j0=0.141 jump=0.000 transit=0.141 dom=transit 四绿=1 
+  run_M3RN8P_1_165523          3090      B1006  j0=0.110 jump=0.000 transit=0.110 dom=transit 四绿=0 
+  run_M3RN8P_2_170248          3090      B1006  j0=0.169 jump=0.526 transit=0.677 dom=mixed 四绿=0 
+  run_M3RNE8O_1_164750         3090      B1006  j0=0.070 jump=0.000 transit=0.070 dom=transit 四绿=1 
+  run_M3RNE8O_2_165017         3090      B1006  j0=0.150 jump=0.000 transit=0.150 dom=transit 四绿=1 
+  run_M3RS12P_2_162132         3090      B1006  j0=0.223 jump=0.000 transit=0.223 dom=transit 四绿=1 
+  run_M3RS8O_2_162950          3090      B1006  j0=0.083 jump=0.103 transit=0.115 dom=mixed 四绿=1 
+  run_M3RS8O_3_163217          3090      B1006  j0=0.263 jump=0.102 transit=0.205 dom=transit 四绿=0 
   run_T2M0_010259              3090      B1004  j0=0.090 jump=0.205 transit=0.279 dom=mixed 四绿=0 重判绿佐证(L3)
   run_T2RA12hov_133845         3090      B1004  j0=0.085 jump=0.000 transit=0.085 dom=transit 四绿=0 重判绿佐证(L3)
   run_T2RA14_135448            3090      B1004  j0=0.493 jump=0.000 transit=0.493 dom=transit 四绿=0 

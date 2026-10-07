@@ -48,7 +48,10 @@ STACK_ERAS = [
     ("fixface-2(1d7d2302/47d4308e)",   "2026-10-02 12:00", "2026-10-03 20:11"),
     ("fixface-3=e7044319/08a46d0a",    "2026-10-03 20:11", "2026-10-04 17:21"),
     ("build-2(8c3453c0/2ad9676e)",     "2026-10-04 17:21", "2026-10-05 12:00"),
-    ("streamguard(b7de133d node 族)",  "2026-10-05 12:00", None),
+    ("streamguard(b7de133d node 族)",  "2026-10-05 12:00", "2026-10-07 14:45"),
+    # IQG 栈=T1-B M2 写码窗产物(f622bae2 lib/886b1e90 node); 分界=STATUS 10-07 14:45
+    # "M2 写码窗完成"里程碑(此前 14:06-14:45 窗内 D1 首跑为 ENV-FAIL 归档轮)
+    ("IQG(f622bae2/886b1e90)",         "2026-10-07 14:45", None),
 ]
 
 # 战役名映射(无 banner 轮的臂; 来源=STATUS/DECISION_LOG/prereg 在册)
@@ -68,6 +71,9 @@ CAMPAIGN_ARM = [
     (re.compile(r"^run_VRFY1_"),      "VRFY(gates 臂验证轮)",           "era-map:T1 v11.9 单元1"),
     (re.compile(r"^run_VRG1_"),       "VRG(guard 臂判别轮,boot-2)",     "era-map:T1 v11.9 单元1"),
     (re.compile(r"^run_SUPHV2"),      "供给窗(guard 臂 P2/P3)",         "era-map:T1 v11.7u5 供给窗"),
+    (re.compile(r"^run_M3R"),         "M3R(T1-B M3 v1.1 批,IQG v1.1 臂)", "era-map:T1 v11.25r2 M3 批"),
+    (re.compile(r"^run_DRILL"),       "演练轮(注入演练,T1 域)",          "era-map:T1 v11.25r2 演练五案"),
+    (re.compile(r"^run_H15_"),        "H15(用户指令验证轮,DESIGNER)",    "era-map:STATUS 10-07 18:05"),
 ]
 
 def dt(s):
@@ -103,6 +109,11 @@ def arm_short(arm):
         parts.append("GATE(cg=%s)" % c.group(1))
     elif "GATE" in arm:
         parts.append("GATE(其他)")
+    i = re.search(r"IQG:gate=(\d+)", arm)
+    if i:
+        parts.append("IQG(g=%s)" % i.group(1))
+    elif "IQG:" in arm:
+        parts.append("IQG(其他)")
     if "RFIX" in arm:
         parts.append("RFIX")
     if not parts:
@@ -125,6 +136,10 @@ def arm_of(d, name, simvins):
         if re.search(r"\[T2RFIXCFG\]", simvins):
             arm = (arm + " | " if arm else "") + "RFIX(staged)"
             prov = (prov + "+" if prov else "") + "banner:T2RFIXCFG"
+        if re.search(r"\[T2IQGCFG\]", simvins):
+            g = re.search(r"\[T2IQGCFG\]\s*(.+)", simvins)
+            arm = (arm + " | " if arm else "") + "IQG:" + (g.group(1).strip() if g else "?")
+            prov = (prov + "+" if prov else "") + "banner:T2IQGCFG"
     if arm is None:
         for rx, label, src in CAMPAIGN_ARM:
             if rx.match(name):
@@ -184,6 +199,9 @@ def parse_wa_json(path):
     try:
         d = json.load(open(path))
     except Exception:
+        # 注意(v10.6 扩切口决策): j0d 列只认 wa_gate_online.json 历史源语义——不做
+        # j0_decomp.json 回退填充(回退会改写旧行空列, 违反扩切口加性/零重判纪律);
+        # 新轮的 j0d 数据权威通道=t3_results/j0d_stats 表(直读 j0_decomp.json)
         return r
     x = d.get("xline", {})
     dec = x.get("j0_decomp", {})
@@ -256,6 +274,17 @@ def main():
         j0v = wa["j0d_jump"] if wa["j0d_jump"] is not None else res["j0"]
         net = int(four == 1 and t2fail == 0 and j0v is not None and j0v < 0.5) if four is not None else None
         rr = l3.get(name, {})
+        # provenance 三源列(T3 v10.6 单元 2 框架; judge_site 恒 3090=判读单源化纪律)
+        if name.startswith("n3_"):
+            birth_machine, sync_channel = "nuc3", "nuc3-shipped"
+        elif name.startswith("u4_"):
+            birth_machine, sync_channel = "uav4", "uav4-synced"
+        elif machine.startswith("3090"):
+            birth_machine, sync_channel = "3090", "native"
+        elif machine.startswith("NUC"):
+            birth_machine, sync_channel = "uav4", "uav4-synced"
+        else:
+            birth_machine, sync_channel = "?", "?"
         rows.append(dict(
             round=name, date=ts.strftime("%Y-%m-%d %H:%M"), machine=machine, boot=boot,
             arm=arm, arm_prov=prov, cauchy=cauchy or "-", stack=stack,
@@ -264,6 +293,7 @@ def main():
             j0=res["j0"], j0d_jump=wa["j0d_jump"], j0d_transit=wa["j0d_transit"],
             j0d_dom=wa["j0d_dom"], njf=wa["njf"], t2fail=t2fail,
             four_green=four, net_round=net, wa_verdict=wa["wa_verdict"],
+            birth_machine=birth_machine, sync_channel=sync_channel, judge_site="3090",
         ))
 
     os.makedirs(os.path.dirname(a.out), exist_ok=True)

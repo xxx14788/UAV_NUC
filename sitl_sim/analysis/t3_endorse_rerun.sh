@@ -44,9 +44,11 @@ for D in "$@"; do
   TG=$(echo "$TRI" | grep -m1 'GATEHIT-STAT')
   TC=$(echo "$TRI" | grep -m1 -oE 'class=[a-z_( ;cf面待wa_gate权威-]*' | cut -d= -f2)
   PF=0  # 轮内逐位标志(末列缺陷修复 v1.1:原版用聚积 FAIL,首失配后后续轮末列全误显)
-  OKJ=$([ "$OJ" = "$NJ" ] && echo ✓ || echo ✗); { [ "$OJ" = "$NJ" ] || PF=1; FAIL=1; } 2>/dev/null
-  OKA=$([ "$OA" = "$NA" ] && echo ✓ || echo ✗); { [ "$OA" = "$NA" ] || PF=1; FAIL=1; } 2>/dev/null
-  OKR=$([ "$OR" = "$NR" ] && echo ✓ || echo ✗); { [ "$OR" = "$NR" ] || PF=1; FAIL=1; } 2>/dev/null
+  # 退出码缺陷修复 v1.2(T3 v10.6 单元 4 确认件): 原版 { [ cond ] || PF=1; FAIL=1; } 组内
+  # FAIL=1 无条件执行=逐位全绿轮也 RC=1; 条件化后 FAIL 仅在真失配置位
+  OKJ=$([ "$OJ" = "$NJ" ] && echo ✓ || echo ✗); { [ "$OJ" = "$NJ" ] || { PF=1; FAIL=1; }; } 2>/dev/null
+  OKA=$([ "$OA" = "$NA" ] && echo ✓ || echo ✗); { [ "$OA" = "$NA" ] || { PF=1; FAIL=1; }; } 2>/dev/null
+  OKR=$([ "$OR" = "$NR" ] && echo ✓ || echo ✗); { [ "$OR" = "$NR" ] || { PF=1; FAIL=1; }; } 2>/dev/null
   echo "| $TAG | $GOAL | jump $OJ/$NJ$OKJ arrive $OA/$NA$OKA RES $OR/$NR$OKR | cf=${CF:-?} tri=$TC | $TG | $([ $PF = 0 ] && echo ✓ || echo 见上列) |"
 done
 rm -rf "/tmp/t3_shadow_$$" 2>/dev/null

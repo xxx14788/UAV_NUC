@@ -1,5 +1,12 @@
 round,machine,boot,arm,cat,j0_result_txt,j0_total,jump_m,transit_m,jump_frac,n_jump,dominant,n_prop,t2fail,four_green,arrive_old,arrive_new,l3_flag,corrobor
 run_DIAGCAUCHY_231757,3090,B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,34.289,34.2888,16.9502,17.3812,0.4937,113,mixed,10862,0,0,4.715,4.715,-,
+run_DRILLD1_N8P_171833,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,0.699,0.6988,0.0,0.6988,0.0,0,transit,18077,0,0,0.164,,,
+run_M3RE12O_1_163942,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,1.153,1.153,0.1047,1.0496,0.0907,1,transit,25256,0,0,0.133,,,
+run_M3RN8P_3_171014,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,2.163,2.1633,0.0,2.1633,0.0,0,transit,22199,0,0,0.172,,,
+run_M3RNE8O_3_165244,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,4.279,4.2791,0.0,4.2791,0.0,0,transit,23888,0,0,0.066,,,
+run_M3RS12P_1_161854,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,0.724,0.7237,0.0,0.7237,0.0,0,transit,22912,0,0,0.086,,,
+run_M3RS12P_3_162403,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,4.322,4.3217,0.0298,4.3463,0.0068,2,transit,26087,0,0,0.097,,,
+run_M3RS8O_1_162653,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,0.999,0.9988,0.1184,0.8878,0.1176,1,transit,27199,0,0,0.079,,,
 run_SUPHV3b_001918,3090,B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,3.909,3.9089,0.8032,4.1547,0.162,47,transit,31144,0,0,0.057,0.057,-,
 run_SUPHVa_224750,3090,B1005,SG:guard=0 sane_p=1000.0 sane_v=50.0 resume_ga,中漂移,4.73,4.73,0.5942,4.4052,0.1189,6,transit,34821,0,0,0.373,0.373,-,
 run_SUPP2A_234133,3090,B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,2.349,2.3487,0.187,2.461,0.0706,3,transit,59642,0,0,3.556,3.556,-,
@@ -44,6 +51,8 @@ run_X5_SE12O_215416,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),中漂�
 run_X5_W12P_R2_231417,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),中漂移,,4.2003,0.0382,4.1652,0.0091,2,transit,67302,0,,,,,
 run_X5_W5O_205640,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),中漂移,,3.2869,0.7887,3.1237,0.2016,7,transit,68270,0,,,,,
 run_X5_W8O_193501,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),中漂移,,3.5795,2.6499,4.0506,0.3955,16,mixed,66690,0,,,,,
+run_M3RE8P_2_160934,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,17.3575,10.3367,8.2858,0.5551,106,mixed,18486,0,,,,,
+run_M3RE8P_3_161639,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,42.0194,11.559,31.3859,0.2692,151,transit,18083,0,,,,,
 run_T2U4OBS1_031909,"?(无证据行,关机窗)",n/a,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,中漂移,1.249,1.2489,0.5029,1.5404,0.2461,4,transit,36249,0,0,4.727,4.918,-,
 run_E4R2-GOFF-D10-LODOM_100819,NUC,n/a,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,中漂移,1.892,1.8916,0.0,1.8916,0.0,0,transit,54949,0,0,0.778,0.323,-,重判绿佐证(L3)
 run_F3B14_163613,NUC,n/a,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,中漂移,15.805,15.8045,18.2034,11.1424,0.6203,257,mixed,30381,0,0,0.919,0.317,-,重判绿佐证(L3)
@@ -54,6 +63,15 @@ run_T2ZETA2_132510,NUC,n/a,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,中漂
 run_U3PO_211438,NUC,n/a,legacy(无banner),中漂移,2.603,2.6025,1.9068,2.9652,0.3914,31,mixed,74117,0,0,4.436,4.970,-,
 run_X1final_040643,NUC,n/a,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,中漂移,2.594,2.5942,2.2155,2.5176,0.4681,88,mixed,33587,0,0,4.637,4.941,-,
 run_DIAGGUARD2_233403,3090,B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.418,0.4181,0.0,0.4181,0.0,0,transit,60719,0,0,4.697,4.697,-,
+run_M3RE12O_2_164230,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.121,0.1209,0.0,0.1209,0.0,0,transit,23983,0,1,0.214,,,
+run_M3RE12O_3_164512,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.141,0.1411,0.0,0.1411,0.0,0,transit,23663,0,1,0.349,,,
+run_M3RN8P_1_165523,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.11,0.1098,0.0,0.1098,0.0,0,transit,86972,0,0,8.214,,,
+run_M3RN8P_2_170248,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.169,0.1687,0.5262,0.6775,0.4371,4,mixed,86044,0,0,7.834,,,
+run_M3RNE8O_1_164750,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.07,0.0697,0.0,0.0697,0.0,0,transit,20718,0,1,0.052,,,
+run_M3RNE8O_2_165017,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.15,0.1505,0.0,0.1505,0.0,0,transit,20595,0,1,0.158,,,
+run_M3RS12P_2_162132,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.223,0.223,0.0,0.223,0.0,0,transit,21632,0,1,0.147,,,
+run_M3RS8O_2_162950,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.083,0.0833,0.1028,0.1148,0.4725,1,mixed,20785,0,1,0.222,,,
+run_M3RS8O_3_163217,3090,B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.263,0.2629,0.1022,0.2048,0.3329,1,transit,85520,0,0,5.895,,,
 run_T2M0_010259,3090,B1004,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,净轮,0.09,0.0901,0.2054,0.2788,0.4243,2,mixed,43190,0,0,0.826,0.041,-,重判绿佐证(L3)
 run_T2RA12hov_133845,3090,B1004,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.085,0.0848,0.0,0.0848,0.0,0,transit,44257,0,0,0.797,0.140,-,重判绿佐证(L3)
 run_T2RA14_135448,3090,B1004,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,净轮,0.493,0.4933,0.0,0.4933,0.0,0,transit,82851,0,0,5.159,4.706,-,
@@ -147,6 +165,7 @@ run_X5_SE8P_200242,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),风暴,,2
 run_X5_SE8P_201000,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),风暴,,2.897,0.8112,3.7601,0.1774,5,transit,76915,2,,,,,
 run_X5_W8P_194109,3090(X5批次),boot-X5-1006/07,v2+cauchy4(054ddc8d),风暴,,1.5354,0.1025,1.0298,0.0905,1,transit,76336,2,,,,,
 run_F3B16_191620,3090(推定:boot窗),B1004,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,风暴,,1.3863,0.1446,0.3699,0.281,1,transit,9776,1,,,,,
+run_M3RE8P_1_160719,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,风暴,,28.1974,29.8882,4.8881,0.8594,271,jump,13388,2,,,,,
 run_SUPX2a_225543,3090(推定:boot窗),B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,风暴,,3.9487,0.0,0.3676,0.0,0,transit,1348,73,,,,,
 run_SUPX2b_230005,3090(推定:boot窗),B1005,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,风暴,,3.3657,0.0,0.345,0.0,0,transit,990,52,,,,,
 run_T2BL1_201552,3090(推定:boot窗),B1004,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,风暴,,11.2646,36.8508,24.412,0.6015,714,mixed,6852,1,,,,,
@@ -154,6 +173,7 @@ run_T2BL3_202549,3090(推定:boot窗),B1004,GATE:cost_gate=1 ratio=10.0 n=5 win=
 run_T2BL6_203956,3090(推定:boot窗),B1004,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,风暴,,26.654,129.52,105.0674,0.5521,3528,mixed,33375,3,,,,,
 run_T2BL8_204921,3090(推定:boot窗),B1004,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,风暴,,35.6292,21.1386,39.3326,0.3496,567,mixed,28120,3,,,4715774.989,-,
 run_VRFY1_023908,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,风暴,,5.3647,0.0,0.2365,0.0,0,transit,4050,110,,,,,
+run_H15_E8O_180514,?,n/a,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,风暴,,30.3599,18.9299,14.3422,0.5689,118,mixed,7640,1,,,,,
 run_F3B10_154733,"?(无证据行,关机窗)",n/a,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,风暴,,630.689,472.9698,298.2332,0.6133,4774,mixed,22019,4,,,4715810.751,-,
 run_F3B11_155643,"?(无证据行,关机窗)",n/a,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,风暴,,2.2413,1.4694,1.6127,0.4768,18,mixed,10851,1,,,4715812.806,-,
 run_F3B13_161000,"?(无证据行,关机窗)",n/a,GATE:cost_gate=0 ratio=10.0 n=5 win=20 | min_d,风暴,,3.1235,52.4382,41.8136,0.5564,766,mixed,23074,2,,,5758242.616,-,
