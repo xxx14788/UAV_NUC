@@ -2129,3 +2129,7 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 **坑登记（本夜新增 4 条）**：①AP 消失型断连 netsh 非提权无解（ap_watch.sh 监测配方在案）；②pkill 模式串自匹配第四次实锤（方括号法 [g]zserver 防护有效）；③heredoc 嵌套中文长文件必翻车（scp 两段式替代）；④Windows Python 不识别 MSYS 路径（D:\ 直通）。
 
 **挂起件**：O6 补采+REGEN v2 冻结生效（T1 窗后 ~05:20）；M3' 批 18 轮（冻结后,STATUS 预告）；编辑器 dry-run+1c baseline（IO 窗）；push（台账+staging 全量）。
+
+**M3prime 批终账（04:11-07:01,补挂起件）**：base 18+v2 18 有效轮+1 A/B 判别轮。**N8P 100%(base 3/3)→0%(v2 0/3) 饥饿病理复现=铁证对照**→REGEN v2 判负→**输入质量门参数化路线整体证伪正式定案**（1a 健康带钉死参数空间无自由度+拒帧-饥饿-跳变雪崩 3-4 拒即崩[格子×时序敏感,S8O 137 拒仍 PASS 反证]）→修复面转候选 A 反馈循环打破（fail-open 加速/报警不拒帧=observe 复用）与候选 B 弃门转 1c（不互斥）。执行事故三层（launch 嵌套 substitution[8cfe93e 修复,T1 3d ENV-FAIL 同根因+勘误登记]/banner %.2f 0.095 显示 0.10 致误判停批/config 副本相对路径 calib 解析失败→camodocal 空指针崩[修复=副本入 config 原目录]）。产物=m3p_results.md（格级表+判读）+双 csv+v2_arm.yaml；git 5d6685a 全推。
+
+**v10.4 收卷行（07:2x）**：双必达 ✓✓（1a 完成+REGEN v2.0 FROZEN 04:15）+保底全落（①分布数据+方法论 ✓②冻结 ✓③M3prime 执行+错峰记录 ✓④1b 第 0 步+设计件+预注册 ✓⑤本行=夜报）；1c 三臂执行滑下夜（设计件+编辑器+标本 md5 就绪=保底达成）；C.10 本地+3090 收卷 v1.0。坑账新增 7 条（AP 消失型/pkill 自匹配第四次/heredoc 嵌套/MSYS 路径/launch 嵌套 substitution/config 相对路径/ssh 超时杀未 setsid 远端命令）。
