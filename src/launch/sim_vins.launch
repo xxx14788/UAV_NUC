@@ -15,7 +15,7 @@
                /mavros/vision_pose/pose（喂 PX4 EKF2，照实机链路）
          消费：run_planner_sitl_vins.launch / run_ctrl_sitl_vins.launch -->
     <node pkg="vins" type="vins_node" name="vins_estimator" output="screen"
-          args="$(optenv T2_VINS_CONFIG $(env HOME)/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml)"/><!-- T2 v10.4: T2_VINS_CONFIG env override, default = legacy path (zero behavior change) -->
+          args="$(optenv T2_VINS_CONFIG /home/ghj/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml)"/><!-- T2 v10.4: T2_VINS_CONFIG env override, literal default (roslaunch forbids nested substitution) -->
     <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen">
         <!-- T1 E-5a: publish arm via env (default pose = legacy bit-path; T1_E5A_PUB_MODE=odom for L-odom arm) -->
         <param name="pub_mode" value="$(optenv T1_E5A_PUB_MODE pose)"/>
