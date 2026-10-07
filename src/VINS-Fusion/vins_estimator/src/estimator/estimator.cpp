@@ -578,7 +578,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     // staging 判定与 case-A 同核(NON_LINEAR ∧ 过宽限期);拒收=丢帧不入滑窗(preintegration
     // 跨丢帧累计,数学无损);fail-open=连续拒收超限放行一帧。判读面=[T2IQG] 日志行可 grep。
     static int t2_iqg_reject_total = 0, t2_iqg_consec = 0, t2_iqg_pass_total = 0;
-    if (T2_IQG_GATE)
+    if (T2_IQG_GATE || T2_IQG_OBSERVE)
     {
         bool t2_iqg_steady = t2_staged_steady_now(solver_flag == NON_LINEAR,
                                                   t2_t_init_finish, header,
@@ -602,6 +602,13 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
         t2_m.corners = (int)image.size();
         t2_m.depth_ok_ratio = t2_m.corners ? (double)t2_depth_ok / t2_m.corners : 0.0;
         t2_m.stereo_pair_ratio = t2_m.corners ? (double)t2_stereo_pairs / t2_m.corners : 0.0;
+        if (T2_IQG_OBSERVE)
+        {
+            // T2 v10.4 1a: observe-only sampling -- per-frame metric log, no rejection
+            ROS_WARN("[T2IQG-METRIC] t=%.2f corners=%d depth_r=%.2f stereo_r=%.2f",
+                     header, t2_m.corners, t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio);
+            goto t2_iqg_done;
+        }
         const char *t2_reason = nullptr;
         if (t2_iqg_should_reject(t2_iqg_steady, t2_m, t2_iqg_consec, &t2_reason))
         {
@@ -623,6 +630,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                          t2_m.corners, t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio);
         }
     }
+    t2_iqg_done:;
     if (f_manager.addFeatureCheckParallax(frame_count, image, td))
     {
         marginalization_flag = MARGIN_OLD;

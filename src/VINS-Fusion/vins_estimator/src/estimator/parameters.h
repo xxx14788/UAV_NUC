@@ -90,6 +90,7 @@ inline bool t2_staged_steady_now(bool non_linear, double t_init_finish, double h
 // fail-open=连续拒收达上限后放行一帧(防门致盲飞,估计器留重锁采样)。
 // 默认全关=零栈改动(实机 config 无这些键=与上游逐位同)。
 extern int T2_IQG_GATE;               // master switch (default 0 = OFF)
+extern int T2_IQG_OBSERVE;           // T2 v10.4 1a: observe-only (metrics+per-frame METRIC log, never reject)
 extern int T2_IQG_MIN_CORNERS;        // K1 供给: 帧特征数下限
 extern double T2_IQG_MIN_DEPTH_RATIO; // K2: 有效深(0<z<band)特征占比下限
 extern double T2_IQG_MAX_DEPTH_M;     // K2 band: 深度有效上界(m)

@@ -24,6 +24,7 @@ double T2_DEPTH_MIN = 0.15, T2_DEPTH_MAX = 30.0, T2_XCHECK_TOL = 0.30;
 int T2_VISION_LOSS = 0;
 // T1-v1125 M2 腿B (INPUTFACE-SCREEN): frame-level input quality gate defaults (all OFF)
 int T2_IQG_GATE = 0;
+int T2_IQG_OBSERVE = 0;   // T2 v10.4 1a sampling mode (default off = legacy)
 int T2_IQG_MIN_CORNERS = 80;
 double T2_IQG_MIN_DEPTH_RATIO = 0.5;
 double T2_IQG_MAX_DEPTH_M = 100.0;
@@ -180,6 +181,13 @@ void readParameters(std::string config_file)
     // T1-v1125 M2 腿B: frame-level input quality gate keys (absent = OFF = legacy)
     if (!fsSettings["t2_input_quality_gate"].empty())
         T2_IQG_GATE = (int)fsSettings["t2_input_quality_gate"];
+    if (!fsSettings["t2_iqg_observe"].empty())
+        T2_IQG_OBSERVE = (int)fsSettings["t2_iqg_observe"];
+    {   // T2 v10.4 1a: env override T2_IQG_OBSERVE=1 (sampling batch; keeps
+        // shared config/launch untouched, config md5 unchanged)
+        const char *t2_env_ob = getenv("T2_IQG_OBSERVE");
+        if (t2_env_ob) T2_IQG_OBSERVE = atoi(t2_env_ob);
+    }
     if (!fsSettings["t2_iqg_min_corners"].empty())
         T2_IQG_MIN_CORNERS = (int)fsSettings["t2_iqg_min_corners"];
     if (!fsSettings["t2_iqg_min_depth_ratio"].empty())
