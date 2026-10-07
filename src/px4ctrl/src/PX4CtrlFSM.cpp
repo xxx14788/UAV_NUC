@@ -99,6 +99,58 @@ void PX4CtrlFSM::process()
 		         (now_time - state_data.rcv_stamp).toSec());
 	}
 
+	// STEP0.5: HAFIX odom 死亡看门(T1-v1125-4b;D1 演练证据 run_DRILLD1_N8P_150019:
+	// 飞行期 VINS 死亡原行为=冻结 odom 盲飞+disarm=0=实机炸机路径,H-A 阻塞项活体实证)。
+	// 梯①watch(dead_s)→AUTO_LAND(冻结 odom 下 z 设点缓降);梯②再 kill_s 仍 armed→
+	// KILL(CommandLong 400)+disarm 重试(闭合 kill≠disarm 缺口,D3/D4a DEGRADED 共同面)。
+	// 复位=landed 或流恢复;[HAFIX] 日志留痕;缺省开=实机红线姿态。
+	if (param.ha_fix.enabled)
+	{
+		const bool odom_dead = !odom_is_received(now_time);
+		const bool flying = fd_in.armed && !fd_in.landed;
+		if (flying && odom_dead)
+		{
+			if (ha_stage == 0)
+			{
+				ha_dead_since = now_time;
+				ha_stage = 1;
+				ROS_ERROR("[HAFIX] odom stream dead @flying -- watch start");
+			}
+			else if (ha_stage == 1 &&
+			         (now_time - ha_dead_since).toSec() >= param.ha_fix.dead_s)
+			{
+				ha_stage = 2;
+				if (state != AUTO_LAND)
+				{
+					state = AUTO_LAND;
+					ROS_ERROR("[HAFIX] dead %.1fs >= %.1fs -> AUTO_LAND (blind-descend on stale odom)",
+					          (now_time - ha_dead_since).toSec(), param.ha_fix.dead_s);
+				}
+			}
+			else if (ha_stage == 2 &&
+			         (now_time - ha_dead_since).toSec() >=
+			             param.ha_fix.dead_s + param.ha_fix.kill_s)
+			{
+				ha_stage = 3;
+				ROS_ERROR("[HAFIX] still armed %.1fs after AUTO_LAND -> KILL + disarm fallback",
+				          (now_time - ha_dead_since).toSec());
+				mavros_msgs::CommandLong kill_srv;
+				kill_srv.request.command = 400;
+				kill_srv.request.confirmation = true;
+				reboot_FCU_srv.call(kill_srv);
+				mavros_msgs::CommandBool disarm_srv;
+				disarm_srv.request.value = false;
+				arming_client_srv.call(disarm_srv);
+			}
+		}
+		else if (ha_stage != 0)
+		{
+			ROS_ERROR("[HAFIX] cleared (landed=%d armed=%d odom_ok=%d) stage %d -> reset",
+			          (int)fd_in.landed, (int)fd_in.armed, (int)!odom_dead, ha_stage);
+			ha_stage = 0;
+		}
+	}
+
 	// STEP1: state machine runs
 	switch (state)
 	{

@@ -10,6 +10,13 @@ import csv, glob, json, os
 SMOKE = os.path.expanduser("~/sitl_sim/vins_smoke_runs")
 COMBO = os.path.expanduser("~/catkin_ws/sitl_sim/t3_results/combo_matrix_20261006_rounds.csv")
 L3 = os.path.expanduser("~/catkin_ws/sitl_sim/t1_evidence/v11_7_2026-10-05/l3_recompute_v14.csv")
+X5PM = {}
+import csv as _csv
+_pm_path = os.path.expanduser("~/sitl_sim/t1_evidence/v11_17_2026-10-06/x5_passmap_live.csv")
+if os.path.exists(_pm_path):
+    for _r in _csv.DictReader(open(_pm_path, encoding="utf-8-sig")):
+        if _r.get("tag"):
+            X5PM[_r["tag"]] = _r
 OUT = os.path.expanduser("~/sitl_sim/t3_results/j0d_stats_20261007")
 
 # X4 CAMPAIGN_ARM 映射(正源=x4_final_tally.md md5 206506c5 + RESULT.txt 实读)
@@ -37,8 +44,24 @@ for p in sorted(glob.glob(os.path.join(SMOKE, "run_*", "j0_decomp.json"))):
     if not d.get("available"):
         continue
     if name.startswith("run_X5_"):
+        # v1.1(2026-10-07 v11.25 阶段5): X5 联表——四绿/到位=x5_passmap_live 正源;
+        # t2fail=simvins.log REINIT/failure detection 实数(C.10 补列)
+        x5t = name[7:] if not name.startswith("run_X5_") else name[len("run_X5_"):]
+        pm = X5PM.get(x5t) or {}
+        gl = os.path.join(SMOKE, name, "simvins.log")
+        t2f = 0
+        try:
+            with open(gl, errors="replace") as f:
+                for ln in f:
+                    if "failure detection" in ln or "REINIT" in ln:
+                        t2f += 1
+        except OSError:
+            t2f = 0
+        res = pm.get("result", "")
         c = {"machine":"3090(X5批次)","boot":"boot-X5-1006/07","arm":"v2+cauchy4(054ddc8d)",
-             "t2fail":"0","four_green":"","arrive":"","j0":""}
+             "t2fail":str(t2f),
+             "four_green":("1" if res == "PASS" else ("0" if res else "")),
+             "arrive":pm.get("arrive_truth",""), "j0":pm.get("jump_prepost","")}
     elif name.startswith("run_X4_"):
         xm = X4MAP.get(name, {"fg":"","arr":""})
         c = {"machine":"3090(X4批次)","boot":"boot-X4-1007","arm":"v2+cauchy4(054ddc8d)",
@@ -81,7 +104,7 @@ L = []
 L.append("="*96)
 L.append("j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor v1.4 口径)  生成 2026-10-07 (T1 v11.23)")
 L.append("扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = %d 袋轮 available" % len(rows))
-L.append("X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 前缀映射: 3090(X5批次)/boot-X5-1006/07/v2+cauchy4(无门批);X5 轮 t2fail/four_green/arrive 未联表(判读史归 x5_passmap)=空列如实注记")
+L.append("X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)")
 L.append("分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577")
 L.append("="*96)
 L.append("总数 %d: %s" % (len(rows), ", ".join("%s=%d" % kv for kv in cnt.most_common())))

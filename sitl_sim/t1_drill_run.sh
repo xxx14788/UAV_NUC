@@ -4,10 +4,10 @@
 # 流程: 起 vins_smoke(后台,N8P 格默认)→等 pursuit(goal 后 25s)→注入→等收束(budget 上限)
 #       →取证(RESULT/stoploss/alarm/inject/轨迹)→teardown 兜底。
 # 注: 判据=drill_prereg_v1 冻结表;本脚本只编排不判读。
+export ROS_DISTRO=noetic ROS_VERSION=1        ROS_MASTER_URI=${ROS_MASTER_URI:-http://localhost:11311}        ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH:-}
+source /opt/ros/noetic/setup.bash
+source "$HOME/catkin_ws/devel/setup.bash"
 set -u
-export ROS_DISTRO=noetic ROS_VERSION=1
-source /opt/ros/noetic/setup.bash 2>/dev/null
-source "$HOME/catkin_ws/devel/setup.bash" 2>/dev/null
 L="$HOME/sitl_sim"
 
 CASE="${1:?D1..D5}"
@@ -15,6 +15,7 @@ GX="${2:-1.010}"; GY="${3:-8.980}"; GZ="${4:-1.0}"
 WORLD="${5:-sitl_world_obstacles}"
 BUDGET=300
 STAMP=$(date +%H%M%S)
+MARKER=$(mktemp)
 TAG="DRILL${CASE}_N8P"
 EV="$L/vins_smoke_runs/run_${TAG}_${STAMP}"
 LOG="/tmp/drill_${CASE}_${STAMP}.log"
@@ -22,9 +23,10 @@ LOG="/tmp/drill_${CASE}_${STAMP}.log"
 echo "[drill] case=$CASE goal=($GX,$GY,$GZ) world=$WORLD ev=$EV" | tee -a "$LOG"
 
 # 案5 监控告警器随轮启动
+MON_DIR=""
 if [ "$CASE" = "D5" ]; then
-  mkdir -p "$EV"
-  setsid nohup python3 "$L/t1_odom_monitor.py" "$EV" > "$EV/monitor_stdout.log" 2>&1 &
+  MON_DIR=$(mktemp -d /tmp/drill_d5_monitor_XXXX)
+  setsid nohup python3 "$L/t1_odom_monitor.py" "$MON_DIR" > "$MON_DIR/monitor_stdout.log" 2>&1 &
 fi
 
 mkdir -p /tmp/drill_logs; setsid nohup bash "$L/vins_smoke.sh" --world "$WORLD" --goal "$GX" "$GY" "$GZ" \
@@ -33,10 +35,10 @@ SMOKE_PID=$!
 echo "[drill] vins_smoke pid=$SMOKE_PID" | tee -a "$LOG"
 
 # 等 run 目录出现 + goal 投递(轮内 goal_trace 或 arrive_watch 出现)
-EV=$(ls -dt "$L"/vins_smoke_runs/run_${TAG}_* 2>/dev/null | head -1)
+EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | head -1)
 WAIT=0
 while [ -z "$EV" ] && [ $WAIT -lt 120 ]; do sleep 3; WAIT=$((WAIT+3));
-  EV=$(ls -dt "$L"/vins_smoke_runs/run_${TAG}_* 2>/dev/null | head -1); done
+  EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | head -1); done
 [ -n "$EV" ] || { echo "[drill] FATAL run dir 未出现" | tee -a "$LOG"; exit 1; }
 echo "[drill] EV=$EV" | tee -a "$LOG"
 
@@ -47,6 +49,10 @@ while [ ! -s "$EV/arrive_watch.txt" ] && [ $WAIT -lt 180 ]; do sleep 3; WAIT=$((
   echo "[drill] WARN arrive_watch 未出现,按时序注入(${WAIT}s)" | tee -a "$LOG"
 sleep 25  # pursuit 稳定段
 
+if ! pgrep -x vins_node >/dev/null; then
+  echo "[drill] ABORT vins_node 不在(pursuit 前提失效),取消注入" | tee -a "$LOG"
+  exit 2
+fi
 INJ_T=$(date +%H:%M:%S)
 echo "[drill] 注入@$INJ_T case=$CASE" | tee -a "$LOG"
 case "$CASE" in
@@ -87,4 +93,8 @@ done
 kill -0 "$SMOKE_PID" 2>/dev/null && { bash "$L/kill_planner_all.sh" >/dev/null 2>&1 || true; }
 sleep 3
 pkill -9 -x vins_node 2>/dev/null || true
+if [ -n "$MON_DIR" ] && [ -d "$MON_DIR" ]; then
+  cp "$MON_DIR"/* "$EV/" 2>/dev/null
+  echo "[drill] monitor 产物回拷 $EV" | tee -a "$LOG"
+fi
 echo "[drill] 完毕 log=$LOG ev=$EV" | tee -a "$LOG"

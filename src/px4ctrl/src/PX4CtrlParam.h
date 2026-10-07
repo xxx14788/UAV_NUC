@@ -79,6 +79,15 @@ public:
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
 	OdomSanityGate_t odom_gate;
+
+	// T1-v1125-4b HAFIX (D1 演练实证:飞行期 VINS 死亡=盲飞+disarm=0 炸机路径)
+	struct HaFix_t
+	{
+		bool enabled;
+		double dead_s;   // odom 流死亡持续阈值(触发梯① AUTO_LAND)
+		double kill_s;   // 梯①后再经此窗仍 armed → KILL+disarm 兜底
+	};
+	HaFix_t ha_fix;
 	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate params
 	struct
 	{

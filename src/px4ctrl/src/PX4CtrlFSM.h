@@ -44,6 +44,10 @@ public:
 
 	LinearControl &controller;
 
+	// T1-v1125-4b HAFIX: odom 死亡看门状态(0=监视/1=watch/2=LAND/3=KILL 已发)
+	ros::Time ha_dead_since;
+	int ha_stage = 0;
+
 	ros::Publisher traj_start_trigger_pub;
 	ros::Publisher ctrl_FCU_pub;
 	ros::Publisher ctrl_FCU_pos_pub; // PositionTarget publisher for PX4 internal control
