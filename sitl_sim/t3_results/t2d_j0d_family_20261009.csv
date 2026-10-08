@@ -1,0 +1,21 @@
+round,scenario,rep,hafix_n,in_j0d,j0_total,jump_m,transit_m,jump_frac,dominant,family
+run_DRILLD1_N8P_214206,S1_hover_1m,1,5,是,0.9967,0.0,0.9967,0.0,transit,transit 慢淋主导族(与 sim 悬停自跳/导航 B 型同族)
+run_DRILLD1_N8P_214621,S2_hover_3m,1,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_214950,S3_transit,1,0,是,0.1202,0.0,0.1202,0.0,transit,净轮(无跳变病理)
+run_DRILLD1_N8P_215405,S4_land_1m,1,0,是,0.0215,0.0,0.0215,0.0,negligible,净轮(无跳变病理)
+run_DRILLD1_N8P_215653,S1_hover_1m,2,5,是,0.2589,0.6324,0.5372,0.5407,mixed,净轮(无跳变病理)
+run_DRILLD1_N8P_220559,S2_hover_3m,2,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_220927,S3_transit,2,5,是,0.2257,0.0,0.2257,0.0,transit,净轮(无跳变病理)
+run_DRILLD1_N8P_221832,S4_land_1m,2,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_221950,S1_hover_1m,3,7,是,2.5453,0.0,2.5453,0.0,transit,transit 慢淋主导族(与 sim 悬停自跳/导航 B 型同族)
+run_DRILLD1_N8P_222406,S2_hover_3m,3,3,是,0.0638,0.0,0.0638,0.0,transit,净轮(无跳变病理)
+run_DRILLD1_N8P_223311,S3_transit,3,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_223339,S4_land_1m,3,5,是,0.2271,0.3623,0.351,0.5079,mixed,净轮(无跳变病理)
+run_DRILLD1_N8P_224245,S1_hover_1m,4,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_224313,S2_hover_3m,4,5,是,0.1526,0.0,0.1526,0.0,transit,净轮(无跳变病理)
+run_DRILLD1_N8P_225218,S3_transit,4,0,否(无可用 j0_decomp=ENV-FAIL 面),,,,,,无判读面
+run_DRILLD1_N8P_225546,S4_land_1m,4,4,是,1.5155,0.0,1.5155,0.0,transit,transit 慢淋主导族(与 sim 悬停自跳/导航 B 型同族)
+run_DRILLD1_N8P_225838,S1_hover_1m,5,0,是,0.1055,0.0,0.1055,0.0,transit,净轮(无跳变病理)
+run_DRILLD1_N8P_230253,S2_hover_3m,5,3,是,12.0895,0.0,0.1214,0.0,transit,transit 慢淋主导族(与 sim 悬停自跳/导航 B 型同族)
+run_DRILLD1_N8P_230621,S3_transit,5,5,是,1.6399,0.0,1.6399,0.0,transit,transit 慢淋主导族(与 sim 悬停自跳/导航 B 型同族)
+run_DRILLD1_N8P_231037,S4_land_1m,5,0,是,0.1124,0.0,0.1124,0.0,transit,净轮(无跳变病理)

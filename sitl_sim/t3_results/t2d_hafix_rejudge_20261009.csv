@@ -1,0 +1,22 @@
+round,ts,scenario,rep,map_src,hafix_n,hafix_maxstage,hafix_last,landed,z_end,disarm,gatehit_chain,result,round_pass,goal,bag_s,note
+run_DRILLD1_N8P_214206,214206,S1_hover_1m,1,summary映射,5,1,"73576, 126.556000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",1,0.105,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_214621,214621,S2_hover_3m,1,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_214950,214950,S3_transit,1,summary映射,0,0,,1,0.134,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_215405,215405,S4_land_1m,1,summary映射,0,0,,1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_215653,215653,S1_hover_1m,2,summary映射,5,1,"49134, 127.620000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",0,1.445,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_220559,220559,S2_hover_3m,2,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_220927,220927,S3_transit,2,summary映射,5,1,"63012, 126.924000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",0,0.916,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_221832,221832,S4_land_1m,2,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_221950,221950,S1_hover_1m,3,summary映射,7,1,"03597, 127.492000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",1,0.104,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_222406,222406,S2_hover_3m,3,summary映射,3,0,"28397, 127.532000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",0,1.028,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_223311,223311,S3_transit,3,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_223339,223339,S4_land_1m,3,summary映射,5,1,"12604, 177.408000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",0,1.022,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_224245,224245,S1_hover_1m,4,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_224313,224313,S2_hover_3m,4,summary映射,5,1,"67271, 127.528000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",0,0.973,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_225218,225218,S3_transit,4,summary映射,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_225546,225546,S4_land_1m,4,summary映射,4,1,"5.251119654, 104.344000000]: [HAFIX] cleared (landed=0 armed=1 odom_ok=1) stage 1 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_225838,225838,S1_hover_1m,5,summary映射,0,0,,1,0.136,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_230253,230253,S2_hover_3m,5,summary映射,3,2,"30.514762941, 43.088000000]: [HAFIX] cleared (landed=0 armed=1 odom_ok=1) stage 2 -> reset",NA,,,,FAIL,FAIL,,,
+run_DRILLD1_N8P_230621,230621,S3_transit,5,summary映射,5,1,"70553, 127.416000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",1,0.105,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_231037,231037,S4_land_1m,5,summary映射,0,0,,1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_231439,231439,非本批(批毕后),,batch_done=23:14:31,7,1,"15785, 189.604000000]: [HAFIX] still armed 20.0s after AUTO_LAND -> KILL + disarm fallback",1,0.104,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
