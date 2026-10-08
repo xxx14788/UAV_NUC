@@ -1,0 +1,33 @@
+diff --git a/include/gazebo_user_camera_plugin.h b/include/gazebo_user_camera_plugin.h
+--- a/include/gazebo_user_camera_plugin.h
++++ b/include/gazebo_user_camera_plugin.h
+@@ -65,6 +65,7 @@ namespace gazebo
+         transport::NodePtr node;
+         event::ConnectionPtr update_connection_;
+         std::string model_name_{""};
++        bool track_model_{true};
+     };
+ }
+ #endif
+diff --git a/src/gazebo_user_camera_plugin.cpp b/src/gazebo_user_camera_plugin.cpp
+--- a/src/gazebo_user_camera_plugin.cpp
++++ b/src/gazebo_user_camera_plugin.cpp
+@@ -51,6 +51,9 @@ UserCameraPlugin::UserCameraPlugin()
+   this->node = transport::NodePtr(new transport::Node());
+   this->node->Init();
+ 
++  const char *disable_tracking = std::getenv("PX4_GZ_DISABLE_CAMERA_TRACKING");
++  track_model_ = !(disable_tracking && std::string(disable_tracking) != "0");
++
+   update_connection_ =
+       event::Events::ConnectPreRender(
+           boost::bind(&UserCameraPlugin::OnUpdate, this));
+@@ -85,7 +88,7 @@ void UserCameraPlugin::OnUpdate() {
+ 
+   rendering::UserCameraPtr user_camera = gui::get_active_camera();
+ 
+-  if(user_camera && !model_name_.empty()) {
++  if(track_model_ && user_camera && !model_name_.empty()) {
+     user_camera->TrackVisual(model_name_);
+   }
+ 

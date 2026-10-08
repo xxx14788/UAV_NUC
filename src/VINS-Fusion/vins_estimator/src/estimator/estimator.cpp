@@ -7,6 +7,7 @@
  * you may not use this file except in compliance with the License.
  *******************************************************/
 
+#include "estimator/p3_notify_codec.h"
 #include "estimator.h"
 
 // T1-E2: one-shot env read (stderr forensics; see audit doc E2_writepoint_audit.md)
@@ -390,6 +391,10 @@ void Estimator::processMeasurements()
         if (reinit_request)
         {
             reinit_request = false;
+            // T1 v11.31 2f P3: reboot 事件通告(原子, latched 发布在 rosNodeTest 侧)
+            ++t2_p3_reboot_cnt;
+            t2_p3_pending_resume = true;
+            t2_p3_notify.store(p3_codec::encode(p3_codec::EV_REBOOT, t2_p3_reboot_cnt));
             clearState();
             setParameter();
             continue;
@@ -901,6 +906,14 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
             t2_failure_reboot_request(failure_occur, reinit_request);
             ROS_WARN("system reboot requested (async via loop-head consumer)");
             return;
+        }
+
+        // T1 v11.31 2f P3: resume 事件通告(重启后首个成功滑窗帧)
+        if (t2_p3_pending_resume)
+        {
+            ++t2_p3_resume_cnt;
+            t2_p3_pending_resume = false;
+            t2_p3_notify.store(p3_codec::encode(p3_codec::EV_RESUME, t2_p3_resume_cnt));
         }
 
         slideWindow();

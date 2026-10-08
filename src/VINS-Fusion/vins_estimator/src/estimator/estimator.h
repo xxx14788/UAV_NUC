@@ -11,6 +11,7 @@
  
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <std_msgs/Header.h>
 #include <std_msgs/Float32.h>
 #include <ceres/ceres.h>
@@ -43,6 +44,8 @@
 class Estimator
 {
   public:
+
+    uint32_t t2_p3_get_notify() const { return t2_p3_notify.load(); }
     Estimator();
     ~Estimator();
     void setParameter();
@@ -61,6 +64,13 @@ class Estimator
     void clearState();
 
     bool reinit_request{false};  // T2-W4: 初始化质量门请求的完全重启标志
+    // T1 v11.31 2f P3: 计划内 reboot 通告契约 v1 (p3_contract_design_v1)
+    // 载荷位域: 高16位=事件(1=reboot,2=resume), 低16位=累计计数
+    std::atomic<uint32_t> t2_p3_notify{0};
+    uint32_t t2_p3_reboot_cnt = 0;
+    uint32_t t2_p3_resume_cnt = 0;
+    bool t2_p3_pending_resume = false;
+
     bool initialStructure();
     bool visualInitialAlign();
     bool relativePose(Matrix3d &relative_R, Vector3d &relative_T, int &l);

@@ -1,6 +1,0 @@
-[绿] stamp 同域: img-imu 中位差 -6.400e-02 s
-[绿] 双目频率: L 19.0Hz R 19.0Hz
-[绿] IMU 频率: 125.0Hz (需 >100, mavcmd long 511 105 5000 0 提频)
-[绿] 真值 model_states: 499 帧
-[绿] mavros connected: connected=True
-RESULT: ALL_GREEN 放行

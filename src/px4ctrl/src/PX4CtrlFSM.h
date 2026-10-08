@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <ros/assert.h>
+#include <std_msgs/UInt32.h>
 
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
@@ -46,6 +47,13 @@ public:
 
 	// T1-v1125-4b HAFIX: odom 死亡看门状态(0=监视/1=watch/2=LAND/3=KILL 已发)
 	ros::Time ha_dead_since;
+	// T1 v11.31 2f P3: 计划内 reboot 通告消费面(p3_contract_design_v1)
+	ros::Time p3_notify_time;
+	uint32_t p3_last_msg = 0;
+	bool p3_notify_seen = false;
+public:
+	void p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg);
+private:
 	int ha_stage = 0;
 
 	ros::Publisher traj_start_trigger_pub;

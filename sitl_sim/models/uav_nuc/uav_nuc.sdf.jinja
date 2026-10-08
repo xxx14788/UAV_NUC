@@ -1,0 +1,579 @@
+{% macro tri_prop(blade_mesh, material_name) -%}
+      <!-- 51466R: 5.1-inch diameter, 4.66-inch nominal pitch, three blades. -->
+      <visual name='prop_hub_visual'><geometry><cylinder><radius>0.008</radius><length>0.006</length></cylinder></geometry><material><script><name>{{ material_name }}</name><uri>file://media/materials/scripts/gazebo.material</uri></script></material></visual>
+      <visual name='prop_blade_0_visual'><pose>0 0 0 0 0 0</pose><geometry><mesh><scale>0.506 0.506 0.506</scale><uri>{{ blade_mesh }}</uri></mesh></geometry><material><script><name>{{ material_name }}</name><uri>file://media/materials/scripts/gazebo.material</uri></script></material></visual>
+      <visual name='prop_blade_1_visual'><pose>0 0 0 0 0 2.0943951</pose><geometry><mesh><scale>0.506 0.506 0.506</scale><uri>{{ blade_mesh }}</uri></mesh></geometry><material><script><name>{{ material_name }}</name><uri>file://media/materials/scripts/gazebo.material</uri></script></material></visual>
+      <visual name='prop_blade_2_visual'><pose>0 0 0 0 0 4.1887902</pose><geometry><mesh><scale>0.506 0.506 0.506</scale><uri>{{ blade_mesh }}</uri></mesh></geometry><material><script><name>{{ material_name }}</name><uri>file://media/materials/scripts/gazebo.material</uri></script></material></visual>
+{%- endmacro %}
+<!-- UAV_NUC v0.2: measured-airframe model derived from PX4 v1.17 Iris. -->
+<sdf version='1.6'>
+  <model name='uav_nuc'>
+    <!-- The model origin is the flight-controller IMU. Lift it 0.215 m so the
+         measured landing contacts start on the ground when spawned at z=0. -->
+    <pose>0 0 0.215 0 0 0</pose>
+    <link name='base_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <!-- Total model mass closes to 2.305 kg after IMU (0.015), four
+             rotors (4x0.005) and GPS (0.015) are included. CG is 30 mm
+             below the IMU in FRD, i.e. z=-0.030 in Gazebo FLU. -->
+        <pose>0 0 -0.030 0 0 0</pose>
+        <mass>2.255</mass>
+        <inertia>
+          <!-- First-order geometric estimate; replace after identification. -->
+          <ixx>0.0155</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0155</iyy>
+          <iyz>0</iyz>
+          <izz>0.0270</izz>
+        </inertia>
+      </inertial>
+      <!-- Battery + centre-frame combined collision: measured 137x115x135 mm,
+           bottom at ground z=0.095 and top at z=0.230. -->
+      <collision name='body_battery_collision'>
+        <pose>0 0 -0.0525 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.137 0.115 0.135</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <min_depth>0.001</min_depth>
+              <max_vel>0</max_vel>
+            </ode>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <!-- Four vertical landing legs directly below the measured motor centres.
+           Each leg runs from propeller-centre height z=+5 mm to the ground
+           plane z=-215 mm in the IMU-centred model frame. -->
+      <collision name='landing_front_right_collision'>
+        <pose>0.11744 -0.11744 -0.105 0 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry>
+      </collision>
+      <collision name='landing_front_left_collision'>
+        <pose>0.11744 0.11744 -0.105 0 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry>
+      </collision>
+      <collision name='landing_back_right_collision'>
+        <pose>-0.11744 -0.11744 -0.105 0 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry>
+      </collision>
+      <collision name='landing_back_left_collision'>
+        <pose>-0.11744 0.11744 -0.105 0 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry>
+      </collision>
+
+      <visual name='centre_frame_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box><size>0.115 0.115 0.030</size></box>
+        </geometry>
+        <material>
+          <ambient>0.025 0.025 0.025 1</ambient><diffuse>0.04 0.04 0.04 1</diffuse>
+        </material>
+      </visual>
+      <visual name='battery_visual'>
+        <!-- Battery top z=-15 mm touches the centre-frame bottom. -->
+        <pose>0 0 -0.0365 0 0 0</pose>
+        <geometry><box><size>0.137 0.043 0.043</size></box></geometry>
+        <material><ambient>0.25 0.25 0.25 1</ambient><diffuse>0.45 0.45 0.45 1</diffuse></material>
+      </visual>
+      <visual name='nuc_visual'>
+        <pose>0 0 0.030 0 0 0</pose>
+        <geometry><box><size>0.112 0.112 0.034</size></box></geometry>
+        <material><ambient>0.015 0.015 0.015 1</ambient><diffuse>0.025 0.025 0.025 1</diffuse></material>
+      </visual>
+      <!-- D435 housing. Geometric centre is z=+0.0585 FLU; sensor reference
+           is z=+0.065. Dimensions come from realsense2_description. -->
+      <visual name='d435_housing_visual'>
+        <pose>0.040 0 0.0585 0 0 0</pose>
+        <geometry><box><size>0.02505 0.090 0.025</size></box></geometry>
+        <material><ambient>0.55 0.55 0.55 1</ambient><diffuse>0.75 0.75 0.75 1</diffuse></material>
+      </visual>
+      <visual name='d435_front_visual'>
+        <pose>0.053 0 0.0585 0 1.57079632679 0</pose>
+        <geometry><cylinder><radius>0.010</radius><length>0.002</length></cylinder></geometry>
+        <material><ambient>0.01 0.01 0.01 1</ambient><diffuse>0.02 0.02 0.02 1</diffuse></material>
+      </visual>
+      <!-- Motor radius 166.09 mm: 20 mm prop-tip clearance from the 115 mm core. -->
+      <visual name='arm_front_right_visual'><pose>0.05872 -0.05872 -0.015 0 0 -0.785398</pose><geometry><box><size>0.16609 0.016 0.012</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      <visual name='arm_front_left_visual'><pose>0.05872 0.05872 -0.015 0 0 0.785398</pose><geometry><box><size>0.16609 0.016 0.012</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      <visual name='arm_back_right_visual'><pose>-0.05872 -0.05872 -0.015 0 0 0.785398</pose><geometry><box><size>0.16609 0.016 0.012</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      <visual name='arm_back_left_visual'><pose>-0.05872 0.05872 -0.015 0 0 -0.785398</pose><geometry><box><size>0.16609 0.016 0.012</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      <visual name='landing_front_right_visual'><pose>0.11744 -0.11744 -0.105 0 0 0</pose><geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry><material><ambient>0.02 0.02 0.02 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+      <visual name='landing_front_left_visual'><pose>0.11744 0.11744 -0.105 0 0 0</pose><geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry><material><ambient>0.02 0.02 0.02 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+      <visual name='landing_back_right_visual'><pose>-0.11744 -0.11744 -0.105 0 0 0</pose><geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry><material><ambient>0.02 0.02 0.02 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+      <visual name='landing_back_left_visual'><pose>-0.11744 0.11744 -0.105 0 0 0</pose><geometry><cylinder><radius>0.006</radius><length>0.220</length></cylinder></geometry><material><ambient>0.02 0.02 0.02 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <link name='/imu_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.015</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name='/imu_joint' type='revolute'>
+      <child>/imu_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name='rotor_0'>
+      <pose>0.11744 -0.11744 0.005 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000273104</iyy>
+          <iyz>0</iyz>
+          <izz>0.000274004</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.005</length>
+            <radius>0.06477</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+{{ tri_prop('model://uav_nuc/meshes/iris_single_blade_ccw.dae', 'Gazebo/Blue') }}
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <joint name='rotor_0_joint' type='revolute'>
+      <child>rotor_0</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name='rotor_1'>
+      <pose>-0.11744 0.11744 0.005 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000273104</iyy>
+          <iyz>0</iyz>
+          <izz>0.000274004</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_1_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.005</length>
+            <radius>0.06477</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+{{ tri_prop('model://uav_nuc/meshes/iris_single_blade_ccw.dae', 'Gazebo/DarkGrey') }}
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <joint name='rotor_1_joint' type='revolute'>
+      <child>rotor_1</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name='rotor_2'>
+      <pose>0.11744 0.11744 0.005 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000273104</iyy>
+          <iyz>0</iyz>
+          <izz>0.000274004</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_2_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.005</length>
+            <radius>0.06477</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+{{ tri_prop('model://uav_nuc/meshes/iris_single_blade_cw.dae', 'Gazebo/Blue') }}
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <joint name='rotor_2_joint' type='revolute'>
+      <child>rotor_2</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name='rotor_3'>
+      <pose>-0.11744 -0.11744 0.005 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000273104</iyy>
+          <iyz>0</iyz>
+          <izz>0.000274004</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_3_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.005</length>
+            <radius>0.06477</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+{{ tri_prop('model://uav_nuc/meshes/iris_single_blade_cw.dae', 'Gazebo/DarkGrey') }}
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <joint name='rotor_3_joint' type='revolute'>
+      <child>rotor_3</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <plugin name='rosbag' filename='libgazebo_multirotor_base_plugin.so'>
+      <robotNamespace/>
+      <linkName>base_link</linkName>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='front_right_motor_model' filename='libgazebo_motor_model.so'>
+      <robotNamespace/>
+      <jointName>rotor_0_joint</jointName>
+      <linkName>rotor_0</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1100</maxRotVelocity>
+      <motorConstant>8.68e-06</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>0</motorNumber>
+      <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/0</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='back_left_motor_model' filename='libgazebo_motor_model.so'>
+      <robotNamespace/>
+      <jointName>rotor_1_joint</jointName>
+      <linkName>rotor_1</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1100</maxRotVelocity>
+      <motorConstant>8.68e-06</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>1</motorNumber>
+      <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/1</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='front_left_motor_model' filename='libgazebo_motor_model.so'>
+      <robotNamespace/>
+      <jointName>rotor_2_joint</jointName>
+      <linkName>rotor_2</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1100</maxRotVelocity>
+      <motorConstant>8.68e-06</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>2</motorNumber>
+      <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/2</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='back_right_motor_model' filename='libgazebo_motor_model.so'>
+      <robotNamespace/>
+      <jointName>rotor_3_joint</jointName>
+      <linkName>rotor_3</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1100</maxRotVelocity>
+      <motorConstant>8.68e-06</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>3</motorNumber>
+      <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <include>
+      <uri>model://gps</uri>
+      <pose>0 0 0.015 0 0 0</pose>
+      <name>gps0</name>
+    </include>
+    <joint name='gps0_joint' type='fixed'>
+      <child>gps0::link</child>
+      <parent>base_link</parent>
+    </joint>
+    <plugin name='groundtruth_plugin' filename='libgazebo_groundtruth_plugin.so'>
+      <robotNamespace/>
+    </plugin>
+    <plugin name='magnetometer_plugin' filename='libgazebo_magnetometer_plugin.so'>
+      <robotNamespace/>
+      <pubRate>100</pubRate>
+      <noiseDensity>0.0004</noiseDensity>
+      <randomWalk>6.4e-06</randomWalk>
+      <biasCorrelationTime>600</biasCorrelationTime>
+      <magTopic>/mag</magTopic>
+    </plugin>
+    <plugin name='barometer_plugin' filename='libgazebo_barometer_plugin.so'>
+      <robotNamespace/>
+      <pubRate>50</pubRate>
+      <baroTopic>/baro</baroTopic>
+      <baroDriftPaPerSec>0</baroDriftPaPerSec>
+    </plugin>
+    <plugin name='mavlink_interface' filename='libgazebo_mavlink_interface.so'>
+      <robotNamespace/>
+      <imuSubTopic>/imu</imuSubTopic>
+      <magSubTopic>/mag</magSubTopic>
+      <baroSubTopic>/baro</baroSubTopic>
+      <mavlink_addr>INADDR_ANY</mavlink_addr>
+      <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
+      <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
+      <serialEnabled>{{ serial_enabled }}</serialEnabled>
+      <serialDevice>{{ serial_device }}</serialDevice>
+      <baudRate>{{ serial_baudrate }}</baudRate>
+      <qgc_addr>INADDR_ANY</qgc_addr>
+      <qgc_udp_port>14550</qgc_udp_port>
+      <sdk_addr>INADDR_ANY</sdk_addr>
+      <sdk_udp_port>14540</sdk_udp_port>
+      <hil_mode>{{ hil_mode }}</hil_mode>
+      <hil_state_level>0</hil_state_level>
+      <send_vision_estimation>0</send_vision_estimation>
+      <send_odometry>1</send_odometry>
+      <enable_lockstep>1</enable_lockstep>
+      <use_tcp>1</use_tcp>
+      <motorSpeedCommandPubTopic>/gazebo/command/motor_speed</motorSpeedCommandPubTopic>
+      <control_channels>
+        <channel name='rotor1'>
+          <input_index>0</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>1000</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>100</zero_position_armed>
+          <joint_control_type>velocity</joint_control_type>
+        </channel>
+        <channel name='rotor2'>
+          <input_index>1</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>1000</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>100</zero_position_armed>
+          <joint_control_type>velocity</joint_control_type>
+        </channel>
+        <channel name='rotor3'>
+          <input_index>2</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>1000</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>100</zero_position_armed>
+          <joint_control_type>velocity</joint_control_type>
+        </channel>
+        <channel name='rotor4'>
+          <input_index>3</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>1000</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>100</zero_position_armed>
+          <joint_control_type>velocity</joint_control_type>
+        </channel>
+        <channel name='rotor5'>
+          <input_index>4</input_index>
+          <input_offset>1</input_offset>
+          <input_scaling>324.6</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>0</zero_position_armed>
+          <joint_control_type>velocity</joint_control_type>
+          <joint_control_pid>
+            <p>0.1</p>
+            <i>0</i>
+            <d>0</d>
+            <iMax>0.0</iMax>
+            <iMin>0.0</iMin>
+            <cmdMax>2</cmdMax>
+            <cmdMin>-2</cmdMin>
+          </joint_control_pid>
+          <joint_name>zephyr_delta_wing::propeller_joint</joint_name>
+        </channel>
+        <channel name='rotor6'>
+          <input_index>5</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>0.524</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>0</zero_position_armed>
+          <joint_control_type>position</joint_control_type>
+          <joint_name>zephyr_delta_wing::flap_left_joint</joint_name>
+          <joint_control_pid>
+            <p>10.0</p>
+            <i>0</i>
+            <d>0</d>
+            <iMax>0</iMax>
+            <iMin>0</iMin>
+            <cmdMax>20</cmdMax>
+            <cmdMin>-20</cmdMin>
+          </joint_control_pid>
+        </channel>
+        <channel name='rotor7'>
+          <input_index>6</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>0.524</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>0</zero_position_armed>
+          <joint_control_type>position</joint_control_type>
+          <joint_name>zephyr_delta_wing::flap_right_joint</joint_name>
+          <joint_control_pid>
+            <p>10.0</p>
+            <i>0</i>
+            <d>0</d>
+            <iMax>0</iMax>
+            <iMin>0</iMin>
+            <cmdMax>20</cmdMax>
+            <cmdMin>-20</cmdMin>
+          </joint_control_pid>
+        </channel>
+        <channel name='rotor8'>
+          <input_index>7</input_index>
+          <input_offset>0</input_offset>
+          <input_scaling>0.524</input_scaling>
+          <zero_position_disarmed>0</zero_position_disarmed>
+          <zero_position_armed>0</zero_position_armed>
+          <joint_control_type>position</joint_control_type>
+        </channel>
+      </control_channels>
+    </plugin>
+    <static>0</static>
+    <plugin name='rotors_gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
+      <robotNamespace/>
+      <linkName>/imu_link</linkName>
+      <imuTopic>/imu</imuTopic>
+    </plugin>
+  </model>
+</sdf>

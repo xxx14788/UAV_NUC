@@ -1,0 +1,21 @@
+diff --git a/ROMFS/px4fmu_common/init.d-posix/airframes/CMakeLists.txt b/ROMFS/px4fmu_common/init.d-posix/airframes/CMakeLists.txt
+--- a/ROMFS/px4fmu_common/init.d-posix/airframes/CMakeLists.txt
++++ b/ROMFS/px4fmu_common/init.d-posix/airframes/CMakeLists.txt
+@@ -74,5 +74,6 @@ px4_add_romfs_files(
+ 	1062_flightgear_tf-r1
+ 	1070_gazebo-classic_boat
++	1091_gazebo-classic_uav_nuc
+ 
+ 	2507_gazebo-classic_cloudship
+ 
+diff --git a/src/modules/simulation/simulator_mavlink/sitl_targets_gazebo-classic.cmake b/src/modules/simulation/simulator_mavlink/sitl_targets_gazebo-classic.cmake
+--- a/src/modules/simulation/simulator_mavlink/sitl_targets_gazebo-classic.cmake
++++ b/src/modules/simulation/simulator_mavlink/sitl_targets_gazebo-classic.cmake
+@@ -78,6 +78,7 @@ if(NOT DEFINED ENV{DONT_RUN})
+ 		cloudship
+ 		glider
+ 		iris
++		uav_nuc
+ 		iris_dual_gps
+ 		iris_foggy_lidar
+ 		iris_irlock

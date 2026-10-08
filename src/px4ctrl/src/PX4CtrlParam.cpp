@@ -35,6 +35,7 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	nh.param("ha_fix/enabled", ha_fix.enabled, true);   // T1-v1125-4b: 默认开(实机红线;流死兜底不依赖人反应)
 	nh.param("ha_fix/dead_s", ha_fix.dead_s, 5.0);
 	nh.param("ha_fix/kill_s", ha_fix.kill_s, 15.0);
+	nh.param("ha_fix/p3_max_recovery_s", ha_fix.p3_max_recovery_s, 30.0); // T1 v11.31 2f P3 契约默认
 	nh.param("odom_gate/enabled", odom_gate.enabled, false);
 	nh.param("odom_gate/max_vel", odom_gate.max_vel, 5.0);
 	nh.param("odom_gate/max_acc", odom_gate.max_acc, 10.0);

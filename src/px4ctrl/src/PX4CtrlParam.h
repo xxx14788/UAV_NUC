@@ -86,6 +86,7 @@ public:
 		bool enabled;
 		double dead_s;   // odom 流死亡持续阈值(触发梯① AUTO_LAND)
 		double kill_s;   // 梯①后再经此窗仍 armed → KILL+disarm 兜底
+		double p3_max_recovery_s; // T1 v11.31 2f P3: 计划内恢复窗(reboot_notify 后 HAFIX 挂起窗)
 	};
 	HaFix_t ha_fix;
 	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate params

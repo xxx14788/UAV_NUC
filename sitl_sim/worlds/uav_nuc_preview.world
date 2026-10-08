@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="uav_nuc_preview">
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <physics name="default_physics" default="0" type="ode">
+      <gravity>0 0 -9.8066</gravity>
+      <ode><solver><type>quick</type><iters>10</iters></solver></ode>
+    </physics>
+
+    <scene>
+      <ambient>0.55 0.55 0.55 1</ambient>
+      <background>0.75 0.80 0.90 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <!-- PX4 spawns this model near (1,1). Close three-quarter view from
+             0.8 m front-right of that birth point. -->
+        <pose>1.8 0.2 0.60 0 0.32 2.35619</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>

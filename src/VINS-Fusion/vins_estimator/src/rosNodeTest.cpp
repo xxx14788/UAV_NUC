@@ -10,6 +10,8 @@
  *******************************************************/
 
 #include <stdio.h>
+#include <std_msgs/UInt32.h>
+#include <chrono>
 #include <queue>
 #include <map>
 #include <thread>
@@ -320,6 +322,19 @@ int main(int argc, char **argv)
     ros::Subscriber sub_cam_switch = n.subscribe("/vins_cam_switch", 100, cam_switch_callback);
 
     std::thread sync_thread{sync_process};
+    // T1 v11.31 2f P3 生产侧: /vins_estimator/reboot_notify (UInt32, latched)
+    // 载荷位域: 高16位=事件(1=reboot,2=resume), 低16位=计数; 50ms 轮询变化发布
+    ros::Publisher p3_pub = n.advertise<std_msgs::UInt32>("reboot_notify", 1, true);
+    std::thread p3_pub_thread([&estimator, &p3_pub]() {
+        std_msgs::UInt32 m;
+        uint32_t last = estimator.t2_p3_get_notify();
+        while (ros::ok())
+        {
+            uint32_t v = estimator.t2_p3_get_notify();
+            if (v != last) { m.data = v; p3_pub.publish(m); last = v; }
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+    });
     ros::spin();
 
     return 0;

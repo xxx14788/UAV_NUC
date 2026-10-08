@@ -51,3 +51,4 @@ pose_graph/
 # ---------- 3. 永不入库的大产物 ----------
 bags/
 nohup.out
+sitl_sim/t1_evidence/**/*.log

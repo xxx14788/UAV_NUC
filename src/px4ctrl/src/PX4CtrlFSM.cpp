@@ -99,12 +99,20 @@ void PX4CtrlFSM::process()
 		         (now_time - state_data.rcv_stamp).toSec());
 	}
 
+	// STEP0.5 前: P3 恢复窗判定(T1 v11.31 2f)
+	const bool p3_window = p3_notify_seen &&
+	    (now_time - p3_notify_time).toSec() < param.ha_fix.p3_max_recovery_s;
+	if (p3_window && ha_stage >= 1)
+	{
+		ROS_WARN_THROTTLE(5.0, "[P3] planned-recovery window active (%.0fs) -- HAFIX watch suspended", param.ha_fix.p3_max_recovery_s);
+		if (ha_stage <= 1) ha_stage = 0; // 仅 watch 期回起点; 梯②③不回退
+	}
 	// STEP0.5: HAFIX odom 死亡看门(T1-v1125-4b;D1 演练证据 run_DRILLD1_N8P_150019:
 	// 飞行期 VINS 死亡原行为=冻结 odom 盲飞+disarm=0=实机炸机路径,H-A 阻塞项活体实证)。
 	// 梯①watch(dead_s)→AUTO_LAND(冻结 odom 下 z 设点缓降);梯②再 kill_s 仍 armed→
 	// KILL(CommandLong 400)+disarm 重试(闭合 kill≠disarm 缺口,D3/D4a DEGRADED 共同面)。
 	// 复位=landed 或流恢复;[HAFIX] 日志留痕;缺省开=实机红线姿态。
-	if (param.ha_fix.enabled)
+	if (param.ha_fix.enabled && !p3_window)
 	{
 		const bool odom_dead = !odom_is_received(now_time);
 		const bool flying = fd_in.armed && !fd_in.landed;
@@ -888,4 +896,16 @@ void PX4CtrlFSM::reboot_FCU()
 
 	// if (param.print_dbg)
 	// 	printf("reboot result=%d(uint8_t), success=%d(uint8_t)\n", reboot_srv.response.result, reboot_srv.response.success);
+}
+
+
+// T1 v11.31 2f P3: reboot_notify 回调(px4ctrl_node 订阅喂入)
+void PX4CtrlFSM::p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg)
+{
+	p3_notify_time = ros::Time::now();
+	p3_last_msg = msg->data;
+	p3_notify_seen = true;
+	const uint32_t ev = msg->data >> 16, cnt = msg->data & 0xFFFFu;
+	ROS_WARN("[P3] reboot_notify ev=%u cnt=%u (1=reboot 2=resume) -- HAFIX watch reset", ev, cnt);
+	if (ha_stage <= 1) { ha_stage = 0; } // watch 期让路; 梯②③不回退
 }

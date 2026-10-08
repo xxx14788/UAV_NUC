@@ -2,6 +2,7 @@
 #include "PX4CtrlFSM.h"
 #include <signal.h>
 #include <std_msgs/String.h>
+#include <std_msgs/UInt32.h>
 
 void mySigintHandler(int sig)
 {
@@ -34,6 +35,11 @@ int main(int argc, char *argv[])
                                                  10,
                                                  boost::bind(&ExtendedState_Data_t::feed, &fsm.extended_state_data, _1));
 
+    // T1 v11.31 2f P3: 计划内 reboot 通告契约消费侧订阅
+    ros::Subscriber p3_notify_sub =
+        nh.subscribe<std_msgs::UInt32>("/vins_estimator/reboot_notify",
+                                      10,
+                                      boost::bind(&PX4CtrlFSM::p3NotifyFeed, &fsm, _1));
     ros::Subscriber odom_sub =
         nh.subscribe<nav_msgs::Odometry>("odom",
                                          100,

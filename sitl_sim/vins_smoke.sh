@@ -12,7 +12,7 @@ source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
 GATE=0
-STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
+WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -22,6 +22,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --probecheck) PROBECHECK=1; shift;;
   --gate) GATE=1; shift;;
   --stoploss) STOPLOSS=1; shift;;
+  --warmup) WARMUP=1; shift;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
@@ -383,6 +384,10 @@ wait_planner_ready() {  # $1=秒; 0=就绪
 }
 # a) 订阅就绪门（首发前；超时不 abort——转入 b 重启路径处置）
 if ! wait_planner_ready 15; then LOG "订阅就绪门超时(15s 无 goal 订阅者或 FSM 心跳)——直入停摊重启路径"; fi
+if [ "$WARMUP" = "1" ]; then
+  python3 "$L/t2_tools/t2_warmup_segment.py" --publish --hz 10 --goal-topic /move_base_simple/goal > "$EV/warmup.log" 2>&1
+  LOG "WARMUP 段完成(8s 预热 goal 流): $(tail -1 "$EV/warmup.log" 2>/dev/null)"
+fi
 for k in 1 2; do goal_pub; sleep 2; done
 LOG "goal 已发(2×8s)"
 # b) 首发 8s 无 target 变更→一次性重启再投递
