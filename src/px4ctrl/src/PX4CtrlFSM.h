@@ -51,10 +51,9 @@ public:
 	ros::Time p3_notify_time;
 	uint32_t p3_last_msg = 0;
 	bool p3_notify_seen = false;
+	int ha_stage = 0;
 public:
 	void p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg);
-private:
-	int ha_stage = 0;
 
 	ros::Publisher traj_start_trigger_pub;
 	ros::Publisher ctrl_FCU_pub;

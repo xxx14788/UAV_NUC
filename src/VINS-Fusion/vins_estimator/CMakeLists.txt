@@ -29,6 +29,7 @@ find_package(Eigen3)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  src
 )
 
 catkin_package()
@@ -60,6 +61,7 @@ if(CATKIN_ENABLE_TESTING)
   target_include_directories(test_reanchor_smoother PRIVATE src)
   catkin_add_gtest(test_t2_stream_guard test/test_t2_stream_guard.cpp)
   catkin_add_gtest(test_p3_notify test/test_p3_notify.cpp)
+  target_include_directories(test_p3_notify PRIVATE src)
   target_include_directories(test_t2_stream_guard PRIVATE src)
   catkin_add_gtest(test_propagate_guard test/test_propagate_guard.cpp)
   target_include_directories(test_propagate_guard PRIVATE src)
