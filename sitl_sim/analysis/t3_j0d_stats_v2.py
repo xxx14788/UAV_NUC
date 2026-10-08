@@ -1,15 +1,42 @@
 #!/usr/bin/env python3
-"""j0d 三列全系统计 v2 扩切口(T1 v11.23 阶段2;2026-10-07)
+"""j0d 三列全系统计 v2.1 扩切口(T3 v10.9 单元1 目录收敛;2026-10-09)
 =2026-10-06 版(113 袋轮)扩 X4 批 9 轮 → 122 袋轮(X4 前 9 轮 j0_decomp 可用面)
 CAMPAIGN_ARM 映射: X4 前缀 → machine=3090(X4批次) boot=boot-X4-1007 arm=v2+cauchy4(054ddc8d)
 t2fail=X4 轮 REINIT/simvins.log 实查=0(4 FAIL 轮同查); four_green=RESULT PASS 映射
 provenance: 原 118 表口径=113 available(v9.9 j0d 批) — 本版重扫后 available 数见汇总行
+谱系: v1(=t3_j0d_stats.py, OUT 已是 repo, 产 20261006 表)已退役归档 retired_generators/;
+     v2(2026-10-07, OUT 硬编码 HOME 侧=双目录病源)→ v2.1 OUT 默认改 repo 正源+版本自描述。
+     v2.1 对同输入与 v2 逐字节等价(CSV 行零漂移, 验证件=t3_results/dir_convergence_20261009.md)。
 """
-import csv, glob, json, os
+import argparse, csv, glob, json, os, datetime
 
-SMOKE = os.path.expanduser("~/sitl_sim/vins_smoke_runs")
-COMBO = os.path.expanduser("~/catkin_ws/sitl_sim/t3_results/combo_matrix_20261006_rounds.csv")
-L3 = os.path.expanduser("~/catkin_ws/sitl_sim/t1_evidence/v11_7_2026-10-05/l3_recompute_v14.csv")
+GEN_VERSION = "t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源)"
+
+_ap = argparse.ArgumentParser(description="j0d 三列全系统计表生成器; " + GEN_VERSION)
+_ap.add_argument("--smoke", default=os.path.expanduser("~/sitl_sim/vins_smoke_runs"))
+_ap.add_argument("--combo", default=None,
+    help="CAMPAIGN_ARM 联表; 默认=自动取 out-dir 内最新 combo_matrix_*_rounds.csv"
+         "(v2.1 起自描述, 谱系=v2 时代靠临时改行换表=双目录病源之一); 显式传路径可钉死")
+_ap.add_argument("--l3", default=os.path.expanduser(
+    "~/catkin_ws/sitl_sim/t1_evidence/v11_7_2026-10-05/l3_recompute_v14.csv"))
+_ap.add_argument("--out-dir", default=os.path.expanduser(
+    "~/catkin_ws/sitl_sim/t3_results"),
+    help="默认=repo 正源(v2.1 起收敛; v2 及以前=HOME 侧 ~/sitl_sim/t3_results, 已冻结历史)")
+_ap.add_argument("--date", default=datetime.date.today().strftime("%Y%m%d"),
+    help="表日期戳; 输出=<out-dir>/j0d_stats_<date>.{csv,txt}; 禁覆写旧日期戳")
+_ap.add_argument("--version", action="version", version=GEN_VERSION)
+A = _ap.parse_args()
+SMOKE, L3 = A.smoke, A.l3
+OUT = os.path.join(A.out_dir, "j0d_stats_" + A.date)
+if A.combo is None:
+    import glob as _glob
+    _cands = sorted(_glob.glob(os.path.join(A.out_dir, "combo_matrix_*_rounds.csv")))
+    if not _cands:
+        raise SystemExit("FAIL: %s 内无 combo_matrix_*_rounds.csv; 显式传 --combo" % A.out_dir)
+    COMBO = _cands[-1]
+    print("[v2.1] combo 联表自动取最新: %s" % COMBO)
+else:
+    COMBO = A.combo
 X5PM = {}
 import csv as _csv
 _pm_path = os.path.expanduser("~/sitl_sim/t1_evidence/v11_17_2026-10-06/x5_passmap_live.csv")
@@ -17,7 +44,6 @@ if os.path.exists(_pm_path):
     for _r in _csv.DictReader(open(_pm_path, encoding="utf-8-sig")):
         if _r.get("tag"):
             X5PM[_r["tag"]] = _r
-OUT = os.path.expanduser("~/sitl_sim/t3_results/j0d_stats_20261007")
 
 # X4 CAMPAIGN_ARM 映射(正源=x4_final_tally.md md5 206506c5 + RESULT.txt 实读)
 X4MAP = {
@@ -106,6 +132,7 @@ L.append("j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor
 L.append("扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = %d 袋轮 available" % len(rows))
 L.append("X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)")
 L.append("分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577")
+L.append("生成器 %s | OUT=%s | combo join=%s | 生成时刻 %s" % (GEN_VERSION, OUT, COMBO, datetime.datetime.now().strftime("%F %T")))
 L.append("="*96)
 L.append("总数 %d: %s" % (len(rows), ", ".join("%s=%d" % kv for kv in cnt.most_common())))
 for mk in ("3090", "NUC", "?"):
@@ -129,4 +156,4 @@ for r in rows:
 with open(OUT + ".txt", "w") as f:
     f.write("\n".join(L) + "\n")
 print("\n".join(L[:14]))
-print("... -> %s.{csv,txt}" % OUT)
+print("... [%s] -> %s.{csv,txt}" % (GEN_VERSION, OUT))

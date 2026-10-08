@@ -1,0 +1,14 @@
+# 对账清单（T3 v10.9 单元1 两侧历史对账 2026-10-09）
+
+HOME 侧 t3_results 根目录散件中台账级(未入 repo)10 件一次性收录。md5 双侧一致：
+
+7ce193f3c1a1e2c7eaf339ca7313f3e3  r3pr1_plannerdom_timeline.csv
+b9890b4d30fcc60dff966392ebbaeb3b  r3pr2_plannerdom_timeline.csv
+88487c0335df6ceb8c6ee2b67db2c62c  u3pg_plannerdom_timeline.csv
+a0be3579e733bc1403cd8223ce671178  u3ph_plannerdom_timeline.csv
+a2880c8c1449acc0143b4ed5a0919bcd  u3po_plannerdom_timeline.csv
+06a38e38018ce16de1c00d2193252c3e  xline_hist_wagate_dryrun.csv
+b8045059d039858387391e7f34ea8643  y4_full_verdicts.csv
+53e1d14e0c1d6cc0f39dc29275edaeab  ledger_fix_append.md
+a3e8502844dab1b806d6c6db4341f65f  x1prime_preflight_selftest.txt
+7760c51f9b1475d6380e06fc06678558  commit_msg_fix.txt

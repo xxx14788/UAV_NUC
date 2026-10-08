@@ -314,6 +314,7 @@ def main():
     out = []
     out.append("=" * 100)
     out.append("T3 组合矩阵(判读域) — 臂×栈×boot×结果  生成: %s" % datetime.datetime.now().strftime("%F %T"))
+    out.append("生成器 t3_combo_matrix_v1.1 (T3 v10.9 单元1 版本自描述; OUT 默认=repo t3_results 正源, 谱系=10-06 起即 repo 侧无改行史)")
     out.append("全库口径: %s (%d 轮) | L3 join: %s | 范围注: t3_results WA 系 X 线前战役轮不在册" % (a.root, len(rows), a.l3))
     out.append("boot 谱系: B1004=10-05白昼(晨boot-0) B1005=10-05夜(reboot-1,风暴夜) B1006=10-06凌晨(reboot-2,VRFY/VRG)")
     out.append("四绿=到位/避障/poscmd/disarm 全1 | 净轮=四绿∧j0(jump)<0.5∧T2fail=0 | 风暴轮=T2fail>0")

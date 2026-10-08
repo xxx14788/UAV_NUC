@@ -1,0 +1,13 @@
+T3 v8.0: 场景分门口径勘误(j0 门回恒 0.5)+round_result 到位门分门正源落地+runbook §3 核签
+
+- 勘误: 第二波误把 wa_gate xline 的 J0 锚差门分场景(obstacles 放宽到 0.75), 违任务书
+  "锚差>0.5 一律 FAIL"恒门口径; 第三波回滚 j0 门恒 0.5(scene_of_run/gate_m 保留为审计面,
+  xline 增 j0_gate_m 常量, 一行判决标签改 arrive_gate=)。历史轮零翻转(值域两端远离分界)。
+- round_result.sh(双副本 md5 对齐): 到位门场景分门正源——GATE=0.75 if obstacles in world
+  else 0.5(world 第 5 参在手), leg1/leg2 打印带门值+场景; J0 跳变门/避障/频率/降落门不动;
+  wa_gate four 继承 RESULT.txt 读值自动继承场景门。
+- 回归四绿: 回放轴 3 cell+在线轴 4 cell selftest PASS(合成 cell=双门语义断言);
+  WC2OBS1 袋双 world 对拍(<0.75/<0.50 打印生效,J0 369.8 恒门一致)。
+- runbook §3 场景分门建议稿(T4 W5a)T3 核签转正式: 数值一致+正源分工+书-器差注记
+  (连续 3s=实机判读语, SITL 实现口径=窗内 min<门)。
+- Z1.2 前置登记: 0.5 接线分叉挂 C01+T1-E1 裁决, v2 代码 flag-off 在库, 翻转维持等待。

@@ -1,0 +1,48 @@
+dir,verdict,four,j0_jump,fj_raw,fj_smj,j0_rev,env_sig,t1d1,vins_pass,reboot_n,gaps,coverage,bas_peak,bgs_peak,track_med,spike_rate,ate_rmse,morph,t_star
+run_E2FAIL1_022847,FAIL,0/1/1/0,0.002,1306,1332,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,1,0.998,1.084,0.05186,3,0.001,343.4335,数值溢出型(含 extreme/非有限帧),0.4
+run_E2FAIL2_023440,ENV-FAIL,0/1/0/1,0.077,4,5,False,ENVDEAD-file,0,True,0,0,0.992,1.2067,0.26026,120,0.0,0.0905,小跳/渐进劣化,7.1
+run_E2FAIL3_024009,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,,0.2433,0.00266,118.0,0.0,,,
+run_E2FAIL4_024211,FAIL,None/None/None/None,,0,0,True,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,0.001,0.6209,0.01538,122.0,0.0,0.0003,无帧跳变(慢劣化或未发散),
+run_E2FAIL5_024737,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_E2PROBE_022152,FAIL,None/None/None/None,,,,,,0,True,0,0,,0.3366,0.00119,138,0.0244,,,
+run_E3_202044,FAIL,None/None/None/None,,147,164,False,,0,True,0,0,0.2,0.9587,0.02169,104.0,0.0152,7.7061,数值溢出型(含 extreme/非有限帧),32.0
+run_E3_210246,FAIL,0/1/1/0,1.92,49,73,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,1.0,1.1871,0.07072,112.0,0.0018,1.8207,数值溢出型(含 extreme/非有限帧),7.2
+run_E4_GOFF_D10_192513,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,,0.06,0.00126,138.5,0.1,,,
+run_E4_GOFF_D10_193039,FAIL,0/1/0/0,25.481,1,0,False,sitl.log:Connection-closed(normal-cleanup-artifact?),1,True,0,0,0.025,3.0013,0.23354,142,0.0188,0.0175,爆散,6.9
+run_E4_GOFF_D10_R2_194927,FAIL,0/1/0/0,8.711,5,5,False,,0,False,0,0,0.026,3.0059,0.87188,140.0,0.0135,0.3018,爆散,6.7
+run_U3PH_210708,FAIL,None/1/0/0,140.623,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,,2.5873,0.24156,140,0.0087,,,
+run_U3PO_211438,FAIL,None/1/1/0,2.603,33,54,False,,0,False,0,0,1.0,1.3709,0.01701,125,0.0023,2.0382,爆散,33.9
+run_U7OL1_195920,FAIL,0/1/1/0,609.775,362,360,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.203,2.0061,0.02692,131.0,0.0258,203.1576,爆散,23.6
+run_U7OL2_202043,FAIL,0/1/1/0,0.392,9,1,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,1.0,0.8015,0.01138,131,0.0038,0.3661,小跳/渐进劣化,23.1
+run_V8_PROBECHECK_205100,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,,0.0787,0.00124,140,0.0465,,,
+run_WAOL1_142557,FAIL,0/1/0/1,8.656,1,0,False,sitl.log:Connection-closed(normal-cleanup-artifact?),1,True,0,0,0.047,0.3576,1.2275,150,0.0047,0.0358,数值溢出型(含 extreme/非有限帧),6.8
+run_WAOL2_214142,FAIL,0/1/1/0,376.184,780,757,False,,0,False,0,0,0.469,1.6936,0.02271,76,0.0057,145.0123,数值溢出型(含 extreme/非有限帧),32.6
+run_WAOL3_215120,FAIL,0/1/0/0,54.156,1,1,False,sitl.log:Connection-closed(normal-cleanup-artifact?),1,True,0,0,0.024,0.1201,1.25884,150.0,0.0093,0.043,数值溢出型(含 extreme/非有限帧),6.7
+run_WAOL4_220117,ENV-FAIL,0/1/1/0,805.901,359,369,False,RESULT.txt:ENV-FAIL,1,True,0,0,0.286,1.4521,0.0577,129,0.0,290.856,数值溢出型(含 extreme/非有限帧),33.6
+run_WAOL5_221128,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,True,0,0,,0.0052,0.0011,133,0.2,,,
+run_WAOL5R_222234,FAIL,0/1/1/0,2.448,57,43,False,sitl.log:Connection-closed(normal-cleanup-artifact?),1,True,0,0,1.0,0.9808,0.00132,82.0,0.0062,1.8859,数值溢出型(含 extreme/非有限帧),7.6
+run_WC2OBS1_030927,FAIL,0/1/1/0,917.758,67,80,False,,0,False,0,0,0.123,1.7158,0.20633,121.5,0.0248,5.0534,数值溢出型(含 extreme/非有限帧),7.0
+run_WC2OBS1_032005,FAIL,0/1/1/0,369.839,512,684,False,,1,True,0,0,0.291,0.7425,0.12547,79.0,0.0242,116.4114,数值溢出型(含 extreme/非有限帧),7.2
+run_WD1_024016,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_WD1b_032925,FAIL,0/1/0/1,17.285,0,0,True,,1,True,0,0,0.046,0.7265,1.17504,133.0,0.0143,0.0077,爆散,10.0
+run_WD1b_033751,ENV-FAIL,0/1/1/0,271.982,5,10,False,ENVDEAD-file,1,True,0,0,0.477,3.5724,0.00222,114.0,0.0337,0.1613,爆散,4.4
+run_X1_000718,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_X1_000947,FAIL,None/None/None/None,,0,0,True,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.999,,,,,0.005,无帧跳变(慢劣化或未发散),
+run_X1_001817,FAIL,0/1/1/0,287.625,233,225,False,,0,False,0,0,0.213,,,,,96.3349,数值溢出型(含 extreme/非有限帧),6.7
+run_X1_002244,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_X1_002443,FAIL,0/1/0/1,117.333,0,0,True,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.046,,,,,0.0106,爆散,6.7
+run_X1_002831,FAIL,0/1/1/0,861.118,280,294,False,,0,False,0,0,0.292,,,,,25.7226,数值溢出型(含 extreme/非有限帧),6.8
+run_X1_223836,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_X1_225059,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,,,,,,,,
+run_X1_225612,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_X1_231835,FAIL,None/None/None/None,,,,,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,,,,,,,,
+run_X1_232055,FAIL,0/1/1/1,,624,632,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.75,,,,,367.2475,爆散,6.9
+run_X1_233210,FAIL,0/1/0/0,,3,4,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.032,,,,,0.2129,数值溢出型(含 extreme/非有限帧),6.8
+run_X1_234437,FAIL,0/1/1/0,,12,12,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.999,,,,,2.6187,小跳/渐进劣化,7.1
+run_X1_235025,FAIL,0/1/0/0,86.817,2,7,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,0,0.027,,,,,0.5315,爆散,6.9
+run_X1final_043355,FAIL,None/None/None/None,102.704,277,293,False,sitl.log:Connection-closed(normal-cleanup-artifact?),0,False,0,1,1.0,0.8228,0.00104,108,0.1267,10.9662,数值溢出型(含 extreme/非有限帧),0.0
+run_X1final_101627,FAIL,0/1/1/0,471.179,719,727,False,,1,True,0,0,0.479,1.0044,0.01958,101,0.0239,249.2359,数值溢出型(含 extreme/非有限帧),30.3
+run_X1final_104445,FAIL,None/None/None/None,,,,,,0,False,0,0,,,,,,,,
+run_X1final_104720,ENV-FAIL,0/1/0/0,57.484,3,2,False,ENVDEAD-file,1,True,0,0,0.027,2.9806,0.31898,140.0,0.0187,0.0735,爆散,6.7
+run_X1final_105449,FAIL,0/1/0/1,890.535,1,1,False,,0,False,0,0,0.062,2.6065,0.01467,138,0.0084,0.0763,爆散,7.9
+run_X1final_172424,FAIL,0/1/0/0,6.042,27,37,False,,0,False,0,0,0.039,2.6489,0.99643,141,0.0157,10.0417,数值溢出型(含 extreme/非有限帧),6.7
