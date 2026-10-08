@@ -1,6 +1,6 @@
 # 三臂终判·判决表判读面（T3 统计面）
 
-> 生成器 t3_three_arm_verdict_view_v1.0 (T3 v10.9 单元2b; OUT=repo 正源; 判据 §4.1 冻结逐字) | 生成 2026-10-09 04:07:14 | 输入: T1=/home/ghj/sitl_sim/t1_evidence/v11_31_2026-10-08/unit1_greenrate/three_arm_results_final.csv | T2=/home/ghj/sitl_sim/t2_results/INPUTFACE/1c_runs/bc_recovery_results.csv
+> 生成器 t3_three_arm_verdict_view_v1.0 (T3 v10.9 单元2b; OUT=repo 正源; 判据 §4.1 冻结逐字) | 生成 2026-10-09 05:19:11 | 输入: T1=/home/ghj/sitl_sim/t1_evidence/v11_31_2026-10-08/unit1_greenrate/three_arm_results_final.csv | T2=/home/ghj/sitl_sim/t2_results/INPUTFACE/1c_runs/bc_recovery_results.csv
 >
 > 判据 §4.1 冻结逐字: **消除**=j0 终态<1m; **改变形态**=跳变时刻偏移>2s 或幅值变化>30%。
 > **双口径声明**: ①end-start=回放判读器 j0_end(odom 末-首); ②jump_prepost=在线正源 j0_total 双锚语义(E8P 在线锚 j0_total=3.12/11 事件>5m/max 55.0)——回放轮无 truth, 口径②以跳变族形态面(maxjump/jump_t/njumps)比对,在线 11 事件/55.0 为同族收敛态锚(δ≥5ms 12 轮已证=在线原形态)。
@@ -33,15 +33,36 @@
 | 3ARM_A_MB_d-10_r2_ta_3ARM_A_MB_d-10_r2_edited | A | MB(δ-10) | MB | 1 | 4.5351 | 未消除(0 事件但终态4.5351m≥1m——慢漂族带) | 0.770@328.1 | 0 | n/a(慢漂族) | 无作用 |
 | 3ARM_A_MB_d0_r1_ta_3ARM_A_MB_d0_r1_edited | A | MB(δ0) | MB | 1 | 4.5079 | 未消除(0 事件但终态4.5079m≥1m——慢漂族带) | 0.944@328.1 | 0 | n/a(慢漂族) | 无作用 |
 | 3ARM_A_MB_d0_r2_ta_3ARM_A_MB_d0_r2_edited | A | MB(δ0) | MB | 1 | 4.5922 | 未消除(0 事件但终态4.5922m≥1m——慢漂族带) | 1.323@23.2 | 0 | n/a(慢漂族) | 无作用 |
+| 3ARM_B_down15_r1 | B | down15 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_down15_r1_bc_3ARM_B_down15_r1_edited | B | down15 | MA | 1 | 0.1608 | 未消除(跳变族1542事件复现; 终态0.1608m<1m 仅口径①面) | 83.009@198.0 | 1542 | 形态未变(dt=0.2s, dA=3%) | 无作用 |
+| 3ARM_B_down15_r2 | B | down15 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_down15_r2_bc_3ARM_B_down15_r2_edited | B | down15 | MA | 1 | 0.0143 | 未消除(跳变族1481事件复现; 终态0.0143m<1m 仅口径①面) | 79.899@198.0 | 1481 | 形态未变(dt=0.2s, dA=7%) | 无作用 |
 | 3ARM_B_drop10_r1 | B | drop10 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_drop10_r1_bc_3ARM_B_drop10_r1_edited | B | drop10 | MA | 1 | 0.0687 | 未消除(跳变族1856事件复现; 终态0.0687m<1m 仅口径①面) | 85.747@198.0 | 1856 | 形态未变(dt=0.2s, dA=0%) | 无作用 |
+| 3ARM_B_drop10_r2 | B | drop10 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_drop10_r2_bc_3ARM_B_drop10_r2_edited | B | drop10 | MA | 1 | 0.2080 | 未消除(跳变族1861事件复现; 终态0.2080m<1m 仅口径①面) | 81.320@197.7 | 1861 | 形态未变(dt=0.2s, dA=5%) | 无作用 |
 | 3ARM_B_drop3_r1 | B | drop3 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_drop3_r1_bc_3ARM_B_drop3_r1_edited | B | drop3 | MA | 1 | 0.0488 | 未消除(跳变族1351事件复现; 终态0.0488m<1m 仅口径①面) | 84.194@197.7 | 1351 | 形态未变(dt=0.2s, dA=2%) | 无作用 |
+| 3ARM_B_drop3_r2 | B | drop3 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_drop3_r2_bc_3ARM_B_drop3_r2_edited | B | drop3 | MA | 1 | 1.9214 | 未消除(跳变族1299事件复现; 终态1.9214m<1m 仅口径①面) | 86.870@198.0 | 1299 | 形态未变(dt=0.2s, dA=1%) | 无作用 |
+| 3ARM_B_reord2_r1 | B | reord2 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_reord2_r2 | B | reord2 | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_B_reord2_r2_bc_3ARM_B_reord2_r2_edited | B | reord2 | MA | 1 | 0.0143 | 未消除(跳变族1720事件复现; 终态0.0143m<1m 仅口径①面) | 80.955@197.1 | 1720 | 形态未变(dt=0.8s, dA=6%) | 无作用 |
+| 3ARM_C_ctr_r1 | C | ctr | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_C_ctr_r1_bc_3ARM_C_ctr_r1_edited | C | ctr | MA | 1 | 0.0143 | 未消除(跳变族1786事件复现; 终态0.0143m<1m 仅口径①面) | 69.232@197.9 | 1786 | 形态未变(dt=0.1s, dA=19%) | 无作用 |
+| 3ARM_C_ctr_r2 | C | ctr | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_C_ctr_r2_bc_3ARM_C_ctr_r2_edited | C | ctr | MA | 1 | 0.0143 | 未消除(跳变族1800事件复现; 终态0.0143m<1m 仅口径①面) | 83.174@197.8 | 1800 | 形态未变(dt=0.0s, dA=3%) | 无作用 |
+| 3ARM_C_full_r1 | C | full | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_C_full_r1_bc_3ARM_C_full_r1_edited | C | full | MA | 1 | 0.0419 | 未消除(跳变族1691事件复现; 终态0.0419m<1m 仅口径①面) | 82.643@197.9 | 1691 | 形态未变(dt=0.1s, dA=4%) | 无作用 |
+| 3ARM_C_full_r2 | C | full | MA | 0 | NA | NA | —@— | NA | NA | 登记 |
+| 3ARM_C_full_r2_bc_3ARM_C_full_r2_edited | C | full | MA | 1 | 0.0732 | 未消除(跳变族1650事件复现; 终态0.0732m<1m 仅口径①面) | 81.430@197.9 | 1650 | 形态未变(dt=0.1s, dA=5%) | 无作用 |
 | 3ARM_base_MA_r1 | base | MA | MA | 0 | 0.8508 | 消除✓(终态0.8508m<1m ∧ 0 事件) | 2.834@7.7 | 0 | 改变形态✓(时刻偏移190.2s>2s✓+幅值变97%>30%✓) | 登记 |
 | 3ARM_base_MA_r1b | base | MA | MA | 1 | 0.0115 | 未消除(跳变族2034事件复现; 终态0.0115m<1m 仅口径①面) | 85.611@197.8 | 2034 | 形态未变(dt=0.0s, dA=0%) | 登记 |
 | 3ARM_base_MA_r2 | base | MA | MA | 1 | 0.0300 | 未消除(跳变族1808事件复现; 终态0.0300m<1m 仅口径①面) | 85.846@197.9 | 1808 | 形态未变(dt=0.1s, dA=0%) | 登记 |
 | 3ARM_base_MB_r1 | base | MB | MB | 1 | 4.5462 | 未消除(0 事件但终态4.5462m≥1m——慢漂族带) | 0.740@328.1 | 0 | n/a(慢漂族) | 登记 |
 | 3ARM_base_MB_r2 | base | MB | MB | 1 | 4.4719 | 未消除(0 事件但终态4.4719m≥1m——慢漂族带) | 0.823@328.1 | 0 | n/a(慢漂族) | 登记 |
 
-## 归因汇总（在判臂轮; 死轮/base 登记）
+## 归因汇总（在判臂轮; 死轮/base/prefix-dryrun 登记）
 
-- 强实锤(消除)=**0**; 弱实锤(改变形态)=**12**; 无作用=**12**
-- 终判读数由臂完备度决定: 三臂在判——终判面齐
+- 强实锤(消除)=**0**; 弱实锤(改变形态)=**12**; 无作用=**23**
+- 终判读数: **三臂终判面齐: C1(时戳配对 δ≥5ms)=唯一命中因子(12 轮逐位收敛态); 臂 B(帧节奏四操作)+臂 C(帧内容重绘)全部无作用(形态面均在基线带)——非『三臂全无作用』分支(臂 A 命中); 跳变族回放形态唯一敏感因子=时戳配对域**

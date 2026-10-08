@@ -55,7 +55,7 @@ def main():
     print("epsilon 带审计  csv=%s  n=%d  门面=%s" % (a.csvpath, total,
           "; ".join("%s@%.2f" % s for s in specs)))
     if not flagged:
-        print("边界带轮: 0/%d (0.0%%) —— 截断未落在任一门阈 ε 带内")
+        print("边界带轮: 0/%d (0.0%%) —— 截断未落在任一门阈 ε 带内" % total)
         print("RESULT: C.2 危害面可忽略 → 按意见 §3 记录项关闭")
         return 0
     print("边界带轮: %d/%d (%.1f%%)" % (len(flagged), total, 100.0 * len(flagged) / total))

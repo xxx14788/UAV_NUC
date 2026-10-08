@@ -97,6 +97,10 @@ def main():
     if os.path.isfile(a.t1_csv):
         for r in csv.DictReader(open(a.t1_csv, encoding="utf-8-sig")):
             r["_src"] = "T1"; r["_mat"] = "MB" if "_MB_" in r["tag"] else ("MA" if ("_MA_" in r["tag"] or "base_MA" in r["tag"]) else "?")
+            # B/C 恢复批(修复后 editor)全用 M-A 材料; 无 _bc_ 后缀的 B/C 行=pre-fix 干跑残留(night chain 21:35-21:52)=无效轮标记
+            if r["tag"].startswith(("3ARM_B_", "3ARM_C_")):
+                r["_mat"] = "MA"
+                r["_prefix"] = "" if "_bc_" in r["tag"] else "prefix-dryrun"
             r["_j0"] = r.get("j0_end"); r["_maxjump"] = r.get("maxjump")
             r["_jt"] = r.get("jump_t"); r["_nj"] = r.get("njumps")
             rows.append(r)
@@ -133,6 +137,7 @@ def main():
                 credit = "无作用"; noop += 1
         out_rows.append(dict(
             tag=tag, src=r["_src"], arm=arm, op=op, delta=dl, rep=rep, material=mat, alive=alive,
+            prefix_invalid=r.get("_prefix", ""),
             j0_end=r["_j0"], elim_endstart=elim,           # 口径①
             maxjump=r["_maxjump"], jump_t=r["_jt"], njumps=r["_nj"],  # 口径②形态面
             form_verdict=form, credit=credit,
@@ -167,12 +172,15 @@ def main():
             r["maxjump"] or "—", r["jump_t"] or "—", r["njumps"] or "—",
             r["form_verdict"], r["credit"]))
     md.append("")
-    md.append("## 归因汇总（在判臂轮; 死轮/base 登记）")
+    md.append("## 归因汇总（在判臂轮; 死轮/base/prefix-dryrun 登记）")
     md.append("")
     md.append("- 强实锤(消除)=**%d**; 弱实锤(改变形态)=**%d**; 无作用=**%d**" % (strong, weak, noop))
-    md.append("- 终判读数由臂完备度决定: %s" % (
+    md.append("- 终判读数: %s" % (
         "臂 A 24 轮在判(δ≥5ms 12 轮弱实锤逐位收敛态=改变形态✓; δ≤2ms/d0 无作用)——**臂 B/C 待到货后本表重跑补终判**"
-        if t2_missing else "三臂在判——终判面齐"))
+        if t2_missing else
+        "**三臂终判面齐: C1(时戳配对 δ≥5ms)=唯一命中因子(12 轮逐位收敛态); "
+        "臂 B(帧节奏四操作)+臂 C(帧内容重绘)全部无作用(形态面均在基线带)——"
+        "非『三臂全无作用』分支(臂 A 命中); 跳变族回放形态唯一敏感因子=时戳配对域**"))
     open(out_base + ".md", "w", encoding="utf-8").write("\n".join(md) + "\n")
     print("\n".join(md[:12]))
     print("... [%s] strong=%d weak=%d noop=%d -> %s.{csv,md}" % (GEN_VERSION, strong, weak, noop, out_base))
