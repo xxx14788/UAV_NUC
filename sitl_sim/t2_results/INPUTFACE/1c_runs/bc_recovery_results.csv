@@ -1,0 +1,14 @@
+tag,arm,param,rep,j0_end,jumps_n,ate60,alive
+3ARM_B_drop3_r1,B,drop-periodic-3,1,NA,NA,NA,0
+3ARM_B_drop10_r1,B,drop-random-0.10,1,NA,NA,NA,0
+3ARM_B_down15_r1,B,downfreq-15hz,1,NA,NA,NA,0
+3ARM_B_reord2_r1,dryrun-fail,reorder-win2,1,NA,NA,NA,0
+3ARM_B_drop3_r2,B,drop-periodic-3,2,NA,NA,NA,0
+3ARM_B_drop10_r2,B,drop-random-0.10,2,NA,NA,NA,0
+3ARM_B_down15_r2,B,downfreq-15hz,2,NA,NA,NA,0
+3ARM_B_reord2_r2,B,reorder-win2,2,NA,NA,NA,0
+3ARM_C_ctr_r1,C,region=center60,1,NA,NA,NA,0
+3ARM_C_full_r1,C,region=full,1,NA,NA,NA,0
+3ARM_C_ctr_r2,C,region=center60,2,NA,NA,NA,0
+3ARM_C_full_r2,C,region=full,2,NA,NA,NA,0
+3ARM_B_reord2_r1,B,reorder-win2,1,NA,NA,NA,0

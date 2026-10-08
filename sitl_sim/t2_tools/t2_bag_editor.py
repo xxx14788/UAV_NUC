@@ -278,9 +278,9 @@ class Repainter(object):
         return self._apply_raw(msg)
 
     def _apply_raw(self, msg):
-        from cv_bridge import cv_bridge
+        from cv_bridge import CvBridge
 
-        bridge = cv_bridge.CvBridge()
+        bridge = CvBridge()
         arr = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
         out = self._paint_array(arr)
         newmsg = bridge.cv2_to_imgmsg(out, encoding=msg.encoding)
@@ -304,6 +304,7 @@ class Repainter(object):
     def _paint_array(self, arr):
         import numpy as np
 
+        arr = np.ascontiguousarray(arr).copy()  # T1-v1131 fix: cv_bridge view is read-only
         h, w = arr.shape[0], arr.shape[1]
         x0 = max(0, min(int(self.rx * w), w - 1))
         y0 = max(0, min(int(self.ry * h), h - 1))
@@ -350,7 +351,7 @@ def _flush_slice(buf, rotate, bag_out, stats, last_written_stamp, topic):
     """Write one buffered span. rotate=True -> rotate header stamps by one."""
     msgs = list(buf)
     if rotate and len(msgs) >= 2:
-        stamps = [m.header.stamp for m in msgs]
+        stamps = [e[0].header.stamp for e in msgs]  # T1-v1131 fix: elements are [msg, bagt] pairs
         for k in range(len(msgs)):
             msgs[k][0].header.stamp = stamps[(k + 1) % len(msgs)]
             stats["stamp_rewrites"] += 1
@@ -508,7 +509,7 @@ def run_edit(args):
                 if win[0] <= rel <= win[1]:
                     inwin_stamps[topic].append(msg.header.stamp.to_sec())
         for topic, stamps in inwin_stamps.items():
-            plan_keep[topic] = selector.plan_for_stamps(stamps)
+            plan_keep[topic] = selector.plan_for_count(stamps)
         print("[info] retiming plan (%.1fs): kept %s of %s in-window"
               % (time.time() - t0,
                  {t: int(sum(plan_keep[t])) for t in plan_keep},

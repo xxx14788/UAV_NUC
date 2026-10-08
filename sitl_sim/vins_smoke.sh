@@ -387,7 +387,37 @@ if ! wait_planner_ready 15; then LOG "订阅就绪门超时(15s 无 goal 订阅�
 if [ "$WARMUP" = "1" ]; then
   python3 "$L/t2_tools/t2_warmup_segment.py" --publish --hz 10 --goal-topic /move_base_simple/goal > "$EV/warmup.log" 2>&1
   LOG "WARMUP 段完成(8s 预热 goal 流): $(tail -1 "$EV/warmup.log" 2>/dev/null)"
+  # ---- goal 切换协议修复 W1/W2 (T2 v10.7 单元1; prereg INPUTFACE/goal_fix_prereg_v1.md) ----
+  # 病理: warmup 10Hz goal 流把 FSM 拖入 EXEC/REPLAN 循环不回 WAIT_TARGET(v11.31 A臂8/8;
+  # 标本 WU_E12O_A: FSM_LEFT_WAIT_TARGET=1 恒定+尾点(0.14,-0.25,1.00) vel=0 悬停),
+  # mission goal 在非 WAIT_TARGET 态走 planNextWaypoint 的 REPLAN 侧路径=失效。
+  # W1: goal-silent 稳定门——等 FSM 回 WAIT_TARGET 证据(以 warmup 毕时字节偏移为基线), 上限 20s。
+  # W2: 等不到→planner 整栈重启一次(复用 v11.17 starve 基建)→干净 INIT→WAIT_TARGET 走正路。
+  WU_OFF=$(stat -c %s "$EV/planner.log" 2>/dev/null || echo 0)
+  wu_wait_ok=0
+  for wk in $(seq 1 20); do
+    if tail -c +$((WU_OFF+1)) "$EV/planner.log" 2>/dev/null | grep -q "to WAIT_TARGET"; then wu_wait_ok=1; break; fi
+    sleep 1
+  done
+  if [ "$wu_wait_ok" = "1" ]; then
+    LOG "WU-goal-fix W1 PASS: warmup 毕后 FSM 回 WAIT_TARGET(${wk}s)——mission goal 走 GEN_NEW_TRAJ 正路"
+    echo "$(date '+%F %T') W1-PASS wait_target_after=${wk}s" >> "$EV/warmup_goal_adopted.txt"
+  else
+    LOG "WU-goal-fix W2: 20s 无 WAIT_TARGET 回转(EXEC/REPLAN 自环病理)→planner 重启#wu(sick log 保全)"
+    echo "$(date '+%F %T') W2-RESTART no_wait_target_20s" >> "$EV/warmup_goal_adopted.txt"
+    mv "$EV/planner.log" "$EV/planner_starved_wu_1.log" 2>/dev/null
+    bash "$L/kill_planner_all.sh" > "$EV/planner_kill_wu.log" 2>&1
+    sleep 2
+    nohup roslaunch ego_planner run_planner_sitl_vins.launch > "$EV/planner.log" 2>&1 &
+    if ! wait_planner_ready 25; then
+      LOG "WARN WU-goal-fix W2: 重启后就绪门超时(25s)——照发 mission goal, 判读面注记"
+      echo "$(date '+%F %T') W2-READY-TIMEOUT" >> "$EV/warmup_goal_adopted.txt"
+    fi
+    sleep 3   # INIT→WAIT_TARGET 状态机首拍
+  fi
 fi
+# W4 采纳证据基线: mission goal 发布前的 planner.log 偏移(W1 路径=原文件; W2 路径=新文件)
+MGOFF=$(stat -c %s "$EV/planner.log" 2>/dev/null || echo 0)
 for k in 1 2; do goal_pub; sleep 2; done
 LOG "goal 已发(2×8s)"
 # b) 首发 8s 无 target 变更→一次性重启再投递
@@ -414,6 +444,17 @@ if ! target_moved && ! awk "BEGIN{exit !($PC > 1.0)}"; then
   fi
 else
   LOG "poscmd 存活门通过(首发 rate=${PC}Hz)"
+  # W4 采纳验证门(T2 v10.7 单元1): poscmd 活≠采纳(A臂病理=traj_server 发旧轨迹尾);
+  # 采纳证据=mission goal 后 planner.log 新增 "from WAIT_TARGET to"(GEN_NEW_TRAJ 转换)。
+  if [ "$WARMUP" = "1" ]; then
+    if tail -c +$((MGOFF+1)) "$EV/planner.log" 2>/dev/null | grep -q "from WAIT_TARGET to"; then
+      echo "$(date '+%F %T') W4-ADOPTED gen_new_traj_after_mission_goal poscmd=${PC}Hz" >> "$EV/warmup_goal_adopted.txt"
+      LOG "WU-goal-fix W4 PASS: mission goal 已被采纳(GEN_NEW_TRAJ 转换在案)"
+    else
+      echo "$(date '+%F %T') W4-NO-EVIDENCE poscmd=${PC}Hz" >> "$EV/warmup_goal_adopted.txt"
+      LOG "WARN WU-goal-fix W4: poscmd 活但无 from-WAIT_TARGET 转换证据——判读面注记"
+    fi
+  fi
 fi
 [ "$GATE" = "1" ] && gate_hit && gate_abort pursuit-start
 [ "$STOPLOSS" = "1" ] && stoploss_hit && gate_abort pursuit-start stoploss
