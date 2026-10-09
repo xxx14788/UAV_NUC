@@ -198,4 +198,62 @@ inline Outcome decide_land(const Inputs &in)
     return o;                                                               // waiting (rotor low speed)
 }
 
+// ---------- T1-v1139 P-1/P-2: HAFIX 梯②③纯决策(可测面;调用侧=PX4CtrlFSM STEP0.5) ----------
+// P-1 语义常量: MAV_CMD_DO_FLIGHTTERMINATION param1 — 1=terminate / 0=cancel。
+// 旧码缺省 0 = 「取消终止」反向 bug 实锤(3d 批 FAIL 侧根因之一),调用点必须用本常量。
+// 二次修复(干测 run_DRILLD1_N8P_042425 实证): 400/param1=1.0 被 FC ACK 但 termination 态被
+// px4ctrl 活跃 setpoint 流覆盖(mode→AUTO.LOITER 悬停 0.59m, armed 恒 True 207s)——补发
+// PX4 官方 kill 语义 = MAV_CMD_COMPONENT_ARM_DISARM(179) param1=0 + param2=21196
+// (commander `disarm -f` 同款 forced 路径,绕过 landed 检查,不依赖 termination 态)。
+constexpr int    HAFIX_KILL_MAVCMD = 400;
+constexpr double HAFIX_KILL_PARAM1_ENGAGE = 1.0;
+constexpr int    HAFIX_KILL2_MAVCMD = 179;        // MAV_CMD_COMPONENT_ARM_DISARM
+constexpr double HAFIX_KILL2_DISARM = 0.0;        // param1 = DISARM
+constexpr double HAFIX_KILL2_FORCE_MAGIC = 21196; // param2 = force 码(空中停电机)
+
+struct HafixInputs
+{
+    bool enabled = true;
+    int stage = 0;             // ha_stage: 0=监视 1=watch 2=LAND 3=KILL 已发
+    bool flying = false;       // armed && !landed
+    double dead_elapsed = 0.0; // now - ha_dead_since
+    bool landed = false;
+    bool armed = false;
+    double dead_s = 5.0;
+    double kill_s = 15.0;
+};
+
+struct HafixAction
+{
+    int stage_next = 0;
+    bool watch_start = false;      // 梯①入口
+    bool auto_land = false;        // 梯①: 切 AUTO_LAND(盲降)
+    bool kill_fire = false;        // 梯②: 本拍发 KILL(400, param1=1.0;调用侧 1Hz 限频+返回检查)
+    bool disarm_postposed = false; // 梯③(P-2): landed 门开→disarm 收尾(调用侧 1Hz 重试)
+    bool cleared = false;
+};
+
+inline HafixAction decide_hafix(const HafixInputs &in)
+{
+    HafixAction a;
+    a.stage_next = in.stage;
+    if (!in.enabled) return a;
+    // P-2 梯③: KILL 后 landed 输入开门才 disarm;持有期(landed∧armed)不清 stage,
+    // disarm 被拒不丢梯(1Hz 重试至成功,成功侧归零)。
+    const bool ladder3_hold = (in.stage == 3 && in.landed && in.armed);
+    if (ladder3_hold) a.disarm_postposed = true;
+    if (in.flying)
+    {
+        if (in.stage == 0)
+        { a.stage_next = 1; a.watch_start = true; }
+        else if (in.stage == 1 && in.dead_elapsed >= in.dead_s)
+        { a.stage_next = 2; a.auto_land = true; }
+        else if (in.dead_elapsed >= in.dead_s + in.kill_s)
+        { if (in.stage == 2) a.stage_next = 3; a.kill_fire = true; } // P-1: 到期即发,持续重试
+    }
+    else if (in.stage != 0 && !ladder3_hold)
+    { a.stage_next = 0; a.cleared = true; }
+    return a;
+}
+
 } // namespace fsm_decision

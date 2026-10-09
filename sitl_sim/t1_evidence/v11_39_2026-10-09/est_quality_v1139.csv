@@ -1,0 +1,6 @@
+scene,kind,n,dur_s,rate_hz,pathlen_m,maxjump_m,jumps_gt_05cm,jumps_gt_10cm,end_drift_m,drift_rate_m_per_min,env_x_m,env_y_m,env_z_m,lindrift_x_m,lindrift_y_m,lindrift_z_m,trips,trip_peak_spread_m,peak_pair_dists,note
+scen0_static,static,2766,184.5,15.0,0.292,0.001,0,0,0.003,0.001,0.0017,0.0033,0.0022,-0.0015,-0.0029,0.0019,,,,
+scen1_microshake,static,2240,149.4,15.0,0.115,0.0003,0,0,0.0007,0.0003,0.0004,0.0007,0.0009,0.0001,-0.0005,0.0009,,,,
+scen2_slowmove,slowmove,3589,239.4,15.0,4.883,0.0246,0,0,0.8554,0.2144,1.021,0.8439,0.3121,-0.348,0.1795,0.1906,,,,
+scen3_walk,walk,3590,239.4,15.0,30.012,0.0523,2,0,0.0579,0.0145,3.5424,4.7339,0.2196,,,,4,2.3765,3.0891/2.5056/2.6043,
+scen4_slide,slide,2691,179.5,15.0,2.163,0.0029,0,0,0.392,0.1311,0.3537,0.7466,0.0069,,,,2,0.0705,0.7998,

@@ -2,7 +2,7 @@
 ex_calib_result.yaml
 vins_result.csv
 data_generator/
-test/
+# test/  # T1-v1139 root-removed: gtest-asset eating recurrence source (dir empty now, keep dead)
 test.launch
 evaluate/
 .vscode/

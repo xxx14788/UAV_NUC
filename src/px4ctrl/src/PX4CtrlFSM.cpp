@@ -109,54 +109,75 @@ void PX4CtrlFSM::process()
 	}
 	// STEP0.5: HAFIX odom 死亡看门(T1-v1125-4b;D1 演练证据 run_DRILLD1_N8P_150019:
 	// 飞行期 VINS 死亡原行为=冻结 odom 盲飞+disarm=0=实机炸机路径,H-A 阻塞项活体实证)。
-	// 梯①watch(dead_s)→AUTO_LAND(冻结 odom 下 z 设点缓降);梯②再 kill_s 仍 armed→
-	// KILL(CommandLong 400)+disarm 重试(闭合 kill≠disarm 缺口,D3/D4a DEGRADED 共同面)。
-	// 复位=landed 或流恢复;[HAFIX] 日志留痕;缺省开=实机红线姿态。
+	// 梯①watch(dead_s)→AUTO_LAND(冻结 odom 下 z 设点缓降);梯②再 kill_s 仍 flying→
+	// KILL(MAV_CMD_DO_FLIGHTTERMINATION 400 param1=1.0=T 终止[缺省 0=取消,旧码反向 bug,P-1]);
+	// 梯③disarm 独立后置到 landed 门(P-2:空中 disarm 必被 PX4 拒,landed=true 才收尾)。
+	// 复位=disarmed 或流恢复;[HAFIX] 日志留痕;缺省开=实机红线姿态。
 	if (param.ha_fix.enabled && !p3_window)
 	{
 		const bool odom_dead = !odom_is_received(now_time);
-		const bool flying = fd_in.armed && !fd_in.landed;
-		if (flying && odom_dead)
+		// T1-v1139 P-1/P-2: 决策权威=decide_hafix(纯函数);副作用逐分支映射(行为等价,F3 同构)。
+		fsm_decision::HafixInputs ha_in;
+		ha_in.enabled = true;
+		ha_in.stage = ha_stage;
+		ha_in.flying = fd_in.armed && !fd_in.landed && odom_dead; // watch 域=飞行∧流死
+		ha_in.dead_elapsed = (ha_stage != 0) ? (now_time - ha_dead_since).toSec() : 0.0;
+		ha_in.landed = fd_in.landed;
+		ha_in.armed = fd_in.armed;
+		ha_in.dead_s = param.ha_fix.dead_s;
+		ha_in.kill_s = param.ha_fix.kill_s;
+		fsm_decision::HafixAction ha_o = fsm_decision::decide_hafix(ha_in);
+
+		if (ha_o.watch_start)
 		{
-			if (ha_stage == 0)
-			{
-				ha_dead_since = now_time;
-				ha_stage = 1;
-				ROS_ERROR("[HAFIX] odom stream dead @flying -- watch start");
-			}
-			else if (ha_stage == 1 &&
-			         (now_time - ha_dead_since).toSec() >= param.ha_fix.dead_s)
-			{
-				ha_stage = 2;
-				if (state != AUTO_LAND)
-				{
-					state = AUTO_LAND;
-					ROS_ERROR("[HAFIX] dead %.1fs >= %.1fs -> AUTO_LAND (blind-descend on stale odom)",
-					          (now_time - ha_dead_since).toSec(), param.ha_fix.dead_s);
-				}
-			}
-			else if (ha_stage == 2 &&
-			         (now_time - ha_dead_since).toSec() >=
-			             param.ha_fix.dead_s + param.ha_fix.kill_s)
-			{
-				ha_stage = 3;
-				ROS_ERROR("[HAFIX] still armed %.1fs after AUTO_LAND -> KILL + disarm fallback",
-				          (now_time - ha_dead_since).toSec());
-				mavros_msgs::CommandLong kill_srv;
-				kill_srv.request.command = 400;
-				kill_srv.request.confirmation = true;
-				reboot_FCU_srv.call(kill_srv);
-				mavros_msgs::CommandBool disarm_srv;
-				disarm_srv.request.value = false;
-				arming_client_srv.call(disarm_srv);
-			}
+			ha_dead_since = now_time;
+			ROS_ERROR("[HAFIX] odom stream dead @flying -- watch start");
 		}
-		else if (ha_stage != 0)
+		if (ha_o.auto_land && state != AUTO_LAND)
+		{
+			state = AUTO_LAND;
+			ROS_ERROR("[HAFIX] dead %.1fs >= %.1fs -> AUTO_LAND (blind-descend on stale odom)",
+			          ha_in.dead_elapsed, param.ha_fix.dead_s);
+		}
+		// P-1 梯②: KILL 到期即发,双命令: ①cmd400 param1=1.0(MAV_CMD_DO_FLIGHTTERMINATION
+		// 终止语义;缺省 0=取消,旧码反向 bug)②cmd179 param1=0+param2=21196(PX4 官方
+		// forced kill=停电机;二次修复——干测实证 400 单发被活跃 setpoint 流覆盖成
+		// AUTO.LOITER 悬停,armed 恒 True)。返回检查+1Hz 限频重试+失败 FAIL 行;成功行仅返回后打。
+		if (ha_o.kill_fire && now_time - ha_kill_trial >= ros::Duration(1.0))
+		{
+			ha_kill_trial = now_time;
+			mavros_msgs::CommandLong kill_srv;
+			kill_srv.request.command = fsm_decision::HAFIX_KILL_MAVCMD;
+			kill_srv.request.param1 = fsm_decision::HAFIX_KILL_PARAM1_ENGAGE;
+			kill_srv.request.confirmation = true;
+			bool ok400 = reboot_FCU_srv.call(kill_srv) && kill_srv.response.success;
+			mavros_msgs::CommandLong kill2_srv;
+			kill2_srv.request.command = fsm_decision::HAFIX_KILL2_MAVCMD;
+			kill2_srv.request.param1 = fsm_decision::HAFIX_KILL2_DISARM;
+			kill2_srv.request.param2 = fsm_decision::HAFIX_KILL2_FORCE_MAGIC;
+			kill2_srv.request.confirmation = true;
+			bool ok179 = reboot_FCU_srv.call(kill2_srv) && kill2_srv.response.success;
+			if (ok400 && ok179)
+				ROS_ERROR("[HAFIX] %.1fs post-AUTO_LAND still flying -> KILL cmd400 p1=1.0 + cmd179 p2=21196 ACCEPTED",
+				          ha_in.dead_elapsed);
+			else
+				ROS_ERROR("[HAFIX] KILL FAIL 400:%d(ack%d r%d) 179:%d(ack%d r%d) -- retry @1s",
+				          (int)ok400, (int)kill_srv.response.success, (int)kill_srv.response.result,
+				          (int)ok179, (int)kill2_srv.response.success, (int)kill2_srv.response.result);
+		}
+		// P-2 梯③: disarm 后置到 landed 门(空中 disarm 必被 PX4 拒);持有期 1Hz 重试。
+		if (ha_o.disarm_postposed && now_time - ha_disarm_trial >= ros::Duration(1.0))
+		{
+			ha_disarm_trial = now_time;
+			if (toggle_arm_disarm(false)) // 内部带返回检查+DISARM rejected 日志
+				ROS_ERROR("[HAFIX] landed gate open -> disarm OK (P-2 postposed ladder)");
+		}
+		if (ha_o.cleared)
 		{
 			ROS_ERROR("[HAFIX] cleared (landed=%d armed=%d odom_ok=%d) stage %d -> reset",
 			          (int)fd_in.landed, (int)fd_in.armed, (int)!odom_dead, ha_stage);
-			ha_stage = 0;
 		}
+		ha_stage = ha_o.stage_next;
 	}
 
 	// STEP1: state machine runs

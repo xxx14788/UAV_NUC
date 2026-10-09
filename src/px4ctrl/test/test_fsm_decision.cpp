@@ -282,6 +282,106 @@ TEST(FsmP1BirthMismatch, PassiveManualNotBlocked)
     EXPECT_EQ(MANUAL_CTRL, o.next); EXPECT_FALSE(o.reject);
 }
 
+// ---------- T1-v1139 P-1/P-2: HAFIX 梯②③语义(KILL=DO_FLIGHTTERMINATION param1=1.0;disarm 后置 landed 门) ----------
+static HafixInputs habase()
+{
+    HafixInputs h;
+    h.enabled = true;
+    h.dead_s = 5.0; h.kill_s = 15.0;
+    return h;
+}
+TEST(HafixP1, KillSemanticsConstants)
+{
+    // P-1 核心: MAV_CMD_DO_FLIGHTTERMINATION, param1=1.0=engage(0=cancel 反向 bug)
+    EXPECT_EQ(400, HAFIX_KILL_MAVCMD);
+    EXPECT_DOUBLE_EQ(1.0, HAFIX_KILL_PARAM1_ENGAGE);
+    // 二次修复(干测 run_DRILLD1_N8P_042425 实证 400 被活跃 setpoint 流覆盖):
+    // 补发 179+param2=21196 forced kill(disarm -f 同款,空中停电机)
+    EXPECT_EQ(179, HAFIX_KILL2_MAVCMD);
+    EXPECT_DOUBLE_EQ(0.0, HAFIX_KILL2_DISARM);
+    EXPECT_DOUBLE_EQ(21196, HAFIX_KILL2_FORCE_MAGIC);
+}
+TEST(HafixP1, KillFiresAtDeadlineWhileFlying)
+{
+    HafixInputs h = habase(); h.stage = 2; h.flying = true;
+    h.dead_elapsed = 20.0; // >= dead_s+kill_s=20
+    HafixAction a = decide_hafix(h);
+    EXPECT_TRUE(a.kill_fire);
+    EXPECT_EQ(3, a.stage_next);
+}
+TEST(HafixP1, KillRetriesWhileStage3Flying)
+{
+    HafixInputs h = habase(); h.stage = 3; h.flying = true;
+    h.dead_elapsed = 25.0; h.landed = false; h.armed = true;
+    HafixAction a = decide_hafix(h);
+    EXPECT_TRUE(a.kill_fire);   // 持续重掷(调用侧 1Hz 限频)
+    EXPECT_EQ(3, a.stage_next); // 不复位
+}
+TEST(HafixP1, KillNotFiredBeforeDeadline)
+{
+    HafixInputs h = habase(); h.stage = 2; h.flying = true;
+    h.dead_elapsed = 19.9; // < 20
+    HafixAction a = decide_hafix(h);
+    EXPECT_FALSE(a.kill_fire);
+    EXPECT_FALSE(a.disarm_postposed);
+    EXPECT_EQ(2, a.stage_next);
+}
+TEST(HafixP2, DisarmNeverFiresAirborne)
+{
+    // P-2 反向 bug 用例: KILL 已发但未落地 → 绝不 disarm(空中 disarm 必被 PX4 拒)
+    HafixInputs h = habase(); h.stage = 3; h.flying = true;
+    h.landed = false; h.armed = true; h.dead_elapsed = 30.0;
+    HafixAction a = decide_hafix(h);
+    EXPECT_FALSE(a.disarm_postposed);
+    EXPECT_TRUE(a.kill_fire);   // KILL 梯独立持续
+}
+TEST(HafixP2, DisarmPostposedOnLandedGate)
+{
+    // landed 门开且仍 armed → disarm 收尾梯激活;持有期不清 stage(disarm 被拒不丢梯)
+    HafixInputs h = habase(); h.stage = 3; h.flying = false;
+    h.landed = true; h.armed = true;
+    HafixAction a = decide_hafix(h);
+    EXPECT_TRUE(a.disarm_postposed);
+    EXPECT_FALSE(a.cleared);
+    EXPECT_EQ(3, a.stage_next);
+}
+TEST(HafixP2, ClearedWhenDisarmedAfterKill)
+{
+    // KILL 后 FC 已 disarm(armed=false,landed=true) → cleared 复位
+    HafixInputs h = habase(); h.stage = 3; h.flying = false;
+    h.landed = true; h.armed = false;
+    HafixAction a = decide_hafix(h);
+    EXPECT_FALSE(a.disarm_postposed);
+    EXPECT_TRUE(a.cleared);
+    EXPECT_EQ(0, a.stage_next);
+}
+TEST(HafixP2, LadderFlowWatchLandKill)
+{
+    // 全梯序: watch(0→1) → AUTO_LAND(1→2) → KILL(2→3) → disarm(landed 门) → cleared
+    HafixInputs h = habase(); h.flying = true; h.landed = false; h.armed = true;
+    HafixAction a1 = decide_hafix(h);                     // stage 0
+    EXPECT_TRUE(a1.watch_start); EXPECT_EQ(1, a1.stage_next);
+    h.stage = 1; h.dead_elapsed = 5.0;
+    HafixAction a2 = decide_hafix(h);
+    EXPECT_TRUE(a2.auto_land); EXPECT_EQ(2, a2.stage_next);
+    h.stage = 2; h.dead_elapsed = 20.0;
+    HafixAction a3 = decide_hafix(h);
+    EXPECT_TRUE(a3.kill_fire); EXPECT_EQ(3, a3.stage_next);
+    h.stage = 3; h.dead_elapsed = 22.0; h.flying = false; h.landed = true;
+    HafixAction a4 = decide_hafix(h);
+    EXPECT_TRUE(a4.disarm_postposed); EXPECT_EQ(3, a4.stage_next);
+    h.armed = false;
+    HafixAction a5 = decide_hafix(h);
+    EXPECT_TRUE(a5.cleared); EXPECT_EQ(0, a5.stage_next);
+}
+TEST(HafixP2, DisabledIsNoop)
+{
+    HafixInputs h = habase(); h.enabled = false; h.stage = 2; h.flying = true; h.dead_elapsed = 99.0;
+    HafixAction a = decide_hafix(h);
+    EXPECT_FALSE(a.kill_fire); EXPECT_FALSE(a.auto_land); EXPECT_FALSE(a.cleared);
+    EXPECT_EQ(2, a.stage_next); // stage 原样
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

@@ -47,6 +47,9 @@ public:
 
 	// T1-v1125-4b HAFIX: odom 死亡看门状态(0=监视/1=watch/2=LAND/3=KILL 已发)
 	ros::Time ha_dead_since;
+	// T1-v1139 P-1/P-2: 梯②KILL 与梯③disarm 1Hz 限频重试时戳
+	ros::Time ha_kill_trial;
+	ros::Time ha_disarm_trial;
 	// T1 v11.31 2f P3: 计划内 reboot 通告消费面(p3_contract_design_v1)
 	ros::Time p3_notify_time;
 	uint32_t p3_last_msg = 0;

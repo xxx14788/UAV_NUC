@@ -35,19 +35,30 @@ SMOKE_PID=$!
 echo "[drill] vins_smoke pid=$SMOKE_PID" | tee -a "$LOG"
 
 # 等 run 目录出现 + goal 投递(轮内 goal_trace 或 arrive_watch 出现)
-EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | head -1)
+# P-3(v11.39): find|head -1 按 inode 序非时间序,多目录并发时可能拿错(时间戳差一秒同前缀
+# 目录在案);改 sort 字典序(H%M%S=时间序)取最新,同前缀多目录下确定性地取本轮目录。
+EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | sort | tail -1)
 WAIT=0
 while [ -z "$EV" ] && [ $WAIT -lt 120 ]; do sleep 3; WAIT=$((WAIT+3));
-  EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | head -1); done
+  EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | sort | tail -1); done
 [ -n "$EV" ] || { echo "[drill] FATAL run dir 未出现" | tee -a "$LOG"; exit 1; }
 echo "[drill] EV=$EV" | tee -a "$LOG"
 
-# 等 pursuit: arrive_watch 出现(goal 已投递且进入到达监视)
-WAIT=0
-while [ ! -s "$EV/arrive_watch.txt" ] && [ $WAIT -lt 180 ]; do sleep 3; WAIT=$((WAIT+3)); done
-[ -s "$EV/arrive_watch.txt" ] && echo "[drill] pursuit 进入(${WAIT}s)" | tee -a "$LOG" || \
-  echo "[drill] WARN arrive_watch 未出现,按时序注入(${WAIT}s)" | tee -a "$LOG"
-sleep 25  # pursuit 稳定段
+# P-3(v11.39) 注入前 flying 门 v3: 等待 harness 自身起飞标记(round.log 出现
+# "poscmd 存活门通过"=goal 已发+poscmd 100Hz=climb 段确定 flying)即注入。
+# 干测链勘误史: ①extended_state 话题探针 NA(话题面不存在);②z 探针 index 不定;
+# ③goal 近点(S1 0.5,0.5)38-79s 即到达+降落,固定 sleep 25 注入窗必错过;
+# ④goal 未投递轮飞机不起飞。harness 标记=零探针不确定性的确定信号。
+GATE_WAIT=0; GATE_MAX=${DRILL_WAIT:-180}
+until grep -q 'poscmd 存活门通过' "$EV/round.log" 2>/dev/null; do
+  sleep 2; GATE_WAIT=$((GATE_WAIT+2))
+  [ $GATE_WAIT -ge $GATE_MAX ] && break
+done
+if grep -q 'poscmd 存活门通过' "$EV/round.log" 2>/dev/null; then
+  echo "[drill] flying 门开(poscmd 存活 @+${GATE_WAIT}s, climb 段注入)" | tee -a "$LOG"
+else
+  echo "[drill] WARN flying 门超时(${GATE_MAX}s poscmd 未起),按时序注入" | tee -a "$LOG"
+fi
 
 if ! pgrep -x vins_node >/dev/null; then
   echo "[drill] ABORT vins_node 不在(pursuit 前提失效),取消注入" | tee -a "$LOG"
