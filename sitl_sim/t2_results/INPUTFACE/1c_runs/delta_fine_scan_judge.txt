@@ -1,0 +1,7 @@
+tag,alive,j0_end,maxjump,jump_t,njumps
+DFS_A_MA_d2_r1_dfs_DFS_A_MA_d2_r1_edited,1,0.0123,59.996,113.1,2532
+DFS_A_MA_d2_r2_dfs_DFS_A_MA_d2_r2_edited,1,0.0278,84.675,197.9,1746
+DFS_A_MA_d3_r1_dfs_DFS_A_MA_d3_r1_edited,1,0.0145,74.741,198.0,1299
+DFS_A_MA_d3_r2_dfs_DFS_A_MA_d3_r2_edited,1,0.0143,80.342,197.9,942
+DFS_A_MA_d4_r1_dfs_DFS_A_MA_d4_r1_edited,1,0.0143,55.041,104.5,11
+DFS_A_MA_d4_r2_dfs_DFS_A_MA_d4_r2_edited,1,0.0143,55.041,104.5,11

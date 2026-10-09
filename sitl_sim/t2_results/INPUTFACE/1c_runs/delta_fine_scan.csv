@@ -1,0 +1,7 @@
+tag,arm,param,rep,j0_end,jumps_n,ate60,alive
+DFS_A_MA_d2_r1,A,delta=2ms,1,NA,NA,NA,0
+DFS_A_MA_d3_r1,A,delta=3ms,1,NA,NA,NA,0
+DFS_A_MA_d4_r1,A,delta=4ms,1,NA,NA,NA,0
+DFS_A_MA_d2_r2,A,delta=2ms,2,NA,NA,NA,0
+DFS_A_MA_d3_r2,A,delta=3ms,2,NA,NA,NA,0
+DFS_A_MA_d4_r2,A,delta=4ms,2,NA,NA,NA,0

@@ -31,7 +31,8 @@ def load_arm_a():
         if len(parts) < 6: continue
         tag = parts[0]
         try:
-            rows[tag] = dict(alive=int(parts[1]), ate=float(parts[2]), j0_end=float(parts[3]),
+            # judge col order (frozen): tag,alive,j0_end,maxjump,jump_t,njumps
+            rows[tag] = dict(alive=int(parts[1]), j0_end=float(parts[2]), maxjump=float(parts[3]),
                              t_jump=float(parts[4]), n_jumps=int(parts[5]))
         except ValueError:
             continue
@@ -51,8 +52,8 @@ def main():
     arows = load_arm_a()
     for tag in sorted(arows):
         r = arows[tag]
-        c = classify(r["j0_end"], r["n_jumps"])
-        print("%-46s j0=%8.3f jumps=%5d t=%7.1f -> %s" % (tag, r["j0_end"], r["n_jumps"], r["t_jump"], c))
+        c = classify(r["maxjump"], r["n_jumps"])  # band caliber = (maxjump, njumps) per v1.1 errata
+        print("%-46s j0e=%7.3f maxjump=%8.3f jumps=%5d t=%7.1f -> %s" % (tag, r["j0_end"], r["maxjump"], r["n_jumps"], r["t_jump"], c))
     print()
     print("== ARM B (frame rhythm) + ARM C (frame content) -- this campaign ==")
     bc = os.path.join(RUNS, "bc_recovery_results.csv")

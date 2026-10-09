@@ -2133,3 +2133,51 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 **M3prime 批终账（04:11-07:01,补挂起件）**：base 18+v2 18 有效轮+1 A/B 判别轮。**N8P 100%(base 3/3)→0%(v2 0/3) 饥饿病理复现=铁证对照**→REGEN v2 判负→**输入质量门参数化路线整体证伪正式定案**（1a 健康带钉死参数空间无自由度+拒帧-饥饿-跳变雪崩 3-4 拒即崩[格子×时序敏感,S8O 137 拒仍 PASS 反证]）→修复面转候选 A 反馈循环打破（fail-open 加速/报警不拒帧=observe 复用）与候选 B 弃门转 1c（不互斥）。执行事故三层（launch 嵌套 substitution[8cfe93e 修复,T1 3d ENV-FAIL 同根因+勘误登记]/banner %.2f 0.095 显示 0.10 致误判停批/config 副本相对路径 calib 解析失败→camodocal 空指针崩[修复=副本入 config 原目录]）。产物=m3p_results.md（格级表+判读）+双 csv+v2_arm.yaml；git 5d6685a 全推。
 
 **v10.4 收卷行（07:2x）**：双必达 ✓✓（1a 完成+REGEN v2.0 FROZEN 04:15）+保底全落（①分布数据+方法论 ✓②冻结 ✓③M3prime 执行+错峰记录 ✓④1b 第 0 步+设计件+预注册 ✓⑤本行=夜报）；1c 三臂执行滑下夜（设计件+编辑器+标本 md5 就绪=保底达成）；C.10 本地+3090 收卷 v1.0。坑账新增 7 条（AP 消失型/pkill 自匹配第四次/heredoc 嵌套/MSYS 路径/launch 嵌套 substitution/config 相对路径/ssh 超时杀未 setsid 远端命令）。
+
+---
+
+## T2 v10.7 战役账（2026-10-09 03:31-；绿率全线主战）
+
+**单元 0（开工收尾）**：night_chain 核查=23:20 完整毕（臂 A 26 轮数据在案 judge 齐/臂 B 8+臂 C 4 全 DRY-RUN FAIL=旧编辑器 21:41 时代[T1 四 bug 修复 21:57 在后]→本夜补跑件/2d HAFIX rc=0/D5 rc=0/**P3 build rc=1=vins+px4ctrl 两包编译挂=T1 挂账**）；vins_node md5 84314cfe mtime 02:34 实核=未被 build 失败污染（catkin 编译失败不 install）；窗口干净（零飞行进程/零锁/df 490G）；git b7e6166 最新+册部署 md5 7a8bd5d8 双端一致；STATUS 开工行。**双目录分叉发现**：~/catkin_ws/sitl_sim/（git 检出镜像）与 ~/sitl_sim/（运行正源）实体并存——打补丁前两份 vins_smoke.sh 逐位一致（diff 44 行=纯补丁），无实害，注记在案。
+
+**单元 1（goal 切换协议修复=头号写码件）**：
+- 预注册先行：INPUTFACE/goal_fix_prereg_v1.md（04ac4b24，落码前冻结）。
+- 根因证据链补钉（本夜新证）：WU_E12O_A planner.log 尾部 tsdiag 连续 pos=(0.14,-0.25,1.00) vel=0（warmup 尾点悬停至 t=337s）+FSM_LEFT_WAIT_TARGET=1（全程未回）+Triggered 20/97（订阅队列 1+planNextWaypoint 内 while(spinOnce) 死等+planGlobalTraj 重算→大量丢弃）+ego_replan_fsm.cpp:158 源码路径（WAIT_TARGET→GEN_NEW_TRAJ=正路；否则死等 EXEC_TRAJ→REPLAN_TRAJ=mission goal 全走 REPLAN 侧失效）。
+- 修复=**案①+②组合**（W1 goal-silent 稳定门[20s 等 WAIT_TARGET 回转，字节偏移基线 grep]+W2 重启兜底[复用 v11.17 starve 基建：planner_starved_wu_1.log 保全+kill+relaunch+就绪门]+W4 采纳验证门[warmup_goal_adopted.txt 落 from-WAIT_TARGET 转换证据]）；**案③提频重发被既有数据证伪排除**（A 臂 mission goal 16 发全灭——失效与频率无关与 FSM 态有关）。
+- 落码：vins_smoke.sh 纯加性补丁 2371B（bak_t2v107 备份+syntax-ok+**WARMUP=0 路径逐字节不变**=B 臂控制变量铁律）；补丁应用器 /tmp/apply_goal_fix.py（双锚点断言式替换）。
+- 干测验证轮：等 B/C 批毕（互杀）→E8P --warmup 单轮→证据链四件（G1 goal_trace G2 WAIT_TARGET 回转 G3 from-WAIT_TARGET G4 位移/到位）判 PASS。
+
+**单元 3（三臂补跑+终判）**：
+- 前置：editor 四 bug 修复版 dry 三操作复验全 PASS（drop-periodic/drop-random/reorder[mono-viol 6776=重排语义预期]/repaint）。
+- 补跑批 t2_three_arm_bc_recovery.sh（12 轮=B 8+C 4，C_WIN=97.88-101.88 冻结沿用）03:45 发射；**执行事故 1**：首次发射 set -u 下 source ROS 爆 ROS_MASTER_URI 未绑定（坑账四件套复发）→补 export 修复重发；**执行事故 2**：pkill 模式串含完整文件名自匹配自杀（第 5 次实锤——模式串与 sed 目标同串）→分步执行规避。
+- 首轮勘误：3ARM_B_drop3_r1 即时 eval j0=NA alive=0=**bag 刷盘时序假阴性**（与 night_chain 臂 A 同款；事后重读 vins_out.bag=3488 帧 odom j0_end=0.0488）；判读以批尾 judge 事后重读为准。
+- 首数据点：**B 臂 drop3（11Hz 图像流）VINS 存活+终态 0.0488m（<1m=消除判据带）**——与 δ≥5ms 收敛带同族机理假说（帧间时距大→时间戳配对共振打破）。
+- 终判表：t2_tools/t2_three_arm_verdict.py（判据=1c 设计件 §4 逐字：消除 j0<1/瀑布 j0≥75∧jumps≥500/改变形态=中间带；臂级=两 rep 一致才判，混合=sensitive 注记；两口径注记 C-3 在案：j0_end 列=end-start 口径同臂 A 判决，frame_jumps=跳计数口径，"消除"分支消费前口径声明）。
+
+**单元 2（预热复验批）**：脚本 t2_warmup_reverify_v107.sh 就绪（16 轮=8 格×两臂同夜全重跑，B 臂旧数据禁跨夜复用；WU1b 旧病理轮不补录；新增 goal_adopted 列消费 W1-W4 证据）；判据沿 1b prereg §2.3 冻结（≥15pp+方向一致 ≥6/8）；失败分支预注册在任务书（非 goal 面 NOT-EFFECTIVE=激励有效性证伪→当夜出 bias 约束②设计件）。
+
+**单元 4（低优池升格）**：δ 细扫脚本 t2_delta_fine_scan.sh（δ∈{2,3,4}×r1r2=6 轮；判据冻结在脚本头：收敛态=两 rep 终态≤60∧跳≤50；δc=最小全收敛 δ；机理假说排序 H-td-online>H-pairing-threshold；副产物=|td|<δc 实机安全域定量）；A1 批脚本 t2_a1_observe_batch.sh+N8P observe 3 轮（预注册 INPUTFACE/a1_observe_prereg_v1.md 4ca3330e：判据=observe 绿率≥2/3→"门计算零副作用+拒帧动作独毒"定案互恰 M3'；0/3→"门计算副作用"新发现；历史对照=M3' N8P base 3/3 vs v2 0/3 零烧轮）。
+
+**单元 3 续（05:2x 终判）**：reorder r1 补跑毕（77.938/1598=瀑布）→臂 B 四操作 8 轮全 NO-EFFECT 完整定案；**三臂终判表 v1.0 落盘**（1c_runs/three_arm_final_verdict_v1.md，md5 ad29123f 双端一致）+judge_final_all.txt 42 行保全；**双必达①达成**。三臂总判决=唯一形态敏感因子=时间戳配对（臂 A δ 相变 2<δc<5ms）；臂 B 节奏/臂 C 内容全瀑布 NO-EFFECT；MB 对照零作用维持；臂 C 消除未触发→场景改造立项条款关闭；ctr_r1 j0=69.2 略低但 nj 全同带+时刻全同+幅值差 18%<30%阈=终态波动非形态改变。
+
+**单元 1 续（05:4x 干测判定）**：**goal 修复 PASS**——WU_FIX_E8P_A_r2 证据链：G3 铁证=最终 planner 实例 INIT→WAIT_TARGET→Triggered!→GEN_NEW_TRAJ→EXEC_TRAJ（mission goal 走正路被采纳）+G4 位移=tsdiag x 0.29→8.28 飞向 goal(9.01,0.98) vel 0.47+G2=W2 路径生效（W1 门 20s 无回转判定正确）；注记①到位 min 缺（VINS 断流止损提前杀@距 goal 0.73m）②本轮 FAIL 根因=VINS 流断（E8P plain 毒域当夜发作，goal 面正交）③W2 就绪门 25s 超时（planner 冷启动慢）→照发丢失→starve#1 兜住=双重启冗余生效。首次干测轮 NEVER-FLEW（起飞段瞬态，环境性重试条款）；重试发现双副本守卫触发（runtime 有补丁镜像无）→按守卫指引同步两份（758b02a0×2）。干测期间孤儿 stoploss_watch 清杀（PID 直杀防 pkill 自匹配）。
+
+**git**：562bde3 已推（16 文件 731 行：补丁+终判表+脚本族+预注册×2+judge 数据）；remote 名坑=UAV_NUC 非 origin（首次 push 报错复盘）。git add 整体失败第二次实录（路径跨正源/镜像分叉）→同步策略=正源产物 cp 进镜像再 add。
+
+**单元 2 终账（06:50-07:2x，双必达②✓）**：复验批 8/8 对完整（16 轮+2 env 补轮[E12P_A+A1 r3 共 2 次环境性重试，1 次/轮条款内]）——**终判 NOT-EFFECTIVE**（A[预热]绿率 12.5% vs B[无预热] 50%，差 -37.5pp；方向一致 3/8<6/8；冻结判据套用无歧义）。判决定性升级（vs v11.31）：goal 面 W4-ADOPTED 7/7 铁证=**激励有效性本身的干净证伪**（非 goal 混杂）；重大勘误=v11.31"A 臂帧稳定反优 jump 0.037-0.222"系悬停混杂（A 臂不导航=无跳变机会），修复后 A 臂真导航 transit jump 劣于 B 臂 4/7 数值对（S8O 1.400 vs 0.333/S8P 1.002 vs 0.142/N8P 1.308 vs 0.076/E12O 0.294 vs 0.095）=**预热自伤机理**（激励把 bias 推入大瞬态带病起飞）。失败分支当夜兑现：**bias 约束②设计件+预注册出稿**（INPUTFACE/1b_bias_route/bias_constraint2_design_v1.md md5 c16f59c1：②a box 物理域默认首案[ceres box ±0.5m/s²/±0.05rad/s 全程结构性]+②b transit 相对锁备选[prior factor W∈{5,10,20} 冻结]+8 对臂判据同 2.3 口径+SITL 收益/风险不对称强制注记+下周期写码[estimator.cpp L1429 落点已侦察]）。预热段三件套全谱收口：①FEED=NO_VALID_CARRIER（10-08）②约束=设计冻结（本夜）③预热=证伪（本夜）。
+
+**单元 4（07:07-08:2x）**：A1 observe 批=N8P 3+1 轮→**1/3 混合带=证据不足如实注记**（预注册分支逐字；扩批条款挂池[N8P≥6+E8P/S8O 各 3 下周期窗]）；机理方向性注记=观察臂两 FAIL（jump 5.435/3.350）为自然跳变族当夜态（同夜 B 臂他格同带）+零拒帧结构性无 M3' 饥饿链（拒帧计数器→跳变耦合链在观察模式不存在）——方向性支持"拒帧动作独毒"但判据面禁以机理替代判定（预注册纪律）。判读文书 a1_observe_verdict_v1.md（038d41f9）。δ 细扫 6 轮（d∈{2,3,4}×r1r2，07:29 发射）——判据冻结在脚本头：收敛态=两 rep j0≤60∧nj≤50；δc=最小全收敛 d；副产物=|td|<δc 实机安全域。
+
+**单元 4 终账（08:2x，δc 定位+机理翻案）**：δ 细扫 6 轮 judge 重读权威——δ=2：59.996/84.675+nj 2532/1746 瀑布；δ=3：74.741/80.342+nj 1299/942 瀑布；**δ=4：55.041@104.5+nj 11 双 rep 逐位=δ≥5 族收敛态**→**δc∈(3,4]ms**（v11.31 的 (2,5) 收窄）。**机理判决翻案（预注册条款兑现）**：收敛态跨 δ∈{4,5,10,20} 逐位相同（零 δ 依赖）=门型签名→**H-pairing-threshold 优先于 H-td-online**（配对窗时间域宽度≈3-4ms；td 渐进吸收应呈 δ 依赖连续形态=未观测到）；实机注记=D435 硬同步流 δ=0 结构性处于配对域无共振路径+在线 td 估计域正交。判决文书 delta_fine_scan_verdict_v1.md（4d064051）+judge 数据 delta_fine_scan_judge.txt。
+
+**重大勘误（v1.0→v1.1，列语义）**：judge 正源列序=tag,alive,**j0_end,maxjump**,jump_t,njumps——三臂终判表 v1.0 将 maxjump 值误标"j0_end"（带判定全程同列对比=自洽结论不变；v1.1 全列修正+真 j0_end 列补齐[maxjump 69-87 轮的真 j0_end=0.011-1.92；MB 标本真 j0_end=4.5-4.6 与在线 HVNET1 4.12m 互证=自洽反证]+预注册"消除=j0<1m"判据在回放域退化声明[基线瀑布轮 j0_end 0.011-0.030 自身<1m=判据退化，操作化=瀑布消除（maxjump+nj 带）v11.31 口径，两口径注记条款兑现]）；verdict.py 列标签同步修；STATUS 历史行"j0 79.9-86.9"等按勘误读作 maxjump。**教训**：MB 列标签勘误前的"j0=0.74 vs 在线 4.12m"矛盾本可作列语义哨兵早触发——判读器输出消费前应对已知在线值做锚点校验。
+
+**v10.7 收卷行（08:3x）**：双必达 ✓✓（①三臂终判表 v1.1 落盘[双端 md5 ffee13f1]+②预热复验批 8/8 对完整执行+终判 NOT-EFFECTIVE）+保底 4/4（goal 修复落码+干测 PASS；复验批执行；三臂 12+2 补轮+终判；本行夜报）+单元 4 池升格全消费（A1 批 3+1 轮判读+δ 细扫 6 轮 δc 定位）。git 562bde3+收尾笔。
+
+**可做而未做清单（穷尽制）**：
+1. A1 observe 扩批（N8P≥6+E8P/S8O 各 3）——1/3 混合带证据不足的池件；未做原因=飞行窗余额耗尽（复验批+A1+干测轮已占满）+扩批需同夜同栈对照。
+2. bias 约束②写码——任务书钦定下周期首件（设计件+预注册本夜已冻结 c16f59c1，写码面已侦察 estimator.cpp L1429）；不提前写=编译窗与 T1 P3 修复错峰纪律+预注册先行已满足。
+3. 三臂标本第二来源（MA 单标本 42 轮）——臂 A/B/C 全梯度仅 E8P 一标本；未做原因=HVNET1（MB）零瀑布基线结构性无梯度意义+新标本采集=12GB/袋飞行窗新预算（X7 注记素材域）。
+4. W2 就绪门超时改进（25s→planner 冷启动实测需要更长或加 FSM 心跳首拍等待）——改进面挂观察（7/7 W2-RESTART+W4-ADOPTED 链路全通=无功能缺陷，仅时序余量）；不修=判据零变动纪律+当前证据不构成缺陷。
+5. δ 细扫 δ=3.5ms 中点补点——(3,4] 已收窄至 1ms 精度，机理判决（门型签名）已不依赖更细定位；追加=纯精度装饰。
+6. T3 判读支持回执等待——warmup_pairs_v107.csv+终判表 v1.1+δc 判决已落 INPUTFACE/1c_runs/ 可直接消费，回执未至（如实登记）。
