@@ -175,3 +175,51 @@
 
 ---
 （本报告完。第五坑月报 v5.26=全增量并入版；下任并入基线=本文 86 条+§4 待落 9 条。）
+
+---
+
+## 第十九周期增补（2026-10-10 夜 T4 v5.31 单元 6：第十八周期到货 23 条全量并入+本夜 T4 新增 2 条=25 条）
+
+> 来源四族：T1 v11.39 夜报 F 节八条（3090 t1_evidence/v11_39_2026-10-09/night_report_v1139.md）+T2 v10.11 完成清账版 F 节六条（~/catkin_ws/sitl_sim/plans_T2_v10.11.md）+T3 v11.1 收官 F 节三条（STATUS 13:5x 行）+总设计师预录六条（v5.31 任务书单元 6）。机理全文转录，零删改。
+
+### T1 八坑（v11.39 战役）
+
+1. **批多实例连环互杀（D-1010-T1-01）**：kill 未验尸（PID 未确认死亡）→旧批存活→双批并发→force_clean 互杀+孤儿 drill 跨批注入；根治=PID 文件单例守卫（v1 pgrep 方案自噬：$() 替换子壳继承父 cmdline 被自身匹配——v2 PID 文件零 cmdline 匹配）。
+2. **set -u 遇 ROS 链复发**：批脚本 source ROS 前未 export ROS_DISTRO（drill 脚本有正解模式未复制——复用纪律）。
+3. **pkill -f 自匹配第三次**：pkill -f "px4ctrl_node" 匹配远程 bash -c 自身命令行秒杀会话——-x 精确名匹配解。
+4. **近点 goal 落地边界**：S1 类近点到达+降落≈poscmd-live+30-70s，固定 sleep 注入窗必落地面——flying 门 v4 双门（poscmd 存活+armed:True）+postgate 从 armed 起算。
+5. **land_detector 冻结 odom 伪落地**：盲降期 C1+C2 伪满足→landed 谎报→高位误 idle 坠落风险——idle 门=px4_on_ground||odom_ok。
+6. **ulog 时间戳=UTC**：rootfs/log 目录名比本地 -8h。
+7. **catkin build 不重建 gtest 二进制**：--make-args tests 拖累全依赖链（uav_utils tests 链接失败阻塞）——build/px4ctrl 目录直接 make test_fsm_decision 单目标解。
+8. **长 ssh 前台命令超时截断外层循环**：同步跑轮的 ssh 550-600s 超时会砍在 drill 毕与登账行之间（两轮补登实证）——轮编排必须 setsid 后台化+轮询登账。
+
+### T2 六坑（v10.10 战役）
+
+9. **sed 替换含字面反斜杠的文本不匹配**：批脚本 banner grep 模式没换成→CSV 列 bug，join 修复。
+10. **批脚本 VINSMD5 捕获薄壳**：vins_node≠真实栈 libvins_lib.so（应记 lib md5）。
+11. **awk NR==FNR 跨文件 FS 陷阱**：map 空格文件被逗号 FS 吞键。
+12. **Windows 本机无 python3**：编辑走专用工具勿依赖本机脚本。
+13. **nohup 后台 ssh 挂壳**：setsid+stdin 重定向+本地任务及时 stop。
+14. **锁 owner PID=$$ 构造脆弱（D-1010-T2-01 根因）**：锁脚本子进程 PID get 返回即死→活轮锁被"合法"接管；锁侧已修（场忙防御）+**根治已由 T4 v5.31 单元 5 落地**（sitl_lock.sh v3 owner=调用方会话 PID 契约，md5 d7b3efa0，E1 回归 21/21，commit 7e8aa32）——本条就此闭环销号。
+
+### T3 三坑（v11.1 战役）
+
+15. **STATUS 时间标签自违反**：写行内嵌时间须先 date 取远端时间再落笔（自报时间与实际脱节）。
+16. **pgrep 自匹配**（T1 同族第三实例）：pgrep/pkill 模式匹配到自身命令行——[x] 字符类或 -x 精确名。
+17. **显示层乱码≠文件坏（误判判别法）**：终端显示乱码先 md5+hexdump 验文件本体，再判编码；显示层与存储层分离。
+
+### 总设计师预录六坑（实机预录会话，v5.31 任务书转录）
+
+18. **USB CDC 断链自愈**：USB 串口断链有自愈窗口但劣化累积（r2 批换线+固定后零断流=单一根因证据链闭合）。
+19. **rsync --partial**：大袋传输必带 --partial（中断续传），否则重传整袋。
+20. **rostopic hz 首采假象**：频率采样首窗偏低，须弃首采段取稳态窗。
+21. **分母陷阱**：比率指标先核分母口径（帧数/时长/轮数三选一错即全错）。
+22. **引号嵌套**：多层引号（ssh+bash+awk 三层）先写模板再逐层展开，禁手拼。
+23. **/tmp 易失**：/tmp 产物即产即固化到 evidence 目录（重启清空；本夜九袋/75 袋/批收货/重放产物全部按此纪律落盘 t4_v531_20261010/）。
+
+### T4 本夜新增（v5.31 战役，收货链实战）
+
+24. **bash 5.0.17 `local a="$1" b="$a/x"` 一行多赋值非左到右**：b 展开取旧值（实测 b="[/x]"）；38 行 NOBAG 假象根因。与引用闭环 v1 tilde 缺陷（I5b 三源之三）同族=展开时序/展开域缺陷。修复=拆行赋值。
+25. **awk POSIX ERE 无反引用**：`\1` 回引匹配全假阳性（100 行 N/N 等值被判 MISMATCH=100）——等值校验在 awk 不可用，改 grep -P 或分布核读。
+
+（第十九周期并入完：86+25=111 条为下任并入基线。）
