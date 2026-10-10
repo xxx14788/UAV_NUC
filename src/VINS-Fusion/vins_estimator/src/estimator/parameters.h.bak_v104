@@ -61,9 +61,6 @@ extern double T2_W4_BGS_THRESH;    // case-B W4 pre-init gate Bgs line (default 
 extern int T2_PSEUDO_DROP;         // exclude pseudo-depth (INIT_DEPTH-injected) features from NON_LINEAR solves
 extern int T2_STARVE_FLOOR;        // track-count floor arming starvation-weighted vision (0 = off)
 extern double T2_STARVE_ALPHA;     // vision sqrt_info scale in starved windows (1.0 = off; 0 = pure IMU+prior)
-extern int T2_BIAS_BOX;            // T2-v10.10 constraint-2a: bias physical-domain box master (0 = off = legacy bit-identical)
-extern int T2_BIAS_TLOCK;          // T2-v10.10 constraint-2b: transit-window relative bias lock master (0 = off = legacy bit-identical)
-extern double T2_BIAS_TLOCK_W;     // 2b prior weight (absolute, sqrt_info = W * I6; WA7G hard-lock baseline = 50)
 
 // T2 zeta-fix: starvation arming predicate — few LK-surviving tracks means the
 // surviving observations are unreliable wholesale (X1prime forensics 2026-10-04:
@@ -93,7 +90,6 @@ inline bool t2_staged_steady_now(bool non_linear, double t_init_finish, double h
 // fail-open=连续拒收达上限后放行一帧(防门致盲飞,估计器留重锁采样)。
 // 默认全关=零栈改动(实机 config 无这些键=与上游逐位同)。
 extern int T2_IQG_GATE;               // master switch (default 0 = OFF)
-extern int T2_IQG_OBSERVE;           // T2 v10.4 1a: observe-only (metrics+per-frame METRIC log, never reject)
 extern int T2_IQG_MIN_CORNERS;        // K1 供给: 帧特征数下限
 extern double T2_IQG_MIN_DEPTH_RATIO; // K2: 有效深(0<z<band)特征占比下限
 extern double T2_IQG_MAX_DEPTH_M;     // K2 band: 深度有效上界(m)

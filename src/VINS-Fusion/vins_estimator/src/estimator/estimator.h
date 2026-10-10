@@ -153,6 +153,12 @@ class Estimator
     Eigen::Vector3d t2_guard_last_ba{0, 0, 0};
     Eigen::Vector3d t2_guard_last_bg{0, 0, 0};
     bool t2_guard_engaged = false;
+    // T2-v10.10 ②b: transit-window relative bias lock state (design c16f59c1 §2)
+    // armed = inside transit window (V first >0.3 -> snapshot; release V <0.2)
+    Eigen::Vector3d t2_tlock_ba{0, 0, 0};
+    Eigen::Vector3d t2_tlock_bg{0, 0, 0};
+    bool t2_tlock_armed = false;   // snapshot taken, prior active
+    bool t2_tlock_done = false;    // transit ended, no re-lock (single-window semantics)
     Vector3d acc_0, gyr_0;
 
     vector<double> dt_buf[(WINDOW_SIZE + 1)];

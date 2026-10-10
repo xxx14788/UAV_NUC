@@ -111,6 +111,6 @@ t2_stream_guard: 1
 t2_pub_sane_p: 50.0
 t2_pub_sane_v: 15.0
 
-# --- REGEN v2 frozen gate params (T2 v10.4 M3prime arm) ---
+# --- REGEN v2 frozen gate params (T2 v10.7 A1 observe arm; identical to M3' v2 arm config) ---
 t2_input_quality_gate: 1
 t2_iqg_min_stereo_ratio: 0.095

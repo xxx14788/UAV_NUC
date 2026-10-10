@@ -13,7 +13,7 @@ T3 v11.1 单元 1d；warmup_greenrate_table 复用改造（判读链同源,schem
 import argparse, csv, os, datetime
 from collections import defaultdict
 
-GEN_VERSION = "t3_bias2a_greenrate_table_v1.0 (T3 v11.1 单元1d; warmup 复用改造; OUT=repo 正源)"
+GEN_VERSION = "t3_bias2a_greenrate_table_v1.1 (T3 v11.1 单元1d; ②a/②b 双 schema 兼容[box_banner/tlock_banner]; OUT=repo 正源)"
 PREREG = ("判据正源=bias_constraint2_design_v1.md §3(c16f59c1 冻结)+box_arm_batch_prereg_v1010.md §2"
           "(批前冻结)——绿率 ≥15pp ∧ 方向 ≥6/8;判据零变动")
 
@@ -85,11 +85,16 @@ def main():
     rb = 100.0 * gb / n
     diff = ra - rb
     valid = (diff >= 15.0 and dir_a_better >= 6) if n_pairs_valid else False
-    # 层③ 失败模式预分类（判负时）
+    # 层③ 失败模式预分类（判负时）; banner 列 ②a=box_banner / ②b=tlock_banner(v1.1 兼容)
     mode = ""
     if not valid:
         aindom = [fnum(r["A_indom"]) for r in rows if fnum(r.get("A_indom", "")) is not None]
-        banner0 = any((by_cell[c].get("A") or {}).get("box_banner", "1") == "0" for c in by_cell)
+        def _banner(row):
+            if row is None: return "1"
+            v = row.get("box_banner")
+            if v is None or v == "": v = row.get("tlock_banner", "1")
+            return v
+        banner0 = any(_banner(by_cell[c].get("A")) == "0" for c in by_cell)
         if banner0 or (aindom and max(aindom) < 95.0):
             mode = "box 无效型嫌疑(banner=0 或 indom<95%)→配置链审计"
         elif diff <= -15.0:

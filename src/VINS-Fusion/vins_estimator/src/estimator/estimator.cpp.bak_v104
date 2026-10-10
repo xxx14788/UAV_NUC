@@ -7,9 +7,7 @@
  * you may not use this file except in compliance with the License.
  *******************************************************/
 
-#include "estimator/p3_notify_codec.h"
 #include "estimator.h"
-#include "t2_bias_box.h"          // T2-v10.10 ②a: bias physical-domain box
 
 // T1-E2: one-shot env read (stderr forensics; see audit doc E2_writepoint_audit.md)
 // P0-A.1 2026-10-01: restored from a5cd330 (c7d901d placeholder swap had neutralized the probe chain)
@@ -392,10 +390,6 @@ void Estimator::processMeasurements()
         if (reinit_request)
         {
             reinit_request = false;
-            // T1 v11.31 2f P3: reboot 事件通告(原子, latched 发布在 rosNodeTest 侧)
-            ++t2_p3_reboot_cnt;
-            t2_p3_pending_resume = true;
-            t2_p3_notify.store(p3_codec::encode(p3_codec::EV_REBOOT, t2_p3_reboot_cnt));
             clearState();
             setParameter();
             continue;
@@ -584,7 +578,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     // staging 判定与 case-A 同核(NON_LINEAR ∧ 过宽限期);拒收=丢帧不入滑窗(preintegration
     // 跨丢帧累计,数学无损);fail-open=连续拒收超限放行一帧。判读面=[T2IQG] 日志行可 grep。
     static int t2_iqg_reject_total = 0, t2_iqg_consec = 0, t2_iqg_pass_total = 0;
-    if (T2_IQG_GATE || T2_IQG_OBSERVE)
+    if (T2_IQG_GATE)
     {
         bool t2_iqg_steady = t2_staged_steady_now(solver_flag == NON_LINEAR,
                                                   t2_t_init_finish, header,
@@ -608,13 +602,6 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
         t2_m.corners = (int)image.size();
         t2_m.depth_ok_ratio = t2_m.corners ? (double)t2_depth_ok / t2_m.corners : 0.0;
         t2_m.stereo_pair_ratio = t2_m.corners ? (double)t2_stereo_pairs / t2_m.corners : 0.0;
-        if (T2_IQG_OBSERVE)
-        {
-            // T2 v10.4 1a: observe-only sampling -- per-frame metric log, no rejection
-            ROS_WARN("[T2IQG-METRIC] t=%.2f corners=%d depth_r=%.2f stereo_r=%.2f",
-                     header, t2_m.corners, t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio);
-            goto t2_iqg_done;
-        }
         const char *t2_reason = nullptr;
         if (t2_iqg_should_reject(t2_iqg_steady, t2_m, t2_iqg_consec, &t2_reason))
         {
@@ -636,7 +623,6 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                          t2_m.corners, t2_m.depth_ok_ratio, t2_m.stereo_pair_ratio);
         }
     }
-    t2_iqg_done:;
     if (f_manager.addFeatureCheckParallax(frame_count, image, td))
     {
         marginalization_flag = MARGIN_OLD;
@@ -907,14 +893,6 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
             t2_failure_reboot_request(failure_occur, reinit_request);
             ROS_WARN("system reboot requested (async via loop-head consumer)");
             return;
-        }
-
-        // T1 v11.31 2f P3: resume 事件通告(重启后首个成功滑窗帧)
-        if (t2_p3_pending_resume)
-        {
-            ++t2_p3_resume_cnt;
-            t2_p3_pending_resume = false;
-            t2_p3_notify.store(p3_codec::encode(p3_codec::EV_RESUME, t2_p3_resume_cnt));
         }
 
         slideWindow();
@@ -1427,12 +1405,7 @@ void Estimator::optimization()
         ceres::LocalParameterization *local_parameterization = new PoseLocalParameterization();
         problem.AddParameterBlock(para_Pose[i], SIZE_POSE, local_parameterization);
         if(USE_IMU)
-        {
             problem.AddParameterBlock(para_SpeedBias[i], SIZE_SPEEDBIAS);
-            // T2-v10.10 ②a: physical-domain box on Ba/Bg (design c16f59c1);
-            // default 0 applies zero bounds = bit-identical legacy path
-            T2BiasBox::apply(problem, para_SpeedBias[i]);
-        }
     }
     if(!USE_IMU)
         problem.SetParameterBlockConstant(para_Pose[0]);
@@ -1507,42 +1480,6 @@ void Estimator::optimization()
         t2_guard_engaged = false;
         t2_guard_last_ba.setZero();
         t2_guard_last_bg.setZero();
-    }
-    // T2-v10.10 ②b: transit-window relative bias lock (design c16f59c1 §2, frozen
-    // window def: V first >0.3 m/s -> snapshot window-head bias; release V <0.2).
-    // "1 s before" of the frozen definition is not realizable online (no rewind);
-    // snapshot at the crossing = nearest not-yet-drifted value — operational
-    // deviation honestly noted in the prereg. Single window (no re-lock after release).
-    if (T2_BIAS_TLOCK && solver_flag == NON_LINEAR && !t2_tlock_done)
-    {
-        double v_now = Vs[WINDOW_SIZE].norm();
-        int tr = T2BiasTlockLogic::transition(t2_tlock_armed, v_now);
-        if (tr == 1)
-        {
-            t2_tlock_armed = true;
-            t2_tlock_ba = Bas[WINDOW_SIZE];
-            t2_tlock_bg = Bgs[WINDOW_SIZE];
-            printf("[T2TLOCK] t=%.4f ENGAGE snapshot |Ba|=%.4f |Bg|=%.5f V=%.3f\n",
-                   Headers[frame_count], t2_tlock_ba.norm(), t2_tlock_bg.norm(), v_now);
-        }
-        else if (tr == -1)
-        {
-            t2_tlock_armed = false;
-            t2_tlock_done = true;
-            printf("[T2TLOCK] t=%.4f RELEASE |Ba|=%.4f |Bg|=%.5f (transit end)\n",
-                   Headers[frame_count], Bas[WINDOW_SIZE].norm(), Bgs[WINDOW_SIZE].norm());
-        }
-    }
-    if (T2_BIAS_TLOCK && solver_flag == NON_LINEAR && t2_tlock_armed)
-    {
-        // anchor every window frame's bias to the transit-head snapshot (relative
-        // lock — snapshot is the carrier value, NOT zero; drift absorption channel
-        // stays open before/after the window, unlike 2a's structural box)
-        for (int k = 0; k <= frame_count; k++)
-        {
-            InitialBiasFactor *bf = new InitialBiasFactor(t2_tlock_ba, t2_tlock_bg, T2_BIAS_TLOCK_W);
-            problem.AddResidualBlock(bf, NULL, para_SpeedBias[k]);
-        }
     }
     if (last_marginalization_info && last_marginalization_info->valid)
     {
