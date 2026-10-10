@@ -1,0 +1,75 @@
+token	v1_category	anchored	v2_status	GT_strict	GT_basename_hits	verdict
+/drone_VINS/t4_work_20261002/pool4_audit/scan_exfail.py	missing-both	1	absent	NONE		OK
+/drone_VINS/t4_work_20261002/pool5_audit/scan_exfail5.py	missing-both	1	absent	NONE		OK
+/home/uav/sitl_sim/SITL.lock	missing-both	1	absent	NONE		OK
+/tmp/audit_queue_driver.sh	nuc-only	1	absent	NONE		OK
+/tmp/e4_scenario_byseg_out.json	nuc-only	1	absent	NONE		OK
+/tmp/e4_scenario_byseg_tables.md	nuc-only	1	absent	NONE		OK
+/tmp/t4_locktest.lock	missing-both	1	absent	NONE		OK
+/tmp/t4_w1_work/t4_w1_replay.sh	nuc-only	1	absent	NONE		OK
+/tmp/t4w1_reception/bags_md5.txt	nuc-only	1	absent	NONE		OK
+/tmp/t4wf_pool4_scan.py	nuc-only	1	absent	NONE		OK
+/tmp/t4wf_pool4_scan_out.txt	nuc-only	1	absent	NONE		OK
+/tmp/t4wf_pool5_scan.py	nuc-only	1	absent	NONE		OK
+/tmp/t4wf_pool5_scan_out.txt	nuc-only	1	absent	NONE		OK
+/tmp/w9/replay_summary.csv	missing-both	1	absent	NONE		OK
+EV/RESULT.txt	missing-both	0	present (basename hit: /home/uav/sitl_sim/vins_smoke_runs/run_T2BL6_203956/RESULT.txt)	NONE	/home/uav/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10-LODOM_100819/RESULT.txt|/home/uav/sitl_sim/vins_smoke_runs/run_E4R2-GOFF-D10_095056/RESULT.txt	OK
+EV/simvins.log	missing-both	0	present (basename hit: /home/uav/sitl_sim/vins_smoke_runs/run_T2BL6_203956/simvins.log)	NONE	/home/uav/sitl_sim/vins_smoke_runs/run_E2FAIL3_024009/simvins.log|/home/uav/sitl_sim/vins_smoke_runs/run_E2PROBE_022152/simvins.log	OK
+EV/sitl.log	missing-both	0	present (basename hit: /home/uav/sitl_sim/vins_smoke_runs/run_T2BL6_203956/sitl.log)	NONE	/home/uav/sitl_sim/t1_evidence/diag_230400/sitl.log|/home/uav/sitl_sim/t1_evidence/heartbeat_163132/sitl.log	OK
+EV/wa_online.txt	missing-both	0	absent	NONE		OK
+R1G_g_chi2/sim_stereo_imu_config.yaml	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_configs/E15_acc050_gyr001/sim_stereo_imu_config.yaml)	NONE	/home/uav/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml|/home/uav/sitl_sim/t2_configs/E02_ext0_zfix/sim_stereo_imu_config.yaml	OK
+R1G_g_depth/sim_stereo_imu_config.yaml	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_configs/E15_acc050_gyr001/sim_stereo_imu_config.yaml)	NONE	/home/uav/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml|/home/uav/sitl_sim/t2_configs/E02_ext0_zfix/sim_stereo_imu_config.yaml	OK
+R1G_g_reprop/sim_stereo_imu_config.yaml	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_configs/E15_acc050_gyr001/sim_stereo_imu_config.yaml)	NONE	/home/uav/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml|/home/uav/sitl_sim/t2_configs/E02_ext0_zfix/sim_stereo_imu_config.yaml	OK
+R1G_g_smooth/sim_stereo_imu_config.yaml	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_configs/E15_acc050_gyr001/sim_stereo_imu_config.yaml)	NONE	/home/uav/sitl_sim/t2_configs/E01_baseline/sim_stereo_imu_config.yaml|/home/uav/sitl_sim/t2_configs/E02_ext0_zfix/sim_stereo_imu_config.yaml	OK
+_j3/manifest.json	missing-both	0	present (basename hit: /home/uav/sitl_sim/vision_inputs/U3PR1_212450_j3/manifest.json)	NONE	/home/uav/sitl_sim/vision_inputs/U3PG_210307_j3/manifest.json|/home/uav/sitl_sim/vision_inputs/U3PH_210708_j3/manifest.json	OK
+_shift.bag	missing-both	0	absent	NONE		OK
+c14_fix/c14_commit_msg.txt	missing-both	0	absent	NONE		OK
+config/fast_drone_250.yaml	missing-both	0	absent	NONE		OK
+config/sim_stereo/e2_debug_smooth.yaml	missing-both	0	absent	NONE		OK
+derived/c15_wc2obs1_bitchk.md	missing-both	0	absent	NONE		OK
+derived/d1_supply_model.md	missing-both	0	absent	NONE		OK
+derived/d2_ndim_corr.md	missing-both	0	absent	NONE		OK
+derived/d3_truncation.md	missing-both	0	absent	NONE		OK
+derived/d4_j2_plane.md	missing-both	0	absent	NONE		OK
+derived/d4_saturation_dual.csv	missing-both	0	absent	NONE		OK
+derived/exfail_matrix_synthetic.md	missing-both	0	absent	NONE		OK
+derived/j2_seg_judgment_v1.csv	missing-both	0	absent	NONE		OK
+derived/pool_m1m2_byseg.md	missing-both	0	absent	NONE		OK
+e7_ctrl2_125hz.bag	missing-both	0	absent	NONE		OK
+flight_2026-09-26_220814/224815/230126.bag	missing-both	0	absent	NONE		OK
+online/replay_frames.csv	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_results/R1_dissect/replay_frames.csv)	NONE	/home/uav/sitl_sim/t2_results/R1_dissect/replay_frames.csv	OK
+out-root/queue_state.json	missing-both	0	present (basename hit: /home/uav/sitl_sim/vision_inputs/queue_state.json)	NONE	/home/uav/sitl_sim/vision_inputs/queue_state.json|/home/uav/sitl_sim/vision_inputs/stage_u3p_out/queue_state.json	OK
+plans/2026-09-27_T3_planner_quality.md	missing-both	0	absent	NONE		OK
+plans/2026-09-27_t4_report.md	missing-both	0	absent	NONE		OK
+plans/2026-09-28_T4_vision_acceptance_v2.md	missing-both	0	absent	NONE		OK
+plans/2026-10-01_prompt_disk_chain.md	missing-both	0	absent	NONE		OK
+plans/2026-10-05_T4_vision_acceptance_v5.17.md	missing-both	0	absent	NONE		OK
+plans/directions/C09_sim2real-vision-sixdim-baseline/DOSSIER.md	missing-both	0	absent	NONE		OK
+realsense_d435/left.yaml	missing-both	0	present (basename hit: /home/uav/sitl_sim/t2_configs/E15_acc050_gyr001/left.yaml)	NONE	/home/uav/sitl_sim/t2_configs/E01_baseline/left.yaml|/home/uav/sitl_sim/t2_configs/E02_ext0_zfix/left.yaml	OK
+rosbag/bag.py	missing-both	0	absent	NONE		OK
+t2_A_173156.bag	missing-both	0	absent	NONE		OK
+t2_A_60hz320.bag	missing-both	0	absent	NONE		OK
+t2_A_60hz640.bag	missing-both	0	absent	NONE		OK
+t2_A_clean.bag	missing-both	0	absent	NONE		OK
+t2_C_60hz320.bag	missing-both	0	absent	NONE		OK
+t2_C_60hz640.bag	missing-both	0	absent	NONE		OK
+t2v3_ground_202520.bag	missing-both	0	absent	NONE		OK
+t2v3_ground_205302.bag	missing-both	0	present (basename hit: /home/uav/sitl_sim/bags/t2v3_ground_205302.bag)	NONE	/home/uav/sitl_sim/bags/t2v3_ground_205302.bag	OK
+t2v3_hover_203248.bag	missing-both	0	absent	NONE		OK
+t2v3_route_112652.bag	missing-both	0	absent	NONE		OK
+t2v3_route_112652_125hz.bag	missing-both	0	absent	NONE		OK
+t2v3_route_203830.bag	missing-both	0	absent	NONE		OK
+t2v3_route_212450.bag	missing-both	0	absent	NONE		OK
+t2v3_route_215016.bag	missing-both	0	absent	NONE		OK
+t2w5_p2_215545.bag	missing-both	0	absent	NONE		OK
+t4_work_20261002/work_selftest/audit_v58_evidence/last_verdict_audit_v58.txt	missing-both	0	present (basename hit: /home/uav/sitl_sim/t4_selftest/.bak_lockfix_20261004/last_verdict_audit_v58.txt)	NONE	/home/uav/sitl_sim/t4_selftest/.bak_lockfix_20261004/last_verdict_audit_v58.txt|/home/uav/sitl_sim/t4_selftest/last_verdict_audit_v58.txt	OK
+tools/build_pool_m1m2_byseg.py	missing-both	0	absent	NONE		OK
+tools/c15_wc2obs1_bitchk.py	missing-both	0	absent	NONE		OK
+v1_ground_salvage_211520.bag	missing-both	0	present (basename hit: /home/uav/catkin_ws/sitl_sim/t1_evidence/v1_2026-09-28/v1_ground_salvage_211520.bag)	NONE	/home/uav/catkin_ws/sitl_sim/t1_evidence/v1_2026-09-28/v1_ground_salvage_211520.bag	OK
+xline_histreg/summary.csv	missing-both	0	absent	NONE		OK
+~/sitl_sim/SITL.lock	missing-both	1	absent	NONE		OK
+~/sitl_sim/bags/t2w5_p1_092335.bag	missing-both	1	absent	NONE		OK
+~/.bashrc	CTRL-POS-tilde	1	present	/home/uav/.bashrc		OK
+/home/uav/.bashrc	CTRL-POS-abs	1	present	/home/uav/.bashrc		OK
+~/zzz_v2check_absent_ctrl.bag	CTRL-NEG-tilde	1	absent	NONE		OK
+zzz_ctrl_dir_v2check/zzz_nofind_ctrl.txt	CTRL-NEG-rel	0	absent	NONE		OK

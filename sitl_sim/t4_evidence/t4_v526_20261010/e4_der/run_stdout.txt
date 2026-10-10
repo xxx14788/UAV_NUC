@@ -1,0 +1,8 @@
+WROTE /tmp/t4_v526_e4_der/e4_framelevel_conditions.csv /tmp/t4_v526_e4_der/e4_framelevel_frames.csv /tmp/t4_v526_e4_der/e4_framelevel_recheck.md
+SUMMARY_BAGS 6 FRAME_ROWS 216
+BAG X1final_173345 n=35 dbic=-161.6918 bc=0.9753 ratio=20.889 conds=111 ftype=两簇分离型 robust=True replay_maxdiff=0 | box dbic=-161.7 bc=0.975 type=两簇分离型
+BAG U3PR1_212450 n=36 dbic=-47.7269 bc=0.7767 ratio=197.130 conds=111 ftype=高位主体型 robust=True replay_maxdiff=0 | box dbic=-47.7 bc=0.777 type=高位主体型
+BAG U3PR2_213717 n=36 dbic=+5.8233 bc=0.3704 ratio=1.471 conds=000 ftype=高位主体型 robust=True replay_maxdiff=0 | box dbic=+5.82 bc=0.37 type=高位主体型
+BAG U3PG_210307 n=36 dbic=+3.4042 bc=0.4798 ratio=1.112 conds=000 ftype=高位主体型 robust=False replay_maxdiff=0 | box dbic=+3.4 bc=0.48 type=高位主体型
+BAG U3PO_211438 n=37 dbic=-49.9484 bc=0.6573 ratio=279.013 conds=111 ftype=高位主体型 robust=True replay_maxdiff=0 | box dbic=-49.9 bc=0.657 type=高位主体型
+BAG U3PH_210708 n=36 dbic=-278.0038 bc=0.9997 ratio=83.782 conds=111 ftype=低位健康型 robust=True replay_maxdiff=0 | box dbic=-278 bc=0.9997 type=低位健康型
