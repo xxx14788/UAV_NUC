@@ -11,7 +11,7 @@
 | 2 | 实机 config+审签 | **PASS 带注记 A/B** | +固件 v1.17.0（011100ff 实测）+FC=Auterion FMU v6C.x 版本行补注（unit2b_postcal_v1139.md） |
 | 3 | 硬件矩阵+物理窗 | **收口（带注记）** | 2a depth 复活（断电复位救回 Asic；30Hz 流在役，hwmon 仅启动期 4 次）✓；2b 校准复测（ACC Y 翻号级重校+mag 首写+battery 0.0V 免测注记）✓；2e 贯通输入链（grid_map 吃 depth 29.9Hz+odom 直供，FSM 无错）✓；**动力套三项=用户裁定跳过**；规划执行面（goal→poscmd→飞行）待台架/首飞 |
 | 4 | 演练五案+实机地面版 | **PASS（收口带降级注记）** | D5 L2 维持+2c 不解锁版毕（unit2c_ground_drill_v1139.md：HAFIX 地面态=flying 门设计边界实证+监控 v1 告警链 60s 触发）；完整怠速版待动力套修复后补 |
-| 5 | HAFIX 多场景+复标 | **待复验批（今晚窗）** | 三案修复+二次修复（400+179 双 kill）落码+gtest 37/37+干测时序链实证（watch→AUTO_LAND→KILL 20.0s 首发全对时）；400 单发被 setpoint 流覆盖实证→179 补强；**20 轮复验批=T2 ②a 臂批让位窗后执行（条款在册，轮间独立可次夜补完）** |
+| 5 | HAFIX 多场景+复标 | **FAIL 侧收口（带二次修复+增量批）** | 20 轮复验批毕（18:08）+六环终判表落盘=**3/20 PASS 批 NOT-PASS**（预注册判据；S1/S2/S3 全 15 轮=梯②③零效悬停到 bag 终，S4 3 轮边界 PASS）；回挖三层机理定案（hafix_kill_dig_v1139.md：①400 被 failsafe 覆写②179+21196 ACK-无操作③**梯①盲降被 decide_land 一拍弹回=px4ctrl 域根因**+SITL GPS 兜底勘误）；**二次修复（梯①盲降结构）落码+gtest 51/51+干测 7 六环全链闭环实证**（watch→盲降 9s 触地→P-2 disarm OK→cleared，RESULT=PASS）；10 轮增量批在飞（18:30 起） |
 | 6 | 基线=旧机 | **PASS**（维持） | — |
 | 7 | OS 调优 | **PASS**（维持） | 持久化闭合 |
 | 8 | failsafe 残件+P3 | **PASS**（维持） | gtest 5/5+消费侧；G-1 strace 侧未做（低优先注记维持） |
@@ -57,6 +57,7 @@
 ## ⑤ go/no-go 判定框架（预写；结论按数据落）
 
 - **硬红（no-go）**：HAFIX 复验批未毕或环4-6 实测 FAIL ｜ 自检 battery 复核不过 ｜ 栈任一件 ENV-FAIL ｜ depth 复活回退且未裁
+  （行 5 现态：复验批毕+终判 NOT-PASS→**梯①二次修复后干测六环闭环实证**；10 轮增量批在飞——**增量批全 PASS=硬红解除**，仍 NOT-PASS=维持 no-go 待下一修复窗）
 - **黄（用户裁项）**：动力套三项跳过下的人工接管依赖 ｜ 首飞场地/空域/observer 安排 ｜ 短任务剖面（建议 ≤4min+悬停 1-2m）
 - **绿（可 go 项）**：VINS 估计质量（五袋全 IN-EXPECT）｜ 校准链（GYRO/ACC/mag 全新）｜ 失效安全链除行 5 外全在役 ｜ depth 复活贯通
 

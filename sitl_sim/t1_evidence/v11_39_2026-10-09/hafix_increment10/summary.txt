@@ -1,0 +1,32 @@
+=== v11.39 increment10 start 2026-10-10T18:30:15+08:00 (blind-land fix build) ===
+[clean] 批首 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 1 start 18:30:20 ---
+S1_hover_1m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_183020
+[clean] S1_hover_1m r1 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 1 start 18:32:58 ---
+S2_hover_3m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_183259
+[clean] S2_hover_3m r1 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 1 start 18:40:09 ---
+S3_transit r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184009
+[clean] S3_transit r1 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 2 start 18:42:47 ---
+S1_hover_1m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184248
+[clean] S1_hover_1m r2 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 2 start 18:45:28 ---
+S2_hover_3m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184528
+[clean] S2_hover_3m r2 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 2 start 18:52:36 ---
+S3_transit r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_185237
+[clean] S3_transit r2 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 3 start 18:59:47 ---
+S1_hover_1m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_185947
+[clean] S1_hover_1m r3 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 4 start 19:02:28 ---
+S1_hover_1m r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_190228
+[clean] S1_hover_1m r4 clean -> post-assert px4=0 gz=0 OK
+=== increment10 done 2026-10-10T19:04:50+08:00 ===
+--- S2_hover_3m round 3 start 19:05:33 ---
+S2_hover_3m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_190534 (补登:外层 ssh 超时截断,轮本体毕@19:12)
+--- S3_transit round 3 start 19:22:42 ---
+S3_transit r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_192242 (补登:外层 ssh 截断,轮本体毕)
+=== increment10 complete(10 rounds) 2026-10-10T19:36:07+08:00 ===

@@ -1,0 +1,10 @@
+S1_hover_1m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_183020
+S2_hover_3m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_183259
+S3_transit r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184009
+S1_hover_1m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184248
+S2_hover_3m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_184528
+S3_transit r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_185237
+S1_hover_1m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_185947
+S1_hover_1m r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_190228
+S2_hover_3m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_190534 (补登:外层 ssh 超时截断,轮本体毕@19:12)
+S3_transit r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_192242 (补登:外层 ssh 截断,轮本体毕)

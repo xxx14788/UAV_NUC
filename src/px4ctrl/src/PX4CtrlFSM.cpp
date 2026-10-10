@@ -86,6 +86,7 @@ void PX4CtrlFSM::process()
 	fd_in.dt_takeoff = (now_time - takeoff_land.toggle_takeoff_land_time).toSec();
 	fd_in.no_rc = param.takeoff_land.no_RC;
 	fd_in.cmdresp_divergent = p2_st.latched; // T1-P2: cmd-response divergence latch
+	fd_in.ha_blind_land = (ha_stage >= 2);   // T1-v1139 梯①盲降: HAFIX LAND 期 decide_land odom 门旁路
 	if (state_data.rcv_stamp != ros::Time(0) && // 首帧保护留在调用点(纯函数不建模,审计表#S0)
 	    fsm_decision::step0_global(fd_state_of(state), fd_in).next == fsm_decision::MANUAL_CTRL)
 	{
@@ -136,8 +137,25 @@ void PX4CtrlFSM::process()
 		if (ha_o.auto_land && state != AUTO_LAND)
 		{
 			state = AUTO_LAND;
+			// T1-v1139 梯①盲降锚: start_pose=最后已知位(陈旧 odom)+时基锚+OFFBOARD 重入
+			// (流死期 decide_hover 把状态弹 MANUAL 时 offboard 已切出;不重入则 PX4
+			//  LOITER failsafe 恒活——梯②400 的 termination 意图被 modeFromAction 每拍
+			// 覆写的机理=复验批 run_160603 ulog 实锤)
+			set_start_pose_for_takeoff_land(odom_data);
+			takeoff_land.toggle_takeoff_land_time = now_time;
+			toggle_offboard_mode(true);
 			ROS_ERROR("[HAFIX] dead %.1fs >= %.1fs -> AUTO_LAND (blind-descend on stale odom)",
 			          ha_in.dead_elapsed, param.ha_fix.dead_s);
+		}
+		// T1-v1139 梯①弹回防护: HAFIX LAND 期 FSM 不得弹回 MANUAL(decide_land 旁路为主,
+		// 本重断言=保险层;反复出现=旁路失效须查)
+		else if (ha_stage >= 2 && ha_o.stage_next >= 2 && state != AUTO_LAND)
+		{
+			state = AUTO_LAND;
+			set_start_pose_for_takeoff_land(odom_data);
+			takeoff_land.toggle_takeoff_land_time = now_time;
+			toggle_offboard_mode(true);
+			ROS_ERROR("[HAFIX] re-assert AUTO_LAND (blind-descend FSM bounce guard)");
 		}
 		// P-1 梯②: KILL 到期即发,双命令: ①cmd400 param1=1.0(MAV_CMD_DO_FLIGHTTERMINATION
 		// 终止语义;缺省 0=取消,旧码反向 bug)②cmd179 param1=0+param2=21196(PX4 官方
@@ -439,7 +457,10 @@ void PX4CtrlFSM::process()
 		}
 		else
 		{
-			rotor_low_speed_during_land = true;
+			// T1-v1139 梯①盲降 idle 门: 盲降期 frozen odom 会伪满足 land_detector 的
+			// C1(目标低于实位)+C2(速度<阈)约束(高位误 idle=坠落)——仅 px4_on_ground(真
+			// 落地,mavros extended_state 流独立于 VINS)或 odom 活(正常降落)才 idle。
+			rotor_low_speed_during_land = fd_in.px4_on_ground || fd_in.odom_ok;
 
 			static bool print_once_flag = true;
 			if (print_once_flag)

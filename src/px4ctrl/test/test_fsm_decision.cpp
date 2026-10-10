@@ -337,13 +337,24 @@ TEST(HafixP2, DisarmNeverFiresAirborne)
 }
 TEST(HafixP2, DisarmPostposedOnLandedGate)
 {
-    // landed 门开且仍 armed → disarm 收尾梯激活;持有期不清 stage(disarm 被拒不丢梯)
-    HafixInputs h = habase(); h.stage = 3; h.flying = false;
+    // landed 门开且仍 armed → disarm 收尾梯激活(stage>=2 语义:v11.39 修订——盲降触地
+    // 即 disarm,不必等 KILL);持有期不清 stage(disarm 被拒不丢梯)
+    HafixInputs h = habase(); h.stage = 2; h.flying = false;
     h.landed = true; h.armed = true;
     HafixAction a = decide_hafix(h);
     EXPECT_TRUE(a.disarm_postposed);
     EXPECT_FALSE(a.cleared);
-    EXPECT_EQ(3, a.stage_next);
+    EXPECT_EQ(2, a.stage_next);
+}
+TEST(HafixP2, WatchStageClearsOnStreamRecovery)
+{
+    // stage1(watch)流恢复(非 flying)→ 复位(原语义保留;盲降承诺从 stage2 起)
+    HafixInputs h = habase(); h.stage = 1; h.flying = false;
+    h.landed = false; h.armed = true;
+    HafixAction a = decide_hafix(h);
+    EXPECT_FALSE(a.disarm_postposed);
+    EXPECT_TRUE(a.cleared);
+    EXPECT_EQ(0, a.stage_next);
 }
 TEST(HafixP2, ClearedWhenDisarmedAfterKill)
 {
@@ -380,6 +391,40 @@ TEST(HafixP2, DisabledIsNoop)
     HafixAction a = decide_hafix(h);
     EXPECT_FALSE(a.kill_fire); EXPECT_FALSE(a.auto_land); EXPECT_FALSE(a.cleared);
     EXPECT_EQ(2, a.stage_next); // stage 原样
+}
+
+// ---------- T1-v1139 梯①盲降: decide_land odom 门旁路 ----------
+TEST(HafixBlindLand, OdomGateBypassedWhenBlindLandActive)
+{
+    // 盲降中 odom 死 → 不得弹回 MANUAL(复验批 run_160603 实锤的一拍弹回=盲降结构断裂)
+    Inputs i = base(); i.odom_ok = false; i.ha_blind_land = true; i.landed = false;
+    Outcome o = decide_land(i);
+    EXPECT_EQ(AUTO_LAND, o.next);        // descending 继续
+    EXPECT_FALSE(o.offboard_off);
+}
+TEST(HafixBlindLand, OdomGateStillActiveWhenNotBlindLand)
+{
+    // 非盲降(正常降落)odom 死 → 原 MANUAL 弹回语义保持
+    Inputs i = base(); i.odom_ok = false; i.ha_blind_land = false;
+    Outcome o = decide_land(i);
+    EXPECT_EQ(MANUAL_CTRL, o.next);
+    EXPECT_TRUE(o.offboard_off);
+}
+TEST(HafixBlindLand, BlindLandingCompletesOnRealGroundContact)
+{
+    // 盲降至真落地(px4_on_ground=true,extended_state 独立源) → disarm 收尾
+    Inputs i = base(); i.odom_ok = false; i.ha_blind_land = true; i.landed = true;
+    i.px4_on_ground = true;
+    Outcome o = decide_land(i);
+    EXPECT_EQ(MANUAL_CTRL, o.next);
+    EXPECT_TRUE(o.disarm);
+}
+TEST(HafixBlindLand, RcHoverGateNotBypassed)
+{
+    // rc_hover 门保留(HAFIX 只旁路 odom 门,RC 语义不变)
+    Inputs i = base(); i.rc_hover = false; i.ha_blind_land = true;
+    Outcome o = decide_land(i);
+    EXPECT_EQ(MANUAL_CTRL, o.next);
 }
 
 int main(int argc, char **argv)

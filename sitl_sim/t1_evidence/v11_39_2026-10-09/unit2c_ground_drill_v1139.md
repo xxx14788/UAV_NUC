@@ -20,10 +20,12 @@
 - **失效面核查定论**：昨晚（10-09）实机 odom 断链全程 watch 0 触发=同因（地面态），**非 watch 输入链缺陷**——T1 域新发现解除（预判的"输入链缺陷"分支不成立，登记为设计边界+兜底层如下）；
 - 地面态 VINS 死的双兜底=①L2 拒飞门（RJ_NO_ODOM：起飞请求被拒，SITL gtest 在案）②监控 v1 TIMEOUT 告警（本演练实证 60s 内触发+flag 置位）。
 
-## 判读 B：修复链实机首次验证（覆盖面如实注记）
+## 判读 B：修复链实机运行面（勘误订正版 06:47）
 
-- 本演练=**HAFIX 修复版（P-1 400+179 双 kill/P-2 landed 门）二进制的实机进程内首跑**：watch 判定面在实机确认（零误触发+订阅链活）；
-- **梯②③（KILL/disarm）需飞行态，本不解锁版未覆盖**——梯②③验证面=SITL 20 轮复验批（干测 1 已实证时序链：watch→AUTO_LAND→KILL cmd400 ACCEPTED；179 生效验证=干测 6/复验批）。
+- **勘误**：本演练执行时（06:00-06:05）旧机 px4ctrl=**旧二进制**（修复仅落 3090 仓，commit ee15996 于 06:1x 才 pull 至旧机+rebuild）；
+- 订阅链核查与 watch 判定面结论**不受勘误影响**：flying 门逻辑（armed∧!landed∧odom_dead）在修复版与旧版逐位相同（P-1/P-2 只改梯②③ KILL/disarm 语义），零触发=flying 门设计边界对两版均成立；
+- **修复版实机进程内首跑=06:47 起**（旧机 px4ctrl_node pid 687939，源码 md5 与 3090 逐位一致 8ada48fd；订阅链确认 imu_propagate/state/battery；ha_fix 参数=代码默认 enabled=true/dead_s=5/kill_s=15，launch 未显式设参——nh.param 缺省语义注记）；
+- 梯②③（KILL/disarm）需飞行态，本不解锁版未覆盖——验证面=SITL 20 轮复验批（干测 1 已实证时序链：watch→AUTO_LAND→KILL cmd400 ACCEPTED；179 生效验证=复验批环④）。
 
 ## 覆盖面注记（降级版）
 

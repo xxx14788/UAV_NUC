@@ -7,7 +7,7 @@
 # 新日志锚(v11.39 修复版): KILL cmd400 param1=1.0 ACCEPTED / KILL FAIL success=.. result=.. / landed gate open -> disarm OK
 import re, os, csv, sys
 
-OUT = os.path.expanduser("~/sitl_sim/t1_evidence/v11_39_2026-10-09/hafix_reverify")
+OUT = os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else "~/sitl_sim/t1_evidence/v11_39_2026-10-09/hafix_reverify")
 SCENES = ["S1_hover_1m", "S2_hover_3m", "S3_transit", "S4_land_1m"]
 ROUNDS = [1, 2, 3, 4, 5]
 
@@ -139,7 +139,7 @@ for scn in SCENES:
 cols = ["scene", "round", "ev", "ring1_watch", "ring2_autoland", "ring3_kill", "ring3_kill_result",
         "ring4_armed_drop", "ring5_zmin", "ring5_ztail", "ring6_disarm", "landed", "auto_disarm",
         "z_end", "hafix_lines", "cleared", "p3_reboot_evt", "rings", "path", "prereg_pass", "verdict", "missing_rings"]
-csvp = os.path.join(OUT, "reverify_verdict_v1139.csv")
+csvp = os.path.join(OUT, "verdict_v1139.csv")
 with open(csvp, "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
     w.writeheader()
@@ -170,6 +170,6 @@ for scn in SCENES:
 lines += per_scene
 lines.append(f"- 批终判: {'PASS' if ok == len(rows) and len(rows) == 20 else 'NOT-PASS'}")
 txt = "\n".join(lines) + "\n"
-open(os.path.join(OUT, "reverify_final_verdict_v1139.md"), "w").write(txt)
+open(os.path.join(OUT, "final_verdict_v1139.md"), "w").write(txt)
 print(txt)
 sys.exit(0 if ok == len(rows) else 1)

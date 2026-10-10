@@ -44,18 +44,29 @@ while [ -z "$EV" ] && [ $WAIT -lt 120 ]; do sleep 3; WAIT=$((WAIT+3));
 [ -n "$EV" ] || { echo "[drill] FATAL run dir 未出现" | tee -a "$LOG"; exit 1; }
 echo "[drill] EV=$EV" | tee -a "$LOG"
 
-# P-3(v11.39) 注入前 flying 门 v3: 等待 harness 自身起飞标记(round.log 出现
-# "poscmd 存活门通过"=goal 已发+poscmd 100Hz=climb 段确定 flying)即注入。
-# 干测链勘误史: ①extended_state 话题探针 NA(话题面不存在);②z 探针 index 不定;
-# ③goal 近点(S1 0.5,0.5)38-79s 即到达+降落,固定 sleep 25 注入窗必错过;
-# ④goal 未投递轮飞机不起飞。harness 标记=零探针不确定性的确定信号。
-GATE_WAIT=0; GATE_MAX=${DRILL_WAIT:-180}
+# P-3(v11.39) 注入前 flying 门 v4(双门): ①round.log "poscmd 存活门通过"(planner 在令)
+#   ②/mavros/state armed:True(FC 解锁=liftoff 边界)。双门齐开后 sleep DRILL_POSTGATE 注入。
+# 勘误史: v1 extended_state 探针 NA;v2 z 探针 index 不定;v3 poscmd 单门+固定窗
+#   → S1 近点场景 poscmd-live+25s 落在落地边界(到达+降落≈+30-70s)→落地态注入废轮实证。
+#   v4 armed 门=起飞沿确定,postgate 从 armed 起算(S1-S3=15s 爬升段/S4=40s 降落段近似)。
+GATE_WAIT=0; GATE_MAX=${DRILL_GATE_MAX:-300}
 until grep -q 'poscmd 存活门通过' "$EV/round.log" 2>/dev/null; do
   sleep 2; GATE_WAIT=$((GATE_WAIT+2))
   [ $GATE_WAIT -ge $GATE_MAX ] && break
 done
 if grep -q 'poscmd 存活门通过' "$EV/round.log" 2>/dev/null; then
-  echo "[drill] flying 门开(poscmd 存活 @+${GATE_WAIT}s, climb 段注入)" | tee -a "$LOG"
+  echo "[drill] flying 门①开(poscmd 存活 @+${GATE_WAIT}s)" | tee -a "$LOG"
+  ARM_WAIT=0
+  while [ $ARM_WAIT -lt 90 ]; do
+    timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q 'armed: True' && break
+    sleep 2; ARM_WAIT=$((ARM_WAIT+2))
+  done
+  if [ $ARM_WAIT -lt 90 ]; then
+    echo "[drill] flying 门②开(armed:True @+${ARM_WAIT}s) -> postgate ${DRILL_POSTGATE:-15}s" | tee -a "$LOG"
+    sleep ${DRILL_POSTGATE:-15}
+  else
+    echo "[drill] WARN armed 门超时(90s),门①后按时序注入" | tee -a "$LOG"
+  fi
 else
   echo "[drill] WARN flying 门超时(${GATE_MAX}s poscmd 未起),按时序注入" | tee -a "$LOG"
 fi

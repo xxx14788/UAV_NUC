@@ -76,6 +76,8 @@ struct Inputs
     bool no_rc = false;         // param.takeoff_land.no_RC (U2.7)
     bool birth_mismatch = false; // P1: rebirth birth-offset latched (cleared on disarm)
     bool cmdresp_divergent = false; // P2: cmd-response divergence latched (cleared on recover/disarm)
+    bool ha_blind_land = false; // T1-v1139 梯①: HAFIX 盲降中(AUTO_LAND odom 门旁路——decide_land 的
+                                // !odom_ok→MANUAL 一拍弹回=盲降结构断裂,复验批 run_160603 实锤)
 };
 
 struct Outcome
@@ -191,7 +193,9 @@ inline Outcome decide_land(const Inputs &in)
 {
     Outcome o;
     o.next = AUTO_LAND;
-    if (!in.rc_hover || !in.odom_ok) { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }
+    // T1-v1139 梯①盲降: HAFIX 盲降中旁路 odom 门(盲降=时基开环下降,不依赖 odom;
+    // 其余门(rc_hover/rc_cmd)保留——RC 语义不变)
+    if (!in.rc_hover || (!in.odom_ok && !in.ha_blind_land)) { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }
     if (!in.rc_cmd)                  { o.next = AUTO_HOVER; return o; }     // abort land
     if (!in.landed)                  return o;                              // descending
     if (in.px4_on_ground)            { o.next = MANUAL_CTRL; o.disarm = true; o.offboard_off = true; return o; }
@@ -238,9 +242,10 @@ inline HafixAction decide_hafix(const HafixInputs &in)
     HafixAction a;
     a.stage_next = in.stage;
     if (!in.enabled) return a;
-    // P-2 梯③: KILL 后 landed 输入开门才 disarm;持有期(landed∧armed)不清 stage,
-    // disarm 被拒不丢梯(1Hz 重试至成功,成功侧归零)。
-    const bool ladder3_hold = (in.stage == 3 && in.landed && in.armed);
+    // P-2 梯③(v11.39 修订): landed 门从 stage==3 扩到 stage>=2——盲降触地即 disarm(地面
+    // disarm=正路,PX4 允许);KILL(梯②)保留给空中超时(still-flying at dead_s+kill_s)。
+    // 持有期(landed∧armed)不清 stage;cleared 仅在 disarmed(任务终态=地面+电机停)。
+    const bool ladder3_hold = (in.stage >= 2 && in.landed && in.armed);
     if (ladder3_hold) a.disarm_postposed = true;
     if (in.flying)
     {
@@ -251,8 +256,8 @@ inline HafixAction decide_hafix(const HafixInputs &in)
         else if (in.dead_elapsed >= in.dead_s + in.kill_s)
         { if (in.stage == 2) a.stage_next = 3; a.kill_fire = true; } // P-1: 到期即发,持续重试
     }
-    else if (in.stage != 0 && !ladder3_hold)
-    { a.stage_next = 0; a.cleared = true; }
+    else if (in.stage != 0 && !ladder3_hold && (in.stage < 2 || !in.armed))
+    { a.stage_next = 0; a.cleared = true; } // stage1=watch 期恢复即复位;stage>=2=骑到 disarm 终态
     return a;
 }
 
