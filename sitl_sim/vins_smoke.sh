@@ -63,6 +63,12 @@ exec > >(tee "$EV/round.log") 2>&1
 LOCK="$L/SITL.lock"
 SL="$L/sitl_lock.sh"
 MYSTREAM="${SMOKE_OWNER:-T3-$TAG}"
+# ---------- 清场断言(前置到取锁前——v11.40 单元5 修复:原顺序断言失败路径已接管锁
+# +EXIT trap 全场扫杀=T2 事故 D-1010-T2-01 杀伤链;前置后脏现场=裸退零杀伤零锁污染) ----------
+A=$(pgrep -xc px4 2>/dev/null || true); A=${A:-0}
+B=$(pgrep -xc gzserver 2>/dev/null || true); B=${B:-0}
+[ "$A" = "0" ] && [ "$B" = "0" ] || { LOG "FATAL SITL 未清(px4=$A gz=$B),先清场再跑(断言在取锁前,失败不接管锁)"; exit 1; }
+
 "$SL" get "$MYSTREAM" || { LOG "FATAL 锁获取失败(活主持有或盘门拒绝,原因见上)"; exit 1; }
 MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
 "$SL" hbloop "$MYSTREAM" & HBPID=$!
@@ -89,10 +95,7 @@ cleanup() {
 }
 trap 'if [ "$(readlink "$LOCK" 2>/dev/null || true)" = "$MYOWNER" ]; then cleanup; "$SL" release "$MYSTREAM" >/dev/null 2>&1; fi' EXIT
 
-# ---------- 清场断言(不动他人,只拒绝脏现场) ----------
-A=$(pgrep -xc px4 2>/dev/null || true); A=${A:-0}
-B=$(pgrep -xc gzserver 2>/dev/null || true); B=${B:-0}
-[ "$A" = "0" ] && [ "$B" = "0" ] || { LOG "FATAL SITL 未清(px4=$A gz=$B),先清场再跑"; exit 1; }
+# ---------- 清场断言已前置到取锁前(v11.40 单元5:D-1010-T2-01 杀伤链修复) ----------
 
 # ---------- fresh master + 域配方 ----------
 # v11.17 1.2 加固: 孤儿 planner 二进制路径清杀(异常死轮遗留 traj_server 持续回放
