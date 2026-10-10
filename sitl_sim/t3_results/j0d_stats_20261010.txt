@@ -3,7 +3,7 @@ j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor v1.4 口�
 扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 286 袋轮 available
 X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)
 分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577
-生成器 t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源) | OUT=/home/ghj/catkin_ws/sitl_sim/t3_results/j0d_stats_20261010 | combo join=/home/ghj/catkin_ws/sitl_sim/t3_results/combo_matrix_20261010_rounds.csv | 生成时刻 2026-10-10 13:45:19
+生成器 t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源) | OUT=/home/ghj/catkin_ws/sitl_sim/t3_results/j0d_stats_20261010 | combo join=/home/ghj/catkin_ws/sitl_sim/t3_results/combo_matrix_20261010_rounds.csv | 生成时刻 2026-10-10 20:00:16
 ================================================================================================
 总数 286: 净轮=111, 风暴=91, 中漂移=84
   3090 234 轮: 净轮=99 中漂移=75 风暴=60
