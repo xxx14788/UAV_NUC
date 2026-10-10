@@ -39,6 +39,8 @@ for R in 1 2 3; do
   JMP=$(grep -m1 -oE "pre-post\|=[0-9.]+" "$EV/RESULT.txt" 2>/dev/null | grep -oE "[0-9.]+$")
   ARR=$(grep -m1 -oE "leg1 到位\(真值\) min=[0-9.-]+" "$EV/RESULT.txt" 2>/dev/null | grep -oE "[0-9.-]+$")
   DIS=$(grep -m1 -oE "auto_disarm->[01]" "$EV/RESULT.txt" 2>/dev/null | grep -oE "[01]$")
+# j0_decomp 步内置(v11.40 unit5; 失败不阻塞轮判读)
+  [ -n "$EV" ] && [ -d "$EV" ] && python3 "$HOME/catkin_ws/sitl_sim/analysis/t3_wa_gate.py" --j0-decomp "$EV" >/dev/null 2>&1 || true
   echo "N8P,$R,$TAG,${RES:-NA},${JMP:-NA},${ARR:-NA},${DIS:-NA}" >> "$OUT"
   echo "[$(date +%H:%M:%S)] $TAG -> ${RES:-NA} jump=${JMP:-NA} arrive=${ARR:-NA}"
 done

@@ -54,7 +54,9 @@ for cell in "${CELLS[@]}"; do
     DIAG=$(python3 "$L/t2_tools/t2_box_diag.py" "$EV" 2>/dev/null)
     [ -n "$DIAG" ] || DIAG="NA,NA,NA,NA,NA,NA,NA"
     BAN=$(grep -c "\[T2BIASTLK\] tlock=1" "$EV/simvins.log" 2>/dev/null); [ "$BAN" -ge 1 ] 2>/dev/null && BAN=1 || BAN=0
-    echo "$C,$arm,$TAG,$RES,${JMP:-NA},${ARR:-NA},${DIS:-NA},$DIAG,$BAN,$VINSMD5" >> "$OUT"
+  # j0_decomp 步内置(v11.40 unit5; 失败不阻塞轮判读)
+  [ -n "$EV" ] && [ -d "$EV" ] && python3 "$HOME/catkin_ws/sitl_sim/analysis/t3_wa_gate.py" --j0-decomp "$EV" >/dev/null 2>&1 || true
+  echo "$C,$arm,$TAG,$RES,${JMP:-NA},${ARR:-NA},${DIS:-NA},$DIAG,$BAN,$VINSMD5" >> "$OUT"
   done
 done
 sort -t, -k1,1 -s "$OUT" -o "$OUT"
