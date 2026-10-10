@@ -1,0 +1,139 @@
+================================================================================================
+j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor v1.4 口径)  生成 2026-10-07 (T1 v11.23)
+扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 286 袋轮 available
+X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)
+分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577
+生成器 t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源) | OUT=/home/ghj/catkin_ws/sitl_sim/t3_results/j0d_stats_20261010 | combo join=/home/ghj/catkin_ws/sitl_sim/t3_results/combo_matrix_20261010_rounds.csv | 生成时刻 2026-10-10 13:12:47
+================================================================================================
+总数 286: 净轮=111, 风暴=91, 中漂移=84
+  3090 234 轮: 净轮=99 中漂移=75 风暴=60
+  NUC  37 轮: 净轮=9 中漂移=8 风暴=20
+  ?    15 轮: 净轮=3 中漂移=1 风暴=11
+
+-- 净轮名册 (T2fail=0 ∧ j0_total<0.5):
+  run_1aO1_E12O_030436         3090      B1006  j0=0.443 jump=0.000 transit=0.443 dom=transit 四绿=1 
+  run_1aO3_S8O_031836          3090      B1006  j0=0.429 jump=0.208 transit=0.223 dom=mixed 四绿=0 
+  run_1aO4_E8O_032707          3090      B1006  j0=0.155 jump=0.000 transit=0.155 dom=transit 四绿=1 
+  run_1aO5_NE12O_032934        3090      B1006  j0=0.129 jump=0.000 transit=0.129 dom=transit 四绿=1 
+  run_1aO6_E8O_040815          3090      B1006  j0=0.116 jump=0.000 transit=0.116 dom=transit 四绿=1 
+  run_1aP1_N8P_023607          3090      B1006  j0=0.055 jump=0.000 transit=0.055 dom=transit 四绿=0 
+  run_1aP2_N8Pr_024336         3090      B1006  j0=0.083 jump=0.000 transit=0.083 dom=transit 四绿=1 
+  run_1aP3_S12P_024603         3090      B1006  j0=0.117 jump=0.000 transit=0.117 dom=transit 四绿=0 
+  run_1aP4_W5P_025333          3090      B1006  j0=0.320 jump=0.000 transit=0.320 dom=transit 四绿=0 
+  run_1aP5_S8P_030101          3090      B1006  j0=0.192 jump=0.000 transit=0.192 dom=transit 四绿=1 
+  run_DIAGGUARD2_233403        3090      B1005  j0=0.418 jump=0.000 transit=0.418 dom=transit 四绿=0 
+  run_DRILLD1_N8P_173320       3090      B1006  j0=0.406 jump=0.000 transit=0.406 dom=transit 四绿=1 
+  run_DRILLD1_N8P_214950       3090      B1006  j0=0.120 jump=0.000 transit=0.120 dom=transit 四绿=0 
+  run_DRILLD1_N8P_215405       3090      B1006  j0=0.021 jump=0.000 transit=0.021 dom=negligible 四绿=1 
+  run_DRILLD1_N8P_215653       3090      B1006  j0=0.259 jump=0.632 transit=0.537 dom=mixed 四绿=0 
+  run_DRILLD1_N8P_220927       3090      B1006  j0=0.226 jump=0.000 transit=0.226 dom=transit 四绿=0 
+  run_DRILLD1_N8P_222406       3090      B1006  j0=0.064 jump=0.000 transit=0.064 dom=transit 四绿=0 
+  run_DRILLD1_N8P_223339       3090      B1006  j0=0.227 jump=0.362 transit=0.351 dom=mixed 四绿=0 
+  run_DRILLD1_N8P_224313       3090      B1006  j0=0.153 jump=0.000 transit=0.153 dom=transit 四绿=0 
+  run_DRILLD1_N8P_225838       3090      B1006  j0=0.105 jump=0.000 transit=0.105 dom=transit 四绿=0 
+  run_DRILLD1_N8P_231037       3090      B1006  j0=0.112 jump=0.000 transit=0.112 dom=transit 四绿=1 
+  run_M3RE12O_2_164230         3090      B1006  j0=0.121 jump=0.000 transit=0.121 dom=transit 四绿=1 
+  run_M3RE12O_3_164512         3090      B1006  j0=0.141 jump=0.000 transit=0.141 dom=transit 四绿=1 
+  run_M3RN8P_1_165523          3090      B1006  j0=0.110 jump=0.000 transit=0.110 dom=transit 四绿=0 
+  run_M3RN8P_2_170248          3090      B1006  j0=0.169 jump=0.526 transit=0.677 dom=mixed 四绿=0 
+  run_M3RNE8O_1_164750         3090      B1006  j0=0.070 jump=0.000 transit=0.070 dom=transit 四绿=1 
+  run_M3RNE8O_2_165017         3090      B1006  j0=0.150 jump=0.000 transit=0.150 dom=transit 四绿=1 
+  run_M3RS12P_2_162132         3090      B1006  j0=0.223 jump=0.000 transit=0.223 dom=transit 四绿=1 
+  run_M3RS8O_2_162950          3090      B1006  j0=0.083 jump=0.103 transit=0.115 dom=mixed 四绿=1 
+  run_M3RS8O_3_163217          3090      B1006  j0=0.263 jump=0.102 transit=0.205 dom=transit 四绿=0 
+  run_M3pbase_E12O_1_044934    3090      B1006  j0=0.115 jump=0.000 transit=0.115 dom=transit 四绿=1 
+  run_M3pbase_E12O_2_045217    3090      B1006  j0=0.261 jump=0.000 transit=0.261 dom=transit 四绿=1 
+  run_M3pbase_N8P_1_050516     3090      B1006  j0=0.178 jump=0.000 transit=0.178 dom=transit 四绿=1 
+  run_M3pbase_N8P_2_050744     3090      B1006  j0=0.183 jump=0.000 transit=0.183 dom=transit 四绿=1 
+  run_M3pbase_N8P_3_051012     3090      B1006  j0=0.105 jump=0.000 transit=0.105 dom=transit 四绿=1 
+  run_M3pbase_NE8O_1_045749    3090      B1006  j0=0.154 jump=0.000 transit=0.154 dom=transit 四绿=1 
+  run_M3pbase_NE8O_3_050249    3090      B1006  j0=0.084 jump=0.000 transit=0.084 dom=transit 四绿=1 
+  run_M3pbase_S12P_1_043426    3090      B1006  j0=0.126 jump=0.000 transit=0.126 dom=transit 四绿=1 
+  run_M3pbase_S12P_2_043700    3090      B1006  j0=0.061 jump=0.000 transit=0.061 dom=transit 四绿=1 
+  run_M3pbase_S8O_1_044212     3090      B1006  j0=0.091 jump=0.000 transit=0.091 dom=transit 四绿=1 
+  run_M3pbase_S8O_2_044438     3090      B1006  j0=0.133 jump=0.000 transit=0.133 dom=transit 四绿=1 
+  run_M3pbase_S8O_3_044705     3090      B1006  j0=0.404 jump=0.000 transit=0.404 dom=transit 四绿=1 
+  run_M3pv2_E12O_1_062914      3090      B1006  j0=0.298 jump=0.000 transit=0.298 dom=transit 四绿=1 
+  run_M3pv2_E12O_2_063203      3090      B1006  j0=0.228 jump=0.000 transit=0.228 dom=transit 四绿=1 
+  run_M3pv2_E12O_3_063446      3090      B1006  j0=0.261 jump=0.000 transit=0.261 dom=transit 四绿=1 
+  run_M3pv2_NE8O_1_063722      3090      B1006  j0=0.058 jump=0.000 transit=0.058 dom=transit 四绿=0 
+  run_M3pv2_NE8O_2_064447      3090      B1006  j0=0.215 jump=0.000 transit=0.215 dom=transit 四绿=1 
+  run_M3pv2_NE8O_3_064714      3090      B1006  j0=0.094 jump=0.000 transit=0.094 dom=transit 四绿=1 
+  run_M3pv2_S12P_2_061648      3090      B1006  j0=0.071 jump=0.000 transit=0.071 dom=transit 四绿=1 
+  run_M3pv2_S12P_3_061918      3090      B1006  j0=0.341 jump=0.195 transit=0.432 dom=transit 四绿=1 
+  run_M3pv2_S8O_1_062145       3090      B1006  j0=0.071 jump=0.000 transit=0.071 dom=transit 四绿=1 
+  run_M3pv2_S8O_2_062412       3090      B1006  j0=0.132 jump=0.000 transit=0.132 dom=transit 四绿=1 
+  run_M3pv2_S8O_3_062639       3090      B1006  j0=0.206 jump=0.000 transit=0.206 dom=transit 四绿=1 
+  run_T2M0_010259              3090      B1004  j0=0.090 jump=0.205 transit=0.279 dom=mixed 四绿=0 重判绿佐证(L3)
+  run_T2RA12hov_133845         3090      B1004  j0=0.085 jump=0.000 transit=0.085 dom=transit 四绿=0 重判绿佐证(L3)
+  run_T2RA14_135448            3090      B1004  j0=0.493 jump=0.000 transit=0.493 dom=transit 四绿=0 
+  run_T2RA5hover_121549        3090      B1004  j0=0.232 jump=0.000 transit=0.232 dom=transit 四绿=0 重判绿佐证(L3)
+  run_VRFY2_040542             3090      B1006  j0=0.100 jump=0.000 transit=0.100 dom=transit 四绿=1 
+  run_VRG1_025100              3090      B1006  j0=0.137 jump=0.000 transit=0.137 dom=transit 四绿=1 
+  run_WU_E12O_A_164025         3090      B1006  j0=0.168 jump=0.000 transit=0.168 dom=transit 四绿=0 
+  run_WU_E12O_B_163747         3090      B1006  j0=0.119 jump=0.000 transit=0.119 dom=transit 四绿=1 
+  run_WU_E12P_A_170921         3090      B1006  j0=0.160 jump=0.000 transit=0.160 dom=transit 四绿=0 
+  run_WU_N8P_A_170142          3090      B1006  j0=0.096 jump=0.000 transit=0.096 dom=transit 四绿=0 
+  run_WU_N8P_B_165914          3090      B1006  j0=0.098 jump=0.000 transit=0.098 dom=transit 四绿=1 
+  run_WU_NE8O_B_165541         3090      B1006  j0=0.144 jump=0.000 transit=0.144 dom=transit 四绿=1 
+  run_WU_S12P_A_161957         3090      B1006  j0=0.037 jump=0.000 transit=0.037 dom=negligible 四绿=0 
+  run_WU_S8O_A_162735          3090      B1006  j0=0.050 jump=0.000 transit=0.050 dom=transit 四绿=0 
+  run_WU_S8P_A_172142          3090      B1006  j0=0.222 jump=0.000 transit=0.222 dom=transit 四绿=0 
+  run_WU_S8P_B_171914          3090      B1006  j0=0.081 jump=0.000 transit=0.081 dom=transit 四绿=1 
+  run_X2g1R_045147             3090      B1006  j0=0.011 jump=0.000 transit=0.011 dom=negligible 四绿=0 
+  run_X2g3_025529              3090      B1004  j0=0.092 jump=0.111 transit=0.199 dom=mixed 四绿=0 重判绿佐证(L3)
+  run_X2g3_042025              3090      B1006  j0=0.042 jump=0.000 transit=0.042 dom=negligible 四绿=0 
+  run_X4_E12O_031818           3090(X4批次 boot-X4-1007 j0=0.252 jump=0.000 transit=0.252 dom=transit 四绿=1 
+  run_X4_E8O_033233            3090(X4批次 boot-X4-1007 j0=0.081 jump=0.000 transit=0.081 dom=transit 四绿=1 
+  run_X4_N8P_034553            3090(X4批次 boot-X4-1007 j0=0.094 jump=0.000 transit=0.094 dom=transit 四绿=1 
+  run_X4_NE12O_032330          3090(X4批次 boot-X4-1007 j0=0.234 jump=0.000 transit=0.234 dom=transit 四绿=1 
+  run_X4_NE8O_032059           3090(X4批次 boot-X4-1007 j0=0.034 jump=0.000 transit=0.034 dom=negligible 四绿=1 
+  run_X4_S8O_033810            3090(X4批次 boot-X4-1007 j0=0.487 jump=0.864 transit=1.311 dom=mixed 四绿=0 
+  run_X5_E12O_203723           3090(X5批次 boot-X5-1006/07 j0=0.215 jump=0.335 transit=0.396 dom=mixed 四绿= 
+  run_X5_E12O_R2_225937        3090(X5批次 boot-X5-1006/07 j0=0.190 jump=0.000 transit=0.190 dom=transit 四绿= 
+  run_X5_E8O_192244            3090(X5批次 boot-X5-1006/07 j0=0.315 jump=0.000 transit=0.315 dom=transit 四绿= 
+  run_X5_E8O_L2_232302         3090(X5批次 boot-X5-1006/07 j0=0.392 jump=0.000 transit=0.392 dom=transit 四绿= 
+  run_X5_N12O_212904           3090(X5批次 boot-X5-1006/07 j0=0.375 jump=0.000 transit=0.375 dom=transit 四绿= 
+  run_X5_N5O_211714            3090(X5批次 boot-X5-1006/07 j0=0.060 jump=0.000 transit=0.060 dom=transit 四绿= 
+  run_X5_N5P_212300            3090(X5批次 boot-X5-1006/07 j0=0.048 jump=0.000 transit=0.048 dom=negligible 四绿= 
+  run_X5_N8P_195421            3090(X5批次 boot-X5-1006/07 j0=0.049 jump=0.000 transit=0.049 dom=negligible 四绿= 
+  run_X5_NE12O_223045          3090(X5批次 boot-X5-1006/07 j0=0.114 jump=0.000 transit=0.114 dom=transit 四绿= 
+  run_X5_NE8O_201655           3090(X5批次 boot-X5-1006/07 j0=0.146 jump=0.000 transit=0.146 dom=transit 四绿= 
+  run_X5_S12P_205411           3090(X5批次 boot-X5-1006/07 j0=0.335 jump=0.000 transit=0.335 dom=transit 四绿= 
+  run_X5_S5O_204600            3090(X5批次 boot-X5-1006/07 j0=0.215 jump=0.000 transit=0.215 dom=transit 四绿= 
+  run_X5_S8O_192525            3090(X5批次 boot-X5-1006/07 j0=0.065 jump=0.000 transit=0.065 dom=transit 四绿= 
+  run_X5_S8O_L2_232958         3090(X5批次 boot-X5-1006/07 j0=0.125 jump=0.000 transit=0.125 dom=transit 四绿= 
+  run_X5_S8P_L2_233654         3090(X5批次 boot-X5-1006/07 j0=0.421 jump=0.000 transit=0.421 dom=transit 四绿= 
+  run_X5_SE5O_213440           3090(X5批次 boot-X5-1006/07 j0=0.227 jump=0.000 transit=0.227 dom=transit 四绿= 
+  run_X5_W12O_210523           3090(X5批次 boot-X5-1006/07 j0=0.494 jump=0.000 transit=0.494 dom=transit 四绿= 
+  run_X5_W12O_R2_230824        3090(X5批次 boot-X5-1006/07 j0=0.262 jump=0.000 transit=0.262 dom=transit 四绿= 
+  run_X5_W12P_211110           3090(X5批次 boot-X5-1006/07 j0=0.256 jump=0.115 transit=0.347 dom=transit 四绿= 
+  run_X5_W5P_210249            3090(X5批次 boot-X5-1006/07 j0=0.297 jump=0.000 transit=0.297 dom=transit 四绿= 
+  run_DRILLD1_N8P_033808       3090(推定:b B1006  j0=0.215 jump=0.000 transit=0.215 dom=transit 四绿=0 
+  run_DRILLD1_N8P_173555       ?         n/a    j0=0.079 jump=0.000 transit=0.079 dom=transit 四绿= 
+  run_F3B3_042444              ?(无证据行,关机 n/a    j0=0.059 jump=0.000 transit=0.059 dom=transit 四绿= 
+  run_F3B4_043658              ?(无证据行,关机 n/a    j0=0.036 jump=0.000 transit=0.036 dom=negligible 四绿= 
+  run_E4R2-GOFF-D10_095056     NUC       n/a    j0=0.057 jump=0.000 transit=0.057 dom=transit 四绿=0 重判绿佐证(L3)
+  run_E4R2-GOFF-D30-I125_103836 NUC       n/a    j0=0.016 jump=0.000 transit=0.016 dom=negligible 四绿=0 重判绿佐证(L3)
+  run_E4R2-GOFF-D30_102511     NUC       n/a    j0=0.118 jump=0.000 transit=0.118 dom=transit 四绿=0 重判绿佐证(L3)
+  run_E4R2-GOFF-D60_103420     NUC       n/a    j0=0.031 jump=0.000 transit=0.031 dom=negligible 四绿=0 
+  run_E4R2-GON-D10_095654      NUC       n/a    j0=0.122 jump=0.000 transit=0.122 dom=transit 四绿=0 重判绿佐证(L3)
+  run_E4R2-REGRESS_104334      NUC       n/a    j0=0.142 jump=0.000 transit=0.142 dom=transit 四绿=0 
+  run_F3B2_035213              NUC       n/a    j0=0.123 jump=0.000 transit=0.123 dom=transit 四绿=0 重判绿佐证(L3)
+  run_F3B8_094417              NUC       n/a    j0=0.026 jump=0.000 transit=0.026 dom=negligible 四绿=0 重判绿佐证(L3)
+  run_U7OL2_202043             NUC       n/a    j0=0.392 jump=0.000 transit=0.392 dom=transit 四绿=0 
+
+-- X2g3 重判绿佐证行(L3 新口径到位破 0.75 门; §2.8a 算术勘误效应逐位):
+  run_E4R2-GOFF-D10-LODOM_100819 旧到位=0.778 → L3 新=0.323 flag=-
+  run_F3B14_163613             旧到位=0.919 → L3 新=0.317 flag=-
+  run_T2M0_010259              旧到位=0.826 → L3 新=0.041 flag=-
+  run_T2RA12hov_133845         旧到位=0.797 → L3 新=0.140 flag=-
+  run_T2RA5hover_121549        旧到位=0.76 → L3 新=0.173 flag=-
+  run_X2g3_025529              旧到位=0.849 → L3 新=0.035 flag=-
+  run_E4R2-GOFF-D10_095056     旧到位=0.786 → L3 新=0.086 flag=-
+  run_E4R2-GOFF-D30-I125_103836 旧到位=0.936 → L3 新=0.343 flag=-
+  run_E4R2-GOFF-D30_102511     旧到位=0.779 → L3 新=0.109 flag=-
+  run_E4R2-GON-D10_095654      旧到位=0.847 → L3 新=0.113 flag=-
+  run_F3B2_035213              旧到位=0.851 → L3 新=0.051 flag=-
+  run_F3B8_094417              旧到位=0.964 → L3 新=0.312 flag=-
+  run_T3U1V_023428             旧到位=0.791 → L3 新=0.583 flag=-
