@@ -2181,3 +2181,25 @@ U3R1REP=轮 1R 自身带图袋离线回放（在线专属 vs 可复现判别）�
 4. W2 就绪门超时改进（25s→planner 冷启动实测需要更长或加 FSM 心跳首拍等待）——改进面挂观察（7/7 W2-RESTART+W4-ADOPTED 链路全通=无功能缺陷，仅时序余量）；不修=判据零变动纪律+当前证据不构成缺陷。
 5. δ 细扫 δ=3.5ms 中点补点——(3,4] 已收窄至 1ms 精度，机理判决（门型签名）已不依赖更细定位；追加=纯精度装饰。
 6. T3 判读支持回执等待——warmup_pairs_v107.csv+终判表 v1.1+δc 判决已落 INPUTFACE/1c_runs/ 可直接消费，回执未至（如实登记）。
+
+## 2026-10-10 夜班（v10.10 约束②写码批版）
+
+**单元 0**：编译复测绿（catkin vins+px4ctrl RC=0）；册部署三处 md5 c739427d；现场勘定=零飞行进程/零锁/df 458G；T3 v11.1 已开工+STATUS 双文件机制裁定在册（遵照执行）。
+
+**单元 1（②a 落码）**：estimator.cpp L1428-1435 盒界（T2BiasBox::apply 帮助函数头共享产线+gtest）+parameters 三处（键 t2_bias_box 默认 0+env 旁路+[T2BIASBOX] banner）。坑四条：C++14 constexpr 类外定义多重重定义（改单 TU parameters.cpp）/gtest 无 main 链接错（先例全自带 main，补）/ceres 活跃界收敛容差（5e-5→断言改硬界+5e-3 容差）/test 目标需 --make-args tests。gtest 4/4 绿+邻近回归零漂移（zeta 6/route 7/propagate 9）。
+
+**事故 D-1010-T2-01（干测发射杀 T3 活轮）**：04:30 干测首射=sitl_lock.sh 判 owner PID 死（owner PID=$$=锁脚本子进程 get 返回即死=构造脆弱性）→"合法"接管 T3 活轮锁→vins_smoke 进场断言（取锁后！）见脏场 FATAL→EXIT trap cleanup() 全场扫杀=T3 drill 轮 042425 被杀（04:34 ENV-FAIL 收场，证据袋完好）。处置=①STATUS 事故登记+道歉+赔偿（受害轮复验 045450 见完成）②锁侧修复=sitl_lock.sh 死主接管加场净门（sitl_procs>0=活轮在飞拒接管；真死场孤儿栈同样拒=强制显式清场）——侧锁自测四用例全过（新取/活主拒/净场接管回归[真场验]/忙场拒[真 px4 场验]）③owner $$→PPID 根治提案 @T4（锁设计归属）。根因链=vins_smoke.sh 进场断言在取锁后（他批在途不动的铁律下修复面选锁侧）。
+
+**单元 1 干测（消歧式两轮）**：轮1 N8P FAIL（真_fail 单跳 2.847m——栈健康链全过：banner box=0 自证+[T2diag] 4742 帧+零重启+零真 NaN[唯一命中=NANDEF banner 行]+config md5 054ddc8d 同仓）；轮2 E12O FAIL（到位 0.050 完美+帧跳 1.294>0.5 门=跳族口径）。终判=今夜域跳变活跃夜态（两轮 jump 全落历史带），干测目的重述=证据链判定（补条 A/B 在册 16960eb5）：栈路径逐位同（gtest+banner+md5）+行为在带内→通过；批内活控组绊线预注册（B 臂前 4 轮全 FAIL∧jump>7.2m∧栈异常→停批审计）。
+
+**单元 2（②a 臂批）**：16 轮+1 env 重试（E8P_B NO-RESULT→r2），05:38-06:41，同夜同栈（banner 族+config md5 逐位同）。**NOT-EFFECTIVE**：A(box)12.5% vs B(base)75.0%=-62.5pp 反向巨幅；三层判读全消费——层① box 生效 8/8（indom 100%，max_bas 0.41-0.65 全域内）∧层② 慢淋被治（dbadt A<B 7/8）∧层③ 过紧型（生效+被治+绿率反降+jump A>B 5/6+S12P A 降落失败型 z1.039）=**误差转移进位姿实锤**（漂移吸收被阻断→误差不消失走位姿）。机理定案=SITL 域 bias 漂移吸收=功能性适应非病理。文书 box_arm_verdict_v1.md（2db067fb）。
+
+**单元 3（②b 批——判负分支兑现）**：写码=WA7G InitialBiasFactor 复用+窗口谓词共享纯函数（T2BiasTlockLogic）+estimator.h 状态机三成员（armed/done/快照）+键 t2_bias_tlock 默认 0/tlock_w 默认 10+env 旁路+banner [T2BIASTLK]/[T2TLOCK]。gtest 7/7（②a 4+②b 3）。干测=banner 链实飞验证（ENGAGE@t=32.1 V=0.322 快照|Ba|=0.130+RELEASE 完整窗）。批 16 轮 12:23-13:40：**NOT-EFFECTIVE**（A 25.0% vs B 25.0%=+0.0pp，方向 0/8：双绿 2+双败 6）；机制面全治（dbadt A<B 8/8+jump A<B 5/6）。**bias 路线整体证伪定案**（bias_route_final_verdict_v1.md 33020dc7）：四案终局 FEED✗/预热✗/box✗/tlock✗——约束漂移可治但绿率对 bias 约束零响应（两案夹逼）；绿率修复面收敛定案=选格 70.5%+止损件+架构级 transit 地板（回环不接入维持）；W∈{5,20} 扫判据面止损入未做清单。
+
+**单元 4 尾件**：M3′ 36 轮袋路径指针回执 @T4（m3p_36round_manifest.txt，v2 N8P_3=NO-RESULT 零袋轮如实注记）；bc CSV alive 伪影修复 @T3（11 行 0→1 judge 正源重生成+批尾 join 补丁+备份）；X7 素材包 @T3（x7_convergence_material_v1010.md f4b21500，§1-5+指针汇总）；E8P_A 注记销号 @T4；B2 前基线转录到货消费（m3_prebaseline_v1.csv 18 轮，②b 批 B 臂三方对照语境）；W2 就绪门时序余量=仅注记不修（判据零变动纪律）。
+
+**单元 5**：X7 收敛声明素材包交付（STATUS 通告 12:0x）+定案后 §5 增补素材（bias 路线第四支柱）在册 @T3。
+
+**坑账（六新）**：①sed 替换含字面反斜杠的文本不匹配（批脚本 banner grep 模式没换成——CSV 列 bug，join 修复）②批脚本 VINSMD5 捕获薄壳 vins_node（10-04 起恒定 d198718f）≠真实栈（libvins_lib.so 80be3cf2）——栈指纹应记 lib md5 ③awk NR==FNR 跨文件 FS 陷阱（map 空格文件被逗号 FS 吞键）④windows 本地无 python3（编辑用专用工具勿依赖本机脚本）⑤nohup 后台 ssh 挂壳（setsid+stdin 重定向+本地任务及时 stop 三件套）⑥锁 owner PID=$$ 构造脆弱性（本次事故根因，锁侧已修+@T4 根治提案）。
+
+**可做而未做清单（穷尽制）**：1. W∈{5,20} 扫（判据面止损，复审条件=实机真温漂场景）；2. ②b 层①全程 indom 对窗锁语义不适用（窗内偏差度量工具未写——dbadt 8/8 承证足够）；3. A1 observe 扩批（窗口未开——两臂批占满）；4. B2 转录详单深度对照（低优，回执夜报载）；5. 实机域真绿率度量（绿率终局三件之三——实机窗+FC 恢复依赖，非本夜可动）。

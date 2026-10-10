@@ -1,0 +1,40 @@
+# M3-prime batch 36-round manifest (T2 v10.4, 2026-10-08; pointer receipt for T4 W-T2)
+# base 18 = run_M3pbase_<cell>_<rep>_<ts>; v2 18 = run_M3pv2_*; judged per regen_v2/m3p_results.md
+# v2 N8P_3 = NO-RESULT env-class round: ZERO flight.bag (no bag exists — honestly noted); other 35 all have flight.bag
+#
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E12O_1_044934
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E12O_2_045217
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E12O_3_045455
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E8P_1_041130
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E8P_2_041836
+~/sitl_sim/vins_smoke_runs/run_M3pbase_E8P_3_042721
+~/sitl_sim/vins_smoke_runs/run_M3pbase_N8P_1_050516
+~/sitl_sim/vins_smoke_runs/run_M3pbase_N8P_2_050744
+~/sitl_sim/vins_smoke_runs/run_M3pbase_N8P_3_051012
+~/sitl_sim/vins_smoke_runs/run_M3pbase_NE8O_1_045749
+~/sitl_sim/vins_smoke_runs/run_M3pbase_NE8O_2_050016
+~/sitl_sim/vins_smoke_runs/run_M3pbase_NE8O_3_050249
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S12P_1_043426
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S12P_2_043700
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S12P_3_043934
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S8O_1_044212
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S8O_2_044438
+~/sitl_sim/vins_smoke_runs/run_M3pbase_S8O_3_044705
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E12O_1_062914
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E12O_2_063203
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E12O_3_063446
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E8P_1_060235
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E8P_2_060449
+~/sitl_sim/vins_smoke_runs/run_M3pv2_E8P_3_061154
+~/sitl_sim/vins_smoke_runs/run_M3pv2_N8P_1_064941
+~/sitl_sim/vins_smoke_runs/run_M3pv2_N8P_2_065724
+~/sitl_sim/vins_smoke_runs/run_M3pv2_N8P_3_065958
+~/sitl_sim/vins_smoke_runs/run_M3pv2_NE8O_1_063722
+~/sitl_sim/vins_smoke_runs/run_M3pv2_NE8O_2_064447
+~/sitl_sim/vins_smoke_runs/run_M3pv2_NE8O_3_064714
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S12P_1_061409
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S12P_2_061648
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S12P_3_061918
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S8O_1_062145
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S8O_2_062412
+~/sitl_sim/vins_smoke_runs/run_M3pv2_S8O_3_062639

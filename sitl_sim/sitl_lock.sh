@@ -92,6 +92,15 @@ get)
       exit 1
     fi
   fi
+  # D-1010-T2-01 修复(2026-10-10 04:30 事故): owner PID=$$=锁脚本子进程,get 返回即死
+  # → 活轮锁可被"合法"接管(取锁方随后进场断言 FATAL/EXIT 清理链扫杀活栈,实证
+  # run_DRILLD1_N8P_042425)。接管语义=清理死场;场忙(px4/gz 活)=有活轮在飞 → 拒
+  # 死主接管(要拿锁走 preclaim/force 权序)。真死场孤儿栈同样拒=强制显式清场
+  # (盲接管+盲扫杀正是事故路径;owner $$→PPID 根治另案 @T4)。
+  if [ "$(sitl_procs)" -gt 0 ]; then
+    echo "HELD by $cur (owner PID 死但场忙 px4+gz>0=活轮在飞;死主接管禁,等锁或 preclaim/force)" >&2
+    exit 1
+  fi
   note "$STREAM" "锁死主接管" "完成" "readlink=$cur PID=${pid:-无} /proc 核验=不存在 → 原子接管为 $local_owner"
   atomic_take "$local_owner" && { echo "took-over from $cur owner=$local_owner"; exit 0; }
   echo "接管失败(竞态,重试)" >&2; exit 1
