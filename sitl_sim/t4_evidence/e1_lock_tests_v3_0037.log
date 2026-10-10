@@ -1,0 +1,16 @@
+v3 测试窗开始 2026-10-11 00:34:58 | deadpid=4194301 livepid=4093321
+---- CASE-V3-1 显式活 owner get 成功+target 嵌该 PID ----
+PASS 显式活owner get+嵌入 (exit=0) :: out=locked owner=V3TEST-4093321-003458|target=V3TEST-4093321-003458|嵌入=Y
+---- CASE-V3-2 活轮不可被合法接管(事故形状复验:他方 get 拒) ----
+PASS 活轮他方get拒 (exit=1) :: out=HELD by V3TEST-4093321-003458 (PID 4093321 活着;等锁或按权序 preclaim/force)|lock未易主=yes
+---- CASE-V3-3 显式死 owner PID 拒绝 ----
+PASS 死owner PID拒 (exit=2) :: out=owner PID 4194301 不存在(传死 PID 拒绝;owner=调用方会话契约 v3)
+---- CASE-V3-4 非数字 owner PID 拒绝 ----
+PASS 非数字owner拒 (exit=2) :: out=owner PID 非数字: 'abc;rm'(调用方须传活会话 PID,推荐显式 $$)
+---- CASE-V3-5 默认 $PPID 契约:包裹壳存活期持锁,target PID=包裹壳 PID ----
+PASS 默认PPID=包裹壳PID(存活期核验) (exit=0) :: wrapper=4093369|target=V3PPID-4093369-003458|嵌入=Y|活=Y
+---- CASE-V3-6 死主可检测:包裹壳死后另一 get 原子接管 ----
+PASS 死主接管(场闲) (exit=0) :: 旧=V3DEAD-4093386-003459|out=took-over from V3DEAD-4093386-003459 owner=V3NEW-4093396-003500|新=V3NEW-4093396-003500
+---- CASE-V3-7 force 显式 owner 参数 ----
+PASS force显式owner嵌入 (exit=0) :: out=forced owner=V3FT-4093321-003500|target=V3FT-4093321-003500
+==== v3 测试窗结束 00:35:00: PASS=7 FAIL=0 ====
