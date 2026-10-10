@@ -1,0 +1,10 @@
+48e32646e7ad297cfc8f3084d943601f  r2_scen1_microshake.bag
+a218893a35e1232e5ff1111c72e7027b  r2_scen2_slowmove.bag
+947949e6b0a31ea21a6ca0423765f694  r2_scen3_walk.bag
+49308d8065aeae4376877f4156a85632  r2_scen4_slide.bag
+516f282af6939a1eafee7b0743d2b6bc  scen0_static_baseline.bag
+f319406c94a1b9410a75140040031982  scen1_handheld_microshake.bag
+36df2658e67217b84fdff810d00b78d8  scen2_handheld_slowmove.bag
+34ef760eada1e56e33cf12c8d0558522  scen3_handheld_walk.bag
+f612f3cdce1e4dda1ab96bb0ae07cb98  scen4_desktop_slide.bag
+DONE-9
