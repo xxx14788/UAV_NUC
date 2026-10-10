@@ -1138,3 +1138,36 @@ D5 收口【本条】git:105c19a=远端;worktree 余=T3 的 round_result/vins_sm
 14:0x | T3 | 归属注记 @T2：收官提交 ca3d4d3 裹挟了你已 staged 未 commit 的 ②a/②b 写码件 12 文件（estimator.cpp/.h+parameters 三件+t2_bias_box.h+test_t2_bias_box.cpp+两 .bak_v104+config+CMakeLists——共享树交错常态,内容逐字节无损已推远端）；你的 commit 纪律请按此对账;我方 T3 件 8 文件同笔（STATUS 同步首例+收官册+②b 表+combo 终代表） | 注记 | 单线
 13:51 | T2 | B2 前基线转录回执 @T3（单元4 低优条款） | 回执 | 到货消费=m3_prebaseline_v1.csv（18 轮转录统一表）；消费面=本夜 ②a/②b 两批 B 臂的三方对照语境（10-08 M3′ base/10-09 B2 转录/10-10 双批 B 臂）——夜态漂移注记在册（②a 批 B 75%→②b 批 B 25% 同名册同批式，格级对照消费时按夜分层）；贵线转录质量合格（iqg_rejects/j0/verdict 列齐全） | 单线
 13:51 | T2 | 任务书 v10.10 收官（夜报） @T1 @T3 @T4 @用户 | 收官 | **双必达 ✓✓**（①②a 臂批执行+判读表落盘[8/8 对+三层判读+文书 2db067fb]∧②三分支处置文书落盘[判负分支全链兑现至第三分支终点：②a 判负报告+②b 批 8/8+**bias 路线整体证伪定案** 33020dc7]）；全单元：单元0 编译复测✓/单元1 落码+gtest7/7+干测消歧式✓/单元2 ②a 批✓/单元3 ②b 批+定案✓/单元4 尾件六件全落（M3′指针回执@T4+bc alive 修复@T3+X7 素材包@T3+E8P_A 销记@T4+W2 仅注记+B2 消费回执）/单元5 X7 素材包+增补素材✓；**事故 D-1010-T2-01 全账**=干测误杀 T3 drill 活轮（锁 owner PID=$$ 构造脆弱+进场断言后置双根因）→登记+赔偿（受害轮复验毕）+锁侧修复四用例验证+@T4 根治提案；坑账六新（sed 反斜杠/banner 薄壳 md5 盲区/awk 跨文件 FS/win 无 python3/ssh 挂壳/锁 PID 构造）；可做而未做清单五条在台账（W 扫判据面止损/层①窗锁度量工具/A1 扩批/B2 深对照/实机真绿率[实机窗依赖]）；产物全推（git 至 a899d01，T3 裹挟提交+归属注记在案 content intact） | 单线
+15:3x | T1 | HAFIX 20 轮复验批发射 @T2 @T3 @T4 | 发射 | 双必达①头号件(T2/T3 收官后窗口空闲,零竞争);批=t1_hafix_reverify_v1139(4 场景×5 轮沿 3d 编排+P-3 flying 门[poscmd 存活]注入时序+轮间强清断言+批前检查单);栈=px4ctrl 修复版(400+179 双 kill,commit ee15996,gtest 37/37);预计 3-4h;判读器 t1_rejudge_hafix_v1139.py(六环链)批毕即跑+@T3 影子重判工具可 --pattern 消费 | 单线
+
+15:48 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1097875-154620 PID=1097875 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1105351-154823
+
+15:48 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1105351-154823 PID=1105351 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1108771-154854
+
+15:53 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1108771-154854 PID=1108771 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1131869-155331
+
+15:55 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1131869-155331 PID=1131869 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1140168-155513
+
+15:58 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1140168-155513 PID=1140168 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1160438-155802
+
+15:58 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1160438-155802 PID=1160438 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1166857-155853
+
+16:06 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1166857-155853 PID=1166857 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1209337-160603
+
+16:15 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1209337-160603 PID=1209337 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1277482-161514
+
+16:33 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1348615-162425 PID=1348615 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1416782-163333
+
+16:49 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1474181-164037 PID=1474181 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1544295-164946
+17:0x | T1 | HAFIX 复验 FAIL 分支回挖定案+梯①二次修复 staged @T2 @T3 @T4 | 件 | 复验批 S1 r1 六环实测=梯②③零效(412x179+413x400 全 ACK ACCEPTED 而电机恒转/armed 恒 True/z 恒 1.08m 悬停全轮)→ulog+源码三层机理:①400 被 failsafe 覆写(Commander.cpp:2383 modeFromAction 每拍盖用户意图;setpoint 断流=LOITER failsafe 恒活)②179+21196 ACK-无操作(源码逐行正确但函数体零痕,物理证据定案=该 PX4 构建空中 forced-disarm 不可依赖;实机 FMU v6C 待台架验)③梯①盲降被 decide_land 的 !odom_ok→MANUAL 一拍弹回(px4ctrl 域根因可修)+SITL GPS 兜底勘误(VINS 死≠PX4 盲;实机纯视觉域不适用);二次修复四件 staged(ha_blind_land 旁路+双锚+OFFBOARD 重入+idle 门,批在跑禁 rebuild);回挖报告=hafix_kill_dig_v1139.md 已落台账;事故 D-1010-T1-01 登记=批首发射期 kill 未验尸导致双实例连环互杀(孤儿 drill force_clean 跨批清场)+守卫 v1 pgrep 子壳自噬→v2 PID 文件守卫在役;批健康在跑(S4 r2,7/20 final) | 单线
+
+17:15 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1674207-170617 PID=1674207 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1741157-171526
+
+17:35 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1831829-172651 PID=1831829 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-1898813-173559
+
+17:56 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-1994641-174719 PID=1994641 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-2061570-175628
+
+18:05 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-2061570-175628 PID=2061570 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-2131580-180538
+
+18:52 | T3-DRILLD1_N8P | 锁死主接管 | 完成 | readlink=T3-DRILLD1_N8P-2407870-184528 PID=2407870 /proc 核验=不存在 → 原子接管为 T3-DRILLD1_N8P-2460704-185237
+19:5x | T1 | 任务书 v11.39 收官（双必达✓✓+穷尽面 FAIL 分支二次修复增量批毕） @用户 @T2 @T3 @T4 | 收官 | 双必达=①20 轮复验批执行完+终判表落盘(18:08 毕,3/20 NOT-PASS 诚实入册)∧②2b/2c+质量报告 v2+首飞呈报件四件全落;穷尽=回挖三层机理(400 failsafe 覆写/179 ACK-无操作/梯①盲降 decide_land 一拍弹回)+梯①盲降结构二次修复(ha_blind_land 旁路+双锚+OFFBOARD 重入+idle 门+cleared=disarmed 终态,gtest 51/51)+干测六环闭环+**10 轮增量批物理链 10/10**(watch→盲降 15s 触地→armed drop→disarm,KILL 零依赖带弹;对照修复前 15/15 悬停不落);物理窗=2a depth 复活+2b 重校实证(v1.17.0/FMU v6C)+2c 不解锁演练+2d 五袋全 IN-EXPECT+2e 贯通;池件=监控 v1.2+VINS 泄漏定案(0.6-1.45GB/h,在役边界保守 5h)+旧批特征化(爆起全早于断链)+p1 五件补测+gitignore 根除;留守件=static_watch 11.3h 4 周期(无自然恢复/滞后 min 17min)+病理报告 v1.2;夜报+可做而未做 7 条+坑账 8 条=t1_evidence/v11_39_2026-10-09/night_report_v1139.md;commit 22d8aa9 已推 | 单线
