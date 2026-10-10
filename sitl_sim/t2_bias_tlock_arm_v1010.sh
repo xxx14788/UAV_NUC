@@ -4,7 +4,7 @@
 #         1b_bias_route/box_arm_batch_prereg_v1010.md (three-layer preset, pre-batch)
 # 8 pairs x 2 arms, same night same stack. A = env T2_BIAS_TLOCK=1 (tlock on),
 # B = no env (default 0 = zero bounds = legacy). ONE config file both arms
-# (control-variable iron rule); arm identity carried by env + [T2BIASBOX] banner.
+# (control-variable iron rule); arm identity carried by env + [T2BIASTLK] banner.
 # ENV-FAIL / NO-RESULT = one environmental retry per round (X-line precedent).
 set -u
 export ROS_DISTRO=noetic ROS_VERSION=1
@@ -53,7 +53,7 @@ for cell in "${CELLS[@]}"; do
     DIS=$(grep -m1 -oE "auto_disarm->[01]" "$EV/RESULT.txt" 2>/dev/null | grep -oE "[01]$")
     DIAG=$(python3 "$L/t2_tools/t2_box_diag.py" "$EV" 2>/dev/null)
     [ -n "$DIAG" ] || DIAG="NA,NA,NA,NA,NA,NA,NA"
-    BAN=$(grep -c "\[T2BIASBOX\] box=1" "$EV/simvins.log" 2>/dev/null); [ "$BAN" -ge 1 ] 2>/dev/null && BAN=1 || BAN=0
+    BAN=$(grep -c "\[T2BIASTLK\] tlock=1" "$EV/simvins.log" 2>/dev/null); [ "$BAN" -ge 1 ] 2>/dev/null && BAN=1 || BAN=0
     echo "$C,$arm,$TAG,$RES,${JMP:-NA},${ARR:-NA},${DIS:-NA},$DIAG,$BAN,$VINSMD5" >> "$OUT"
   done
 done
