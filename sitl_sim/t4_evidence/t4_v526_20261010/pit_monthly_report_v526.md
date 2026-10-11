@@ -223,3 +223,14 @@
 25. **awk POSIX ERE 无反引用**：`\1` 回引匹配全假阳性（100 行 N/N 等值被判 MISMATCH=100）——等值校验在 awk 不可用，改 grep -P 或分布核读。
 
 （第十九周期并入完：86+25=111 条为下任并入基线。）
+
+## 第二十周期增补（2026-10-11 软件收官合并册 T1ENG 单元 6 NUC 腿件；本周期 6 条）
+
+26. **PX4 logger `logger_topics.txt` 是替换语义非追加**：`initialize_logged_topics` 在该文件存在且 >0 主题时**整体跳过默认主题集**（logged_topics.cpp L533 实读）→ SITL ulog 只剩配置内 2 主题=84KB 空壳（默认 85 主题 40-136MB）。额外主题采集改走参数/重编译路径，`logger_topics.txt` 禁用（C-1 v1 轮事故实证）。
+27. **`grep -c` 无匹配=输出"0"且 rc=1**：与 `|| echo 0` 组合产生 "0\n0" 双行值——计数变量带换行进 `[ -lt ]` 判假/报错。正确写法 `|| true`+空值兜底 `${X:-0}`（δA 配额逻辑干测抓到）。
+28. **标记类 state 文件计数锚必须与写入格式对齐**：写入行"时间戳 KEPT ev=..."而计数锚 `^KEPT` 行首 → 恒 0=配额永不满。锚定词置行首或计数模式含前导字段（同上干测抓到，成对坑）。
+29. **判读类工具 import 失败静默假成功**：t3_wa_gate --j0-decomp 无 ROS 环境（import rosbag 失败）时写 available=False 且**退出码 0**——批处理循环 20/20"成功"实为废 json（j0d 滚入首跑失收实证）。工具对致命 import 应 rc≠0 或落 ERROR 标记。
+30. **mavros 订阅触发型流+瞬时 `rostopic echo -n1`=空采**：/mavros/local_position/odom 等订阅驱动流，echo 首帧延迟（订阅→SET_MESSAGE_INTERVAL→首帧）>3-5s timeout → 60/60 全空。采样需持久后台流（echo -p 落盘）或订阅预热窗（C-1 z 采样事故实证）。
+31. **数字签名 grep 会命中 ROS 时间戳小数**：污染取证 grep "642716" 命中日志时间戳 `1791212701.056427160` 小数段=假阳性——坐标类签名必须锚定字段前缀（如 `xyz=`）或用专用提取器（S8P 溯源 planner.log 面弃用实证）。
+
+（第二十周期并入完：111+6=117 条为下任并入基线。）
