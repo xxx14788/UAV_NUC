@@ -77,9 +77,9 @@
 ## 9. HAFIX 终验批滚动收（单元 4 §6，2026-10-11 上午收讫；批毕 02:59:33）
 
 - 批=T1ENG v11.40 t1_hafix_finalverify_v1140（S1_hover_1m/S2_hover_3m/S3_transit/S4_land_1m ×r1-r5，00:35:20-02:59:33，POSTGATE 15/15/15/40）。
-- 滚动收（凭据=finalverify_receipt_20261011.txt）：**20/20 final 轮全部 OK**（rosbag info rc=0、chunks N/N 等值、flight.bag 42-556MB）——收讫-待判（判读权=T1ENG 域，判读器 t1_rejudge_hafix_v1140.py 批毕未跑，summary 尾留调用提示=其会话断在批毕前，如实注记不代跑）。
+- 滚动收（凭据=finalverify_receipt_20261011.txt）：**20/20 final 轮全部 OK**（rosbag info rc=0、chunks N/N 等值、flight.bag 42-556MB）——**判读毕**（T4 v5.33 验收联动 15:4x：原"收讫-待判/判读器批毕未跑"状态推进，判读权=T1ENG 域已行使=v11.40 双工具 20/20 bit-identical，联动凭据详 §10.1）。
 - 附加登记：8 个 attempt 无效/监控壳目录（NOBAG=env-only：hwmon 探针+round.log+vins_config.md5，无飞行）——S3 r1 attempt1（rc=2 HAFIX_lines=0）等重试链留痕，合理零袋。
-- **A1 扩批 12 轮+②b 复验 8 对未发射**（03:00 后零新 run 目录；T1ENG 编排在终验批后，其会话于批毕前后断离）——待其续册，非本册跳步。
+- A1 扩批 12 轮=**已发射已收·判读毕**（a1x_receipt_20261011.txt 12/12+unit3_a1_expand_verdict_v1140.md ff1f82e4）；②b 复验 8 对=**取消**（②b 终裁定案 2b_contradiction_final_ruling_v1010.md 95ae856f）——T4 v5.33 验收联动 15:4x 状态推进（原"未发射"行），详 §10.1。
 - 本会话 02:52-10:02 轮询空窗（约 7h，本机休眠/网络断=事故非收工）：批毕时刻在窗内，收讫时点=10:0x 补行（会话驻留纪律：外因断开重启首件=消费在途件产物+STATUS 补行——本节即补行）。
 
 ## 10. 滚动收·判读毕联动+本周期新产物（软件收官合并册单元6，2026-10-11 13:1x）
@@ -106,3 +106,14 @@
 
 - δ 政策 A 双用途注记：绿轮抽样图像袋（2 袋/批）落码毕——未来批窗首应用时袋到即收，E4 像素重放可直接复用（@T4 消费面在案）。
 - 零三态口径维持：本节全部登记=索引级+md5 锚，无 T4 预注册判据面收货判读。
+
+### 10.3 T4 v5.33 会话独立验收章（2026-10-11 15:3x；第二十周期 T4 执行会话，定位=独立验收工程册合并册代执件+补缺+收口）
+
+- **终验批四件锚复核（逐位一致 ✓×4）**：final_verdict_v1140.md=a8743e51 / verdict_v1140.csv=6a6864db / hafix_chain50_table_v1140.md=3dee1859 / t1_rejudge_hafix_v1140.py=01a12705（~/sitl_sim 侧独立重测；判读器双位同值）——§10.1 锚全数复核通过。
+- **A1X 实物抽验 ✓**：run_A1X_* 目录计数=12/12；a1x_receipt_20261011.txt 行格式（chunks N/N 等值）抽读一致；unit3_a1_expand_verdict_v1140.md=ff1f82e4 双位 ✓；②b 终裁 2b_contradiction_final_ruling_v1010.md=95ae856f 双位 ✓。
+- **§10.2 抽验**：c1_verdict_v1.md=620aa07f ✓ / x7_convergence_material_v1010.md=002577d1 ✓（双位）；**j0d 锚换代注记：j0d_stats_20261011.csv 现 md5=1876a9f8（437 行=436 轮+头），§10.2 所记 5e4dbd7a 为 430 轮时点值，承 15:24 合并册收工行"j0d 430→终版 436"滚入，锚以 1876a9f8（终版）为准**。
+- **六工具对账（v5.32 D 表锚口径，3090 双位）**：三判读工具 j3_image_metrics=3721399e / j3_fb_residual=08cb8829 / j3_feature_density=7f45974b 双位逐位一致 ✓；t4_ref_closure_v2=c3d233c5 权威位（catkin_ws analysis）✓；u3_hover_drift=628faa64（t1_evidence/v10）✓；sitl_lock.sh v3=d7b3efa0 双树 ✓；**draft2verdicts 换代注记：87593eb4→4268fe2f 双位**（承合并册 13:26 selftest 断言自污染修复，凭据 d2v_selftest_rerun_v112.txt，T4 抽读 [1]-[4] 全 OK ✓）。
+- **锁 v3 文书验收通过**：lock_v3_production_conclusion_v1.md（t4_evidence 双位）——数据面 34 把锁（终验批 20+A1X 12+C-1 轮 2）零接管/零冲突/零孤儿/零残留，v2 时代 10-20min 接管循环对照谱在册，C-1 v1 事故轮失败路径自清理实证；其 §3.4 自认 hbloop 独立重跑未做，T4 本会话补做（§10.4）。
+- **NUC 腿独立抽验 ✓**：ssh nuc md5sum analysis/j3_image_metrics.py=3721399e（承 13:09 六工具 6/6 的第三方复核）。
+- **月报核验**：117 条基线确认（第二十周期 6 条=第 26-31 条，"111+6=117 条为下任并入基线"收尾行在册）；**"周期增补节模板 v1.1"缺空**（全文无并入规则模板节）——T4 本会话补做（月报新章+§10.5 注记）。
+- 正本零触碰复核：verdicts 正本 docs/t4_verdicts_v2.md=4f34d500 复测一致 ✓；草稿 bd042be6 未动（主会话认领转录悬置维持）。
