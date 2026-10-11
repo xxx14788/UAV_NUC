@@ -73,3 +73,11 @@
 ## 8. 坑账交叉引用（单元 6）
 
 - 本台账 §5 两条 T4 新坑+第十八周期到货 23 条（T1 八+T2 六+T3 三+总设计师预录六）已全量并入月报增补节（pit_monthly_report_v526.md md5 bbbbb336，86→111 条下任基线）；月报镜像同步本目录（t4_v526_20261010/）。T2 锁 owner PID 坑（23 条之一）随单元 5 v3 根治闭环销号。
+
+## 9. HAFIX 终验批滚动收（单元 4 §6，2026-10-11 上午收讫；批毕 02:59:33）
+
+- 批=T1ENG v11.40 t1_hafix_finalverify_v1140（S1_hover_1m/S2_hover_3m/S3_transit/S4_land_1m ×r1-r5，00:35:20-02:59:33，POSTGATE 15/15/15/40）。
+- 滚动收（凭据=finalverify_receipt_20261011.txt）：**20/20 final 轮全部 OK**（rosbag info rc=0、chunks N/N 等值、flight.bag 42-556MB）——收讫-待判（判读权=T1ENG 域，判读器 t1_rejudge_hafix_v1140.py 批毕未跑，summary 尾留调用提示=其会话断在批毕前，如实注记不代跑）。
+- 附加登记：8 个 attempt 无效/监控壳目录（NOBAG=env-only：hwmon 探针+round.log+vins_config.md5，无飞行）——S3 r1 attempt1（rc=2 HAFIX_lines=0）等重试链留痕，合理零袋。
+- **A1 扩批 12 轮+②b 复验 8 对未发射**（03:00 后零新 run 目录；T1ENG 编排在终验批后，其会话于批毕前后断离）——待其续册，非本册跳步。
+- 本会话 02:52-10:02 轮询空窗（约 7h，本机休眠/网络断=事故非收工）：批毕时刻在窗内，收讫时点=10:0x 补行（会话驻留纪律：外因断开重启首件=消费在途件产物+STATUS 补行——本节即补行）。
