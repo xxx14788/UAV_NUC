@@ -45,7 +45,7 @@
 | A2 | 09-29 | ssh heredoc/echo 写中文必乱码（GBK/UTF-8 转码层破坏） | 红线⑥：本地 UTF-8 写→scp→远端 cat 拼接 | 已落 | nuc-ops-pitfalls-round2#1 + night-ops-v61#4 | 复发2（变体=复合命令 echo 进 STATUS） |
 | A3 | 09-30 | ssh heredoc 引号错位→尾随空格文件名，git 显 ?? 内容进错文件 | `ls \| cat -A` 查验 | 已落 | t4-j3 工具三坑③ | |
 | A4 | 10-01 | 非交互 ssh 无 ROS 环境（ros 工具/rosbag 不在 PATH） | bash -lc 显式 source（ssh 纪律①） | 已落 | t4-jr-batch→J-R 五坑⑤（verdicts L121） | 复发：10-04 rosbag 不在默认 PATH（v514）；复发2：10-11 旧机 roslaunch No such file + vins_node libxmlrpcpp.so 缺（LD_LIBRARY_PATH 未带，v116 旧机窗两例） |
-| A5 | 10-01 | `set -u` 在 ROS setup source 前杀脚本（setup 内未绑定变量）且报错被 2>&1 吞 | 先 source 后 set -u/作用域化 set +u | 已落 | J-R 五坑①（L118）+v57 工具坑② | 复发2 |
+| A5 | 10-01 | `set -u` 在 ROS setup source 前杀脚本（setup 内未绑定变量）且报错被 2>&1 吞 | 先 source 后 set -u/作用域化 set +u | 已落 | J-R 五坑①（L118）+v57 工具坑② | 复发3（2026-10-11 ENG v112 续跑：最小实验 v1 秒死重申，plans_软件收官合并_v112_close.md F#8） |
 | A6 | 10-01 | ssh 后台+管道→退出码/输出双双失真 | 远端落日志文件+REMOTE_RC 显式回传 | 已落 | J-R 五坑④（L121） | |
 | A7 | 10-01 | rosbag 探测 pgrep -x 探不到 python 包装、pgrep -f 被外层含"rosbag"字样命令自命中毒计数 | `ps -eo comm=\|grep -cx rosbag` | 已落 | J-R 五坑②（L119） | 与 A1 同族 |
 | A8 | 10-01 | 重定向手滑 `>/`（根目录）静默废掉 roscore | 远端命令禁根目录重定向手滑（纪律在册） | 已落 | J-R 五坑③（L120） | |
@@ -274,3 +274,14 @@
 42. **ssh 远程 python heredoc 整体被吞（静默 no-op）**：`ssh host 'python3 - <<EOF ... EOF'` 的 heredoc 经 stdin 通道传输被 ssh 消费链吃掉——python 实际读到空脚本零执行零报错（A2/A3 家族新机理：非乱码非引号错位，是 heredoc 根本未达远端 bash）——对冲=远程打补丁/内联 python 一律走"本地写文件→scp→远端执行"两段式（T1ENG v116 δA 批 R_START 补丁首射 no-op 实证，文件式二射全中）。
 
 （第二十一周期并入完：120+8=128 条为下任并入基线。）
+
+## 第二十一周期增补·T4 续跑并入（2026-10-11 T4 v5.37 单元 2；工程册 v1.1 清账续跑 4 条落账；承模板 v1.1 规则 1 同周期追加小节+规则 4 复发走首条不新增）
+
+> 来源册=plans_软件收官合并_v112_close.md（md5 5064058d）F 坑账 #7-10（L171-175，"续跑新增 4 条待下月报并入"）；并入前基线读数=128（c96e573b，承 T4 v5.37 单元 5 勘误以 128 为准、120 为 v5.34 时点值）；4 条中 #8 与 A5 同机理按规则 4 走 A5 行复发标注（见上表，不计新条），新条 3 条。
+
+43. **roslaunch CLI 空值不算 set**：`roslaunch ... gcs_url:=` 传空值不构成 launch 内 arg 的 set 语义，下游取未设态——空参必须在 launch 文件内以 `value=""` 显式落。实证=ENG v112 毒域根治件 mavros_nomission.launch wrapper（295816c）绕开实录+来源册 F#7（L171）；对冲已落（wrapper 四件随 295816c 入仓）。（T1ENG）
+44. **实验脚本 FATAL 路径不清场→下轮"SITL 未清"竞态**：脚本 FATAL 退出分支缺清场段，SITL/VINS 残留污染下一轮进场判定。实证=来源册 F#9（L173）；对冲=FATAL 分支显式清理+下轮进场"未清"断言前置——机制在册、脚本模板默认段制度化待落。（T1ENG 发现；T4 v5.37 复用面注记）
+45. **force 无 preclaim 被拒被误读为 hbloop FAIL**：锁 v3 force 在无 preclaim 时拒绝=设计保护面（防误抢）而非心跳缺陷——测例必须先验证前提再断言，防把保护当病。实证=hbloop 守护面单测凭据 hbloop_owner_guard_test_v533.md（75528603，case③④ 守卫/自退 PASS）+来源册 F#10（L174-175）；对冲已落（测例前提断言+T4 v5.33 单测凭据在册）。（T1ENG 首记；T4 v5.33 补测凭据）
+
+（第二十一周期 T4 续跑并入完：128+3=131 条为下任并入基线——续跑 4 条中 #8 走 A5 复发标注不新增条数（模板规则 4），新条 43-45 共 3 条，算术闭合 128+3=131；本周期 T4 v5.37 会话新坑如后续产生，按模板规则 1 同周期再追加小节滚动、收工节尾终读数为准。）
+
