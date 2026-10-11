@@ -12,7 +12,7 @@ source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
 GATE=0
-WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""
+WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""; IMGREC=0
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -24,6 +24,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --stoploss) STOPLOSS=1; shift;;
   --warmup) WARMUP=1; shift;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
+  --img-record) IMGREC=1; shift;;  # δ 政策 A(2026-10-11 裁定 A): 独立图像袋,绿轮抽样由 drill 层裁决
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -91,6 +92,9 @@ cleanup() {
   pkill -f 'run_ctrl_sitl_vin[s]' 2>/dev/null; pkill -f 'run_planner_sitl_vin[s]' 2>/dev/null
   pkill -f 'src/launch/sim_vins.launc[h]' 2>/dev/null
   pkill -f 'roslaunc[h]' 2>/dev/null; pkill -f 'roscor[e]' 2>/dev/null
+  [ -n "$IMGRECPID" ] && kill "$IMGRECPID" 2>/dev/null
+  [ -n "$GPWPID" ] && kill "$GPWPID" 2>/dev/null
+  pkill -f "t1_goal_pollution_watc[h]" 2>/dev/null
   sleep 3
 }
 trap 'if [ "$(readlink "$LOCK" 2>/dev/null || true)" = "$MYOWNER" ]; then cleanup; "$SL" release "$MYSTREAM" >/dev/null 2>&1; fi' EXIT
@@ -245,6 +249,33 @@ nohup rosbag record -O "$BAG" \
   > "$EV/record.log" 2>&1 &
 REC=$!
 sleep 3
+
+# ---------- δ 政策 A（2026-10-11 用户裁定 A）独立图像袋 ----------
+# --img-record: 左右目+IMU 录独立 images_raw.bag（不污主袋 flight.bag=判读正源）;
+# 磁盘门 avail≥23G（20G 红线+3GB 袋预算），不足则跳过并留 SKIPPED 痕;
+# 保留/删除=绿轮抽样,由 t1_drill_run.sh 层轮毕裁决（前 2 绿轮保留）。
+IMGRECPID=""
+if [ "$IMGREC" = "1" ]; then
+  AVAIL_GB=$(df --output=avail -B1G "$HOME" 2>/dev/null | tail -1 | tr -d ' ')
+  if [ "${AVAIL_GB:-0}" -ge 23 ]; then
+    nohup rosbag record -O "$EV/images_raw.bag" \
+      /iris_stereo_vins/vins_cam_left/image_raw /iris_stereo_vins/vins_cam_right/image_raw \
+      /mavros/imu/data > "$EV/record_img.log" 2>&1 &
+    IMGRECPID=$!
+    LOG "δA: 独立图像袋录制中(pid=$IMGRECPID, 左右目+IMU, 盘 avail=${AVAIL_GB}G)"
+  else
+    LOG "δA: 盘门不足(avail=${AVAIL_GB}G<23G), 本轮图像录制跳过"
+    echo "skip_reason=disk_gate avail=${AVAIL_GB}G" > "$EV/images_raw.SKIPPED"
+  fi
+fi
+
+# ---------- S8P goal 污染全程监听（2026-10-11 任务书单元3;TK_S8P_B 签名 UTM(642716,5.72e6,0)）
+# 间歇缺陷 3/5 跨两批+DRILLD1_N8P_005122 seq14/15 亦有=话题面系统性;污染帧 jsonl 全量留痕
+# (判读面伪影注记口径+毒域溯源素材);首发窗预检在 goal 段;此处=轮内全程兜底监听。
+GPWPID=""
+setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_goal_pollution_watch.py" \
+  --out "$EV/goal_pollution_watch.jsonl" >/dev/null 2>&1 < /dev/null &
+GPWPID=$!
 
 # ---------- 1b 飞行中前兆门 watchdog+RTF 探针(v11.20 单元1b;--gate 1;纯脚本面) ----------
 # 数据源=simvins.log([T2slv] cost 主+[T2diag] |Bas| 副,10Hz);双门=绝对+轮内自适应;
@@ -423,6 +454,35 @@ fi
 MGOFF=$(stat -c %s "$EV/planner.log" 2>/dev/null || echo 0)
 for k in 1 2; do goal_pub; sleep 2; done
 LOG "goal 已发(2×8s)"
+# ---------- S8P goal 污染首发窗预检（2026-10-11 任务书单元3 机器防线） ----------
+# 回读采样 3 帧(每帧 4s 窗):任帧 |coord|>1e4=UTM 签名→重发覆盖(-r 1 goal_pub 即自愈面);
+# 3/3 污染→GOAL-POLLUTION-ABORT 受控中止(判读=污染伪影,与 TK_S8P_B 剔除条款同口径)。
+# 采样性质注记:1 帧/探,间歇单帧型污染可能漏采(全程监听器 goal_pollution_watch.jsonl 兜底)。
+goal_pollution_probe() {
+  local fr x y z
+  fr=$(timeout 4 rostopic echo -n1 /move_base_simple/goal/pose/position 2>/dev/null) || return 0
+  x=$(echo "$fr" | awk '/^x:/{print $2; exit}')
+  y=$(echo "$fr" | awk '/^y:/{print $2; exit}')
+  z=$(echo "$fr" | awk '/^z:/{print $2; exit}')
+  [ -z "$x$y$z" ] && return 0
+  if awk "BEGIN{exit !(($x<0?-$x:$x)>1e4 || ($y<0?-$y:$y)>1e4 || ($z<0?-$z:$z)>1e4)}"; then
+    echo "$(date '+%F %T') POLLUTED-FRAME x=$x y=$y z=$z" >> "$EV/goal_pollution.flag"
+    return 1
+  fi
+  return 0
+}
+POLL_N=0
+for pk in 1 2 3; do
+  if ! goal_pollution_probe; then POLL_N=$((POLL_N+1)); goal_pub; sleep 2; else break; fi
+done
+if [ "$POLL_N" -ge 3 ]; then
+  LOG "GOAL-POLLUTION-ABORT: 连续 ${POLL_N} 帧采样 UTM 签名(|coord|>1e4)——受控中止"
+  echo "RESULT=GOAL-POLLUTION-ABORT (S8P 签名:连续${POLL_N}帧采样 |coord|>1e4;证据=goal_pollution.flag+goal_pollution_watch.jsonl;判读=污染伪影非基线样本,与 TK_S8P_B 剔除条款同口径)" > "$EV/RESULT.txt"
+  bash "$L/06_land.sh" >> "$EV/takeoff.log" 2>&1 || true
+  exit 7
+elif [ "$POLL_N" -gt 0 ]; then
+  LOG "WARN goal 污染帧×${POLL_N}(采样)已被重发覆盖——判读面注记 goal_pollution.flag"
+fi
 # b) 首发 8s 无 target 变更→一次性重启再投递
 sleep 8
 PC=$(poscmd_rate); case "$PC" in ''|*[!0-9.]*) PC=0;; esac
@@ -580,6 +640,12 @@ grep -q "RESULT=ENV-FAIL" "$EV/RESULT.txt" && LOG "ENV-FAIL 环境性崩溃口�
 
 # ---------- 留痕落盘(任务书 v11.17 §1.1d): goal 发布 vs FSM 状态变化对表 ----------
 python3 "$HOME/catkin_ws/sitl_sim/t1_goal_trace.py" "$EV" >/dev/null 2>&1 || LOG "WARN goal_trace 失败(留痕面注记)"
+
+# δA: 轮毕先关图像袋(flush 落盘),尺寸留痕;保留/删除裁决在 drill 层
+if [ -n "$IMGRECPID" ]; then
+  kill "$IMGRECPID" 2>/dev/null; sleep 2
+  [ -f "$EV/images_raw.bag" ] && LOG "δA: 图像袋 $(du -h "$EV/images_raw.bag" | cut -f1) (裁决=drill 层绿轮抽样)"
+fi
 
 # ---------- 清场(函数已前置+EXIT trap;正常路径显式调一遍) ----------
 cleanup

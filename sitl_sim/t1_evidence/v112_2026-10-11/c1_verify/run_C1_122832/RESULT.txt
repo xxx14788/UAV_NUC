@@ -1,0 +1,10 @@
+=== C-1 SITL 验证轮 RESULT（在线面）===
+run=/home/ghj/sitl_sim/t1_evidence/v112_2026-10-11/c1_verify/run_C1_122832
+inject=inject_wallclock=2026-10-11T12:31:08+08:00
+observe: armed True=60 False=0
+repro_suspect_online=1
+hover_base: 0 samples, min/max: 
+ack_online lines: 0
+0
+settle tail: 12:41:46 [settle] armed: False mode: MANUAL  z= 12:41:52 [settle] armed: False mode: MANUAL  z= 12:41:57 [settle] armed: False mode: MANUAL  z= 
+（终判以 ulog_five_tuple.txt 离线面 + 本在线面合并 → 判决文书 c1_verdict_v1.md）

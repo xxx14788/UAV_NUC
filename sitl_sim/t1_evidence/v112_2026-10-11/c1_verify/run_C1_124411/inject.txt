@@ -1,0 +1,3 @@
+inject_wallclock=2026-10-11T12:45:17+08:00
+cmd=179 param1=0 param2=21196 via: rosrun mavros mavcmd long（COMMAND_LONG→from_external=1 source=1/240,与 08_24_40 同路径）
+burst3_wallclock=2026-10-11T12:47:18+08:00

@@ -1,0 +1,10 @@
+ulog: /home/ghj/sitl_sim/t1_evidence/v112_2026-10-11/c1_verify/run_C1_122832/round.ulg
+ver_sw: d6f12ad1c4f70ad3230afd7d86e971421e02fef4
+duration_s: 670.2
+vehicle_command: NOT IN ULOG
+vehicle_command_ack: NOT IN ULOG
+vehicle_status: NOT IN ULOG
+actuator_armed: NOT IN ULOG
+vehicle_local_position: NOT IN ULOG
+events topic: NOT IN ULOG（补采未生效或零事件）
+log_message topic: 0 rows

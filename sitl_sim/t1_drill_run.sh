@@ -29,8 +29,28 @@ if [ "$CASE" = "D5" ]; then
   setsid nohup python3 "$L/t1_odom_monitor.py" "$MON_DIR" > "$MON_DIR/monitor_stdout.log" 2>&1 &
 fi
 
+# ---------- δ 政策 A（2026-10-11 用户裁定 A：每批前 2 绿轮抽样录图像,~1-3GB/袋,双用途@T4） ----------
+# 批层挂钩: export T1_DELTA_IMG_QUOTA=2 T1_DELTA_IMG_STATE=<批目录>/delta_img_state.txt
+# 机理: 配额未满→本轮附加 --img-record(vins_smoke 独立 images_raw.bag,不污主袋);
+#       轮毕 RESULT=PASS→保留+计数,否则删图像袋(主 flight.bag 判读正源不受影响)。
+# 绿=轮内 round_result PASS 口径;批毕重判翻案如实注记(证据面补充,不改判据)。
+IMG_ARGS=""
+if [ "${T1_DELTA_IMG_QUOTA:-0}" -gt 0 ] && [ -n "${T1_DELTA_IMG_STATE:-}" ]; then
+  # 干测修复(2026-10-11): ①grep -c 无匹配=输出"0"且rc=1,`||echo 0`会产生"0\n0"双行值
+  #   → 首 2 绿轮前的轮(state 无 KEPT 行)配额判假;改 ||true+空值兜底
+  #   ②state 行=时间戳开头,KEPT 不在行首 → "^KEPT" 恒 0 → 配额永不满;裁决段标记已改行首,
+  #   计数 "^KEPT "(带空格)=实袋保留数,KEPT-NOBAG 不占配额(盘恢复后续录)
+  KEPT=$(grep -c "^KEPT " "$T1_DELTA_IMG_STATE" 2>/dev/null || true); KEPT=${KEPT:-0}
+  if [ "${KEPT:-0}" -lt "${T1_DELTA_IMG_QUOTA:-0}" ]; then
+    IMG_ARGS="--img-record"
+    echo "$(date -Is) ROUND_START quota=${T1_DELTA_IMG_QUOTA} kept=${KEPT} img=on" >> "$T1_DELTA_IMG_STATE"
+  else
+    echo "$(date -Is) ROUND_START quota_full img=off" >> "$T1_DELTA_IMG_STATE"
+  fi
+fi
+
 mkdir -p /tmp/drill_logs; setsid nohup bash "$L/vins_smoke.sh" --world "$WORLD" --goal "$GX" "$GY" "$GZ" \
-    --tag "$TAG" --budget "$BUDGET" --stoploss > "/tmp/smoke_${TAG}_${STAMP}.log" 2>&1 &
+    --tag "$TAG" --budget "$BUDGET" --stoploss $IMG_ARGS > "/tmp/smoke_${TAG}_${STAMP}.log" 2>&1 &
 SMOKE_PID=$!
 echo "[drill] vins_smoke pid=$SMOKE_PID" | tee -a "$LOG"
 
@@ -43,6 +63,8 @@ while [ -z "$EV" ] && [ $WAIT -lt 120 ]; do sleep 3; WAIT=$((WAIT+3));
   EV=$(find "$L/vins_smoke_runs" -maxdepth 1 -name "run_${TAG}_*" -newer "$MARKER" ! -name "*envfail*" 2>/dev/null | sort | tail -1); done
 [ -n "$EV" ] || { echo "[drill] FATAL run dir 未出现" | tee -a "$LOG"; exit 1; }
 echo "[drill] EV=$EV" | tee -a "$LOG"
+[ -n "$IMG_ARGS" ] && [ -n "${T1_DELTA_IMG_STATE:-}" ] \
+  && echo "$(date -Is) ROUND_EV $EV" >> "$T1_DELTA_IMG_STATE"
 
 # P-3(v11.39) 注入前 flying 门 v4(双门): ①round.log "poscmd 存活门通过"(planner 在令)
 #   ②/mavros/state armed:True(FC 解锁=liftoff 边界)。双门齐开后 sleep DRILL_POSTGATE 注入。
@@ -111,6 +133,25 @@ echo "[drill] 收束态:" | tee -a "$LOG"
 for f in RESULT.txt stoploss.flag stoploss_*.json odom_alarm.flag odom_alarm.json inject_*.json; do
   [ -f "$EV"/$f ] && { echo "--- $f:"; head -c 400 "$EV"/$f; echo; } >> "$LOG" 2>&1
 done
+# ---------- δ 政策 A 保留/删除裁决（轮毕即时,磁盘峰值=1 袋） ----------
+if [ -n "$IMG_ARGS" ] && [ -n "${T1_DELTA_IMG_STATE:-}" ] && [ -n "$EV" ]; then
+  IMGBAG="$EV/images_raw.bag"
+  if [ -f "$EV/RESULT.txt" ] && head -5 "$EV/RESULT.txt" | grep -q "RESULT=PASS"; then
+    if [ -f "$IMGBAG" ]; then
+      echo "KEPT $(date -Is) ev=$EV size=$(du -h "$IMGBAG" | cut -f1) @T4 双用途(E4 像素重放可复用)" >> "$T1_DELTA_IMG_STATE"
+      echo "[drill] δA: 绿轮图像袋保留 $(du -h "$IMGBAG" | cut -f1)" | tee -a "$LOG"
+    else
+      echo "KEPT-NOBAG $(date -Is) ev=$EV (录制被盘门跳过,见 images_raw.SKIPPED;不占配额)" >> "$T1_DELTA_IMG_STATE"
+    fi
+  else
+    if [ -f "$IMGBAG" ]; then
+      rm -f "$IMGBAG"
+      echo "DISCARDED $(date -Is) ev=$EV (非绿轮,图像袋删;主 flight.bag 保留)" >> "$T1_DELTA_IMG_STATE"
+      echo "[drill] δA: 非绿轮图像袋已删" | tee -a "$LOG"
+    fi
+  fi
+fi
+
 # teardown 兜底(vins_smoke 自清失败时)
 kill -0 "$SMOKE_PID" 2>/dev/null && { bash "$L/kill_planner_all.sh" >/dev/null 2>&1 || true; }
 sleep 3

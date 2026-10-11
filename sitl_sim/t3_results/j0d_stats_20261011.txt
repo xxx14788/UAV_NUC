@@ -1,14 +1,14 @@
 ================================================================================================
 j0d 三列全系统计表 v2 扩切口(净轮/风暴/中漂移; anchor v1.4 口径)  生成 2026-10-07 (T1 v11.23)
-扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 398 袋轮 available
+扩切口: 2026-10-06 版(113) + X4 批 9(7 批轮+2 1e 标本) + X5 批 59(参数精扫,v11.17 在盘 j0d) + 其他新落 4 = 430 袋轮 available
 X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054ddc8d);t2fail=REINIT 实查 0(4 FAIL 轮同查);four_green=RESULT PASS 映射(正源 x4_final_tally 206506c5);X5 联表(v1.1 v11.25): 四绿/到位/j0=x5_passmap_live 正源;t2fail=simvins.log REINIT/failure detection 实数(C.10 补列销号)
 分类: 风暴=T2fail>0; 净轮=T2fail=0∧j0_total<0.5; 中漂移=T2fail=0∧j0_total≥0.5 | 判读器 bee17577
-生成器 t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源) | OUT=/home/ghj/catkin_ws/sitl_sim/t3_results/j0d_stats_20261011 | combo join=/home/ghj/catkin_ws/sitl_sim/t3_results/combo_matrix_20261010_rounds.csv | 生成时刻 2026-10-11 01:51:21
+生成器 t3_j0d_stats_v2.1 (T3 v10.9 单元1; OUT=repo 正源) | OUT=/home/ghj/catkin_ws/sitl_sim/t3_results/j0d_stats_20261011 | combo join=/home/ghj/catkin_ws/sitl_sim/t3_results/combo_matrix_20261011_rounds.csv | 生成时刻 2026-10-11 12:53:56
 ================================================================================================
-总数 398: 净轮=173, 中漂移=119, 风暴=106
-  3090 343 轮: 净轮=159 中漂移=109 风暴=75
+总数 430: 净轮=194, 中漂移=130, 风暴=106
+  3090 374 轮: 净轮=179 中漂移=120 风暴=75
   NUC  37 轮: 净轮=9 中漂移=8 风暴=20
-  ?    18 轮: 净轮=5 中漂移=2 风暴=11
+  ?    19 轮: 净轮=6 中漂移=2 风暴=11
 
 -- 净轮名册 (T2fail=0 ∧ j0_total<0.5):
   run_1aO1_E12O_030436         3090      B1006  j0=0.443 jump=0.000 transit=0.443 dom=transit 四绿=1 
@@ -22,6 +22,10 @@ X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054dd
   run_1aP4_W5P_025333          3090      B1006  j0=0.320 jump=0.000 transit=0.320 dom=transit 四绿=0 
   run_1aP5_S8P_030101          3090      B1006  j0=0.192 jump=0.000 transit=0.192 dom=transit 四绿=1 
   run_A1OBS_N8P_r1_070732      3090      B1006  j0=0.094 jump=0.000 transit=0.094 dom=transit 四绿=1 
+  run_A1X_N8P_observe_r2_101853 3090      B1006  j0=0.077 jump=0.000 transit=0.077 dom=transit 四绿=1 
+  run_A1X_N8P_observe_r4_102911 3090      B1006  j0=0.129 jump=0.000 transit=0.129 dom=transit 四绿=1 
+  run_A1X_N8P_observe_r6_103439 3090      B1006  j0=0.083 jump=0.000 transit=0.083 dom=transit 四绿=0 
+  run_A1X_S8O_base_r3_105422   3090      B1006  j0=0.141 jump=0.000 transit=0.141 dom=transit 四绿=0 
   run_BX_E12O_A_060401         3090      B1006  j0=0.109 jump=0.000 transit=0.109 dom=transit 四绿=1 
   run_BX_E12O_B_060122         3090      B1006  j0=0.109 jump=0.000 transit=0.109 dom=transit 四绿=1 
   run_BX_N8P_B_061141          3090      B1006  j0=0.416 jump=0.000 transit=0.416 dom=transit 四绿=1 
@@ -31,6 +35,22 @@ X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054dd
   run_BX_S8O_B_055855          3090      B1006  j0=0.160 jump=0.000 transit=0.160 dom=transit 四绿=1 
   run_BX_S8P_B_063627          3090      B1006  j0=0.057 jump=0.000 transit=0.057 dom=transit 四绿=1 
   run_DIAGGUARD2_233403        3090      B1005  j0=0.418 jump=0.000 transit=0.418 dom=transit 四绿=0 
+  run_DRILLD1_N8P_003520       3090      B1006  j0=0.305 jump=0.000 transit=0.305 dom=transit 四绿=1 
+  run_DRILLD1_N8P_003905       3090      B1006  j0=0.357 jump=0.727 transit=0.455 dom=mixed 四绿=0 
+  run_DRILLD1_N8P_005122       3090      B1006  j0=0.073 jump=0.000 transit=0.073 dom=transit 四绿=1 
+  run_DRILLD1_N8P_010618       3090      B1006  j0=0.177 jump=0.116 transit=0.230 dom=mixed 四绿=1 
+  run_DRILLD1_N8P_010857       3090      B1006  j0=0.462 jump=0.000 transit=0.462 dom=transit 四绿=0 
+  run_DRILLD1_N8P_012114       3090      B1006  j0=0.049 jump=0.000 transit=0.049 dom=negligible 四绿=1 
+  run_DRILLD1_N8P_013354       3090      B1006  j0=0.155 jump=0.000 transit=0.155 dom=transit 四绿=0 
+  run_DRILLD1_N8P_015829       3090      B1006  j0=0.240 jump=0.000 transit=0.240 dom=transit 四绿=1 
+  run_DRILLD1_N8P_020107       3090      B1006  j0=0.218 jump=0.000 transit=0.218 dom=transit 四绿=1 
+  run_DRILLD1_N8P_020450       3090      B1006  j0=0.111 jump=0.000 transit=0.111 dom=transit 四绿=1 
+  run_DRILLD1_N8P_021948       3090      B1006  j0=0.072 jump=0.000 transit=0.072 dom=transit 四绿=0 
+  run_DRILLD1_N8P_023206       3090      B1006  j0=0.126 jump=0.000 transit=0.126 dom=transit 四绿=1 
+  run_DRILLD1_N8P_023444       3090      B1006  j0=0.387 jump=0.000 transit=0.387 dom=transit 四绿=1 
+  run_DRILLD1_N8P_023725       3090      B1006  j0=0.107 jump=0.000 transit=0.107 dom=transit 四绿=0 
+  run_DRILLD1_N8P_024435       3090      B1006  j0=0.064 jump=0.000 transit=0.064 dom=transit 四绿=0 
+  run_DRILLD1_N8P_025653       3090      B1006  j0=0.113 jump=0.000 transit=0.113 dom=transit 四绿=1 
   run_DRILLD1_N8P_045450       3090      B1006  j0=0.079 jump=0.000 transit=0.079 dom=transit 四绿=0 
   run_DRILLD1_N8P_050141       3090      B1006  j0=0.152 jump=0.000 transit=0.152 dom=transit 四绿=0 
   run_DRILLD1_N8P_051357       3090      B1006  j0=0.114 jump=0.000 transit=0.114 dom=transit 四绿=0 
@@ -170,6 +190,7 @@ X4 CAMPAIGN_ARM 映射: machine=3090(X4批次)/boot-X4-1007/arm=v2+cauchy4(054dd
   run_DRILLD1_N8P_033808       3090(推定:b B1006  j0=0.215 jump=0.000 transit=0.215 dom=transit 四绿=0 
   run_DRILLD1_N8P_154620       3090(推定:b B1006  j0=0.169 jump=0.000 transit=0.169 dom=transit 四绿=0 
   run_DRILLD1_N8P_155331       3090(推定:b B1006  j0=0.029 jump=0.000 transit=0.029 dom=negligible 四绿=0 
+  run_DRILLD1_N8P_012355       ?         n/a    j0=0.191 jump=0.000 transit=0.191 dom=transit 四绿= 
   run_DRILLD1_N8P_155513       ?         n/a    j0=0.029 jump=0.000 transit=0.029 dom=negligible 四绿= 
   run_DRILLD1_N8P_155853       ?         n/a    j0=0.061 jump=0.000 transit=0.061 dom=transit 四绿= 
   run_DRILLD1_N8P_173555       ?         n/a    j0=0.079 jump=0.000 transit=0.079 dom=transit 四绿= 

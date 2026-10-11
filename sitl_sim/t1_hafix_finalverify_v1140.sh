@@ -4,6 +4,8 @@
 # 预注册判据(3d 原文冻结): 每轮 HAFIX≥1 ∧ landed=1;场景 PASS=全轮{PASS,SILENT-OK}∧≥1机制轮;批=4场景全PASS
 # v11.40 S4 边界解读预注册(任务书单元2原文): 落地后注入轮(hafix=0∧landed=1)=正确静默 SILENT-OK 禁误判 FAIL
 # 判读=t1_rejudge_hafix_v1140.py(B-7 参数化)+双工具重判(t3_2d_hafix_rejudge+t3_reverify_crosscheck_v2)
+# δ 政策 A 挂钩(2026-10-11 裁定 A,未来批窗用): 发射前 export T1_DELTA_IMG_QUOTA=2
+#   T1_DELTA_IMG_STATE="$OUT/delta_img_state.txt" → 前 2 绿轮保留 images_raw.bag(双用途@T4)
 set -u
 # 单例守卫(D-1010-T1-01 教训;v2=PID 文件)
 PIDF=/tmp/t1_reverify_batch.pid

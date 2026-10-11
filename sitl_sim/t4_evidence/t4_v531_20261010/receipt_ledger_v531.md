@@ -81,3 +81,28 @@
 - 附加登记：8 个 attempt 无效/监控壳目录（NOBAG=env-only：hwmon 探针+round.log+vins_config.md5，无飞行）——S3 r1 attempt1（rc=2 HAFIX_lines=0）等重试链留痕，合理零袋。
 - **A1 扩批 12 轮+②b 复验 8 对未发射**（03:00 后零新 run 目录；T1ENG 编排在终验批后，其会话于批毕前后断离）——待其续册，非本册跳步。
 - 本会话 02:52-10:02 轮询空窗（约 7h，本机休眠/网络断=事故非收工）：批毕时刻在窗内，收讫时点=10:0x 补行（会话驻留纪律：外因断开重启首件=消费在途件产物+STATUS 补行——本节即补行）。
+
+## 10. 滚动收·判读毕联动+本周期新产物（软件收官合并册单元6，2026-10-11 13:1x）
+
+### 10.1 §9 状态联动：20/20 收讫-待判 → **判读毕**
+
+- 判读产物收讫（md5 锚全对）：final_verdict_v1140.md（a8743e51）+ verdict_v1140.csv（**6a6864db=锚 ✓**，21 行=20 轮+头）+ 50 轮链表 hafix_chain50_table_v1140.md（**3dee1859=锚 ✓**）+ 判读器 t1_rejudge_hafix_v1140.py（**01a12705=锚 ✓**）——判读结论=S1-S3 全 15/15 PASS+S4 边界 2/2（判读权 T1ENG 域，结论面见其文书；本台账只登记判读毕状态）。
+- §9 尾注两行状态更新：①「判读器批毕未跑」→已跑毕（v11.40 双工具 20/20 bit-identical）；②「A1 扩批 12 轮未发射」→**已发射已收**：A1X 12 袋索引级登记（凭据=a1x_receipt_20261011.txt，12/12 OK：chunks N/N 等值、duration 88-414s、bag 57-540MB）——判读毕（unit3_a1_expand_verdict_v1140.md，ff1f82e4）；②b 复验=取消（终裁定案，95ae856f 锚 ✓）。
+
+### 10.2 本周期新产物滚动收（md5 锚表）
+
+| 产物 | md5 | 域 |
+|---|---|---|
+| C-1 SITL 验证判决文书（c1_verdict_v1.md，复现分支确认） | 620aa07f | T1ENG |
+| C-1 定位文书（附录 A 并入版） | 48d6fb0e | T1ENG |
+| j0d 表 430 轮（j0d_stats_20261011.csv 滚入版） | 5e4dbd7a | T1ENG/T3 工具 |
+| combo 表 499 轮（combo_matrix_20261011_rounds.csv） | d86720de | T3 工具 |
+| X7 材料增补行版（x7_convergence_material_v1010.md） | 002577d1 | T2/T3 交接件 |
+| δ 政策 A 落码件（vins_smoke/drill/批脚本 3 件） | 594e3ce4/d687a10b/4afb158c | T1ENG |
+| S8P goal 污染监听器（t1_goal_pollution_watch.py） | 057707b3 | T1ENG |
+| E8P/E12P 毒域溯源首步（unit3_toxic_domain_trace_v1.md） | 519c58b9 | T1ENG |
+| 内存取证设计+L0 基线（unit4_memleak_forensics_design_v1.md） | f4008a4b | T1ENG |
+| C-1 轮脚本+提取器（t1_c1_verify_v1.sh/t1_c1_extract_ulog.py） | b2251cf3/4af2cb8d | T1ENG |
+
+- δ 政策 A 双用途注记：绿轮抽样图像袋（2 袋/批）落码毕——未来批窗首应用时袋到即收，E4 像素重放可直接复用（@T4 消费面在案）。
+- 零三态口径维持：本节全部登记=索引级+md5 锚，无 T4 预注册判据面收货判读。
