@@ -143,3 +143,9 @@
 - 根除链资产 md5 锚（T4 独立实测）：noMission pluginlist=**a0cdda9a** ✓（与通告逐位一致）/ mavros_nomission.launch=**47c66460** / 02_start_mavros.sh v2=**ead14328** ✓（与通告逐位一致；工作树 M 态=工程册在途件，T4 零触碰）。
 - **W-R8PFIX 登记**：终验轮 run_E8PFIX_161914 发射中（16:19 发射，判据预注册=T1ENG 域：watch 零污染帧∧非 2min 短轮=毒域抢救成功）；袋落盘即索引级收讫-待判（rosbag info 凭据），判读权 T1ENG 域。
 - 备注：本会话收工行（15:58）后新通告按滚动收语义续收（会话驻留①在途件禁收工），非中断重入。
+
+### 10.8 滚动收·R8PFIX 终验轮袋索引级收讫（T4 v5.33 会话 16:3x；判读权 T1ENG 域）
+
+- 袋=run_E8PFIX_161914/flight.bag：rosbag info rc=0，duration 189s（3:09），messages 244768，chunks 305/305 等值，size 242891600B——**收讫-待判**。墙钟事实=229s（16:19:14 发射→16:23:03 收束），非 2min 短轮；判据"watch 零污染帧∧非 2min 短轮"的裁定权=T1ENG 预注册域。
+- 事实面（不判读）：watch jsonl 1 行={"type":"first","t":46.48,"callerid":"/rostopic_3174541_*","x":9.01,"y":0.98,"z":1.0}=本地系轮自身 goal 坐标量纲（非 UTM 毒帧签名 642719/4671811 族）；round.log 16:22:31 降级②（VINS 流断/滞后>10s）→16:23:03 STOPLOSS-ABORT 收束 recovery=DEGRADED path=KILL；round.log 含一处 python IndexError 碎片（工具面，T1ENG 域）。
+- W-R8PFIX 转为"已收讫待 T1ENG 判读"；本会话续收毕收工。

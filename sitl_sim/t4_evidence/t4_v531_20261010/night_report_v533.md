@@ -64,3 +64,9 @@
 - 六工具：三判读 3721399e/08cb8829/7f45974b 双位 ✓；closure_v2 c3d233c5 权威位 ✓；u3_hover_drift 628faa64 ✓；d2v 换代 87593eb4→4268fe2f（有据）；锁 v3 d7b3efa0 双树 ✓。
 - 工程：HEAD=2d2234e（pull 已最新）；df=435924MB（红线 20G 未触发）；工程册在途 M 文件（t1_three_arm_campaign_v1131.sh/t2_m3p_v2_arm.yaml）零触碰（全程 pathspec 提交）。
 - "台账 L293 锚"载体勘误：现行 3090 各候选文件（v526 台账 201 行/v531 台账 108 行/v5.32 书 88 行/DECISION_LOG 424 行）均无 L293 六工具锚——锚值以 v5.32 任务书 D 表为正源执行对账（本会话六工具全闭合即基于 D 表），L293 载体演变史如实注记，不再追。
+
+## 9. 收工后滚动续收（16:19-16:3x；会话驻留①在途件禁收工）
+
+- 16:19 T1ENG 通告 E8P 毒域**根除链落地**（插件级定位终局=guided_target）：三资产 md5 锚 T4 独立实测逐位一致（pluginlist a0cdda9a/mavros_nomission.launch 47c66460/02_start_mavros.sh v2 ead14328，末者为工程册在途 M 态零触碰）→台账 §10.7。
+- 16:23 R8PFIX 终验轮收束（229s，STOPLOSS-ABORT recovery=DEGRADED）：袋索引级收讫-待判（189s/244768 msgs/chunks 305/305 等值；watch 1 行=本地系轮自身 goal 坐标非 UTM 毒帧签名——事实照录，判据裁定权 T1ENG）→台账 §10.8。
+- 《可做而未做清单》更新：第 3 条（E8P 插件级定位+最小复现）由工程册 16:19 完成销号；其余 8 条维持。

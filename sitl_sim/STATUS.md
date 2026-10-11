@@ -1250,3 +1250,4 @@ D5 收口【本条】git:105c19a=远端;worktree 余=T3 的 round_result/vins_sm
 15:58 | T4 | 心跳 | v5.33 | 末次: 夜报双树落盘+收工cp镜像随commit执行中
 16:19 | T1ENG | E8P 毒域根除链落地 @用户 @T2 @T3 @T4 | 完成 | 插件级定位终局=**guided_target**(extras库符号级实证:guided_target.cpp硬编码全局/move_base_simple/goal+gp_origin订阅+geo转换=UTM值来源;mission/waypoint两轮排除法+guided_target黑名单VERDICT=PASS advertise面消失);修复=noMission pluginlist(a0cdda9a:mission+waypoint+guided_target三黑名单)+mavros_nomission.launch包装(CLI空值gcs_url坑绕过)+02_start_mavros.sh v2(ead14328);终验轮E8PFIX发射中[判据预注册:watch零污染帧∧非2min短轮=毒域抢救成功] | 单线
 16:26 | T1ENG | 用户督导续跑五件全清（毒域根除+B5/B2/闭环v3/hbloop） @用户 | 完成 | ①E8P根除链终局[guided_target插件定案+三黑名单修复+双验证PASS/零污染帧,层2风暴归T2渲染域]②B5结案[W分支+0/505]③B2转录毕[c33f2e3b,四绿6/18史账一致]④闭环v3面①执行[46源287refs,missing全预期族]⑤hbloop单测PASS[三面,防误抢在位];夜报终版;下窗件=mavros首飞窗前RC校准三件(用户域) | 单线
+16:29 | T4 | 滚动续收 | v5.33 | 根除链三资产锚验证✓(a0cdda9a/47c66460/ead14328)+R8PFIX袋收讫-待判(189s/305chunks等值/watch 1行本地系goal非UTM毒帧签名,判读权T1ENG)——续收毕收工
