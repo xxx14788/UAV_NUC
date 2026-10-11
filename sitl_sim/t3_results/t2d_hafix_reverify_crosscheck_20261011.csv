@@ -1,0 +1,21 @@
+scene,round,hafix_t1/t3,landed_t1/t3,t1_verdict,t3_shadow_verdict
+S1_hover_1m,003520,hafix 6/6,landed 1/1,PASS,PASS
+S1_hover_1m,010618,hafix 8/8,landed 1/1,PASS,PASS
+S1_hover_1m,013354,hafix 10/10,landed 1/1,PASS,PASS
+S1_hover_1m,020450,hafix 6/6,landed 1/1,PASS,PASS
+S1_hover_1m,023444,hafix 8/8,landed 1/1,PASS,PASS
+S2_hover_3m,003905,hafix 8/8,landed 1/1,PASS,PASS
+S2_hover_3m,010857,hafix 10/10,landed 1/1,PASS,PASS
+S2_hover_3m,014611,hafix 6/6,landed 1/1,PASS,PASS
+S2_hover_3m,020731,hafix 6/6,landed 1/1,PASS,PASS
+S2_hover_3m,023725,hafix 6/6,landed 1/1,PASS,PASS
+S3_transit,005122,hafix 6/6,landed 1/1,PASS,PASS
+S3_transit,012114,hafix 6/6,landed 1/1,PASS,PASS
+S3_transit,015829,hafix 6/6,landed 1/1,PASS,PASS
+S3_transit,021948,hafix 8/8,landed 1/1,PASS,PASS
+S3_transit,024435,hafix 8/8,landed 1/1,PASS,PASS
+S4_land_1m,005401,hafix 8/8,landed 1/1,PASS,PASS
+S4_land_1m,012355,hafix 0/0,landed 0/0,FAIL,FAIL
+S4_land_1m,020107,hafix 0/0,landed 1/1,FAIL,FAIL
+S4_land_1m,023206,hafix 2/2,landed 1/1,PASS,PASS
+S4_land_1m,025653,hafix 0/0,landed 1/1,FAIL,FAIL

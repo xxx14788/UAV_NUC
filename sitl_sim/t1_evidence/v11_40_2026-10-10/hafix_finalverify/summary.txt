@@ -1,0 +1,88 @@
+[clean] 批首 clean -> post-assert px4=0 gz=0 OK
+=== v11.40 hafix FINALVERIFY batch start 2026-10-11T00:35:20+08:00 ===
+--- S1_hover_1m round 1 start 00:35:20 ---
+S1_hover_1m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_003520
+[clean] S1_hover_1m r1 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 1 start 00:39:05 ---
+S2_hover_3m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_003905
+[clean] S2_hover_3m r1 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 1 start 00:46:13 ---
+S3_transit r1 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_004613) -> retry ×1
+[clean] S3_transit r1 retry-pre clean -> post-assert px4=0 gz=0 OK
+S3_transit r1 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_005122
+S3_transit r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_005122
+[clean] S3_transit r1 clean -> post-assert px4=0 gz=0 OK
+--- S4_land_1m round 1 start 00:54:00 ---
+S4_land_1m r1 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_005401
+[clean] S4_land_1m r1 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 2 start 01:01:09 ---
+S1_hover_1m r2 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_010109) -> retry ×1
+[clean] S1_hover_1m r2 retry-pre clean -> post-assert px4=0 gz=0 OK
+S1_hover_1m r2 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_010618
+S1_hover_1m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_010618
+[clean] S1_hover_1m r2 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 2 start 01:08:56 ---
+S2_hover_3m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_010857
+[clean] S2_hover_3m r2 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 2 start 01:16:05 ---
+S3_transit r2 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_011605) -> retry ×1
+[clean] S3_transit r2 retry-pre clean -> post-assert px4=0 gz=0 OK
+S3_transit r2 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_012114
+S3_transit r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_012114
+[clean] S3_transit r2 clean -> post-assert px4=0 gz=0 OK
+--- S4_land_1m round 2 start 01:23:55 ---
+S4_land_1m r2 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_012355
+[clean] S4_land_1m r2 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 3 start 01:33:54 ---
+S1_hover_1m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_013354
+[clean] S1_hover_1m r3 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 3 start 01:41:02 ---
+S2_hover_3m r3 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_014102) -> retry ×1
+[clean] S2_hover_3m r3 retry-pre clean -> post-assert px4=0 gz=0 OK
+S2_hover_3m r3 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_014611
+S2_hover_3m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_014611
+[clean] S2_hover_3m r3 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 3 start 01:53:20 ---
+S3_transit r3 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_015320) -> retry ×1
+[clean] S3_transit r3 retry-pre clean -> post-assert px4=0 gz=0 OK
+S3_transit r3 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_015829
+S3_transit r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_015829
+[clean] S3_transit r3 clean -> post-assert px4=0 gz=0 OK
+--- S4_land_1m round 3 start 02:01:07 ---
+S4_land_1m r3 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_020107
+[clean] S4_land_1m r3 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 4 start 02:04:50 ---
+S1_hover_1m r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_020450
+[clean] S1_hover_1m r4 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 4 start 02:07:30 ---
+S2_hover_3m r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_020731
+[clean] S2_hover_3m r4 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 4 start 02:14:39 ---
+S3_transit r4 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_021439) -> retry ×1
+[clean] S3_transit r4 retry-pre clean -> post-assert px4=0 gz=0 OK
+S3_transit r4 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_021948
+S3_transit r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_021948
+[clean] S3_transit r4 clean -> post-assert px4=0 gz=0 OK
+--- S4_land_1m round 4 start 02:26:56 ---
+S4_land_1m r4 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_022657) -> retry ×1
+[clean] S4_land_1m r4 retry-pre clean -> post-assert px4=0 gz=0 OK
+S4_land_1m r4 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_023206
+S4_land_1m r4 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_023206
+[clean] S4_land_1m r4 clean -> post-assert px4=0 gz=0 OK
+--- S1_hover_1m round 5 start 02:34:44 ---
+S1_hover_1m r5 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_023444
+[clean] S1_hover_1m r5 clean -> post-assert px4=0 gz=0 OK
+--- S2_hover_3m round 5 start 02:37:24 ---
+S2_hover_3m r5 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_023725
+[clean] S2_hover_3m r5 clean -> post-assert px4=0 gz=0 OK
+--- S3_transit round 5 start 02:44:35 ---
+S3_transit r5 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_024435
+[clean] S3_transit r5 clean -> post-assert px4=0 gz=0 OK
+--- S4_land_1m round 5 start 02:51:43 ---
+S4_land_1m r5 attempt1 无效(rc=2 HAFIX_lines=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_025144) -> retry ×1
+[clean] S4_land_1m r5 retry-pre clean -> post-assert px4=0 gz=0 OK
+S4_land_1m r5 attempt2 rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_025653
+S4_land_1m r5 final drill_rc=0 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DRILLD1_N8P_025653
+[clean] S4_land_1m r5 clean -> post-assert px4=0 gz=0 OK
+=== v11.40 hafix FINALVERIFY batch done 2026-10-11T02:59:33+08:00 ===
+判读(双工具): python3 /home/ghj/sitl_sim/t1_rejudge_hafix_v1140.py /home/ghj/sitl_sim/t1_evidence/v11_40_2026-10-10/hafix_finalverify ; t3: python3 /home/ghj/catkin_ws/sitl_sim/analysis/t3_2d_hafix_rejudge.py --pattern 'DRILLD1_N8P_*' --since <HHMM> ; crosscheck v2

@@ -1,0 +1,39 @@
+round,ts,scenario,rep,map_src,hafix_n,hafix_maxstage,hafix_last,landed,z_end,disarm,gatehit_chain,result,round_pass,goal,bag_s,note
+run_DRILLD1_N8P_003520,003520,S1_hover_1m,1,goal推断,6,2,"3.278019174, 177.516000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_003905,003905,S2_hover_3m,1,goal推断,8,2,"1.824687664, 112.316000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_004613,004613,?,1,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_005122,005122,S3_transit,1,goal推断,6,2,"8.984406867, 112.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.104,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_005401,005401,S1_hover_1m,2,goal推断,8,2,"2.478751664, 137.316000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_010109,010109,?,2,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_010618,010618,S1_hover_1m,3,goal推断,8,2,"4.951785751, 111.516000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_010857,010857,S2_hover_3m,2,goal推断,10,2,"4.589033017, 113.324000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_011605,011605,?,3,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_012114,012114,S3_transit,2,goal推断,6,2,"3.058897219, 114.324000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.104,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_012355,012355,S1_hover_1m,4,goal推断,0,0,,NA,,,,,NO-JUDGE,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,no-RESULT
+run_DRILLD1_N8P_013354,013354,S1_hover_1m,5,goal推断,10,2,"0.868670288, 112.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_014102,014102,?,4,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_014611,014611,S2_hover_3m,3,goal推断,6,2,"9.222977195, 113.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_015320,015320,?,5,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_015829,015829,S3_transit,3,goal推断,6,2,"5.708101725, 112.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_020107,020107,S1_hover_1m,6,goal推断,0,0,,1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_020450,020450,S1_hover_1m,7,goal推断,6,2,"8.909355526, 114.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.104,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_020731,020731,S2_hover_3m,4,goal推断,6,2,"7.485401723, 112.320000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_021439,021439,?,6,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_021948,021948,S3_transit,4,goal推断,8,2,"4.897218078, 112.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_022657,022657,?,7,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_023206,023206,S1_hover_1m,8,goal推断,2,1,"89.748576491, 49.696000000]: [HAFIX] cleared (landed=0 armed=1 odom_ok=1) stage 1 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_023444,023444,S1_hover_1m,9,goal推断,8,2,"2.999633367, 113.708000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.104,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,PASS,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_023725,023725,S2_hover_3m,5,goal推断,6,2,"3.446435279, 113.516000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 0.50 0.50 3.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_024435,024435,S3_transit,5,goal推断,8,2,"1.895576911, 112.312000000]: [HAFIX] cleared (landed=1 armed=0 odom_ok=0) stage 2 -> reset",1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",FAIL,PASS,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_025144,025144,?,8,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_025653,025653,S1_hover_1m,10,goal推断,0,0,,1,0.105,1,"n=0 abort:0,land:0,disarm:1,not2fail:1",PASS,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_033808,033808,S1_hover_1m,11,goal推断,0,0,,0,0.623,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",ENV,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_034137,034137,?,9,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_034505,034505,?,10,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_034833,034833,?,11,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_040715,040715,?,12,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
+run_DRILLD1_N8P_042425,042425,S3_transit,6,goal推断,190,0,.688000000]: [HAFIX] 207.3s post-AUTO_LAND still flying -> KILL cmd400 param1=1.0 ACCEPTED,0,0.592,0,"n=1 abort:0,land:0,disarm:0,not2fail:0",ENV,FAIL,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_045450,045450,S3_transit,7,goal推断,0,0,,1,0.105,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 1.01 8.98 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_050141,050141,S1_hover_1m,12,goal推断,0,0,,1,0.121,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_051357,051357,S1_hover_1m,13,goal推断,0,0,,1,0.140,0,"n=0 abort:0,land:0,disarm:0,not2fail:1",FAIL,FAIL,goal: 0.50 0.50 1.0 leg2: 0 0 0 0,,
+run_DRILLD1_N8P_054131,054131,?,13,goal推断,0,0,,NA,,,,,NO-JUDGE,,,no-px4ctrl.log;no-RESULT
