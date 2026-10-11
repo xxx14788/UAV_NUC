@@ -109,7 +109,7 @@ for R in 1 2 3 4 5; do
   run_one S1_hover_1m  0.50 0.50 1.0 15 $R
   run_one S2_hover_3m  0.50 0.50 3.0 15 $R
   run_one S3_transit   1.01 8.98 1.0 15 $R
-  run_one S4_land_1m   0.50 0.50 1.0 40 $R
+  run_one S4_land_1m   0.50 0.50 1.0 auto $R   # v112 单元5: auto=下降段中点自适应注入(旧 40s 固定近似退役;终验批已收官形态不变,未来批用 auto)
 done
 
 echo "=== v11.40 hafix FINALVERIFY batch done $(date -Is) ===" | tee -a "$SUM"

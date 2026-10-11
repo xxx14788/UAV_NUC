@@ -299,6 +299,16 @@ if [ "$STOPLOSS" = "1" ]; then
 fi
 gate_hit() { [ -f "$EV/gatehit.flag" ]; }
 stoploss_hit() { [ -f "$EV/stoploss.flag" ]; }
+# ---------- 早退收束 LANDING 行补算（单元5 v112;landed=NA 记录面根除） ----------
+# round_result.sh 的 LANDING 行(z_end=truth 尾 50 帧 iris z 均值<0.15)只在正常收束路径打印;
+# 早退路径(下方各调用点)直写 RESULT 退出 → 判读器 L102 正则落空 → landed=NA(v11.40 S4 r2
+# 缺行形态)。本函数以同口径从 bag 补算 append;bag 不可读时落 NA 行保持记录面存在。
+early_landing_line() {
+  sleep 5   # rosbag record 尾帧 flush 余量
+  python3 "$L/t1_landing_line.py" "$BAG" >> "$EV/RESULT.txt" 2>/dev/null \
+    || echo "LANDING: z_end=NA m (补算器不可用)->NA" >> "$EV/RESULT.txt"
+}
+
 gate_abort() {  # $1=相位标签;$2=模式(gate|stoploss,默认gate);完整恢复=受控中止+完整降落+disarm=1+无T2fail(预注册)
   local PH="${1:-?}" MODE="${2:-gate}" DISARMED=0 STREAM_OK=1 K J
   local PFX=gatehit; [ "$MODE" = stoploss ] && PFX=stoploss
@@ -362,11 +372,13 @@ for f in glob.glob(sys.argv[1] + "/" + sys.argv[3] + "_*.json"):
 PYEOF
   if [ "$MODE" = stoploss ]; then
     echo "RESULT=FAIL (STOPLOSS-ABORT@$PH jump 后置止损触发; recovery=$REC; auto_disarm->$DISARMED; 留痕=stoploss_<tag>.json+actions; 真FAIL 提前终止形态——jump 面判读归 round_result 帧稳定性不重复判)" > "$EV/RESULT.txt"
+    early_landing_line
     LOG "STOPLOSS-ABORT 收束 recovery=$REC path=$PTH"
     cleanup
     exit 43
   fi
   echo "RESULT=GATE-INTERCEPT (前兆门@$PH; recovery=$REC; auto_disarm->$DISARMED; 留痕=gatehit_<tag>.json+gate_timeline+actions; $([ "$REC" = COMPLETE ] && echo '完整恢复=计入分子' || echo '降级=不完整恢复不计入分子,如实'))" > "$EV/RESULT.txt"
+  early_landing_line
   LOG "GATE-INTERCEPT 收束 recovery=$REC path=$PTH"
   cleanup
   exit 42
@@ -388,6 +400,7 @@ if [ "$LZ" != NA ] && awk "BEGIN{exit !($LZ < 0.3)}"; then
   LOG "WARN NEVER-FLEW: truth z=$LZ<0.3(armed 但未离地)——早停+降落收尾,标本保全(@T1 域取证面)"
   bash "$L/06_land.sh" >> "$EV/takeoff.log" 2>&1 || true
   echo "RESULT=FAIL (证据: never-flew 离地真值门 truth z=$LZ; 判读面标本保全)" > "$EV/RESULT.txt"
+  early_landing_line
   exit 1
 fi
 LOG "已等离地稳定(truth z=$LZ)"
@@ -478,6 +491,7 @@ done
 if [ "$POLL_N" -ge 3 ]; then
   LOG "GOAL-POLLUTION-ABORT: 连续 ${POLL_N} 帧采样 UTM 签名(|coord|>1e4)——受控中止"
   echo "RESULT=GOAL-POLLUTION-ABORT (S8P 签名:连续${POLL_N}帧采样 |coord|>1e4;证据=goal_pollution.flag+goal_pollution_watch.jsonl;判读=污染伪影非基线样本,与 TK_S8P_B 剔除条款同口径)" > "$EV/RESULT.txt"
+  early_landing_line
   bash "$L/06_land.sh" >> "$EV/takeoff.log" 2>&1 || true
   exit 7
 elif [ "$POLL_N" -gt 0 ]; then

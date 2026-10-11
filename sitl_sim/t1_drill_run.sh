@@ -85,7 +85,40 @@ if grep -q 'poscmd 存活门通过' "$EV/round.log" 2>/dev/null; then
   done
   if [ $ARM_WAIT -lt 90 ]; then
     echo "[drill] flying 门②开(armed:True @+${ARM_WAIT}s) -> postgate ${DRILL_POSTGATE:-15}s" | tee -a "$LOG"
-    sleep ${DRILL_POSTGATE:-15}
+    if [ "${DRILL_POSTGATE:-15}" = "auto" ]; then
+      # ---------- S4 中段下降注入时序（单元5 v112;postgate 自适应取下降段中点） ----------
+      # 病灶:固定 40s 近似在 S4 降落段漂移→注入落点散布(落地前/后均有,v11.40 B-1/C-6 边界族)。
+      # 自适应:armed 后 z 持久流(订阅触发流坑:C-1 教训,瞬时 echo 空采)→悬停基线 z_h(10 帧)
+      # →下降沿(z<z_h-0.25)→中点(z<=z_h*0.5,z_ground≈0 近似)→注入;沿后 90s 兜底按时序注入。
+      ZF=$(mktemp /tmp/drill_zstream_XXXX.csv)
+      setsid nohup timeout 300 rostopic echo -p /mavros/local_position/odom/pose/position/z > "$ZF" 2>/dev/null < /dev/null &
+      ZPID=$!
+      echo "[drill] auto-postgate: z 流起($ZF),悬停基线采样 12s" | tee -a "$LOG"
+      sleep 12
+      Z_H=$(awk -F, 'NR>1 && $2!=""{s+=$2;n++} END{if(n>0) printf "%.3f", s/n}' "$ZF" 2>/dev/null)
+      if [ -z "$Z_H" ] || [ "$Z_H" = "0.000" ]; then
+        echo "[drill] auto-postgate: 基线不可得(z_h=$Z_H)→回退固定 40s" | tee -a "$LOG"
+        sleep 40
+      else
+        echo "[drill] auto-postgate: 基线 z_h=${Z_H}m,等下降沿(z<$(awk "BEGIN{printf \"%.2f\", $Z_H-0.25}"))+中点(z<=$(awk "BEGIN{printf \"%.2f\", $Z_H*0.5}"))" | tee -a "$LOG"
+        EDGE_T=0; MID_T=0
+        while [ $EDGE_T -lt 90 ]; do
+          ZC=$(awk -F, 'NR>1 && $2!=""{v=$2} END{print v}' "$ZF" 2>/dev/null)
+          [ -n "$ZC" ] || { sleep 2; EDGE_T=$((EDGE_T+2)); continue; }
+          if [ "$MID_T" = "0" ]; then
+            awk "BEGIN{exit !($ZC < $Z_H-0.25)}" && { MID_T=1; echo "[drill] auto-postgate: 下降沿命中 @z=${ZC}m" | tee -a "$LOG"; }
+          else
+            awk "BEGIN{exit !($ZC <= $Z_H*0.5)}" && { echo "[drill] auto-postgate: 中点命中 @z=${ZC}m→注入" | tee -a "$LOG"; break; }
+          fi
+          sleep 2; EDGE_T=$((EDGE_T+2))
+        done
+        [ $EDGE_T -ge 90 ] && echo "[drill] auto-postgate: 90s 兜底超时(末 z=${ZC}m)→按时序注入" | tee -a "$LOG"
+      fi
+      kill $ZPID 2>/dev/null
+      rm -f "$ZF"
+    else
+      sleep ${DRILL_POSTGATE:-15}
+    fi
   else
     echo "[drill] WARN armed 门超时(90s),门①后按时序注入" | tee -a "$LOG"
   fi
