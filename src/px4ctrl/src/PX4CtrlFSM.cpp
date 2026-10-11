@@ -157,10 +157,10 @@ void PX4CtrlFSM::process()
 			toggle_offboard_mode(true);
 			ROS_ERROR("[HAFIX] re-assert AUTO_LAND (blind-descend FSM bounce guard)");
 		}
-		// P-1 梯②: KILL 到期即发,双命令: ①cmd400 param1=1.0(MAV_CMD_DO_FLIGHTTERMINATION
-		// 终止语义;缺省 0=取消,旧码反向 bug)②cmd179 param1=0+param2=21196(PX4 官方
-		// forced kill=停电机;二次修复——干测实证 400 单发被活跃 setpoint 流覆盖成
-		// AUTO.LOITER 悬停,armed 恒 True)。返回检查+1Hz 限频重试+失败 FAIL 行;成功行仅返回后打。
+		// P-1 梯②: KILL 到期即发,双命令(三次修复 C-1 终局, 号勘定 185/400——旧 400p1=1=ARM
+		// 空转与旧 179=SET_HOME 均非停电机, 详 fsm_decision.h 注): ①cmd185 param1=1.0
+		// (MAV_CMD_DO_FLIGHTTERMINATION 终止语义) ②cmd400 param1=0+param2=21196
+		// (真 forced disarm=停电机,绕过 landed 检查)。返回检查+1Hz 限频重试+失败 FAIL 行;成功行仅返回后打。
 		if (ha_o.kill_fire && now_time - ha_kill_trial >= ros::Duration(1.0))
 		{
 			ha_kill_trial = now_time;
@@ -176,7 +176,7 @@ void PX4CtrlFSM::process()
 			kill2_srv.request.confirmation = true;
 			bool ok179 = reboot_FCU_srv.call(kill2_srv) && kill2_srv.response.success;
 			if (ok400 && ok179)
-				ROS_ERROR("[HAFIX] %.1fs post-AUTO_LAND still flying -> KILL cmd400 p1=1.0 + cmd179 p2=21196 ACCEPTED",
+				ROS_ERROR("[HAFIX] %.1fs post-AUTO_LAND still flying -> KILL cmd185 p1=1.0 + cmd400 p2=21196 ACCEPTED",
 				          ha_in.dead_elapsed);
 			else
 				ROS_ERROR("[HAFIX] KILL FAIL 400:%d(ack%d r%d) 179:%d(ack%d r%d) -- retry @1s",

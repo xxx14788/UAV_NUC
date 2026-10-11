@@ -292,12 +292,12 @@ static HafixInputs habase()
 }
 TEST(HafixP1, KillSemanticsConstants)
 {
-    // P-1 核心: MAV_CMD_DO_FLIGHTTERMINATION, param1=1.0=engage(0=cancel 反向 bug)
-    EXPECT_EQ(400, HAFIX_KILL_MAVCMD);
+    // P-1 核心: MAV_CMD_DO_FLIGHTTERMINATION=185, param1=1.0=engage(0=cancel 反向 bug)
+    // 三次修复(C-1 终局 run_C1se_184008): 号勘定 185=FLIGHTTERMINATION/400=ARM_DISARM/179=SET_HOME
+    EXPECT_EQ(185, HAFIX_KILL_MAVCMD);
     EXPECT_DOUBLE_EQ(1.0, HAFIX_KILL_PARAM1_ENGAGE);
-    // 二次修复(干测 run_DRILLD1_N8P_042425 实证 400 被活跃 setpoint 流覆盖):
-    // 补发 179+param2=21196 forced kill(disarm -f 同款,空中停电机)
-    EXPECT_EQ(179, HAFIX_KILL2_MAVCMD);
+    // 真身 forced kill = 400(0,21196)(disarm -f 同款,空中停电机)
+    EXPECT_EQ(400, HAFIX_KILL2_MAVCMD);
     EXPECT_DOUBLE_EQ(0.0, HAFIX_KILL2_DISARM);
     EXPECT_DOUBLE_EQ(21196, HAFIX_KILL2_FORCE_MAGIC);
 }

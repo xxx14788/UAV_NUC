@@ -205,13 +205,14 @@ inline Outcome decide_land(const Inputs &in)
 // ---------- T1-v1139 P-1/P-2: HAFIX 梯②③纯决策(可测面;调用侧=PX4CtrlFSM STEP0.5) ----------
 // P-1 语义常量: MAV_CMD_DO_FLIGHTTERMINATION param1 — 1=terminate / 0=cancel。
 // 旧码缺省 0 = 「取消终止」反向 bug 实锤(3d 批 FAIL 侧根因之一),调用点必须用本常量。
-// 二次修复(干测 run_DRILLD1_N8P_042425 实证): 400/param1=1.0 被 FC ACK 但 termination 态被
-// px4ctrl 活跃 setpoint 流覆盖(mode→AUTO.LOITER 悬停 0.59m, armed 恒 True 207s)——补发
-// PX4 官方 kill 语义 = MAV_CMD_COMPONENT_ARM_DISARM(179) param1=0 + param2=21196
-// (commander `disarm -f` 同款 forced 路径,绕过 landed 检查,不依赖 termination 态)。
-constexpr int    HAFIX_KILL_MAVCMD = 400;
+// 三次修复(C-1 终局判决 run_C1se_184008, 2026-10-11): MAV_CMD 号勘定——179=DO_SET_HOME、
+// 400=COMPONENT_ARM_DISARM、185=DO_FLIGHTTERMINATION。旧双命令[400+p1=1.0=已解锁下 ARM 空转,
+// NOT_CHANGED→ACK0]与[179(0,21196)=SET_HOME 到(0,0,0), ACCEPTED 零电机效果]均非停电机;
+// 二次修复注释"179=COMPONENT_ARM_DISARM"为错号起源, "termination 被 setpoint 流覆盖"为幻影
+// (400p1=1 从未携带 termination 意图)。固件行为全正确, 案卷宗=c1_separation/。
+constexpr int    HAFIX_KILL_MAVCMD = 185;         // MAV_CMD_DO_FLIGHTTERMINATION(终止语义)
 constexpr double HAFIX_KILL_PARAM1_ENGAGE = 1.0;
-constexpr int    HAFIX_KILL2_MAVCMD = 179;        // MAV_CMD_COMPONENT_ARM_DISARM
+constexpr int    HAFIX_KILL2_MAVCMD = 400;        // MAV_CMD_COMPONENT_ARM_DISARM(真身)
 constexpr double HAFIX_KILL2_DISARM = 0.0;        // param1 = DISARM
 constexpr double HAFIX_KILL2_FORCE_MAGIC = 21196; // param2 = force 码(空中停电机)
 
