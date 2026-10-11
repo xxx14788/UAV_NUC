@@ -117,3 +117,10 @@
 - **NUC 腿独立抽验 ✓**：ssh nuc md5sum analysis/j3_image_metrics.py=3721399e（承 13:09 六工具 6/6 的第三方复核）。
 - **月报核验**：117 条基线确认（第二十周期 6 条=第 26-31 条，"111+6=117 条为下任并入基线"收尾行在册）；**"周期增补节模板 v1.1"缺空**（全文无并入规则模板节）——T4 本会话补做（月报新章+§10.5 注记）。
 - 正本零触碰复核：verdicts 正本 docs/t4_verdicts_v2.md=4f34d500 复测一致 ✓；草稿 bd042be6 未动（主会话认领转录悬置维持）。
+
+### 10.4 hbloop 属主守护面单测补做（T4 v5.33，2026-10-11 15:4x；销号合并册 B 清单"锁hbloop独立重跑"）
+
+- 被测件=sitl_lock.sh v3 d7b3efa0（repo 权威位，零改动）；侧锁制（SITL_LOCK_FILE=/tmp/t4_hbloop_test_v533.lock，SITL_LOCK_SKIP_DISK_GATE=1 非飞行用途）。
+- 四机制点 **8/8 PASS rc=0**：①get 显式 $$ owner 契约 ②heartbeat 阳性（匹配前缀 symlink mtime 刷新）③heartbeat 属主守卫阴性（非属主前缀 rc=1 拒代心跳+mtime 零改动）④hbloop 易主自退（易主后一个 300s 心跳周期内自退，新主 get/heartbeat 不受影响）。
+- 凭据=hbloop_owner_guard_test_v533.md（本目录+Windows t4/v533_out/ 同步存档，md5 75528603 三方一致）；与 E1 v3 回归新例 7/7（hbloop 相关）互证=守护面双覆盖。
+- v3.1 候选面：本轮测试未发现新缺陷，无候选项产生（守卫面维持 v3 原样）；锁 v3 文书 §3.4 未跑项就此闭合。
