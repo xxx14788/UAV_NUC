@@ -1,0 +1,7 @@
+# T4 v5.37 单元4 75袋md5全量重算凭据（2026-10-11 23:45）
+- 基线=75bag_md5_20261010.txt（v5.31 在册，76 行=75 袋+COUNTS 行）
+- 解析根=~/sitl_sim/vins_smoke_runs（WU 族 34）+~/sitl_sim/t3_results（3ARM 族 41）——首跑单根(vins_smoke_runs)报 MISSING 41 系根覆盖不全，双根修正后全解析（发现记录在案）
+- 方式=串行 md5sum 逐袋对照（23:45:18-23:45:29，11s；3090 零负载 pgrep rosbag/gzserver/px4 全 0，IO 预告 STATUS 在册）
+- 复算脚本 md5=bf486683（/tmp/t4v537_u4_recount.sh，本地 D:/drone_VINS/tmp/ 同源）
+- 结果=TOTAL=75 PASS=75 DRIFT=0 MISSING=0
+- 结论=**零漂移，v5.31 在册凭据整体有效**——凭据更新声明：75bag_md5_20261010.txt 继续为正源，无需换代；本凭据=v5.37 时点复验记录
