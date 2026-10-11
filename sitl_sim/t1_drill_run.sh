@@ -119,4 +119,6 @@ if [ -n "$MON_DIR" ] && [ -d "$MON_DIR" ]; then
   cp "$MON_DIR"/* "$EV/" 2>/dev/null
   echo "[drill] monitor 产物回拷 $EV" | tee -a "$LOG"
 fi
+# j0_decomp 步内置(v11.40 unit5; 失败不阻塞轮判读)
+[ -n "$EV" ] && [ -d "$EV" ] && python3 "$HOME/catkin_ws/sitl_sim/analysis/t3_wa_gate.py" --j0-decomp "$EV" >/dev/null 2>&1 || true
 echo "[drill] 完毕 log=$LOG ev=$EV" | tee -a "$LOG"
