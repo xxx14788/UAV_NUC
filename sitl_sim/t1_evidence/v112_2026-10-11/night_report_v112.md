@@ -86,3 +86,15 @@
 - 「当夜耗尽」语义修正：毒域=当日活跃/跨日持续（本日全复现窗在案）；
 - j0d 终滚 **436**（+6：中漂 133/风暴 109）+combo 505 数据行——md5 1876a9f8/c92bc3bf；
 - 文书 unit3_toxic_domain_trace_v1.md §5-6（1e5ac6ab）；机器防线（watch v1.5+首发窗预检）自此默认在役。
+
+## 追加 B 清单（E8P 战果衍生，14:3x 补）
+
+7. **mavros 插件级定位+最小复现实验**：污染在场时 `rosnode info /mavros` advertise 面 30 秒件+裸 mavros 链最小复现（本窗嵌套引号 launch 失败如实注记，清场零残留）——下窗首件候选（连同拦截/重映射处置设计）。
+
+## 终局补遗（16:0x-16:3x 用户督导续跑件——五件全清）
+
+1. **E8P 毒域根除链**（上节 L2a 的完成态）：插件级定位终局=**guided_target**（extras 库符号级；mission/waypoint 两轮排除法）+修复三件（pluginlist 三黑名单/launch 包装/02 脚本 v2）+双验证（裸链 VERDICT=PASS advertise 消失；E8PFIX 整轮 watch **零污染帧** vs 修复前 7 帧）——**双层病理定案**：层1 污染已根除/S8P 间歇污染一并闭；层2 场景原生风暴（njf=270 无污染仍在）归 T2 δ 渲染时戳域。文书 f339ef2a。
+2. **B5 epsilon 带审计=结案**：W/R 分支核对定**分支 W**（estimator.cpp printf %.4f/%.6f 写侧截断，二进制在案）；审计实跑 505 轮 **0/505 边界带（0.0%）**→按意见 §3 记录项关闭。
+3. **B2 M3′ 前基线转录=毕**：m3_baseline_transcription_v1.csv（18 轮 grid/round/j0/four_green/t2fail+t2fail simvins 实查；四绿 6/18 与 M3 v1.1 史账一致；md5 c33f2e3b 记档）。
+4. **引用闭环 v3 面①=执行**：v3 工具（2→12 固定文档面+自动近期族）扫描 46 源/287 refs/450 occ/present 197/dangling 1（锁瞬态预期）/missing 89（/tmp 易失+Windows 异机+瞬态三预期族，无 typo 型）；报告 closure_v3_scan_20261011.txt。
+5. **锁 v3 hbloop 属主守护面单测=PASS**：三面（活 owner 心跳✓/非属主流拒✓/无 preclaim 强抢拒✓=防误抢保护在位）；首测"FAIL"定性=测例前提错（force 无凭被拒正是 v3 保护设计）。

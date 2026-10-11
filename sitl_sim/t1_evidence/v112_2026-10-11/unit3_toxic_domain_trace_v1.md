@@ -62,3 +62,11 @@
 - **坐标确定性**：(642719.x, 4671811.x) 六轮七帧微抖（小数级）=**确定性来源**（≈42.20N 118.75E zone50 UTM——地理换算型而非随机型）。
 - **待单查（下窗 30 秒件）**：`rosnode info /mavros` 或污染在场时 `rostopic info /move_base_simple/goal`——mavros 插件树（waypoint/global_position 在载）中谁 advertise 了 goal 话题；候选方向=mavros 系统插件对 PX4 端某 MAVLink 消息的桥接转发。
 - **机器防线即时价值**：S8P 首发窗预检+全程监听器已在 vins_smoke 默认在役（v1.5）——毒域轮自此带帧级 callerid 取证面。
+
+## 7. 毒域根除链终局（2026-10-11 16:0x-16:2x 收官册补件——插件级定位+修复+双验证）
+
+- **插件级定位终局=`guided_target`**（mavros_extras 1.20.1 src/plugins/guided_target.cpp）：libmavros_extras.so 符号级实证（/move_base_simple/goal 硬编码全局话题+gp_origin 订阅+geographic_msgs 转换助手——UTM 值来源闭环）；mission/waypoint 经两轮黑名单排除法排除（mission 黑名单下 goal 仍在；waypoint 黑名单下 goal 仍在；guided_target 黑名单下 **VERDICT=PASS advertise 面消失**）。
+- **修复三件**：noMission pluginlist（mission+waypoint+guided_target 三黑名单，a0cdda9a）+ mavros_nomission.launch 包装（roslaunch CLI 空值 gcs_url:= 不算 set 坑绕过=launch 内 value="" 传递）+ 02_start_mavros.sh v2（ead14328）。本栈五件套零使用所黑三插件面（恢复路径在文件头注记）。
+- **终验双判读（E8PFIX_161914）**：①**watch 零污染帧**（vs 修复前六轮 7 帧——goal 污染根除实证，判据命中）②轮仍 STOPLOSS（4min，j0=37.6/njf=270 风暴形态残留）。
+- **E8P 毒域双层病理终局定案**：层1=goal UTM 污染（guided_target 桥，**已根除**）；层2=E8P 场景原生 VINS 风暴（无污染下 njf=270 仍在）——修复面归渲染/时戳域（T2 δ 系列在册结论域），非 harness 面。S8P 间歇污染（TK 批 3/5）随层1根除一并闭。
+- 附带战果：t1_minimal_mavros_repro.sh（裸链最小复现法）+t1_fix_validate_bare.sh（插件面验证器）两工具入册；v1 首跑 set -u 先于 source 踩回（V3 老坑重申）。

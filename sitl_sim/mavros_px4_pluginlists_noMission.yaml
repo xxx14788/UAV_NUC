@@ -1,0 +1,19 @@
+# E8P 毒域修复（2026-10-11 收官册）: waypoint 插件硬编码全局话题 /move_base_simple/goal
+# (libmavros.so 二进制实证;发布者插件级定位=裸链mission黑名单下goal仍在→waypoint loaded行实证)
+# ——与 harness goal 话题名冲突; PX4 任务消息触发时发布 UTM 帧毒 goal(六轮七帧实证
+# 642719.x,4671811.x)。mission 一并黑(同族话题,零使用)。本栈五件套零使用
+# /mavros/mission/* 与 waypoint goal 面。恢复=改回 px4.launch。
+plugin_blacklist:
+# common
+- safety_area
+- mission
+- guided_target
+- waypoint
+# extras
+- image_pub
+- vibration
+- distance_sensor
+- rangefinder
+- wheel_odometry
+
+plugin_whitelist: []

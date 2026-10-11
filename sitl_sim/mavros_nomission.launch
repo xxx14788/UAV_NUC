@@ -1,0 +1,15 @@
+<launch>
+	<!-- E8P 毒域修复 v1（2026-10-11 收官册）: mavros 起 stack 包装
+	     mission 插件黑名单(硬编码全局话题 /move_base_simple/goal 与 harness goal 同名
+	     冲突=毒域根因,六轮七帧 UTM 帧实证;本栈零使用 /mavros/mission/*)。
+	     CLI 空值 gcs_url:= 不被 roslaunch 视为 set → 本文件内 value="" 传递(实测)。
+	     恢复旧行为: roslaunch mavros px4.launch fcu_url:=udp://:14540@127.0.0.1:14580 -->
+	<include file="/opt/ros/noetic/share/mavros/launch/node.launch">
+		<arg name="pluginlists_yaml" value="/home/ghj/sitl_sim/mavros_px4_pluginlists_noMission.yaml" />
+		<arg name="config_yaml" value="/opt/ros/noetic/share/mavros/launch/px4_config.yaml" />
+		<arg name="fcu_url" value="udp://:14540@127.0.0.1:14580" />
+		<arg name="gcs_url" value="" />
+		<arg name="tgt_system" value="1" />
+		<arg name="tgt_component" value="1" />
+	</include>
+</launch>
