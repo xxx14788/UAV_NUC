@@ -149,3 +149,11 @@
 - 袋=run_E8PFIX_161914/flight.bag：rosbag info rc=0，duration 189s（3:09），messages 244768，chunks 305/305 等值，size 242891600B——**收讫-待判**。墙钟事实=229s（16:19:14 发射→16:23:03 收束），非 2min 短轮；判据"watch 零污染帧∧非 2min 短轮"的裁定权=T1ENG 预注册域。
 - 事实面（不判读）：watch jsonl 1 行={"type":"first","t":46.48,"callerid":"/rostopic_3174541_*","x":9.01,"y":0.98,"z":1.0}=本地系轮自身 goal 坐标量纲（非 UTM 毒帧签名 642719/4671811 族）；round.log 16:22:31 降级②（VINS 流断/滞后>10s）→16:23:03 STOPLOSS-ABORT 收束 recovery=DEGRADED path=KILL；round.log 含一处 python IndexError 碎片（工具面，T1ENG 域）。
 - W-R8PFIX 转为"已收讫待 T1ENG 判读"；本会话续收毕收工。
+
+### 10.9 滚动收·合并册二次返场三行收讫+根除链闭环销号（T4 v5.34 清账会话 16:4x）
+
+- 16:26 续跑五件全清收讫：E8P 根除链终局（guided_target 插件定案+双验证 PASS=裸链 advertise 面消失+E8PFIX 全轮 watch 零污染帧 vs 修复前 7/7；层 2 风暴 njf=270 归 T2 渲染时戳域；295816c ERADICATED）+B5 结案（W 分支 printf 截断+audit 0/505）+B2 转录毕（c33f2e3b；**verdicts 正本 4f34d500 未变=未落正本**，与定稿的语义区分见 v5.34 C3）+闭环 v3 面①执行（46 源 287 refs，missing=全预期族）+hbloop 守护面 3-case PASS（no-preclaim force refusal=设计保护面）。
+- 16:29 ②b 层①末件毕收讫：t2_window_bias_metric.py+4 轮实跑（|Bas| 窗内 Δ+0.127~+1.006 中位+0.537、|Bgs|≤0.009=加速度计主导；为 v10.10 终判补逐轮数值证据、证伪不翻案；commit 42e6b18）。
+- 16:35 合并册 v1.1 完成清账版落盘收讫（5064058d 三处一致；3090 HEAD=4ff330c）。
+- 根除链四资产入仓核验：git show --stat 295816c 含 02_start_mavros.sh/mavros_nomission.launch/mavros_px4_pluginlists_noMission.yaml/t1_minimal_mavros_repro.sh——§10.7 三锚为入仓前实测，两态逐位一致。
+- 销号联动：本会话《可做而未做清单》第 1（引用闭环 v3 执行）/3（E8P 插件级）/4（②b 层①）/5（B5/B2 溯源）条由工程册销号；§10.8 W-R8PFIX→判读宣告已到（16:26"全轮零污染帧"），状态转"判读宣告已收"（全文书权 T1ENG）。
