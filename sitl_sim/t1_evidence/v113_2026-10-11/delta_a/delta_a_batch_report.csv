@@ -1,0 +1,5 @@
+cell,round,tag,verdict,jump,arrive,disarm,imgrec,imgbag,kept_after
+DAn8p_5,5,DAn8p_5,FAIL,2.492,8.633,1,on,14G,0
+DAn8p_6,6,DAn8p_6,FAIL,0.135,7.790,1,on,14G,0
+DAn8p_7,7,DAn8p_7,FAIL,2.832,9.466,1,on,14G,0
+DAn8p_8,8,DAn8p_8,FAIL,7.955,8.508,1,on,15G,0

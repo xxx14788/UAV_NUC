@@ -44,7 +44,7 @@
 | A1 | 09-27 | ssh 复合命令含 pkill 模式串→自匹配杀掉自己会话（exit 255） | 清理落脚本文件（t3_clean.sh）+清理与启动分两次 ssh；模式串用 [x] 字符类 | 已落 | sitl-debug-toolbox-lessons | 复发：ssh 纪律③ pgrep -f [x] 规避内化 |
 | A2 | 09-29 | ssh heredoc/echo 写中文必乱码（GBK/UTF-8 转码层破坏） | 红线⑥：本地 UTF-8 写→scp→远端 cat 拼接 | 已落 | nuc-ops-pitfalls-round2#1 + night-ops-v61#4 | 复发2（变体=复合命令 echo 进 STATUS） |
 | A3 | 09-30 | ssh heredoc 引号错位→尾随空格文件名，git 显 ?? 内容进错文件 | `ls \| cat -A` 查验 | 已落 | t4-j3 工具三坑③ | |
-| A4 | 10-01 | 非交互 ssh 无 ROS 环境（ros 工具/rosbag 不在 PATH） | bash -lc 显式 source（ssh 纪律①） | 已落 | t4-jr-batch→J-R 五坑⑤（verdicts L121） | 复发：10-04 rosbag 不在默认 PATH（v514） |
+| A4 | 10-01 | 非交互 ssh 无 ROS 环境（ros 工具/rosbag 不在 PATH） | bash -lc 显式 source（ssh 纪律①） | 已落 | t4-jr-batch→J-R 五坑⑤（verdicts L121） | 复发：10-04 rosbag 不在默认 PATH（v514）；复发2：10-11 旧机 roslaunch No such file + vins_node libxmlrpcpp.so 缺（LD_LIBRARY_PATH 未带，v116 旧机窗两例） |
 | A5 | 10-01 | `set -u` 在 ROS setup source 前杀脚本（setup 内未绑定变量）且报错被 2>&1 吞 | 先 source 后 set -u/作用域化 set +u | 已落 | J-R 五坑①（L118）+v57 工具坑② | 复发2 |
 | A6 | 10-01 | ssh 后台+管道→退出码/输出双双失真 | 远端落日志文件+REMOTE_RC 显式回传 | 已落 | J-R 五坑④（L121） | |
 | A7 | 10-01 | rosbag 探测 pgrep -x 探不到 python 包装、pgrep -f 被外层含"rosbag"字样命令自命中毒计数 | `ps -eo comm=\|grep -cx rosbag` | 已落 | J-R 五坑②（L119） | 与 A1 同族 |
@@ -260,3 +260,17 @@
 34. **文件内不得写自身 md5（自指发散）**：月报模板节初版把"并入本节后 md5=X"写进文件自身——写入动作改变文件使 X 永不成立——与 d2v selftest [5]"断言自污染"同族（ENG 13:26 修复例），对冲=自引用凭据一律落文件外载体（台账/STATUS 落档值），文件内只写"以台账落档值为准"（T4 v5.33 实证）。
 
 （第二十周期 T4 补录完：117+3=120 条为下任并入基线。）
+
+
+## 第二十一周期增补（2026-10-11 工程合并册 v1.6 T1ENG 收官周期；本周期 8 条，承模板 v1.1）
+
+35. **PX4 控制台行宽截断伪影（数字中间截断）**：C1FR 取证打印单行超控制台行宽被定点截断——`src=1/240` 显示成 `src=1/2`（p2 多 4 字符恰好把截断点推进数字中间）；初读差点把"命令被 component2 改写"当真、几乎改错终局判决——对冲=**控制台面只作发现线索，字段级判决必走 ulog/文件面双源核对**（本次 179_fields.py ulog 提取器+ACK target 反推双源兜住，T1ENG v116 run_C1se_184008 实证）。
+36. **MAVCmd 号以注释/口传为准 → 系统性错号（C-1 全案根因）**：fsm_decision.h 注释自称 `179=MAV_CMD_COMPONENT_ARM_DISARM`（真身 400；179=DO_SET_HOME；185=FLIGHTTERMINATION）→ kill 梯双命令全错号（400+p1=1.0=ARM 空转 / 179=SET_HOME）却全 ACK ACCEPTED——**ACK 只证明"命令被正确执行"，不证明"执行的是你以为的事"**——对冲=命令号引用必溯源 `msg/versioned/VehicleCommand.msg` 常量表；kill 类功能以正控轮（预期物理效果断言：armed 翻转/输出归零）为唯一验收（T1ENG v116 修复 89dc2a1+双正控轮实证）。
+37. **heaptrack 包 rosrun → LD_PRELOAD 被 ROS 工具链剥离 → 4K 空文件假数据**：`heaptrack rosrun vins vins_node` 的目标实为 python 脚本 rosrun，vins_node 子进程未被插桩（heaptrack 文件仅 4K=包装进程自身分配）——对冲=profiler 直包目标二进制（`heaptrack <devel/.../vins_node> <yaml>`），事后首查 heaptrack 文件体量（KB 级=未插桩，T1ENG v116 smoke/loopmain 双实例 4K 实证）。
+38. **heaptrack 1.1（focal 仓版本）三面差异**：①无 `heaptrack_interpret` 子命令（rc=127 假命令失败）→用 `heaptrack_print`；②输出文件 `.gz` 非 `.zst`（glob 按新版写必落空）；③`pgrep -f "lib/vins/vins_node"` 先匹配 heaptrack 包装父进程 → RSS 监视器盯错进程（1.6MB 恒定假读数）——对冲=精确名 `pgrep -x vins_node`+版本面命令/文件名核对（T1ENG v116 supp 实证，监视修复后 93MB 真读数）。
+39. **setsid+nohup 掩盖外层重定向失败（后台发射假成功）**：`setsid nohup bash x.sh > dir/不存在的目录/out.log 2>&1 &` 重定向开档即失败、命令根本未起，但 setsid 脱离使发射 shell 照常回显成功；瞬时 pgrep 残影进一步误导——对冲=**后台发射后必验产物**（sleep 数秒 tail 输出文件+轮目录出现，T1ENG v116 δ 批首射早夭实证，重发前 mkdir 补齐）。
+40. **rosbag play --loop 时戳回归 → VINS Ceres NaN → Bus error（回放域新边界条件）**：bag 循环边界仿真时钟倒流，VINS 求解器残差 NaN（trust_region_minimizer Terminating）后 SIGBUS core——存活随机（smoke 300s 活过 2 边界/loopmain 180s 即崩）——飞行域无此路径（时钟单调）；对冲=**回放长窗禁 --loop，用单遍降速（-r 137/7200≈0.019）等效拉伸**（T1ENG v116 loopmain/slowmain 双模实证）。
+41. **Windows WLAN"硬件开/软件关"态（无线电软开关）**：netsh 显示无线电状态"硬件 开/软件 关"，`netsh wlan connect` 报 2150899714（接口电源关闭），非管理员会话无法恢复（enable 需提权）——双机局域网全失联；对冲=ssh config 常备 Tailscale+ProxyJump 跳板别名（本机→uav4 DERP→LAN→3090 全程恢复无需求人，T1ENG v116 开工首 20min 实证）。
+42. **ssh 远程 python heredoc 整体被吞（静默 no-op）**：`ssh host 'python3 - <<EOF ... EOF'` 的 heredoc 经 stdin 通道传输被 ssh 消费链吃掉——python 实际读到空脚本零执行零报错（A2/A3 家族新机理：非乱码非引号错位，是 heredoc 根本未达远端 bash）——对冲=远程打补丁/内联 python 一律走"本地写文件→scp→远端执行"两段式（T1ENG v116 δA 批 R_START 补丁首射 no-op 实证，文件式二射全中）。
+
+（第二十一周期并入完：120+8=128 条为下任并入基线。）

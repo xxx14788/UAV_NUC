@@ -44,11 +44,12 @@ fi
 rosparam set use_sim_time true
 rosparam load "$YAML" /vins_estimator 2>/dev/null || true
 
-# VINS under heaptrack
+# VINS under heaptrack（直包二进制——rosrun 是 python 脚本, ROS 工具链剥 LD_PRELOAD → 4K 空文件事故）
 cd "$EV"
-setsid nohup heaptrack rosrun vins vins_node "$YAML" > "$EV/vins.log" 2>&1 < /dev/null &
+VINSBIN="$HOME/catkin_ws/devel/.private/vins/lib/vins/vins_node"
+setsid nohup heaptrack "$VINSBIN" "$YAML" > "$EV/vins.log" 2>&1 < /dev/null &
 sleep 5
-VPID=$(pgrep -f "lib/vins/vins_node" | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
+VPID=$(pgrep -x vins_node | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
 [ -n "$VPID" ] || { LOG "FATAL VINS 未起(见 vins.log)"; tail -5 "$EV/vins.log"; exit 1; }
 LOG "VINS up pid=$VPID (heaptrack wrapped)"
 
@@ -56,6 +57,7 @@ LOG "VINS up pid=$VPID (heaptrack wrapped)"
 TOPICS="/iris_stereo_vins/vins_cam_left/image_raw /iris_stereo_vins/vins_cam_right/image_raw /mavros/imu/data_raw"
 case "$MODE" in
   smoke)    DUR=300; PLAY="rosbag play $BAG --clock --loop --topics $TOPICS";;
+  supp)     DUR=175; PLAY="rosbag play $BAG --clock --topics $TOPICS";;   # 单遍全速: 零时戳回归, 137s 帧满速
   loopmain) DUR=7200; PLAY="rosbag play $BAG --clock --loop --topics $TOPICS";;
   slowmain) DUR=7200; PLAY="rosbag play $BAG --clock -r 0.019 --topics $TOPICS";;
   *) LOG "FATAL unknown mode"; exit 2;;
@@ -69,7 +71,7 @@ START=$(date +%s)
 : > "$EV/rss.csv"; echo "wall,res_kb,vsz_kb,elapsed_s" >> "$EV/rss.csv"
 while [ $(( $(date +%s) - START )) -lt "$DUR" ]; do
   sleep 60
-  NOW=$(pgrep -f "lib/vins/vins_node" | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
+  NOW=$(pgrep -x vins_node | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
   if [ -z "$NOW" ]; then
     echo "$(date -Is),DEAD,$(( $(date +%s) - START ))" >> "$EV/rss.csv"
     LOG "WARN VINS 死亡 @$(( $(date +%s) - START ))s — 分析现存 heaptrack 文件(部分窗)"
@@ -82,17 +84,17 @@ done
 
 # 收卷: 先停 play 再优雅停 VINS(heaptrack 落盘)
 pkill -f "rosbag pla[y] $BAG" 2>/dev/null; kill $PPID_ 2>/dev/null
-VP=$(pgrep -f "lib/vins/vins_node" | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
+VP=$(pgrep -x vins_node | while read p; do m=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -c "11312"); [ "$m" = "1" ] && echo $p; done | head -1)
 [ -n "$VP" ] && { kill -INT $VP 2>/dev/null; sleep 8; kill -9 $VP 2>/dev/null; }
 sleep 5
 LOG "heaptrack 文件: $(ls -sh "$EV"/heaptrack.* 2>/dev/null | tr '\n' ' ')"
 
-# 解读(符号级归属面)
-HT=$(ls -t "$EV"/heaptrack.*.zst 2>/dev/null | head -1)
+# 解读(符号级归属面; heaptrack 1.1 无 interpret 子命令, 用 heaptrack_print; 文件为 .gz)
+HT=$(ls -t "$EV"/heaptrack.vins_node.*.gz "$EV"/heaptrack.*.gz 2>/dev/null | grep -v rosrun | head -1)
 if [ -n "$HT" ]; then
-  timeout 600 heaptrack_interpret "$HT" > "$EV/heaptrack_interpret.txt" 2>&1 \
+  timeout 600 heaptrack_print "$HT" > "$EV/heaptrack_interpret.txt" 2>&1 \
     && LOG "interpret 毕 ($(wc -l < "$EV/heaptrack_interpret.txt") 行)" \
-    || LOG "WARN interpret 失败/超时(原始 zst 留档)"
+    || LOG "WARN interpret 失败/超时(原始 gz 留档)"
 fi
 echo "=== rss.csv tail ==="; tail -5 "$EV/rss.csv"
 LOG "L2 窗毕 mode=$MODE"

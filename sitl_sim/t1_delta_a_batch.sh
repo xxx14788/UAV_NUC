@@ -6,7 +6,7 @@
 #   ②录制作业验证=轮毕即时(先于裁决): rosbag info 完整性+左右目帧数对齐+首末时戳抽验
 #   ③批判读=绿率对照 M3 N8P 基线(0/3 FAIL) + 每轮 j0d 滚入(t3_wa_gate --j0-decomp, 失败不阻塞)
 # 轮=N8P 格标准 vins_smoke 流程(无注入): goal(1.010,8.980,1.0) world=obstacles budget=300 --stoploss
-# 用法: t1_delta_a_batch.sh [轮数=4]
+# 用法: t1_delta_a_batch.sh [轮数=4] [起始轮号=1]  # 起始轮号>1=扩展批(标签连续,不撞已有 run 目录)
 export ROS_DISTRO=noetic ROS_VERSION=1 \
        ROS_MASTER_URI=${ROS_MASTER_URI:-http://localhost:11311} \
        ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH:-}
@@ -18,6 +18,7 @@ BATCH_DIR="$L/t1_evidence/v113_2026-10-11/delta_a"
 mkdir -p "$BATCH_DIR"
 OUT="$BATCH_DIR/delta_a_batch_report.csv"
 N_ROUNDS="${1:-4}"
+R_START="${2:-1}"
 GX=1.010; GY=8.980; GZ=1.0; WORLD=sitl_world_obstacles; BUDGET=300
 export T1_DELTA_IMG_QUOTA=2
 export T1_DELTA_IMG_STATE="$BATCH_DIR/delta_img_state.txt"
@@ -58,7 +59,7 @@ PY
   tail -6 "$ev/images_check.txt"
 }
 
-for r in $(seq 1 "$N_ROUNDS"); do
+for r in $(seq "$R_START" $(( R_START + N_ROUNDS - 1 ))); do
   TAG="DAn8p_${r}"
   # δA 配额门(drill 层语义逐字移植)
   KEPT=$(grep -c "^KEPT " "$T1_DELTA_IMG_STATE" 2>/dev/null || true); KEPT=${KEPT:-0}

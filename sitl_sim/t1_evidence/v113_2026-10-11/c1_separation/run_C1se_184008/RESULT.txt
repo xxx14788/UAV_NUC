@@ -1,0 +1,10 @@
+=== C-1 v2 轮 RESULT（在线面; mode=separate）===
+run=/home/ghj/sitl_sim/t1_evidence/v113_2026-10-11/c1_separation/run_C1se_184008
+inject=inject_wallclock=2026-10-11T18:41:14+08:00
+observe: armed True=60 False=0
+repro_suspect_online=1
+statustext lines: 0
+0
+c1fr_console lines: 670
+settle tail: 18:45:24 [settle] armed: False mode: MANUAL  z= 18:45:26 [settle] armed: False mode: MANUAL  z= 18:45:28 [settle] armed: False mode: MANUAL  z= 
+（终判=分离判决文书, C1FR 面 + ulog 五元组合并）

@@ -1,0 +1,16 @@
+2026-10-11T19:03:21+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:11:09+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_1_190321 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:11:09+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:18:51+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_2_191109 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:18:51+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:26:36+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_3_191851 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:26:36+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:29:22+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_4_192636 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:31:35+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:39:32+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_5_193135 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:39:32+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:47:15+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_6_193932 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:47:15+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T19:55:11+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_7_194715 (非绿轮,图像袋删;主 flight.bag 保留)
+2026-10-11T19:55:11+08:00 ROUND_START quota=2 kept=0 img=on
+DISCARDED 2026-10-11T20:03:28+08:00 ev=/home/ghj/sitl_sim/vins_smoke_runs/run_DAn8p_8_195511 (非绿轮,图像袋删;主 flight.bag 保留)

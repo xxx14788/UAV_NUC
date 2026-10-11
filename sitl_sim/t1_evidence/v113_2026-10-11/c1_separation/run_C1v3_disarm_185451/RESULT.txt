@@ -1,0 +1,7 @@
+=== C-1 v3 正控轮 RESULT（在线面; spec=disarm; inj='400 0 21196 0 0 0 0 0'）===
+run=/home/ghj/sitl_sim/t1_evidence/v113_2026-10-11/c1_separation/run_C1v3_disarm_185451
+observe: armed True=0 False=45
+ack_online lines: 0
+0
+settle tail: 18:57:17 [observe] armed: False mode: AUTO.LOITER  z= 18:57:19 [observe] armed: False mode: AUTO.LOITER  z= 18:57:21 [observe] armed: False mode: AUTO.LOITER  z= 
+（终判 = ulog 面合并后正控判决: disarm 轮 PASS=armed翻转+输出零; term 轮 PASS=nav TERMINATION）

@@ -1,0 +1,7 @@
+=== C-1 v3 正控轮 RESULT（在线面; spec=term; inj='185 1.0 0 0 0 0 0 0'）===
+run=/home/ghj/sitl_sim/t1_evidence/v113_2026-10-11/c1_separation/run_C1v3_term_185824
+observe: armed True=5 False=40
+ack_online lines: 0
+0
+settle tail: 19:00:49 [observe] armed: False mode: ''  z= 19:00:51 [observe] armed: False mode: ''  z= 19:00:53 [observe] armed: False mode: ''  z= 
+（终判 = ulog 面合并后正控判决: disarm 轮 PASS=armed翻转+输出零; term 轮 PASS=nav TERMINATION）

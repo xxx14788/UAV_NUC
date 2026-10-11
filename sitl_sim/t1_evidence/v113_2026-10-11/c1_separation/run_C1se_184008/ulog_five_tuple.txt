@@ -1,0 +1,19 @@
+ulog: /home/ghj/sitl_sim/t1_evidence/v113_2026-10-11/c1_separation/run_C1se_184008/round.ulg
+ver_sw: d6f12ad1c4f70ad3230afd7d86e971421e02fef4
+duration_s: 255.0
+CMD179 #1: t+50.71s param1=0.0 param2=21196.0 src_comp=240 tgt_comp=1 ext=1
+CMD179 #2: t+171.94s param1=0.0 param2=21196.0 src_comp=240 tgt_comp=1 ext=1
+CMD179 #3: t+174.90s param1=0.0 param2=21196.0 src_comp=240 tgt_comp=1 ext=1
+CMD179 #4: t+177.84s param1=0.0 param2=21196.0 src_comp=240 tgt_comp=1 ext=1
+total vehicle_command rows: 10, cmd179 rows: 4
+ACK179: 4 rows; result histogram: {0: 4}
+  first ACK179 t+50.72s result=0
+  last  ACK179 t+177.85s result=0
+vehicle_status: 516 samples; arming_state flips: [(23.108, 1, 2), (253.988, 2, 1)]
+  arming_state last 3: [1, 1, 1]
+actuator_armed: 516 samples; True=460 False=56; last=False
+nav_state histogram: {4: 51, 14: 465}
+nav_state tail(last<=50 unique-run): [4, 14]
+local_position z bands(10 segments): 0..25s:[-0.02,0.03] 26..51s:[-0.83,0.01] 51..76s:[-0.76,-0.63] 76..102s:[-0.71,-0.62] 102..127s:[-0.75,-0.70] 127..153s:[-0.73,-0.67] 153..178s:[-0.74,-0.70] 178..204s:[-0.75,-0.67] 204..229s:[-0.77,-0.66] 229..254s:[-0.69,-0.01] 254..254s:[-0.06,-0.06]
+events topic: NOT IN ULOG（补采未生效或零事件）
+log_message topic: NOT IN ULOG
