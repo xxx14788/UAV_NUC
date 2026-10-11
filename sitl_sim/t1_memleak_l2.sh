@@ -62,6 +62,7 @@ case "$MODE" in
   slowmain) DUR=7200; PLAY="rosbag play $BAG --clock -r 0.019 --topics $TOPICS";;
   *) LOG "FATAL unknown mode"; exit 2;;
 esac
+DUR="${C1_L2_DUR:-$DUR}"   # 包装器单实例时长覆盖(loopmain 重启包装用)
 setsid nohup $PLAY > "$EV/play.log" 2>&1 < /dev/null &
 PPID_=$!
 LOG "play up ($MODE, ${DUR}s): $PLAY"

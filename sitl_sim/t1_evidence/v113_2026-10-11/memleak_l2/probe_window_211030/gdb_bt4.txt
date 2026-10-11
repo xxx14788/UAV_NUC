@@ -1,0 +1,235 @@
+[New LWP 3345637]
+[New LWP 3345638]
+[New LWP 3345639]
+[New LWP 3345640]
+[New LWP 3345641]
+[New LWP 3345642]
+[New LWP 3345643]
+[New LWP 3345673]
+[New LWP 3345674]
+[New LWP 3345675]
+[New LWP 3345676]
+[New LWP 3345677]
+[New LWP 3345678]
+[New LWP 3345679]
+[New LWP 3345680]
+[New LWP 3345681]
+[New LWP 3345683]
+[New LWP 3345682]
+[New LWP 3345684]
+[New LWP 3345685]
+[New LWP 3345686]
+[New LWP 3345687]
+[New LWP 3345688]
+[New LWP 3345689]
+[New LWP 3345690]
+[New LWP 3345691]
+[New LWP 3345692]
+[New LWP 3345693]
+[New LWP 3345694]
+[New LWP 3345695]
+[New LWP 3345696]
+[New LWP 3345697]
+[New LWP 3345698]
+[New LWP 3345699]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7ffeb4ef7af0, clockid=<optimized out>, expected=0, futex_word=0x55cac24e4ac8) at ../sysdeps/nptl/futex-internal.h:320
+320	../sysdeps/nptl/futex-internal.h: 没有那个文件或目录.
+Breakpoint 1 at 0x7f3873c2df30 (3 locations)
+[Switching to Thread 0x7f386e3de700 (LWP 3345641)]
+=== HIT 1 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.268000000000001) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 2 size=12192 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x000055ca8f940fb1 in std::vector<ceres::internal::CompressedList, std::allocator<ceres::internal::CompressedList> >::_M_default_append(unsigned long) ()
+#2  0x000055ca8f962dfd in ceres::internal::BlockJacobianWriter::CreateJacobian() const ()
+#3  0x000055ca8f95a9e7 in ceres::internal::TrustRegionPreprocessor::Preprocess(ceres::Solver::Options const&, ceres::internal::ProblemImpl*, ceres::internal::PreprocessedProblem*) ()
+#4  0x000055ca8f937517 in ceres::Solver::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#5  0x000055ca8f938a6e in ceres::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#6  0x00007f387bd5a3d4 in Estimator::optimization (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:1736
+#7  0x00007f387bd66a63 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:863
+#8  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#9  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#11 0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 3 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 4 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.372) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 5 size=12160 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x000055ca8f940fb1 in std::vector<ceres::internal::CompressedList, std::allocator<ceres::internal::CompressedList> >::_M_default_append(unsigned long) ()
+#2  0x000055ca8f962dfd in ceres::internal::BlockJacobianWriter::CreateJacobian() const ()
+#3  0x000055ca8f95a9e7 in ceres::internal::TrustRegionPreprocessor::Preprocess(ceres::Solver::Options const&, ceres::internal::ProblemImpl*, ceres::internal::PreprocessedProblem*) ()
+#4  0x000055ca8f937517 in ceres::Solver::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#5  0x000055ca8f938a6e in ceres::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#6  0x00007f387bd5a3d4 in Estimator::optimization (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:1736
+#7  0x00007f387bd66a63 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:863
+#8  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#9  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#11 0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 6 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 7 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.504000000000001) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 8 size=11488 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x000055ca8f940fb1 in std::vector<ceres::internal::CompressedList, std::allocator<ceres::internal::CompressedList> >::_M_default_append(unsigned long) ()
+#2  0x000055ca8f962dfd in ceres::internal::BlockJacobianWriter::CreateJacobian() const ()
+#3  0x000055ca8f95a9e7 in ceres::internal::TrustRegionPreprocessor::Preprocess(ceres::Solver::Options const&, ceres::internal::ProblemImpl*, ceres::internal::PreprocessedProblem*) ()
+#4  0x000055ca8f937517 in ceres::Solver::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#5  0x000055ca8f938a6e in ceres::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#6  0x00007f387bd5a3d4 in Estimator::optimization (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:1736
+#7  0x00007f387bd66a63 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:863
+#8  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#9  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#11 0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 9 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 10 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.603999999999999) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 11 size=11488 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x000055ca8f940fb1 in std::vector<ceres::internal::CompressedList, std::allocator<ceres::internal::CompressedList> >::_M_default_append(unsigned long) ()
+#2  0x000055ca8f962dfd in ceres::internal::BlockJacobianWriter::CreateJacobian() const ()
+#3  0x000055ca8f95a9e7 in ceres::internal::TrustRegionPreprocessor::Preprocess(ceres::Solver::Options const&, ceres::internal::ProblemImpl*, ceres::internal::PreprocessedProblem*) ()
+#4  0x000055ca8f937517 in ceres::Solver::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#5  0x000055ca8f938a6e in ceres::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#6  0x00007f387bd5a3d4 in Estimator::optimization (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:1736
+#7  0x00007f387bd66a63 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:863
+#8  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#9  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#11 0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 12 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 13 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.704000000000001) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 14 size=10592 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x000055ca8f940fb1 in std::vector<ceres::internal::CompressedList, std::allocator<ceres::internal::CompressedList> >::_M_default_append(unsigned long) ()
+#2  0x000055ca8f962dfd in ceres::internal::BlockJacobianWriter::CreateJacobian() const ()
+#3  0x000055ca8f95a9e7 in ceres::internal::TrustRegionPreprocessor::Preprocess(ceres::Solver::Options const&, ceres::internal::ProblemImpl*, ceres::internal::PreprocessedProblem*) ()
+#4  0x000055ca8f937517 in ceres::Solver::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#5  0x000055ca8f938a6e in ceres::Solve(ceres::Solver::Options const&, ceres::Problem*, ceres::Solver::Summary*) ()
+#6  0x00007f387bd5a3d4 in Estimator::optimization (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:1736
+#7  0x00007f387bd66a63 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:863
+#8  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#9  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#11 0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 15 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 16 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.835999999999999) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 17 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd65ac9 in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2188
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+=== HIT 18 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd66397 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=30.968) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:666
+#2  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#3  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+[New Thread 0x7f384cbf3700 (LWP 3345931)]
+[Thread 0x7f384cbf3700 (LWP 3345931) exited]
+[New Thread 0x7f3807fff700 (LWP 3345932)]
+[Thread 0x7f3807fff700 (LWP 3345932) exited]
+[New Thread 0x7f38077fe700 (LWP 3345933)]
+[Thread 0x7f38077fe700 (LWP 3345933) exited]
+[New Thread 0x7f3806ffd700 (LWP 3345934)]
+[Thread 0x7f3806ffd700 (LWP 3345934) exited]
+=== HIT 19 size=10512 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd6545e in Estimator::slideWindow (this=this@entry=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:2143
+#2  0x00007f387bd66c70 in Estimator::processImage (this=0x55ca8fb32680 <estimator>, image=..., header=<optimized out>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:920
+#3  0x00007f387bd6ac25 in Estimator::processMeasurements (this=0x55ca8fb32680 <estimator>) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:468
+#4  0x00007f387ad00df4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007f387b71e609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007f387a9eb353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+[Switching to Thread 0x7f3870452740 (LWP 3345634)]
+=== HIT 20 size=10224 ===
+#0  0x00007f387acd4b10 in operator new(unsigned long) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#1  0x00007f387bd5687c in __gnu_cxx::new_allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >*>::allocate (this=<synthetic pointer>, __n=1278) at /usr/include/c++/9/ext/new_allocator.h:102
+#2  std::allocator_traits<std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >*> >::allocate (__a=<synthetic pointer>..., __n=1278) at /usr/include/c++/9/bits/alloc_traits.h:443
+#3  std::_Deque_base<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::_M_allocate_map (this=0x55ca8fb32710 <estimator+144>, __n=1278) at /usr/include/c++/9/bits/stl_deque.h:634
+#4  std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::_M_reallocate_map (__add_at_front=false, __nodes_to_add=1, this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/deque.tcc:954
+#5  std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::_M_reserve_map_at_back (__nodes_to_add=1, this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/stl_deque.h:2198
+#6  std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::_M_push_back_aux<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > (this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/deque.tcc:491
+#7  std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::emplace_back<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > (this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/deque.tcc:174
+#8  std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >::push_back (__x=..., this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/stl_deque.h:1585
+#9  std::queue<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::deque<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> >, std::allocator<std::pair<double, Eigen::Matrix<double, 3, 1, 0, 3, 1> > > > >::push (__x=..., this=0x55ca8fb32710 <estimator+144>) at /usr/include/c++/9/bits/stl_queue.h:265
+#10 Estimator::inputIMU (this=0x55ca8fb32680 <estimator>, t=62.840000000000003, linearAcceleration=..., angularVelocity=...) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/estimator/estimator.cpp:238
+#11 0x000055ca8f8fdd11 in imu_callback (imu_msg=...) at /home/ghj/catkin_ws/src/VINS-Fusion/vins_estimator/src/rosNodeTest.cpp:183
+#12 0x000055ca8f90bfd2 in boost::function1<void, boost::shared_ptr<sensor_msgs::Imu_<std::allocator<void> > const> const&>::operator() (a0=..., this=<optimized out>) at /usr/include/boost/function/function_template.hpp:677
+#13 boost::detail::function::void_function_obj_invoker1<boost::function<void (boost::shared_ptr<sensor_msgs::Imu_<std::allocator<void> > const> const&)>, void, boost::shared_ptr<sensor_msgs::Imu_<std::allocator<void> > const> >::invoke(boost::detail::function::function_buffer&, boost::shared_ptr<sensor_msgs::Imu_<std::allocator<void> > const>) (function_obj_ptr=..., a0=...) at /usr/include/boost/function/function_template.hpp:158
+[Inferior 1 (process 3345634) detached]
