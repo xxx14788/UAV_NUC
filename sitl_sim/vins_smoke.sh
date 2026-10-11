@@ -274,7 +274,7 @@ fi
 # (判读面伪影注记口径+毒域溯源素材);首发窗预检在 goal 段;此处=轮内全程兜底监听。
 GPWPID=""
 setsid nohup python3 "$HOME/catkin_ws/sitl_sim/t1_goal_pollution_watch.py" \
-  --out "$EV/goal_pollution_watch.jsonl" >/dev/null 2>&1 < /dev/null &
+  --out "$EV/goal_pollution_watch.jsonl" --snap-publishers >/dev/null 2>&1 < /dev/null &
 GPWPID=$!
 
 # ---------- 1b 飞行中前兆门 watchdog+RTF 探针(v11.20 单元1b;--gate 1;纯脚本面) ----------

@@ -51,3 +51,14 @@
 - **L2a 解锁**（发布者定位）：污染帧在场时 `rostopic info /move_base_simple/goal` publishers 实读——需轮内窗口（本轮已收束无法追），列下窗 L2a 首件；候选面=seq 域分析（污染帧恒 seq=0 或独立递增域=发布频率极低的常驻节点）。
 - 假说 A（状态残留）：本轮 plain world+全新 SITL 起栈（无前夜状态）仍复现——**跨夜残留子假说进一步削弱**（连同 §1.2 banner 同代，A 假说主证据面基本收窄至 gate 参数/世界状态两冷门面）。
 - 工具注记：early_landing_line 首战 $BAG 空展开 NA（显式路径修复已落码；本轮 RESULT 尾行手动补算同口径 z_end=0.104→landed=1）。
+
+## 6. L2a 发布者定位战果（2026-10-11 13:36-14:04 五轮连环：L2A/L2B/L2C/L2D/L2E）
+
+- **5/5 连续复现**（毒域今日全活跃态，另加 L1 共 6/6）——「当夜耗尽」语义修正：毒域=**当日活跃/跨日持续**形态（本日 13:28-14:04 窗全复现）。
+- **watch 探针四代迭代**（v1.1 publishers 拍照→v1.2 rosgraph systemState→v1.3 rostopic 进程命令行→v1.4 TCP 连接层→v1.5 **callerid 帧级**）：
+  - **发布者节点定案=`/mavros`**（L2E 帧级实证 `callerid:"/mavros"`）；
+  - harness 全清白链：我方 rostopic pub 参数逐字正常（L2C/L2D 命令行快照）+seq 域证明（我方 pub seq 递增≠污染帧 seq 0/1 独立域）+全 launch 零 __name 重映射+plain world 零插件+api 插件二进制零 goal 字符串；
+  - 排除链在案：gazebo world 插件（0 plugin）/api 插件（strings 无 move_base）/我方 pub（参数+seq 域）/非注册发布者（TCP 连接表全量核）。
+- **坐标确定性**：(642719.x, 4671811.x) 六轮七帧微抖（小数级）=**确定性来源**（≈42.20N 118.75E zone50 UTM——地理换算型而非随机型）。
+- **待单查（下窗 30 秒件）**：`rosnode info /mavros` 或污染在场时 `rostopic info /move_base_simple/goal`——mavros 插件树（waypoint/global_position 在载）中谁 advertise 了 goal 话题；候选方向=mavros 系统插件对 PX4 端某 MAVLink 消息的桥接转发。
+- **机器防线即时价值**：S8P 首发窗预检+全程监听器已在 vins_smoke 默认在役（v1.5）——毒域轮自此带帧级 callerid 取证面。
