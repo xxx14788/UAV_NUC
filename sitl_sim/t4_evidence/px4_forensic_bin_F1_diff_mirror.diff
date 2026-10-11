@@ -1,0 +1,101 @@
+diff --git a/src/modules/commander/Commander.cpp b/src/modules/commander/Commander.cpp
+index 663223c9bf..b880df8ba7 100644
+--- a/src/modules/commander/Commander.cpp
++++ b/src/modules/commander/Commander.cpp
+@@ -548,7 +548,11 @@ static constexpr const char *arm_disarm_reason_str(arm_disarm_reason_t calling_r
+ 
+ transition_result_t Commander::arm(arm_disarm_reason_t calling_reason, bool run_preflight_checks)
+ {
++	PX4_INFO("C1FR[arm] enter preflight=%d isArmed=%d st=%u hrt=%lu", \
++		 (int)run_preflight_checks, (int)isArmed(), (unsigned)_vehicle_status.arming_state, (unsigned long)hrt_absolute_time());
++
+ 	if (isArmed()) {
++		PX4_INFO("C1FR[arm] ret NOT_CHANGED (already armed)");
+ 		return TRANSITION_NOT_CHANGED;
+ 	}
+ 
+@@ -637,7 +641,11 @@ transition_result_t Commander::arm(arm_disarm_reason_t calling_reason, bool run_
+ 
+ transition_result_t Commander::disarm(arm_disarm_reason_t calling_reason, bool forced)
+ {
++	PX4_INFO("C1FR[disarm] enter forced=%d isArmed=%d st=%u hrt=%lu", \
++		 (int)forced, (int)isArmed(), (unsigned)_vehicle_status.arming_state, (unsigned long)hrt_absolute_time());
++
+ 	if (!isArmed()) {
++		PX4_INFO("C1FR[disarm] ret NOT_CHANGED (not armed)");
+ 		return TRANSITION_NOT_CHANGED;
+ 	}
+ 
+@@ -689,6 +697,9 @@ transition_result_t Commander::disarm(arm_disarm_reason_t calling_reason, bool f
+ 
+ 	_status_changed = true;
+ 
++	PX4_INFO("C1FR[disarm] WROTE DISARMED st_now=%u status_changed=%d hrt=%lu", \
++		 (unsigned)_vehicle_status.arming_state, (int)_status_changed, (unsigned long)hrt_absolute_time());
++
+ 	return TRANSITION_CHANGED;
+ }
+ 
+@@ -961,6 +972,10 @@ Commander::handle_command(const vehicle_command_s &cmd)
+ 				// Arm is forced (checks skipped) when param2 is set to a magic number.
+ 				const bool forced = (static_cast<int>(lroundf(cmd.param2)) == 21196);
+ 
++				PX4_INFO("C1FR[armdis] enter action=%d forced=%d ext=%d isArmed=%d st=%u hrt=%lu", \
++					 (int)arming_action, (int)forced, (int)cmd.from_external, (int)isArmed(), \
++					 (unsigned)_vehicle_status.arming_state, (unsigned long)hrt_absolute_time());
++
+ 				transition_result_t arming_res = TRANSITION_DENIED;
+ 				arm_disarm_reason_t arm_disarm_reason = cmd.from_external ? arm_disarm_reason_t::command_external :
+ 									arm_disarm_reason_t::command_internal;
+@@ -973,6 +988,9 @@ Commander::handle_command(const vehicle_command_s &cmd)
+ 
+ 				}
+ 
++				PX4_INFO("C1FR[armdis] res=%d isArmed=%d st=%u hrt=%lu", \
++					 (int)arming_res, (int)isArmed(), (unsigned)_vehicle_status.arming_state, (unsigned long)hrt_absolute_time());
++
+ 				if (arming_res == TRANSITION_DENIED) {
+ 					cmd_result = vehicle_command_ack_s::VEHICLE_CMD_RESULT_TEMPORARILY_REJECTED;
+ 
+@@ -1891,6 +1909,12 @@ void Commander::run()
+ 			vehicle_command_s cmd;
+ 
+ 			if (_vehicle_command_sub.copy(&cmd)) {
++				PX4_INFO("C1FR[loop] cmd=%lu p1=%.4f p2=%.4f p3=%.4f p4=%.4f p5=%.4f p6=%.4f p7=%.4f tgt=%u/%u src=%u/%u ext=%d gen=%u->%u ts=%lu", \
++					 (unsigned long)cmd.command, (double)cmd.param1, (double)cmd.param2, (double)cmd.param3, (double)cmd.param4, \
++					 (double)cmd.param5, (double)cmd.param6, (double)cmd.param7, \
++					 (unsigned)cmd.target_system, (unsigned)cmd.target_component, (unsigned)cmd.source_system, (unsigned)cmd.source_component, \
++					 (int)cmd.from_external, last_generation, _vehicle_command_sub.get_last_generation(), (unsigned long)cmd.timestamp);
++
+ 				if (_vehicle_command_sub.get_last_generation() != last_generation + 1) {
+ 					PX4_ERR("vehicle_command lost, generation %u -> %u", last_generation, _vehicle_command_sub.get_last_generation());
+ 				}
+@@ -1898,6 +1922,8 @@ void Commander::run()
+ 				if (handle_command(cmd)) {
+ 					_status_changed = true;
+ 				}
++			} else {
++				PX4_INFO("C1FR[loop] COPY-FAILED gen=%u", last_generation);
+ 			}
+ 		}
+ 
+@@ -1944,6 +1970,10 @@ void Commander::run()
+ 			_vehicle_status.timestamp = hrt_absolute_time();
+ 			_vehicle_status_pub.publish(_vehicle_status);
+ 
++			PX4_INFO("C1FR[pub] arming=%u act_armed=%d nav=%lu hrt=%lu", \
++				 (unsigned)_vehicle_status.arming_state, (int)_actuator_armed.armed, \
++				 (unsigned long)_vehicle_status.nav_state, (unsigned long)hrt_absolute_time());
++
+ 			// failure_detector_status publish
+ 			failure_detector_status_s fd_status{};
+ 			fd_status.fd_roll = _failure_detector.getStatusFlags().roll;
+@@ -2641,6 +2671,8 @@ void Commander::printRejectMode(uint8_t nav_state)
+ 
+ void Commander::answer_command(const vehicle_command_s &cmd, uint8_t result)
+ {
++	PX4_INFO("C1FR[ack] cmd=%lu result=%u", (unsigned long)cmd.command, (unsigned)result);
++
+ 	switch (result) {
+ 	case vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED:
+ 		break;
