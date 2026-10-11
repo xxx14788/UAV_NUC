@@ -107,6 +107,7 @@ run_BX_E8P_A_053810,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.
 run_DRILLD1_N8P_190228,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,17.4924,11.9474,6.0368,0.6643,45,mixed,15027,0,,,,,
 run_DRILLD4_N8P_152705,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,0.5521,0.3132,0.3618,0.464,4,mixed,19331,0,,,,,
 run_DRILLD5_N8P_155544,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,0.6025,0.632,1.0232,0.3818,4,mixed,85802,0,,,,,
+run_E8PL1_132824,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,35.5173,17.7028,18.0098,0.4957,138,mixed,10535,0,,,,,
 run_M3RE8P_2_160934,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,17.3575,10.3367,8.2858,0.5551,106,mixed,18486,0,,,,,
 run_M3RE8P_3_161639,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,42.0194,11.559,31.3859,0.2692,151,transit,18083,0,,,,,
 run_M3pAB_default_E8P_055226,3090(推定:boot窗),B1006,SG:guard=1 sane_p=50.0 sane_v=15.0 resume_gap=,中漂移,,39.6562,20.7972,19.8524,0.5116,322,mixed,19351,0,,,,,

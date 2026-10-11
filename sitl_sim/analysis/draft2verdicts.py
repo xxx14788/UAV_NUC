@@ -145,9 +145,12 @@ def selftest(text, out_text, dropped, synth, src_path):
             w, cd, co, "一致" if cd == co else "不一致"))
         ok &= (cd == co)
     # 凭据记号计数（零增删证据）
+    # v112 修复: 排除工具自合成的章尾出处行（模板含"凭据"二字——自污染计数
+    # 27vs28 假 FAIL; 产物中形态="> 本节=draft2verdicts.py..."blockquote 行）
     cd = sum(1 for l in lines if "凭据" in l)
-    co = sum(1 for l in out_text.splitlines() if "凭据" in l)
-    ev.append("[5] 含'凭据'行数: 草稿 {} vs 输出 {} -> {}".format(
+    co = sum(1 for l in out_text.splitlines()
+             if "凭据" in l and not l.startswith("> 本节=draft2verdicts.py"))
+    ev.append("[5] 含'凭据'行数(排除自合成出处行): 草稿 {} vs 输出 {} -> {}".format(
         cd, co, "一致" if cd == co else "不一致"))
     ok &= (cd == co)
     # 逐节行数对照（### 小节为界）

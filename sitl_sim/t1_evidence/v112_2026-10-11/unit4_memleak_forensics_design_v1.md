@@ -40,3 +40,11 @@
 
 - smaps_snap1_1301.txt（旧机 ~/sitl_realmachine/09_reboot_stack_2026-10-09/memleak_forensics_v1/）；watch2 曲线=同目录 v1139 csv；
 - 上游：unit4_vins_memleak_v1140.md（统一模型 v1，c84cb5a4）；本件=其单元 4 执行首步续篇。
+
+## 7. 快照 2 增量模式定案（13:01→13:24，23min 窗；追加于同日）
+
+- snap2：1247 段/4833MB（RSS 4947480KB）；snap1→snap2：**共同段增量合计仅 2MB**（唯一 >2MB 增长段 +2.1MB）；**新增段 15 个合计 918MB**。
+- **增量模式定案=新增段型（arena 泛滥/直配 mmap），主 arena 线性膨胀假设否证**——泄漏 100% 走新段（0.65 段/min，均值 61MB RSS/段）；帧量子在新段内堆积。
+- 对 L1/L2 收窄价值：gdb attach 面改看 **arena/mmap 计数谱**（malloc_stats 的 arena 数+`M_MMAP_THRESHOLD` 行为）而非单一 heap 柱状图；牺牲实例（massif）将直接给新段的分配栈——价值升档。
+- 速率注记：smaps 窗内 2.39GB/h（>watch2 段均值 1.44）=泄漏相波动（统一模型「健康帧占比」解释自洽；两窗均值仍 ≤2.18+带内）。
+- 凭据：memleak_forensics_v1/smaps_snap{1_1301,2_1324}.txt（旧机在档）。

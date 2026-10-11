@@ -305,7 +305,9 @@ stoploss_hit() { [ -f "$EV/stoploss.flag" ]; }
 # 缺行形态)。本函数以同口径从 bag 补算 append;bag 不可读时落 NA 行保持记录面存在。
 early_landing_line() {
   sleep 5   # rosbag record 尾帧 flush 余量
-  python3 "$L/t1_landing_line.py" "$BAG" >> "$EV/RESULT.txt" 2>/dev/null \
+  # v112 修复: 显式路径——E8PL1 首战实测 $BAG 在本函数上下文空展开(open("")=FileNotFoundError→NA 行);
+  # $EV 已验证可靠(同路径 RESULT.txt 写出正常), 故直取 "$EV/flight.bag"
+  python3 "$L/t1_landing_line.py" "$EV/flight.bag" >> "$EV/RESULT.txt" 2>/dev/null \
     || echo "LANDING: z_end=NA m (补算器不可用)->NA" >> "$EV/RESULT.txt"
 }
 

@@ -42,3 +42,12 @@
 - 盘点表全量=本件 §1（可复扫脚本=ls+RESULT/gt/j0d 三列循环，3090 现场执行 2026-10-11 13:0x）
 - 上游：unit3_a1_expand_verdict_v1140.md §2（E8P 0/3 毒域耗尽复现）；unit5_baseline50pp_decomposition_v1.md（毒域两格三批全败结构性）；TK_S8P_B UTM 签名（642716,5722260,0）。
 - 工具：goal_pollution_watch（本日上线，057707b3）——L1 的假说 B 证据面。
+
+## 5. L1 复验轮判读（2026-10-11 13:28-13:30 提前执行；run_E8PL1_132824）
+
+- **形态复现 ✓**：STOPLOSS-ABORT@pursuit-start 短轮 2min 收束（recovery=COMPLETE path=KILL）——与 A1X E8P base 3/3 同构；j0d=j0_total 35.52m/njf=138（风暴爆发型，§1.4 形态带内）。
+- **判读预注册 L1① 命中=假说 B（域内污染源）直证**：goal_pollution_watch 监听器首战实捕污染帧 `{"type":"polluted","t":56.632,"seq":0,"x":642719.34,"y":4671811.32,"z":0.0}`——UTM 形态（x=642719 与 TK_S8P_B 642716 同族；y=4.67e6 与 S8P 5.72e6 不同带=多污染点候选）；**header.seq=0=独立发布者节点签名**（我方 pub seq 递增从 1 起）。
+- **机理链成形**：UTM 污染 goal（t=56.6s）→planner GEN_NEW_TRAJ 向 1e6 级目标规划→VINS 追踪风暴（njf=138）→流断→STOPLOSS 止损→2min 短轮。E8P 毒域=goal 污染间歇彩票（§1.3 轮级彩票语义与此自洽）。
+- **L2a 解锁**（发布者定位）：污染帧在场时 `rostopic info /move_base_simple/goal` publishers 实读——需轮内窗口（本轮已收束无法追），列下窗 L2a 首件；候选面=seq 域分析（污染帧恒 seq=0 或独立递增域=发布频率极低的常驻节点）。
+- 假说 A（状态残留）：本轮 plain world+全新 SITL 起栈（无前夜状态）仍复现——**跨夜残留子假说进一步削弱**（连同 §1.2 banner 同代，A 假说主证据面基本收窄至 gate 参数/世界状态两冷门面）。
+- 工具注记：early_landing_line 首战 $BAG 空展开 NA（显式路径修复已落码；本轮 RESULT 尾行手动补算同口径 z_end=0.104→landed=1）。
