@@ -157,8 +157,16 @@ land_ok = z_end < 0.15
 GATE = 0.75 if ('obstacles' in world or 'corridor' in world) else 0.5   # dao wei scene gate; v1.5 C3: corridor han 7 shiti zhangai, an 10-01 fenmen yuyi chi 0.75 (renwushu danyuan3 yuzhuce)
 ok = [dt1 < GATE, mind > 0.349, hz >= 50, disarm_ok]
 if jump > 0.5:
-    ok[0] = 0
-    print('判据: VINS 帧跳变(%.2fm)>0.5m → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)' % jump)
+    # v1.5h(2026-10-14 C3): 慢漂豁免——|pre-post| 是累积量, 慢漂轮(hover6: 1.28m/102s=0.0126m/s,
+    # j0d 证 jump 分量仅 0.135)被误翻案; 跳变带对照(E4_224447 24m/307s=0.078, E1_205851 21.7m/57s=0.38)。
+    # 门=漂移率 0.03 m/s(3× 慢漂健康带上界); 单帧跳终判归 j0d max_frame_de_m(判据③语义对齐)。
+    _win = (prop[-1][0] - p0[0]) if (prop and p0) else 0
+    _rate = (jump / _win) if _win > 30 else 9.9
+    if _rate > 0.03:
+        ok[0] = 0
+        print('判据: VINS 帧跳变(%.2fm)>0.5m 且漂移率 %.4f m/s>0.03 → 到位判 FAIL(目标物理位置被跳变移走,T2 瞬态发散类)' % (jump, _rate))
+    else:
+        print('注记: |pre-post|=%.2fm>0.5 但漂移率 %.4f m/s≤0.03=慢漂带豁免(v1.5h; 单帧跳终判归 j0d)' % (jump, _rate))
 print('leg1 到位(真值) min=%.3f m (<%.2f,场景门 world=%s)->%d | leg1(VINS自报) min=%.3f m' % (dt1, GATE, world, ok[0], dv1))
 if hasl2 and t2_start:
     dt2 = leg_min(truth, (l2x,l2y,l2z), t2_start, t_end)
