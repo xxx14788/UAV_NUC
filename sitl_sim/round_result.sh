@@ -17,10 +17,10 @@ BOX = {"box_A": (3.5,-1.5,0.0,1.0,1.0,1.8), "box_B": (5.0,-2.5,0.0,1.5,1.0,1.2),
 if world.endswith('_v2'):
     BOX["box_D"] = (6.4,-2.0,0.0,1.0,1.0,2.8); BOX["box_E"] = (6.4,0.5,0.0,1.0,1.0,2.8)
 if "corridor" in world:   # v1.5c C3: GAZEBO frame (truth tong zhen; jiubiao A/B/C shi odom zuobiao dai ±1m xitong cha de lishi baoliu mian). zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8
-    BOX = {"cB1": (4.453,0.787,0.0,1.0,1.0,1.8), "cB2": (7.014,0.077,0.0,1.0,1.0,1.8),
-           "cB3": (9.439,1.162,0.0,1.0,1.0,1.8), "cB4": (12.000,0.453,0.0,1.0,1.0,1.8),
-           "cN1": (2.515,3.143,0.0,1.0,1.0,1.8), "cN2": (4.921,4.270,0.0,1.0,1.0,1.8),
-           "cN3": (6.056,6.673,0.0,1.0,1.0,1.8)}  # v1.5f: world v5 (STAGGER 0.45 S-form iteration; v4 backup 0386316c)
+    BOX = {"cB1": (4.457,0.737,0.0,1.0,1.0,1.8), "cB2": (7.010,0.127,0.0,1.0,1.0,1.8),
+           "cB3": (9.442,1.112,0.0,1.0,1.0,1.8), "cB4": (11.995,0.502,0.0,1.0,1.0,1.8),
+           "cN1": (2.544,3.100,0.0,1.0,1.0,1.8), "cN2": (4.875,4.295,0.0,1.0,1.0,1.8),
+           "cN3": (6.077,6.622,0.0,1.0,1.0,1.8)}  # v1.5g: world v6 (d=0.40 RC-3 retreat; v5 backup 191b06de)
 def dbox(p, b):
     cx,cy,z0,sx,sy,sz = b
     dx = max(abs(p[0]-cx)-sx/2, 0.0); dy = max(abs(p[1]-cy)-sy/2, 0.0)

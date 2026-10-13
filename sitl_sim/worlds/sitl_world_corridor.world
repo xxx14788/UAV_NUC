@@ -41,7 +41,7 @@
     </scene>
 
     <model name="cB1">
-      <pose>5.463 1.767 0.9 0 0 0</pose>
+      <pose>5.467 1.717 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -53,7 +53,7 @@
     </model>
 
     <model name="cB2">
-      <pose>8.024 1.057 0.9 0 0 0</pose>
+      <pose>8.020 1.107 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -65,7 +65,7 @@
     </model>
 
     <model name="cB3">
-      <pose>10.449 2.142 0.9 0 0 0</pose>
+      <pose>10.453 2.092 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -77,7 +77,7 @@
     </model>
 
     <model name="cB4">
-      <pose>13.010 1.433 0.9 0 0 0</pose>
+      <pose>13.006 1.482 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -89,7 +89,7 @@
     </model>
 
     <model name="cN1">
-      <pose>3.525 4.123 0.9 0 0 0</pose>
+      <pose>3.561 4.087 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -101,7 +101,7 @@
     </model>
 
     <model name="cN2">
-      <pose>5.931 5.250 0.9 0 0 0</pose>
+      <pose>5.896 5.286 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -113,7 +113,7 @@
     </model>
 
     <model name="cN3">
-      <pose>7.066 7.653 0.9 0 0 0</pose>
+      <pose>7.102 7.617 0.9 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision"><geometry><box><size>1.0 1.0 1.8</size></box></geometry></collision>
@@ -165,7 +165,7 @@
     </model>
 
     <model name="slab_05">
-      <pose>11.310 7.940 0.02 0 0 0</pose>
+      <pose>6.670 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -175,7 +175,7 @@
     </model>
 
     <model name="slab_06">
-      <pose>8.990 5.620 0.02 0 0 0</pose>
+      <pose>11.310 7.940 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -185,7 +185,7 @@
     </model>
 
     <model name="slab_07">
-      <pose>2.030 -1.340 0.02 0 0 0</pose>
+      <pose>8.990 5.620 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -195,7 +195,7 @@
     </model>
 
     <model name="slab_08">
-      <pose>-0.290 3.300 0.02 0 0 0</pose>
+      <pose>2.030 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -205,7 +205,7 @@
     </model>
 
     <model name="slab_09">
-      <pose>4.350 -1.340 0.02 0 0 0</pose>
+      <pose>-0.290 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -215,7 +215,7 @@
     </model>
 
     <model name="slab_10">
-      <pose>4.350 7.940 0.02 0 0 0</pose>
+      <pose>4.350 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -225,7 +225,7 @@
     </model>
 
     <model name="slab_11">
-      <pose>6.670 10.260 0.02 0 0 0</pose>
+      <pose>4.350 7.940 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -235,7 +235,7 @@
     </model>
 
     <model name="slab_12">
-      <pose>-0.290 -1.340 0.02 0 0 0</pose>
+      <pose>6.670 10.260 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -245,7 +245,7 @@
     </model>
 
     <model name="slab_13">
-      <pose>6.670 -1.340 0.02 0 0 0</pose>
+      <pose>-0.290 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
@@ -255,11 +255,21 @@
     </model>
 
     <model name="slab_14">
-      <pose>8.990 -1.340 0.02 0 0 0</pose>
+      <pose>6.670 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="slab_15">
+      <pose>8.990 -1.340 0.02 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
+          <material><ambient>0.9 0.5 0.1 1</ambient><diffuse>0.9 0.5 0.1 1</diffuse></material>
         </visual>
       </link>
     </model>
