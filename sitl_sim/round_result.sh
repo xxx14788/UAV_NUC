@@ -16,11 +16,11 @@ BOX = {"box_A": (3.5,-1.5,0.0,1.0,1.0,1.8), "box_B": (5.0,-2.5,0.0,1.5,1.0,1.2),
        "box_C": (4.5,-3.5,0.0,1.0,1.0,2.2)}
 if world.endswith('_v2'):
     BOX["box_D"] = (6.4,-2.0,0.0,1.0,1.0,2.8); BOX["box_E"] = (6.4,0.5,0.0,1.0,1.0,2.8)
-if "corridor" in world:   # v1.5(2026-10-13 C3): corridor box zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8 (odom frame)
-    BOX = {"cB1": (2.00,0.20,0.0,1.0,1.0,1.8), "cB2": (4.50,-0.20,0.0,1.0,1.0,1.8),
-           "cB3": (7.00,0.20,0.0,1.0,1.0,1.8), "cB4": (9.50,-0.20,0.0,1.0,1.0,1.8),
-           "cN1": (2.33,2.62,0.0,1.0,1.0,1.8), "cN2": (4.38,4.10,0.0,1.0,1.0,1.8),
-           "cN3": (5.87,6.15,0.0,1.0,1.0,1.8)}
+if "corridor" in world:   # v1.5c C3: GAZEBO frame (truth tong zhen; jiubiao A/B/C shi odom zuobiao dai ±1m xitong cha de lishi baoliu mian). zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8
+    BOX = {"cB1": (4.485,1.442,0.0,1.0,1.0,1.8), "cB2": (7.008,1.231,0.0,1.0,1.0,1.8),
+           "cB3": (9.471,1.818,0.0,1.0,1.0,1.8), "cB4": (11.994,1.607,0.0,1.0,1.0,1.8),
+           "cN1": (3.348,3.593,0.0,1.0,1.0,1.8), "cN2": (5.401,5.074,0.0,1.0,1.0,1.8),
+           "cN3": (6.889,7.123,0.0,1.0,1.0,1.8)}  # v1.5d: world v2 xiangwei (RC-1 xiufu: shoubao rangwei 3.5m + zhen hangxian)
 def dbox(p, b):
     cx,cy,z0,sx,sy,sz = b
     dx = max(abs(p[0]-cx)-sx/2, 0.0); dy = max(abs(p[1]-cy)-sy/2, 0.0)
@@ -141,7 +141,7 @@ g1_ts = next((g[0] for g in goals if abs(g[1]-gx)<0.01 and abs(g[2]-gy)<0.01 and
 w1_to = t2_start if t2_start else t_end
 dt1 = leg_min(truth, (gx,gy,gz), g1_ts, w1_to)
 dv1 = leg_min(prop, (gx,gy,gz), g1_ts, w1_to, anchored=False)
-mind = min(dbox(p, bx) for p in truth for bx in BOX.values()) if truth else -1
+mind = min(dbox((p[1],p[2],p[3]), bx) for p in truth for bx in BOX.values()) if truth else -1  # v1.5b C3: yuan 4-tuple zhijie ru dbox -> p[0]=ts bei dang x zuoobiao(historical mind=ts-vs-box-x weying, 19.8/15.0 deng zhi quantibu weying); fix=(x,y,z) qiepian, yuhe yuyi huigui
 hz = len(cmd)/(cmd[-1][0]-cmd[0][0]) if len(cmd)>10 else 0
 import bisect
 dev = []; ts_prop = [p[0] for p in prop]
