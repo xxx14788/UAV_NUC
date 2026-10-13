@@ -16,6 +16,11 @@ BOX = {"box_A": (3.5,-1.5,0.0,1.0,1.0,1.8), "box_B": (5.0,-2.5,0.0,1.5,1.0,1.2),
        "box_C": (4.5,-3.5,0.0,1.0,1.0,2.2)}
 if world.endswith('_v2'):
     BOX["box_D"] = (6.4,-2.0,0.0,1.0,1.0,2.8); BOX["box_E"] = (6.4,0.5,0.0,1.0,1.0,2.8)
+if "corridor" in world:   # v1.5(2026-10-13 C3): corridor box zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8 (odom frame)
+    BOX = {"cB1": (2.00,0.20,0.0,1.0,1.0,1.8), "cB2": (4.50,-0.20,0.0,1.0,1.0,1.8),
+           "cB3": (7.00,0.20,0.0,1.0,1.0,1.8), "cB4": (9.50,-0.20,0.0,1.0,1.0,1.8),
+           "cN1": (2.33,2.62,0.0,1.0,1.0,1.8), "cN2": (4.38,4.10,0.0,1.0,1.0,1.8),
+           "cN3": (5.87,6.15,0.0,1.0,1.0,1.8)}
 def dbox(p, b):
     cx,cy,z0,sx,sy,sz = b
     dx = max(abs(p[0]-cx)-sx/2, 0.0); dy = max(abs(p[1]-cy)-sy/2, 0.0)
@@ -114,6 +119,7 @@ if a_pre and a_post:
 # 样本(C_sta 与历史位等价因静态窗隐身性;A* 判决面不受影响——两种构造下 A* 同选)。
 print('anchor(双锚取稳A*): (%.3f, %.3f, %.3f) | 帧稳定性 |pre-post|=%.3f m%s'
       % (a[0], a[1], a[2], jump, '  <-- VINS 帧中途跳变!' if jump > 0.5 else ''))
+# v1.5(2026-10-13 C3): corridor world box-table + scene-gate extension; panduan luoji ling gaidong
 # v1.4 双锚取稳双列(prereg §2.8):A* 已用于到位判;gap=‖C_sta−C_dyn‖(未评估=99.9)
 def _fmt(x): return ('(%.3f, %.3f, %.3f)' % x) if x else 'N/A'
 print('DUAL-ANCHOR v1.4: A*=%s rule=%s gap=%.3f flag=%s | sta=%s(n=%d,span=%.1fs,stable=%d) dyn=%s(n=%d,span=%.1fs,stable=%d)'
@@ -148,7 +154,7 @@ disarm_ok = (not armed[-1]) if armed else False
 # 完整降落证据（三列分账 v1 恢复链[2];T3 v10.3 单元 1）：真值末 50 帧 z 均值 <0.15m
 z_end = (sum(t[3] for t in truth[-50:])/min(50, len(truth))) if truth else -1.0
 land_ok = z_end < 0.15
-GATE = 0.75 if 'obstacles' in world else 0.5   # 到位场景门(正源=world 参数)
+GATE = 0.75 if ('obstacles' in world or 'corridor' in world) else 0.5   # dao wei scene gate; v1.5 C3: corridor han 7 shiti zhangai, an 10-01 fenmen yuyi chi 0.75 (renwushu danyuan3 yuzhuce)
 ok = [dt1 < GATE, mind > 0.349, hz >= 50, disarm_ok]
 if jump > 0.5:
     ok[0] = 0
