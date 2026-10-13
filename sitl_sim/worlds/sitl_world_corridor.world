@@ -125,10 +125,9 @@
     </model>
 
     <model name="slab_01">
-      <pose>2.030 0.980 0.02 0 0 0</pose>
+      <pose>8.990 7.940 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.1 1</ambient><diffuse>0.9 0.9 0.1 1</diffuse></material>
         </visual>
@@ -136,10 +135,9 @@
     </model>
 
     <model name="slab_02">
-      <pose>8.990 7.940 0.02 0 0 0</pose>
+      <pose>11.310 10.260 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.1 0.9 1</ambient><diffuse>0.9 0.1 0.9 1</diffuse></material>
         </visual>
@@ -147,10 +145,9 @@
     </model>
 
     <model name="slab_03">
-      <pose>11.310 10.260 0.02 0 0 0</pose>
+      <pose>8.990 10.260 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
         </visual>
@@ -158,10 +155,9 @@
     </model>
 
     <model name="slab_04">
-      <pose>8.990 10.260 0.02 0 0 0</pose>
+      <pose>13.630 0.980 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.9 0.1 1</ambient><diffuse>0.1 0.9 0.1 1</diffuse></material>
         </visual>
@@ -169,10 +165,9 @@
     </model>
 
     <model name="slab_05">
-      <pose>13.630 0.980 0.02 0 0 0</pose>
+      <pose>13.630 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.1 0.9 1</ambient><diffuse>0.1 0.1 0.9 1</diffuse></material>
         </visual>
@@ -180,10 +175,9 @@
     </model>
 
     <model name="slab_06">
-      <pose>-0.290 0.980 0.02 0 0 0</pose>
+      <pose>11.310 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
         </visual>
@@ -191,10 +185,9 @@
     </model>
 
     <model name="slab_07">
-      <pose>13.630 3.300 0.02 0 0 0</pose>
+      <pose>6.670 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.5 0.1 1</ambient><diffuse>0.9 0.5 0.1 1</diffuse></material>
         </visual>
@@ -202,10 +195,9 @@
     </model>
 
     <model name="slab_08">
-      <pose>11.310 3.300 0.02 0 0 0</pose>
+      <pose>11.310 7.940 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.9 0.9 1</ambient><diffuse>0.1 0.9 0.9 1</diffuse></material>
         </visual>
@@ -213,10 +205,9 @@
     </model>
 
     <model name="slab_09">
-      <pose>6.670 3.300 0.02 0 0 0</pose>
+      <pose>8.990 5.620 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.1 1</ambient><diffuse>0.9 0.9 0.1 1</diffuse></material>
         </visual>
@@ -224,10 +215,9 @@
     </model>
 
     <model name="slab_10">
-      <pose>11.310 7.940 0.02 0 0 0</pose>
+      <pose>2.030 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.1 0.9 1</ambient><diffuse>0.9 0.1 0.9 1</diffuse></material>
         </visual>
@@ -235,10 +225,9 @@
     </model>
 
     <model name="slab_11">
-      <pose>8.990 5.620 0.02 0 0 0</pose>
+      <pose>-0.290 3.300 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
         </visual>
@@ -246,10 +235,9 @@
     </model>
 
     <model name="slab_12">
-      <pose>2.030 -1.340 0.02 0 0 0</pose>
+      <pose>4.350 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.9 0.1 1</ambient><diffuse>0.1 0.9 0.1 1</diffuse></material>
         </visual>
@@ -257,10 +245,9 @@
     </model>
 
     <model name="slab_13">
-      <pose>-0.290 3.300 0.02 0 0 0</pose>
+      <pose>2.030 5.620 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.1 0.9 1</ambient><diffuse>0.1 0.1 0.9 1</diffuse></material>
         </visual>
@@ -268,10 +255,9 @@
     </model>
 
     <model name="slab_14">
-      <pose>4.350 -1.340 0.02 0 0 0</pose>
+      <pose>4.350 7.940 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
         </visual>
@@ -279,10 +265,9 @@
     </model>
 
     <model name="slab_15">
-      <pose>2.030 5.620 0.02 0 0 0</pose>
+      <pose>6.670 10.260 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.5 0.1 1</ambient><diffuse>0.9 0.5 0.1 1</diffuse></material>
         </visual>
@@ -290,10 +275,9 @@
     </model>
 
     <model name="slab_16">
-      <pose>4.350 7.940 0.02 0 0 0</pose>
+      <pose>-0.290 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.1 0.9 0.9 1</ambient><diffuse>0.1 0.9 0.9 1</diffuse></material>
         </visual>
@@ -301,10 +285,9 @@
     </model>
 
     <model name="slab_17">
-      <pose>6.670 10.260 0.02 0 0 0</pose>
+      <pose>6.670 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
           <material><ambient>0.9 0.9 0.1 1</ambient><diffuse>0.9 0.9 0.1 1</diffuse></material>
         </visual>
@@ -312,34 +295,11 @@
     </model>
 
     <model name="slab_18">
-      <pose>-0.290 -1.340 0.02 0 0 0</pose>
-      <static>true</static>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
-          <material><ambient>0.9 0.1 0.9 1</ambient><diffuse>0.9 0.1 0.9 1</diffuse></material>
-        </visual>
-      </link>
-    </model>
-
-    <model name="slab_19">
-      <pose>6.670 -1.340 0.02 0 0 0</pose>
-      <static>true</static>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
-          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
-        </visual>
-      </link>
-    </model>
-
-    <model name="slab_20">
       <pose>8.990 -1.340 0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="collision"><geometry><box><size>2.00 2.00 0.02</size></box></geometry></collision>
         <visual name="visual"><geometry><box><size>2.00 2.00 0.02</size></box></geometry>
-          <material><ambient>0.1 0.9 0.1 1</ambient><diffuse>0.1 0.9 0.1 1</diffuse></material>
+          <material><ambient>0.9 0.1 0.9 1</ambient><diffuse>0.9 0.1 0.9 1</diffuse></material>
         </visual>
       </link>
     </model>
