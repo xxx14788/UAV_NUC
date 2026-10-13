@@ -17,10 +17,10 @@ BOX = {"box_A": (3.5,-1.5,0.0,1.0,1.0,1.8), "box_B": (5.0,-2.5,0.0,1.5,1.0,1.2),
 if world.endswith('_v2'):
     BOX["box_D"] = (6.4,-2.0,0.0,1.0,1.0,2.8); BOX["box_E"] = (6.4,0.5,0.0,1.0,1.0,2.8)
 if "corridor" in world:   # v1.5c C3: GAZEBO frame (truth tong zhen; jiubiao A/B/C shi odom zuobiao dai ±1m xitong cha de lishi baoliu mian). zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8
-    BOX = {"cB1": (4.485,1.442,0.0,1.0,1.0,1.8), "cB2": (7.008,1.231,0.0,1.0,1.0,1.8),
-           "cB3": (9.471,1.818,0.0,1.0,1.0,1.8), "cB4": (11.994,1.607,0.0,1.0,1.0,1.8),
-           "cN1": (3.348,3.593,0.0,1.0,1.0,1.8), "cN2": (5.401,5.074,0.0,1.0,1.0,1.8),
-           "cN3": (6.889,7.123,0.0,1.0,1.0,1.8)}  # v1.5d: world v2 xiangwei (RC-1 xiufu: shoubao rangwei 3.5m + zhen hangxian)
+    BOX = {"cB1": (5.482,1.517,0.0,1.0,1.0,1.8), "cB2": (8.005,1.306,0.0,1.0,1.0,1.8),
+           "cB3": (10.468,1.893,0.0,1.0,1.0,1.8), "cB4": (12.991,1.682,0.0,1.0,1.0,1.8),
+           "cN1": (3.702,3.946,0.0,1.0,1.0,1.8), "cN2": (5.755,5.427,0.0,1.0,1.0,1.8),
+           "cN3": (7.243,7.476,0.0,1.0,1.0,1.8)}  # v1.5e: world v4 (RC-1b standoff)  # v1.5d: world v2 xiangwei (RC-1 xiufu: shoubao rangwei 3.5m + zhen hangxian)
 def dbox(p, b):
     cx,cy,z0,sx,sy,sz = b
     dx = max(abs(p[0]-cx)-sx/2, 0.0); dy = max(abs(p[1]-cy)-sy/2, 0.0)
