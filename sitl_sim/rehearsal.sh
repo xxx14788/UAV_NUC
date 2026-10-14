@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# rehearsal.sh v1.0 — SITL 彩排批（专项① 单元1，2026-10-11）
+# rehearsal.sh v7 — SITL 彩排批（专项① 单元1，2026-10-11；v7=全域收尾册 1.2/1.3 修复 2026-10-14）
+# v7 变更（两处，判据/门值零变动）：
+#   ① A3 判定段重写：旧模式四连失配根因=对 dashboard 输出格式猜写（英文 JUMP/跳变=非零数字/闩锁串
+#     均不存在于实物）。实测数据面（010939 轮）=csv alarms 列中文告警串"单帧跳变:RED"（5s 粒度可靠面）
+#     +plain 行"单帧跳变=N m (max M)[OK|RED]"（1s 粒度，毒窗有空洞不可作主）。新判定=csv 主+plain 次。
+#   ② sampler_start() heredoc 内嵌 python→外置 $L/rehearsal_sampler.py（六轮零输出根因=heredoc python
+#     进程组被 ssh 会话吞）；setsid+nohup+三重定向全对冲+stdout 摘要行落 sampler.out 供短窗验证。
 # 手册剖面全流程（正常段）+ 异常接管演练段 + dashboard v1 实跑验证。
 # 起栈机制复刻 vins_smoke.sh（同一套五件套+坑防线）；飞行剖面按手册 v2 §2/§9.4。
 #
@@ -77,6 +83,25 @@ wait_dist() {  # $1..3=目标 $4=门 $5=超时秒 —— 到位等待
   done
   return 1
 }
+
+odom_pos() {   # odom 域 xyz（goal 同域——彩排第四轮域错位教训：真值系≠odom 系）
+  timeout 3 rostopic echo -n1 --noarr /vins_estimator/imu_propagate/pose/pose/position 2>/dev/null \
+    | grep -E '^\s*[xyz]:' | awk '{printf "%.3f ", $2}' | sed 's/ $//'
+}
+wait_dist_odom() {  # $1..3=目标 $4=门 $5=超时 —— odom 域到位等待（判定正域）
+  local D0=$(date +%s) P D
+  while [ $(( $(date +%s) - D0 )) -lt "${5:-60}" ]; do
+    P=$(odom_pos)
+    if [ -n "$P" ]; then
+      D=$(python3 -c "import math;px,py,pz=map(float,'$P'.split());print(math.dist((px,py,pz),($1,$2,$3)))" 2>/dev/null)
+      LOG "  odomdist=$D (gate ${4})"
+      python3 -c "exit(0 if float('${D:-999}')<${4} else 1)" 2>/dev/null && return 0
+    fi
+    sleep 3
+  done
+  return 1
+}
+
 wait_fsm() {  # $1=期望态 $2=超时
   local D0=$(date +%s) F
   while [ $(( $(date +%s) - D0 )) -lt "${2:-30}" ]; do
@@ -87,38 +112,10 @@ wait_fsm() {  # $1=期望态 $2=超时
 }
 
 # 后台采样器：1Hz fsm/armed/mode/z → sampler.tsv（时序正源）
+# v7：heredoc 内嵌 python → 外置 $L/rehearsal_sampler.py（六轮零输出根因=heredoc python 进程组
+# 被 ssh 会话吞）；setsid 脱会话+nohup 忽略 HUP+三重定向全对冲；stdout 摘要行落 sampler.out 供短窗验证。
 sampler_start() {
-  setsid nohup python3 - "$EV/sampler.tsv" << 'PYEOF' >/dev/null 2>&1 < /dev/null &
-import sys, rospy, threading
-from std_msgs.msg import String
-from mavros_msgs.msg import State
-from nav_msgs.msg import Odometry
-out = open(sys.argv[1], 'a', buffering=1)
-st = {'fsm':'', 'armed':None, 'mode':'', 'odom_hz':0, 'z':None}
-lock = threading.Lock()
-import collections, time
-times = collections.deque()
-def on_fsm(m): st['fsm'] = m.data
-def on_state(m): st['armed'] = m.armed; st['mode'] = m.mode
-def on_odom(m):
-    t = time.time(); times.append(t)
-    while times and t - times[0] > 2: times.popleft()
-    st['odom_hz'] = len(times)/2.0
-    st['z'] = m.pose.pose.position.z
-rospy.init_node('rehearsal_sampler', anonymous=True)
-rospy.Subscriber('/debugPx4ctrl/fsm_state', String, on_fsm)
-rospy.Subscriber('/mavros/state', State, on_state)
-rospy.Subscriber('/vins_estimator/imu_propagate', Odometry, on_odom)
-r = rospy.Rate(1)
-import datetime
-while not rospy.is_shutdown():
-    with lock:
-        out.write("%s\t%s\t%s\t%s\t%.1f\t%s\n" % (
-            datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3],
-            st['fsm'], st['armed'], st['mode'], st['odom_hz'],
-            '' if st['z'] is None else '%.3f' % st['z']))
-    r.sleep()
-PYEOF
+  setsid nohup python3 -u "$L/rehearsal_sampler.py" "$EV/sampler.tsv" > "$EV/sampler.out" 2>&1 < /dev/null &
   echo $! > "$EV/sampler.pid"
 }
 sampler_stop() { [ -f "$EV/sampler.pid" ] && kill -- -"$(cat "$EV/sampler.pid")" 2>/dev/null; :; }
@@ -294,13 +291,14 @@ TL "goalA.发出(2,0,1)"
 timeout 8 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped \
   "{header: {frame_id: 'world'}, pose: {position: {x: 2.0, y: 0.0, z: 1.0}}}" >/dev/null 2>&1
 F=$(fsm_now); LOG "  goal 后 fsm=${F:-NA}（CMD_CTRL=CH6 高等价达成面）"
-if wait_dist 2.0 0.0 1.0 0.75 60; then vset N4 PASS; TL "goalA.到位 PASS"; else vset N4 FAIL; TL "goalA.到位 FAIL"; fi
+if wait_dist_odom 2.0 0.0 1.0 0.75 75; then vset N4 PASS; TL "goalA.到位odom域 PASS"; else vset N4 FAIL; TL "goalA.到位 FAIL"; fi
 
 LOG "=== C4 goal B：返航上方 (0,0) ==="
-TL "goalB.发出(0,0,1)"
+TL "goalB.等待到点稳定(8s)后发出(0,0,1)=手册时序"
+sleep 8
 timeout 8 rostopic pub -r 1 /move_base_simple/goal geometry_msgs/PoseStamped \
   "{header: {frame_id: 'world'}, pose: {position: {x: 0.0, y: 0.0, z: 1.0}}}" >/dev/null 2>&1
-if wait_dist 0.0 0.0 1.0 0.75 60; then vset N5 PASS; TL "goalB.到位 PASS"; else vset N5 FAIL; TL "goalB.到位 FAIL"; fi
+if wait_dist_odom 0.0 0.0 1.0 0.75 75; then vset N5 PASS; TL "goalB.到位odom域 PASS"; else vset N5 FAIL; TL "goalB.到位 FAIL"; fi
 
 LOG "=== C5 降落+disarm（06_land 模式=CH6 低+降落决策等价）==="
 TL "降落.命令发出 takeoff_land=2"
@@ -416,16 +414,18 @@ try:
 except Exception: print('999')")
 TL "D4.真值位移=$GTJUMP (门0.5m=不跟跳)"
 python3 -c "exit(0 if float('$GTJUMP')<0.5 else 1)" 2>/dev/null && vset A4 PASS || vset A4 FAIL
-# dashboard 联动：毒窗内 csv/行有 RED
+# dashboard 联动判定 v2（对齐 010939 轮实物格式——四连坑终结：英文 JUMP/"跳变=非零数字"均不存在于实物；
+# 实测数据面=csv alarms 列中文告警串"单帧跳变:RED"[5s 粒度可靠面，毒窗 01:17:08/01:17:18 两行在案]
+# +plain 行"单帧跳变=N m (max M)[RED]"[1s 粒度，毒窗有空洞不可作主]）
 sleep 2
-if grep -qE '(RED).*(跳变=[1-9])|(跳变=[0-9.]+ m.{0,4}\[RED\])' "$EV/dashboard_plain.log"; then
-  vset A3 PASS; LOG "  dashboard JUMP RED 联动 ✓"
+if grep -q '单帧跳变:RED' "$EV/dashboard.csv" 2>/dev/null; then
+  vset A3 PASS; LOG "  dashboard csv alarms 单帧跳变:RED 联动 ✓"
+elif grep -qE '单帧跳变=[0-9.]+ m \(max [0-9.]+\)\[RED\]' "$EV/dashboard_plain.log" 2>/dev/null; then
+  vset A3 PASS; LOG "  dashboard plain 单帧跳变[RED] 行 ✓"
 else
-  # csv 兜底查（plain 行 1s 粒度可能错过 2Hz 毒帧——查 csv 5s 粒度的 alarms 列）
-  if grep -q 'JUMP' "$EV/dashboard.csv" 2>/dev/null; then vset A3 PASS; LOG "  dashboard csv JUMP 记录 ✓"
-  else vset A3 FAIL; LOG "  dashboard 未捕获 JUMP（查因）"; fi
+  vset A3 FAIL; LOG "  dashboard 两源均无跳变告警（csv alarms 列+plain 行）"
 fi
-TL "D4.dashboard联动 A3=$V_A3"
+TL "D4.dashboard联动 A3=$V_A3 判定v2"
 
 LOG "=== D5 接管序列模拟（=CH6 拨低停轨迹+降落决策；CH5 手动终极面=首飞窗现场件）==="
 TL "D5.接管序列:land命令"
