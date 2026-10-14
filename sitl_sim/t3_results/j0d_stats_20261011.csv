@@ -435,3 +435,5 @@ run_X1final_101627,NUC,n/a,X-line(gates-config canonical),风暴,471.179,471.178
 run_X1final_105449,NUC,n/a,X-line(gates-config canonical),风暴,890.535,890.5347,520.6636,372.6956,0.5828,3366,mixed,16077,1,0,8.435,8.679,-,
 run_X1final_172424,NUC,n/a,X-line(gates-config canonical),风暴,6.042,6.042,5.6842,3.599,0.6123,54,mixed,1860,1,0,11.314,11.314,-,
 run_X2g1_041203,NUC,n/a,GATE:cost_gate=1 ratio=10.0 n=5 win=20 | min_d,风暴,0.674,0.674,1.1342,1.1901,0.488,30,mixed,55768,7,0,8.124,8.399,-,
+rehearsal_004513,3090,n/a,T1PF-rehearsal v6 全流程轮,彩排-transit健康,2.1646,2.1646,0.0002,0.1016,0.0020,38,transit,119576,n/a,n/a,n/a,n/a,-,j0d_rehearsal_20261014 彩排袋画像(全域收尾册1.4;轮源=t1_evidence/preflight_boost_20261011/rehearsal_004513;毒窗帧未入袋=jump 分量地板)
+rehearsal_010939,3090,n/a,T1PF-rehearsal v6 补验轮(含 D4 毒 odom x+8m 注入窗),彩排-毒窗-jump,16.6805,16.6805,26.0556,8.8993,0.7452,96,jump,66432,n/a,n/a,n/a,n/a,-,j0d_rehearsal_20261014 彩排袋画像(全域收尾册1.4;轮源=rehearsal_010939;D4 毒窗帧在袋=jump 主导预期形态)
