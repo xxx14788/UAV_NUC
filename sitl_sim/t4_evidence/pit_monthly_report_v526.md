@@ -296,3 +296,20 @@
 51. **setsid nohup 全重定向后台发射仍挂 ssh 通道**：ssh 'bash -c "... & sleep; pgrep"' 复合内 & 发射后通道不返（45s+）——全三向重定向不救复合模式；ssh -f 单发即返。对冲=远端后台发射用 ssh -f 或发射/观察分两次 ssh（T4 v5.37 单元 6b 5hwin3 发射实证）。（T4）
 
 （第二十一周期 T4 会话新坑并入完：131+6=137 条为下任并入基线——本周期会话另产 A5 复发4+条 22 复发2/3 两处首条目标注（模板规则 4 不增条数）；本周期收官=T4 域清零态，此为 T4 域最后一次月报并入。）
+
+
+## 第二十二周期增补·全域收尾清零册并入（2026-10-14，实飞前夜；来源=专项① 夜报 F 节 8 坑[night_report_preflight_boost.md]+③C 前任清账版 4 坑[Win t2/2026-10-13_专项③C避障整改/…_v1_close.md]+本册会话新坑；本并入新条 9、复发标注 6 处不计条数——模板规则 4）
+
+52. **`&& 复合后台化`前置失败静默短路**：`cmd1 && cmd2 &` 形态中 cmd1 非零退出即静默跳过 cmd2（无报错无产物），叠加 pgrep 自匹配误报 alive（ssh bash -c 包装进程名命中）双错觉——判"发射成功"全假。对冲=发射后必验产物文件出现（非 pgrep）+复合命令拆分单发+pgrep 匹配词加 `[]` 防自匹配（专项① 彩排首轮未发射实证，夜报 F#1）。（T1PF）
+53. **rostopic echo 输出带引号/回车污染判定**：echo -n1 输出行含引号与 \r\n，直接字符串比较恒假（fsm 判定失效）。对冲=`tr -d '\r\n"'`+awk 首词提取（rehearsal fsm_now/armed_now 定型，夜报 F#4）。（T1PF）
+54. **heredoc python 进程组被 ssh 会话吞**：bash 内嵌 heredoc python 以后台形态发射，会话断开即全组死——六轮零输出无报错（sampler 1Hz 采样器失效根因）。对冲=外置 .py 文件+setsid nohup+stdin/stdout/stderr 三重定向发射+stdout 摘要行落 log 供短窗 tail 验证（本册 rehearsal v7 外置 rehearsal_sampler.py 修复实证+短窗 1Hz 行流验证；夜报 F#5）。（T1PF；本册 v7 修复闭环）
+55. **彩排判定域错位（真值系 vs odom 系）**：goal 到位判定用 gazebo 真值系坐标，而 goal/odom 同在 VINS odom 系——双坐标系差致到位误判。对冲=判定正域=odom 域（wait_dist_odom），真值仅用于悬停漂移/触地等物理面（rehearsal v6 修复定型，夜报 F#7）。（T1PF）
+56. **grep 检测词四连失配（猜格式写模式）**：对 dashboard 输出连续四版模式全失配（英文 JUMP→中文"跳变=非零"→闩锁串→正则复合）——根因=对下游工具实际输出格式凭想象写 grep，实物中四形态均不存在；真实数据面=csv alarms 列中文告警串"单帧跳变:RED"+plain 行"单帧跳变=N m (max M)[OK|RED]"且 1s 行流有毒窗空洞。对冲=**先看 3 行实物样例再写模式**+双源判序（csv 5s 粒度可靠面为主、plain 1s 次之）（本册 rehearsal v7 A3 判定 v2 修复+010939 重跑自证 PASS/旧模式 FAIL 对照实证；夜报 F#8）。（T1PF；本册闭环）
+57. **杀批清场名单不全漏杀（两案）**：清场只杀主进程族，漏杀 planner 族/vins_smoke 子进程持锁——残活并发污染后续批（1 轮证据作废）+锁拒绝 8 连。对冲=全名单清场核验制（x4_batch force_cleanup 名单∪rehearsal cleanup 名单+起栈前 pgrep 逐项核零+锁持有 PID 定点）为起批前置断言（③C 前任清账版实证，与条 44"FATAL 不清场"相邻面=一个缺调用一个名单不全）。（③C）
+58. **会话上下文耗尽中途收口制**：长战役会话上下文耗尽被迫中途收口时，在飞批（setsid 自治落盘）+未判读轮+未写汇总的交接链断裂风险。对冲=批全 setsid nohup 自治化（产物自落盘）+清账版三节制（完成了什么/没做什么/卡点客观）+STATUS 全程行号链+续任首件=消费自治产物（③C 前任 10-13 19:58-22:51 会话实证，本册同构执行）。（③C）
+59. **DERP 中继高延迟下 ssh ConnectTimeout=20s 必超时**：tailscale 对称 NAT 只走 DERP（RTT~480ms）时，默认/20s 级 ConnectTimeout 在 TCP 握手阶段超时（tailscale ping 通但 ssh 连不上假象）；45s 实测稳定。对冲=跳板腿 ssh 一律 ConnectTimeout≥45+重试循环+批处理 setsid 自治化（本册 10-14 四连失败→45s 成功实证）。（本册）
+60. **git commit pathspec 漏 `--` 分隔符报"未知选项"**：`git commit -m "msg" --path1`（漏 --）被解析为未知选项而非路径规格，报错输出长且不指向真因；staged 区已确认时可直接 commit（staged 即边界）或重发带 `--` 的正确形态。对冲=commit pathspec 语法模板 `git commit -m "…" -- <paths>`（本册 abd1032 提交一次实证）。（本册）
+
+（第二十二周期并入复发标注 6 处——模板规则 4 不增条数：①专项① F#2"setsid 吊 ssh 会话"→条 51 复发（三次重现，与 5hwin3 发射同机理）；②专项① F#3"python 写文件 CRLF"→A10 复发（复发 3：wb+newline='\n' 对冲同族）；③专项① F#6"非交互 ssh 无 ROS env"→A4/A5 复发（复发 3：source 后 setsid 环境继承）；④③C"判读器双副本部署只落仓副本"→条 47 复发（对冲升级=工具双副本 md5 对账制从此在册，vins_smoke 调 runtime 副本实锤）；⑤③C"3090 DHCP 18min 断线（expire→rebind）+.4 dynamic"→B17 复发（DHCP 家族第三案；本册 10-14 直连 .4 超时=第四实证，nuc2j 跳板全代偿）；⑥本册"ssh×2 中继+awk 三层引号转义崩"→A18 复发（复发 3：对冲=数据文件先拉本地再算，禁双层中继内联 awk）。）
+
+（第二十二周期全域收尾清零册并入完：**137+9=146 条**——专项① 8 坑中新条 5（52-56）+复发 3；③C 4 坑中新条 2（57-58）+复发 2；本册新坑中新条 2（59-60）+复发 1。**实飞前夜终本（后续新坑进当期夜报）**——本册=专项制收官册，软件侧全零终态，月报至此转入按夜报滚动形态。）
