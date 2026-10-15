@@ -1,7 +1,7 @@
-# C-2 world v7 正式设计与生成（终局册 §四 C-2；2026-10-15 定稿）
+# C-2 world v7 正式设计与生成（终局册 §四 C-2；2026-10-15 定稿；v7.3 换代记录见 §六b）
 
 > 草案（c2_world_v7_design_draft.md）→ 本正式版：数字槽回填+三表硬门跑数+md5 锁定。
-> **v7 world md5=159272bdef9de8a37b9809c7fead0768（四处一致：战役目录 / catkin_ws sitl_sim/worlds / PX4 sitl_gazebo-classic worlds / 本文档）**；生成器 gen_corridor_world_v7.py md5=d2eadc1c31852e3b388a19bcb4828706（确定性：同参数同输出）。
+> **当前生效版=v7.3（md5=383a301a，三处部署：战役目录 / catkin_ws sitl_sim/worlds / PX4 sitl_gazebo-classic worlds；本文档注记位=第四处）**；生成器 gen_corridor_world_v7.py（确定性；v7.3 版含薄板面+标准 URI）。初版 v7.0 md5=159272bd 的换代链见 §六b。
 
 ## 一、规格锁定（用户 10-15 裁定承载）
 
@@ -54,7 +54,19 @@ w_c 不足→先 +W（0.2 步进）再 −d（0.05 步进）；每改重出三�
 - XML 解析自检 PASS（ElementTree）；gzserver 加载冒烟 PASS（无 material/model 错误；**视觉级 tag 可见性验证=C-5 前快检项**，若材质 404 箱面呈素色将被图像审查捕获）
 - round_result BOX 表（odom）："cB1": (4.44,0.94), "cB2": (9.52,0.12), "cB3": (11.92,1.50), "cN1": (2.41,3.25), "cN2": (5.03,4.16), "cN3": (5.95,6.78)（z=0 尺寸 1×1×1.8）
 
-## 七、待办传递
+## 六、b v7.x 换代记录（红线③迭代制；tag 可见性快检 5 轮排障链）
 
-- C-5 前快检：v7 起栈一轮悬停短飞，拉图像帧确认 tag 渲染在图（材质视觉级验证）。
-- W-用户 AprilTag 实物族名/单位确认（等待登记承册；若不同→一键重生成 v7.1+贴箱窗复验）。
+| 版本 | md5 | 变更 | 判定 |
+|------|-----|------|------|
+| v7.0 | 159272bd | 初版：tag 面=plane visual（FACES 朝向错误：pitch 0/π=顶/底面，±π/2=±x 面） | 侧面无 tag（部署缺陷，未用于任何批） |
+| v7.1 | abc1c351 | 面实现改薄板 box（0.02 厚外偏 0.501，无 plane 法向/贴图旋转歧义）；tag PNG 画布 600×1080 竖比 | 结构正确；材质寻址未决 |
+| v7.2 | （生成未部署批） | 材质 URI 绝对路径化 file:///home/ghj/.gazebo/... | 材质仍黑（见 v7.3 根因） |
+| **v7.3** | **383a301a** | 材质走 gazebo 系统资源路径（/usr/share/gazebo-11/media/materials/{scripts,textures}，sudo 部署）+标准相对 URI file://media/materials | **tag 渲染 ASCII 实锤**（白静区+黑框+格子结构在图） |
+
+**排障注记（工程坑登记）**：①plane 的 SDF 欧拉朝向语义（pitch 0/π=法向 ±z 顶底面）②gazebo classic 材质加载对 model:// URI 的 GAZEBO_MODEL_PATH 依赖（PX4 起栈环境不含 ~/.gazebo/models）→系统资源路径为自定义材质标准做法③**bright>180 判据坑**：场景 ambient 0.4 把纯白纹理压至 ~150-180，阈值判 bright=0 是**判据错误非渲染失败**（v7.1/v7.2 可能已渲染，ASCII 结构判据为准）④pkill -f 自匹配（ssh 命令串含匹配词）。
+**硬门/三表结论不变**（v7.0→v7.3 仅 tag 面实现与材质寻址变更，箱位/走廊/tag 规格逐位同——§一§二数字全部沿用）。
+
+## 七、待办传递（v7.3 更新）
+
+- ~~C-5 前快检：tag 渲染验证~~ ✅ 已毕（ASCII 实锤，§六b）。
+- W-用户 AprilTag 实物族名/单位确认（等待登记承册；若不同→一键重生成 v7.4+贴箱窗复验）。
