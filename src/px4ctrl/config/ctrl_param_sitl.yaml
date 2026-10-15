@@ -24,6 +24,13 @@ auto_takeoff_land:
     no_RC: true
     takeoff_height: 0.75 # m
     takeoff_land_speed: 0.5 # m/s   //<1.5
+    # C3-B2 H4-FIX (B1 preregistered): takeoff control envelope
+    takeoff_thrust_cap: 0.80    # AUTO_TAKEOFF thrust ceiling; 0 = off (legacy)
+    takeoff_tilt_max_deg: 20.0  # AUTO_TAKEOFF attitude tilt clamp; -1 = off (legacy)
+    takeoff_cap_release_z: 0.30 # release envelope once odom_z - takeoff anchor exceeds this
+    # C3-B2 H4-F3 (design §11 rework preregistration): attitude-gated thrust
+    takeoff_att_gate_deg: 45.0  # actual tilt above this during takeoff -> leveling regime; -1 = off
+    takeoff_gated_thrust: 0.40  # leveling-regime thrust ceiling; 0 = off
 
 thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(Unit:N): F=K1*Voltage^K2*(K3*u^2+(1-K3)*u).
     print_value: true # display the value of “thr_scale_compensate” or “hover_percentage” during thrust model estimating.

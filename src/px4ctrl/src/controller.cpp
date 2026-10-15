@@ -23,7 +23,8 @@ quadrotor_msgs::Px4ctrlDebug
 LinearControl::calculateControl(const Desired_State_t &des,
     const Odom_Data_t &odom,
     const Imu_Data_t &imu, 
-    Controller_Output_t &u)
+    Controller_Output_t &u,
+    const double tilt_max_deg)
 {
   /* WRITE YOUR CODE HERE */
       //compute disired acceleration
@@ -35,6 +36,9 @@ LinearControl::calculateControl(const Desired_State_t &des,
       des_acc += Eigen::Vector3d(0,0,param_.gra);
 
       u.thrust = computeDesiredCollectiveThrustSignal(des_acc);
+      /* C3-B2 H4-F2（B1 预注册）：起飞倾角限幅。thrust 只取 des_acc(2) 且
+         已在上行算毕，此处横向缩放不影响推力信号（thrust 不变性单测锚定）。 */
+      px4ctrl_att::clampAccelTilt(des_acc, tilt_max_deg);
       /* 姿态目标改为期望加速度向量直接构造（几何控制器法）。原实现先按当前
          yaw_odom 把 des_acc 折算成 roll/pitch，再与目标 des.yaw 组欧拉角四元数：
          yaw 误差大时（返程掉头 >90deg）PX4 按最短路径追该四元数会穿倒扣姿态，

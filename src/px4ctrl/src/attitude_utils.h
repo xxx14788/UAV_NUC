@@ -19,6 +19,8 @@
  * PX4 发 NaN 四元数。
  */
 #include <Eigen/Dense>
+#include <algorithm>
+#include <cmath>
 
 namespace px4ctrl_att
 {
@@ -60,6 +62,26 @@ inline Eigen::Quaterniond attitudeLegacyEuler(const Eigen::Vector3d &des_acc,
        Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()))
           .toRotationMatrix();
   return Eigen::Quaterniond(R);
+}
+
+/* C3-B2 H4-F2（B1 预注册）：起飞倾角限幅纯函数。
+ * 把 des_acc 横向分量缩放到 |xy| <= tan(tilt_max_deg)*des_acc(2)，使
+ * attitudeFromAccel 构造的姿态倾角有界。推力信号只取 des_acc(2)，横向
+ * 缩放不改推力（thrust 不变性）。tilt_max_deg<=0 时不动作（旧行为）。
+ * 非有限输入不动作（防护与 attitudeFromAccel 同源，交由其兜底）。 */
+inline void clampAccelTilt(Eigen::Vector3d &des_acc, double tilt_max_deg)
+{
+  if (tilt_max_deg <= 0.0 || !des_acc.allFinite())
+    return;
+  const double az = std::max(des_acc(2), 1e-3);
+  const double max_xy = std::tan(tilt_max_deg * M_PI / 180.0) * az;
+  const double nxy = std::hypot(des_acc(0), des_acc(1));
+  if (nxy > max_xy)
+  {
+    const double s = max_xy / nxy;
+    des_acc(0) *= s;
+    des_acc(1) *= s;
+  }
 }
 
 } // namespace px4ctrl_att

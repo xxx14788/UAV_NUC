@@ -88,6 +88,13 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
     read_essential_param(nh, "auto_takeoff_land/no_RC", takeoff_land.no_RC);
 	read_essential_param(nh, "auto_takeoff_land/takeoff_height", takeoff_land.height);
 	read_essential_param(nh, "auto_takeoff_land/takeoff_land_speed", takeoff_land.speed);
+	// C3-B2 H4-FIX（B1 预注册）：可选起飞包络参数，缺省=旧行为（关闭）
+	nh.param("auto_takeoff_land/takeoff_thrust_cap", takeoff_land.thrust_cap, 0.0);
+	nh.param("auto_takeoff_land/takeoff_tilt_max_deg", takeoff_land.tilt_max_deg, -1.0);
+	nh.param("auto_takeoff_land/takeoff_cap_release_z", takeoff_land.cap_release_z, 0.30);
+	// C3-B2 H4-F3（设计文档 §11）：姿态门控推力，缺省=关闭
+	nh.param("auto_takeoff_land/takeoff_att_gate_deg", takeoff_land.att_gate_deg, -1.0);
+	nh.param("auto_takeoff_land/takeoff_gated_thrust", takeoff_land.gated_thrust, 0.0);
 
 	read_essential_param(nh, "thrust_model/print_value", thr_map.print_val);
 	read_essential_param(nh, "thrust_model/K1", thr_map.K1);

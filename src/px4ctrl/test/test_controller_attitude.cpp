@@ -171,3 +171,43 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+// 7. C3-B2 H4-F2：起飞倾角限幅——限幅后构造姿态倾角有界（20deg 锚）
+TEST(Attitude, ClampTiltBoundsConstructedAttitude)
+{
+  // 躺地卡滞情景的大横向需求：xy=8 m/s²（倾角本会到 ~39deg）+ 限幅 20deg
+  Eigen::Vector3d acc(6.0, 5.0, G);
+  px4ctrl_att::clampAccelTilt(acc, 20.0);
+  Eigen::Quaterniond q = attitudeFromAccel(acc, 0.3, G);
+  Eigen::Vector3d zb = rotateZ(q);
+  double tilt_deg = std::acos(std::min(1.0, zb(2))) * 180.0 / M_PI;
+  EXPECT_LE(tilt_deg, 20.0 + 0.5); // 数值容差 0.5deg
+  EXPECT_GE(tilt_deg, 1.0);        // 确实倾斜而非被误伤到垂直
+}
+
+// 8. C3-B2 H4-F2：关闭态（<=0）零改动=旧行为回归锁
+TEST(Attitude, ClampTiltOffIsNoop)
+{
+  Eigen::Vector3d acc(6.0, 5.0, G), ref(6.0, 5.0, G);
+  px4ctrl_att::clampAccelTilt(acc, -1.0);
+  EXPECT_EQ(acc, ref);
+  px4ctrl_att::clampAccelTilt(acc, 0.0);
+  EXPECT_EQ(acc, ref);
+}
+
+// 9. C3-B2 H4-F2：thrust 不变性——z 分量不动、横向等比缩放、比率恰为 tan(限角)
+TEST(Attitude, ClampTiltPreservesThrustAxis)
+{
+  Eigen::Vector3d acc(6.0, 5.0, 12.0);
+  const double z_before = acc(2);
+  const double dir_before = std::atan2(acc(1), acc(0));
+  px4ctrl_att::clampAccelTilt(acc, 20.0);
+  EXPECT_DOUBLE_EQ(acc(2), z_before); // 推力信号（z 分量）逐位不变
+  EXPECT_NEAR(std::atan2(acc(1), acc(0)), dir_before, 1e-9); // 方向保持
+  EXPECT_NEAR(std::hypot(acc(0), acc(1)) / acc(2),
+              std::tan(20.0 * M_PI / 180.0), 1e-9); // 恰在限角锥面
+  // 限内输入不动（倾角 10deg < 20deg 限）
+  Eigen::Vector3d small(1.0, 0.5, G), small_ref(1.0, 0.5, G);
+  px4ctrl_att::clampAccelTilt(small, 20.0);
+  EXPECT_EQ(small, small_ref);
+}

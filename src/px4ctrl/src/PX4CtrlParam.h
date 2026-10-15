@@ -56,7 +56,13 @@ public:
 		bool no_RC;
 		double height;
 		double speed;
-
+		// C3-B2 H4-FIX（B1 预注册）：起飞控制包络三参数
+		double thrust_cap;    // >0：AUTO_TAKEOFF 包络内推力上限（0=关闭=旧行为）
+		double tilt_max_deg;  // >0：AUTO_TAKEOFF 姿态倾角限幅（-1=关闭=旧行为）
+		double cap_release_z; // odom_z 高出起飞锚该值后释放包络
+		// C3-B2 H4-F3（设计文档 §11 回炉增补预注册）：姿态门控推力
+		double att_gate_deg;  // >0：实际倾角超此值期间推力压到平衡档（-1=关闭）
+		double gated_thrust;  // 门控期推力上限（0=关闭）
 	};
 
 	struct OdomSanityGate_t
