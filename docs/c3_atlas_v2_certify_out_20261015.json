@@ -1,0 +1,145 @@
+{
+ "clip_cert": [
+  {
+   "run": "run_C3E1_205851",
+   "truth_n": 18686,
+   "odom_n": 13266,
+   "odom_points_clipped": 1098,
+   "clip_frac": 0.0828,
+   "window_x": [
+    -3.44,
+    8.54
+   ],
+   "window_y": [
+    -5.4,
+    6.59
+   ],
+   "truth_ext": [
+    3.98,
+    0.77
+   ],
+   "odom_max_abs_from_birth_m": 38.54,
+   "odom_max_dev_vs_truth_m": 37.57,
+   "over_window_excursion_m": 31.01
+  },
+  {
+   "run": "run_C3E2_215820",
+   "truth_n": 97529,
+   "odom_n": 85120,
+   "odom_points_clipped": 0,
+   "clip_frac": 0.0,
+   "window_x": [
+    -99.86,
+    5.15
+   ],
+   "window_y": [
+    -15.56,
+    89.46
+   ],
+   "truth_ext": [
+    97.01,
+    72.14
+   ],
+   "odom_max_abs_from_birth_m": 3.62,
+   "odom_max_dev_vs_truth_m": 2.57,
+   "over_window_excursion_m": 0.0
+  },
+  {
+   "run": "run_C3E2_221911",
+   "truth_n": 67746,
+   "odom_n": 10065,
+   "odom_points_clipped": 2155,
+   "clip_frac": 0.2141,
+   "window_x": [
+    -27.7,
+    92.94
+   ],
+   "window_y": [
+    -115.42,
+    5.22
+   ],
+   "truth_ext": [
+    63.41,
+    112.64
+   ],
+   "odom_max_abs_from_birth_m": 49.17,
+   "odom_max_dev_vs_truth_m": 49.73,
+   "over_window_excursion_m": 44.93
+  },
+  {
+   "run": "run_C3E2_003610",
+   "truth_n": 73233,
+   "odom_n": 66630,
+   "odom_points_clipped": 0,
+   "clip_frac": 0.0,
+   "window_x": [
+    -2.99,
+    10.52
+   ],
+   "window_y": [
+    -5.36,
+    8.15
+   ],
+   "truth_ext": [
+    5.51,
+    2.86
+   ],
+   "odom_max_abs_from_birth_m": 6.95,
+   "odom_max_dev_vs_truth_m": 1.62,
+   "over_window_excursion_m": 0.0
+  },
+  {
+   "run": "run_C3E2_013723",
+   "truth_n": 67750,
+   "odom_n": 57485,
+   "odom_points_clipped": 3238,
+   "clip_frac": 0.0563,
+   "window_x": [
+    -2.99,
+    16.71
+   ],
+   "window_y": [
+    -9.27,
+    10.44
+   ],
+   "truth_ext": [
+    11.7,
+    3.36
+   ],
+   "odom_max_abs_from_birth_m": 49.6,
+   "odom_max_dev_vs_truth_m": 37.9,
+   "over_window_excursion_m": 33.9
+  },
+  {
+   "run": "run_C3NE2_020022",
+   "truth_n": 67683,
+   "odom_n": 58609,
+   "odom_points_clipped": 3693,
+   "clip_frac": 0.063,
+   "window_x": [
+    -3.82,
+    7.29
+   ],
+   "window_y": [
+    -3.02,
+    8.08
+   ],
+   "truth_ext": [
+    2.55,
+    3.1
+   ],
+   "odom_max_abs_from_birth_m": 47.77,
+   "odom_max_dev_vs_truth_m": 49.56,
+   "over_window_excursion_m": 43.77
+  }
+ ],
+ "font_cert": {
+  "zh_glyph_n": 11,
+  "zh_distinct_bitmaps": 1,
+  "zh_tofu": true,
+  "en_glyph_n": 33,
+  "en_distinct_bitmaps": 15,
+  "en_tofu": false,
+  "conclusion": "default font lacks CJK → Chinese text renders as repeated identical boxes (tofu); ASCII renders distinct glyphs"
+ }
+}
