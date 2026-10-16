@@ -1,0 +1,11 @@
+=== 环境二分矩阵结果汇总 2026-10-17 02:2x-04:3x ===
+[T-min 无env] RECOVERED(短窗)/长探=9帧活后死
+[T2 setup.sh] 首测RECOVERED(短窗伪影)/复测STILL-BROKEN
+[T7 GRP=/usr/share/gazebo-11:] STILL-BROKEN(后证明为残留master+晚采样混淆,单变量复测=仍病但与健康差异实为采样窗)
+[真因子=死亡时刻] 所有配置在~1s死后,长探统一9帧活(10Hz)/25帧(30Hz)
+[GPU :0 root+gdm] 9/595 活
+[NUC 旧机] 1/600 活
+[全栈v7.3] depth 0/299 stereo 571/571
+[全栈v9] depth 0/358 stereo 714/714
+[30Hz min2] 25/833 活
+[cache清除] 仍9帧

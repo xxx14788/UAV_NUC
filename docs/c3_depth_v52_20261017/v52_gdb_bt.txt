@@ -1,0 +1,1405 @@
+[New LWP 109100]
+[New LWP 109101]
+[New LWP 109102]
+[New LWP 109104]
+[New LWP 109105]
+[New LWP 109106]
+[New LWP 109107]
+[New LWP 109108]
+[New LWP 109109]
+[New LWP 109110]
+[New LWP 109111]
+[New LWP 109112]
+[New LWP 109113]
+[New LWP 109114]
+[New LWP 109115]
+[New LWP 109116]
+[New LWP 109117]
+[New LWP 109118]
+[New LWP 109119]
+[New LWP 109120]
+[New LWP 109121]
+[New LWP 109122]
+[New LWP 109123]
+[New LWP 109124]
+[New LWP 109125]
+[New LWP 109126]
+[New LWP 109127]
+[New LWP 109128]
+[New LWP 109129]
+[New LWP 109130]
+[New LWP 109131]
+[New LWP 109132]
+[New LWP 109133]
+[New LWP 109134]
+[New LWP 109135]
+[New LWP 109136]
+[New LWP 109139]
+[New LWP 109140]
+[New LWP 109141]
+[New LWP 109142]
+[New LWP 109143]
+[New LWP 109144]
+[New LWP 109145]
+[New LWP 109146]
+[New LWP 109147]
+[New LWP 109148]
+[New LWP 109149]
+[New LWP 109150]
+[New LWP 109151]
+[New LWP 109152]
+[New LWP 109153]
+[New LWP 109154]
+[New LWP 109155]
+[New LWP 109156]
+[New LWP 109157]
+[New LWP 109158]
+[New LWP 109159]
+[New LWP 109160]
+[New LWP 109161]
+[New LWP 109162]
+[New LWP 109163]
+[New LWP 109164]
+[New LWP 109165]
+[New LWP 109166]
+[New LWP 109167]
+[New LWP 109168]
+[New LWP 109169]
+[New LWP 109170]
+[New LWP 109171]
+[New LWP 109172]
+[New LWP 109173]
+[New LWP 109174]
+[New LWP 109175]
+[New LWP 109176]
+[New LWP 109177]
+[New LWP 109178]
+[New LWP 109179]
+[New LWP 109180]
+[New LWP 109181]
+[New LWP 109182]
+[New LWP 109183]
+[New LWP 109184]
+[New LWP 109185]
+[New LWP 109186]
+[New LWP 109187]
+[New LWP 109188]
+[New LWP 109189]
+[New LWP 109190]
+[New LWP 109191]
+[New LWP 109192]
+[New LWP 109193]
+[New LWP 109194]
+[New LWP 109195]
+[New LWP 109196]
+[New LWP 109197]
+[New LWP 109198]
+[New LWP 109199]
+[New LWP 109200]
+[New LWP 109201]
+[New LWP 109202]
+[New LWP 109203]
+[New LWP 109204]
+[New LWP 109205]
+[New LWP 109206]
+[New LWP 109207]
+[New LWP 109208]
+[New LWP 109209]
+[New LWP 109210]
+[New LWP 109211]
+[New LWP 109212]
+[New LWP 109213]
+[New LWP 109214]
+[New LWP 109215]
+[New LWP 109216]
+[New LWP 109217]
+[New LWP 109218]
+[New LWP 109219]
+[New LWP 109220]
+[New LWP 109221]
+[New LWP 109222]
+[New LWP 109223]
+[New LWP 109224]
+[New LWP 109225]
+[New LWP 109226]
+[New LWP 109227]
+[New LWP 109228]
+[New LWP 109229]
+[New LWP 109230]
+[New LWP 109231]
+[New LWP 109232]
+[New LWP 109233]
+[New LWP 109257]
+[New LWP 109258]
+[New LWP 109259]
+[New LWP 109260]
+[New LWP 109261]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00007fb5be93323f in __GI___clock_nanosleep (clock_id=1, flags=0, req=0x7ffed570d030, rem=0x7ffed570d040) at ../sysdeps/unix/sysv/linux/clock_nanosleep.c:78
+78	../sysdeps/unix/sysv/linux/clock_nanosleep.c: 没有那个文件或目录.
+
+Thread 137 (Thread 0x7fb372ffd700 (LWP 109261)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb372ffb610, clockid=<optimized out>, expected=0, futex_word=0x559df2899610) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb372ffb610, clockid=<optimized out>, mutex=0x559df28995c0, cond=0x559df28995e8) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559df28995e8, mutex=0x559df28995c0, abstime=0x7fb372ffb610) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e809f in ros::CallbackQueue::callAvailable(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5100f30dc in gazebo::GazeboRosCameraUtils::CameraQueueThread() () at /opt/ros/noetic/lib/libgazebo_ros_camera_utils.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 136 (Thread 0x7fb3737fe700 (LWP 109260)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559df147d2b0) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559df147d300, cond=0x559df147d288) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559df147d288, mutex=0x559df147d300) at pthread_cond_wait.c:647
+#3  0x00007fb5beb35e30 in std::condition_variable::wait(std::unique_lock<std::mutex>&) () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007fb5be2b21c2 in gazebo::physics::World::LogWorker() () at /lib/x86_64-linux-gnu/libgazebo_physics.so.11
+#5  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 135 (Thread 0x7fb373fff700 (LWP 109259)):
+#0  0x00007fb5be93323f in __GI___clock_nanosleep (clock_id=1, flags=0, req=0x7fb373ffd430, rem=0x7fb373ffd440) at ../sysdeps/unix/sysv/linux/clock_nanosleep.c:78
+#1  0x00007fb5bed5b04c in gazebo::common::Time::Sleep(gazebo::common::Time const&) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#2  0x00007fb5be2c5d6b in gazebo::physics::World::Step() () at /lib/x86_64-linux-gnu/libgazebo_physics.so.11
+#3  0x00007fb5be2c900d in gazebo::physics::World::RunLoop() () at /lib/x86_64-linux-gnu/libgazebo_physics.so.11
+#4  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 134 (Thread 0x7fb378ffb700 (LWP 109258)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559defdc4178) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559defdc4128, cond=0x559defdc4150) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559defdc4150, mutex=0x559defdc4128) at pthread_cond_wait.c:647
+#3  0x00007fb5be7f91ab in  () at /lib/x86_64-linux-gnu/libgazebo_sensors.so.11
+#4  0x00007fb5be7f15eb in gazebo::sensors::SensorManager::SensorContainer::RunLoop() () at /lib/x86_64-linux-gnu/libgazebo_sensors.so.11
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 133 (Thread 0x7fb3797fc700 (LWP 109257)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def993808) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def9937b8, cond=0x559def9937e0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def9937e0, mutex=0x559def9937b8) at pthread_cond_wait.c:647
+#3  0x00007fb5be7f91ab in  () at /lib/x86_64-linux-gnu/libgazebo_sensors.so.11
+#4  0x00007fb5be7f15eb in gazebo::sensors::SensorManager::SensorContainer::RunLoop() () at /lib/x86_64-linux-gnu/libgazebo_sensors.so.11
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 132 (Thread 0x7fb399ff7700 (LWP 109233)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 131 (Thread 0x7fb39a3f8700 (LWP 109232)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 130 (Thread 0x7fb39b7fd700 (LWP 109231)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 129 (Thread 0x7fb39a7f9700 (LWP 109230)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 128 (Thread 0x7fb39affb700 (LWP 109229)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 127 (Thread 0x7fb39b3fc700 (LWP 109228)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 126 (Thread 0x7fb39abfa700 (LWP 109227)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 125 (Thread 0x7fb39bbfe700 (LWP 109226)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 124 (Thread 0x7fb4307f4700 (LWP 109225)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 123 (Thread 0x7fb4313f7700 (LWP 109224)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 122 (Thread 0x7fb430bf5700 (LWP 109223)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 121 (Thread 0x7fb39bfff700 (LWP 109222)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 120 (Thread 0x7fb431bf9700 (LWP 109221)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 119 (Thread 0x7fb430ff6700 (LWP 109220)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 118 (Thread 0x7fb4317f8700 (LWP 109219)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 117 (Thread 0x7fb431ffa700 (LWP 109218)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 116 (Thread 0x7fb4323fb700 (LWP 109217)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 115 (Thread 0x7fb4407f8700 (LWP 109216)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 114 (Thread 0x7fb4327fc700 (LWP 109215)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 113 (Thread 0x7fb4487f8700 (LWP 109214)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 112 (Thread 0x7fb4507f8700 (LWP 109213)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 111 (Thread 0x7fb4587f8700 (LWP 109212)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 110 (Thread 0x7fb4745f9700 (LWP 109211)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 109 (Thread 0x7fb4bc7f8700 (LWP 109210)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 108 (Thread 0x7fb4dc7f8700 (LWP 109209)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 107 (Thread 0x7fb5107f8700 (LWP 109208)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 106 (Thread 0x7fb524470700 (LWP 109207)):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007fb5bde8aa4d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#2  0x00007fb5bde8aa8d in  () at /lib/x86_64-linux-gnu/libtbb.so.2
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 105 (Thread 0x7fb432ffd700 (LWP 109206)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb432ffb6a0, clockid=<optimized out>, expected=0, futex_word=0x559defe49f68) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb432ffb6a0, clockid=<optimized out>, mutex=0x559defe49ec8, cond=0x559defe49f40) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559defe49f40, mutex=0x559defe49ec8, abstime=0x7fb432ffb6a0) at pthread_cond_wait.c:665
+#3  0x00007fb5bcbf00eb in ignition::transport::v8::NodeSharedPrivate::PublishThread() () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#4  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 104 (Thread 0x7fb4337fe700 (LWP 109205)):
+#0  0x00007fb5be968bbf in __GI___poll (fds=0x7fb4337fc5e0, nfds=1, timeout=99) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007fb5b6203339 in zmq_poll () at /lib/x86_64-linux-gnu/libzmq.so.5
+#2  0x00007fb5bcbd62ae in ignition::transport::v8::pollSockets(std::vector<int, std::allocator<int> > const&, int) () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#3  0x00007fb5bcc10f82 in ignition::transport::v8::Discovery<ignition::transport::v8::ServicePublisher>::RecvMessages() () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#4  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 103 (Thread 0x7fb433fff700 (LWP 109204)):
+#0  0x00007fb5be968bbf in __GI___poll (fds=0x7fb433ffd5e0, nfds=1, timeout=99) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007fb5b6203339 in zmq_poll () at /lib/x86_64-linux-gnu/libzmq.so.5
+#2  0x00007fb5bcbd62ae in ignition::transport::v8::pollSockets(std::vector<int, std::allocator<int> > const&, int) () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#3  0x00007fb5bcc0b402 in ignition::transport::v8::Discovery<ignition::transport::v8::MessagePublisher>::RecvMessages() () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#4  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 102 (Thread 0x7fb440ff9700 (LWP 109203)):
+#0  0x00007fb5be968bbf in __GI___poll (fds=0x7fb440ff75e0, nfds=3, timeout=250) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007fb5b6203339 in zmq_poll () at /lib/x86_64-linux-gnu/libzmq.so.5
+#2  0x00007fb5bcbf9827 in ignition::transport::v8::NodeShared::RunReceptionTask() () at /lib/x86_64-linux-gnu/libignition-transport8.so.8
+#3  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#4  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 101 (Thread 0x7fb4417fa700 (LWP 109202)):
+#0  0x00007fb5be97568e in epoll_wait (epfd=28, events=0x7fb4417f7a40, maxevents=256, timeout=-1) at ../sysdeps/unix/sysv/linux/epoll_wait.c:30
+#1  0x00007fb5b61b3899 in  () at /lib/x86_64-linux-gnu/libzmq.so.5
+#2  0x00007fb5b61f5e5f in  () at /lib/x86_64-linux-gnu/libzmq.so.5
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 100 (Thread 0x7fb441ffb700 (LWP 109201)):
+#0  0x00007fb5be97568e in epoll_wait (epfd=26, events=0x7fb441ff8a40, maxevents=256, timeout=-1) at ../sysdeps/unix/sysv/linux/epoll_wait.c:30
+#1  0x00007fb5b61b3899 in  () at /lib/x86_64-linux-gnu/libzmq.so.5
+#2  0x00007fb5b61f5e5f in  () at /lib/x86_64-linux-gnu/libzmq.so.5
+#3  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#4  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 99 (Thread 0x7fb4427fc700 (LWP 109200)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 98 (Thread 0x7fb442ffd700 (LWP 109199)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 97 (Thread 0x7fb4437fe700 (LWP 109198)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 96 (Thread 0x7fb443fff700 (LWP 109197)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 95 (Thread 0x7fb448ff9700 (LWP 109196)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 94 (Thread 0x7fb4497fa700 (LWP 109195)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 93 (Thread 0x7fb449ffb700 (LWP 109194)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 92 (Thread 0x7fb44a7fc700 (LWP 109193)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 91 (Thread 0x7fb44affd700 (LWP 109192)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 90 (Thread 0x7fb44b7fe700 (LWP 109191)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 89 (Thread 0x7fb44bfff700 (LWP 109190)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 88 (Thread 0x7fb450ff9700 (LWP 109189)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 87 (Thread 0x7fb4517fa700 (LWP 109188)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 86 (Thread 0x7fb451ffb700 (LWP 109187)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 85 (Thread 0x7fb4527fc700 (LWP 109186)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 84 (Thread 0x7fb452ffd700 (LWP 109185)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 83 (Thread 0x7fb4537fe700 (LWP 109184)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 82 (Thread 0x7fb453fff700 (LWP 109183)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 81 (Thread 0x7fb458ff9700 (LWP 109182)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 80 (Thread 0x7fb4597fa700 (LWP 109181)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 79 (Thread 0x7fb459ffb700 (LWP 109180)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 78 (Thread 0x7fb45a7fc700 (LWP 109179)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 77 (Thread 0x7fb45affd700 (LWP 109178)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 76 (Thread 0x7fb45b7fe700 (LWP 109177)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 75 (Thread 0x7fb45bfff700 (LWP 109176)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 74 (Thread 0x7fb474dfa700 (LWP 109175)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 73 (Thread 0x7fb4755fb700 (LWP 109174)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 72 (Thread 0x7fb475dfc700 (LWP 109173)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x7fb5986ff8e8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x7fb5986ff898, cond=0x7fb5986ff8c0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x7fb5986ff8c0, mutex=0x7fb5986ff898) at pthread_cond_wait.c:647
+#3  0x00007fb5bf2c56eb in  () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#4  0x00007fb5bf2c4a57 in Ogre::DefaultWorkQueue::waitForNextRequest() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#5  0x00007fb5bf2c3a50 in Ogre::DefaultWorkQueue::_threadMain() () at /lib/x86_64-linux-gnu/libOgreMain.so.1.9.0
+#6  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#7  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#8  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 71 (Thread 0x7fb476ffd700 (LWP 109172)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559deef5ce58) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559deef5ce08, cond=0x559deef5ce30) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559deef5ce30, mutex=0x559deef5ce08) at pthread_cond_wait.c:647
+#3  0x00007fb52663a5eb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb52663a1eb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 70 (Thread 0x7fb4777fe700 (LWP 109171)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 69 (Thread 0x7fb477fff700 (LWP 109170)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 68 (Thread 0x7fb4bcff9700 (LWP 109169)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 67 (Thread 0x7fb4bd7fa700 (LWP 109168)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 66 (Thread 0x7fb4bdffb700 (LWP 109167)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 65 (Thread 0x7fb4be7fc700 (LWP 109166)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 64 (Thread 0x7fb4beffd700 (LWP 109165)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 63 (Thread 0x7fb4bf7fe700 (LWP 109164)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 62 (Thread 0x7fb4bffff700 (LWP 109163)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 61 (Thread 0x7fb4dcff9700 (LWP 109162)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 60 (Thread 0x7fb4dd7fa700 (LWP 109161)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 59 (Thread 0x7fb4ddffb700 (LWP 109160)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 58 (Thread 0x7fb4de7fc700 (LWP 109159)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 57 (Thread 0x7fb4deffd700 (LWP 109158)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 56 (Thread 0x7fb4df7fe700 (LWP 109157)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 55 (Thread 0x7fb4dffff700 (LWP 109156)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def681040) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def680ff0, cond=0x559def681018) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def681018, mutex=0x559def680ff0) at pthread_cond_wait.c:647
+#3  0x00007fb526d2318b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d2310b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 54 (Thread 0x7fb4ec845700 (LWP 109155)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def610f9c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610f48, cond=0x559def610f70) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610f70, mutex=0x559def610f48) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 53 (Thread 0x7fb4ed046700 (LWP 109154)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def610e3c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610de8, cond=0x559def610e10) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610e10, mutex=0x559def610de8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 52 (Thread 0x7fb4ed847700 (LWP 109153)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def610cdc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610c88, cond=0x559def610cb0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610cb0, mutex=0x559def610c88) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 51 (Thread 0x7fb4ee048700 (LWP 109152)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def610b7c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610b28, cond=0x559def610b50) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610b50, mutex=0x559def610b28) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 50 (Thread 0x7fb4ee849700 (LWP 109151)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def610a1c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def6109c8, cond=0x559def6109f0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def6109f0, mutex=0x559def6109c8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 49 (Thread 0x7fb510ff9700 (LWP 109150)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def6108bc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610868, cond=0x559def610890) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610890, mutex=0x559def610868) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 48 (Thread 0x7fb5117fa700 (LWP 109149)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def61075c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610708, cond=0x559def610730) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610730, mutex=0x559def610708) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 47 (Thread 0x7fb511ffb700 (LWP 109148)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def6105fc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def6105a8, cond=0x559def6105d0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def6105d0, mutex=0x559def6105a8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 46 (Thread 0x7fb5127fc700 (LWP 109147)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def61049c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610448, cond=0x559def610470) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610470, mutex=0x559def610448) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 45 (Thread 0x7fb512ffd700 (LWP 109146)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def61033c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def6102e8, cond=0x559def610310) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610310, mutex=0x559def6102e8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 44 (Thread 0x7fb5137fe700 (LWP 109145)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def6101dc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610188, cond=0x559def6101b0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def6101b0, mutex=0x559def610188) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 43 (Thread 0x7fb513fff700 (LWP 109144)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def61007c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def610028, cond=0x559def610050) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def610050, mutex=0x559def610028) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 42 (Thread 0x7fb524c71700 (LWP 109143)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def60ff1c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def60fec8, cond=0x559def60fef0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def60fef0, mutex=0x559def60fec8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 41 (Thread 0x7fb525472700 (LWP 109142)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def60fdbc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def60fd68, cond=0x559def60fd90) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def60fd90, mutex=0x559def60fd68) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 40 (Thread 0x7fb525c73700 (LWP 109141)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def60fc5c) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def60fc08, cond=0x559def60fc30) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def60fc30, mutex=0x559def60fc08) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 39 (Thread 0x7fb526474700 (LWP 109140)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def60fafc) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def60faa8, cond=0x559def60fad0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def60fad0, mutex=0x559def60faa8) at pthread_cond_wait.c:647
+#3  0x00007fb526d2607b in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#4  0x00007fb526d25edb in  () at /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 38 (Thread 0x7fb534ff9700 (LWP 109139)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb534ff7640, clockid=<optimized out>, expected=0, futex_word=0x7fb5bf4999dc <SingletonT<gazebo::transport::ConnectionManager>::GetInstance()::t+92>) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb534ff7640, clockid=<optimized out>, mutex=0x7fb5bf499988 <SingletonT<gazebo::transport::ConnectionManager>::GetInstance()::t+8>, cond=0x7fb5bf4999b0 <SingletonT<gazebo::transport::ConnectionManager>::GetInstance()::t+48>) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x7fb5bf4999b0 <SingletonT<gazebo::transport::ConnectionManager>::GetInstance()::t+48>, mutex=0x7fb5bf499988 <SingletonT<gazebo::transport::ConnectionManager>::GetInstance()::t+8>, abstime=0x7fb534ff7640) at pthread_cond_wait.c:665
+#3  0x00007fb5bdf2748e in gazebo::transport::ConnectionManager::Run() () at /lib/x86_64-linux-gnu/libgazebo_transport.so.11
+#4  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 37 (Thread 0x7fb535ffb700 (LWP 109136)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb535ff9610, clockid=<optimized out>, expected=0, futex_word=0x559def5dd61c) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb535ff9610, clockid=<optimized out>, mutex=0x559def5dd5c8, cond=0x559def5dd5f0) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559def5dd5f0, mutex=0x559def5dd5c8, abstime=0x7fb535ff9610) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e809f in ros::CallbackQueue::callAvailable(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5b3590c in gazebo::GazeboRosApiPlugin::gazeboQueueThread() () at /opt/ros/noetic/lib/libgazebo_ros_api_plugin.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 36 (Thread 0x7fb5367fc700 (LWP 109135)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5367fa5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5367fa5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5367fa5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 35 (Thread 0x7fb536ffd700 (LWP 109134)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb536ffb5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb536ffb5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb536ffb5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 34 (Thread 0x7fb5377fe700 (LWP 109133)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5377fc5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5377fc5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5377fc5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 33 (Thread 0x7fb537fff700 (LWP 109132)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb537ffd5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb537ffd5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb537ffd5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 32 (Thread 0x7fb550ff9700 (LWP 109131)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb550ff75f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb550ff75f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb550ff75f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 31 (Thread 0x7fb5517fa700 (LWP 109130)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5517f85f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5517f85f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5517f85f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 30 (Thread 0x7fb551ffb700 (LWP 109129)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb551ff95f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb551ff95f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb551ff95f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 29 (Thread 0x7fb5527fc700 (LWP 109128)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5527fa5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5527fa5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5527fa5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 28 (Thread 0x7fb552ffd700 (LWP 109127)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb552ffb5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb552ffb5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb552ffb5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 27 (Thread 0x7fb5537fe700 (LWP 109126)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5537fc5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5537fc5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5537fc5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 26 (Thread 0x7fb553fff700 (LWP 109125)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb553ffd5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb553ffd5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb553ffd5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 25 (Thread 0x7fb580ff9700 (LWP 109124)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb580ff75f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb580ff75f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb580ff75f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 24 (Thread 0x7fb5817fa700 (LWP 109123)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5817f85f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5817f85f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5817f85f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 23 (Thread 0x7fb581ffb700 (LWP 109122)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb581ff95f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb581ff95f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb581ff95f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 22 (Thread 0x7fb5827fc700 (LWP 109121)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5827fa5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5827fa5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5827fa5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 21 (Thread 0x7fb582ffd700 (LWP 109120)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb582ffb5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb582ffb5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb582ffb5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 20 (Thread 0x7fb5837fe700 (LWP 109119)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5837fc5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5837fc5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5837fc5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 19 (Thread 0x7fb583fff700 (LWP 109118)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb583ffd5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb583ffd5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb583ffd5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 18 (Thread 0x7fb598ff9700 (LWP 109117)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb598ff75f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb598ff75f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb598ff75f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 17 (Thread 0x7fb5997fa700 (LWP 109116)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5997f85f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5997f85f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5997f85f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 16 (Thread 0x7fb599ffb700 (LWP 109115)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb599ff95f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb599ff95f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb599ff95f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 15 (Thread 0x7fb59a7fc700 (LWP 109114)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb59a7fa5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb59a7fa5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb59a7fa5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 14 (Thread 0x7fb59affd700 (LWP 109113)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb59affb5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb59affb5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb59affb5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 13 (Thread 0x7fb59b7fe700 (LWP 109112)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb59b7fc5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb59b7fc5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb59b7fc5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 12 (Thread 0x7fb59bfff700 (LWP 109111)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb59bffd5f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb59bffd5f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb59bffd5f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 11 (Thread 0x7fb5a0f97700 (LWP 109110)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5a0f955f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5a0f955f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5a0f955f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 10 (Thread 0x7fb5a1798700 (LWP 109109)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5a17965f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5a17965f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5a17965f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 9 (Thread 0x7fb5a1f99700 (LWP 109108)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5a1f975f0, clockid=<optimized out>, expected=0, futex_word=0x559deef9c3a8) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5a1f975f0, clockid=<optimized out>, mutex=0x559deef9c358, cond=0x559deef9c380) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559deef9c380, mutex=0x559deef9c358, abstime=0x7fb5a1f975f0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e7096 in ros::CallbackQueue::callOne(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a3a765 in ros::AsyncSpinnerImpl::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 8 (Thread 0x7fb5a279a700 (LWP 109107)):
+#0  futex_abstimed_wait_cancelable (private=<optimized out>, abstime=0x7fb5a27985e0, clockid=<optimized out>, expected=0, futex_word=0x559def1341ac) at ../sysdeps/nptl/futex-internal.h:320
+#1  __pthread_cond_wait_common (abstime=0x7fb5a27985e0, clockid=<optimized out>, mutex=0x559def134158, cond=0x559def134180) at pthread_cond_wait.c:520
+#2  __pthread_cond_timedwait (cond=0x559def134180, mutex=0x559def134158, abstime=0x7fb5a27985e0) at pthread_cond_wait.c:665
+#3  0x00007fb5a59e809f in ros::CallbackQueue::callAvailable(ros::WallDuration) () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5a5a233af in ros::internalCallbackQueueThreadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 7 (Thread 0x7fb5a2f9b700 (LWP 109106)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def36ff28) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def36fed8, cond=0x559def36ff00) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def36ff00, mutex=0x559def36fed8) at pthread_cond_wait.c:647
+#3  0x00007fb5a5a20b87 in ros::ROSOutAppender::logThread() () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 6 (Thread 0x7fb5a379c700 (LWP 109105)):
+#0  0x00007fb5be968bbf in __GI___poll (fds=0x7fb594001120, nfds=2, timeout=100) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007fb5a57ec46c in XmlRpc::XmlRpcDispatch::work(double) () at /opt/ros/noetic/lib/libxmlrpcpp.so
+#2  0x00007fb5a59b91aa in ros::XMLRPCManager::serverThreadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#3  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#4  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#5  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 5 (Thread 0x7fb5a3f9d700 (LWP 109104)):
+#0  0x00007fb5be97568e in epoll_wait (epfd=9, events=0x7fb5a3f9b3d0, maxevents=4, timeout=100) at ../sysdeps/unix/sysv/linux/epoll_wait.c:30
+#1  0x00007fb5a59c58d8 in ros::poll_sockets(int, pollfd*, unsigned long, int) () at /opt/ros/noetic/lib/libroscpp.so
+#2  0x00007fb5a5a4125c in ros::PollSet::update(int) () at /opt/ros/noetic/lib/libroscpp.so
+#3  0x00007fb5a59d305d in ros::PollManager::threadFunc() () at /opt/ros/noetic/lib/libroscpp.so
+#4  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 4 (Thread 0x7fb5a47b2700 (LWP 109102)):
+#0  0x00007fb5be93323f in __GI___clock_nanosleep (clock_id=1, flags=0, req=0x7fb5a47b0620, rem=0x7fb5a47b0630) at ../sysdeps/unix/sysv/linux/clock_nanosleep.c:78
+#1  0x00007fb5bed5b04c in gazebo::common::Time::Sleep(gazebo::common::Time const&) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#2  0x00007fb5bed5b1dc in gazebo::common::Time::MSleep(unsigned int) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#3  0x00007fb5bf471135 in gazebo::Master::Run() () at /lib/x86_64-linux-gnu/libgazebo.so.11
+#4  0x00007fb5beb3bdf4 in  () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 3 (Thread 0x7fb5a4fb3700 (LWP 109101)):
+#0  0x00007fb5be97568e in epoll_wait (epfd=5, events=0x7fb5a4fb0f40, maxevents=128, timeout=-1) at ../sysdeps/unix/sysv/linux/epoll_wait.c:30
+#1  0x00007fb5bdf0ca5b in  () at /lib/x86_64-linux-gnu/libgazebo_transport.so.11
+#2  0x00007fb5bdf0f1ee in  () at /lib/x86_64-linux-gnu/libgazebo_transport.so.11
+#3  0x00007fb5bdf2fe72 in  () at /lib/x86_64-linux-gnu/libgazebo_transport.so.11
+#4  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#5  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#6  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 2 (Thread 0x7fb5a63f7700 (LWP 109100)):
+#0  futex_wait_cancelable (private=<optimized out>, expected=0, futex_word=0x559def0638c8) at ../sysdeps/nptl/futex-internal.h:183
+#1  __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x559def063878, cond=0x559def0638a0) at pthread_cond_wait.c:508
+#2  __pthread_cond_wait (cond=0x559def0638a0, mutex=0x559def063878) at pthread_cond_wait.c:647
+#3  0x00007fb5bed1c4e3 in  () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#4  0x00007fb5bed12882 in gazebo::common::ModelDatabase::UpdateModelCache(bool) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#5  0x00007fb5bcec443b in  () at /lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+#6  0x00007fb5be43a609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#7  0x00007fb5be975353 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+
+Thread 1 (Thread 0x7fb5a640cf00 (LWP 109098)):
+#0  0x00007fb5be93323f in __GI___clock_nanosleep (clock_id=1, flags=0, req=0x7ffed570d030, rem=0x7ffed570d040) at ../sysdeps/unix/sysv/linux/clock_nanosleep.c:78
+#1  0x00007fb5bed5b04c in gazebo::common::Time::Sleep(gazebo::common::Time const&) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#2  0x00007fb5bed5b1dc in gazebo::common::Time::MSleep(unsigned int) () at /lib/x86_64-linux-gnu/libgazebo_common.so.11
+#3  0x00007fb5bf441cf2 in gazebo::Server::Run() () at /lib/x86_64-linux-gnu/libgazebo.so.11
+#4  0x0000559db78145fd in  ()
+#5  0x00007fb5be87a083 in __libc_start_main (main=0x559db7814500, argc=5, argv=0x7ffed570d3b8, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7ffed570d3a8) at ../csu/libc-start.c:308
+#6  0x0000559db78146fe in  ()
+[Inferior 1 (process 109098) detached]

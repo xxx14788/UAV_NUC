@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+<world name="min2c">
+  <include><uri>model://ground_plane</uri></include>
+  <include><uri>model://sun</uri></include>
+  <model name="target_box">
+    <pose>3 0 1 0 0 0</pose>
+    <link name="l">
+      <inertial><mass>1</mass><inertia><ixx>1</ixx><iyy>1</iyy><izz>1</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="c"><geometry><box><size>2 2 2</size></box></geometry></collision>
+      <visual name="v"><geometry><box><size>2 2 2</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material></visual>
+    </link>
+  </model>
+  <model name="depth_rig">
+    <pose>0 0 2 0 0 0</pose>
+    <link name="link">
+      <sensor name="dcam" type="camera">
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <camera name="dc">
+          <horizontal_fov>1.2</horizontal_fov>
+          <image><width>320</width><height>240</height><format>R8G8B8</format></image>
+          <clip><near>0.2</near><far>12</far></clip>
+        </camera>
+        <plugin name="p" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn><updateRate>0</updateRate>
+          <cameraName>min2c_cam</cameraName>
+          <imageTopicName>/min2c/image_raw</imageTopicName>
+          <frameName>dc_optical</frameName>
+        </plugin>
+      </sensor>
+    </link>
+  </model>
+</world>
+</sdf>
