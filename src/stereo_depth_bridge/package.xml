@@ -3,7 +3,7 @@
   <name>stereo_depth_bridge</name>
   <version>0.1.0</version>
   <description>sim-only stereo->depth bridge (v6.2); SGBM on alive dynamic stereo pair, 32FC1 metric depth for grid_map. RED LINE: never enters real-machine stack.</description>
-  <maintainer email="dev@local">c3-v62 campaign</maintainer>
+  <maintainer email="bridge@example.com">c3-v62 campaign</maintainer>
   <license>MIT</license>
   <exec_depend>rospy</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
