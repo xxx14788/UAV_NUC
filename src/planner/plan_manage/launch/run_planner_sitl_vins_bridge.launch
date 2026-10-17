@@ -8,6 +8,7 @@
          与 GPS 代位版(run_planner_sitl.launch)的差异仅在 odom/depth 话题源，
          参数集相同(差异登记见 README 0 R6 表)。 -->
     <!-- T1-W4 认证开关:轮A基线(false)/轮B认证(true) -->
+    <arg name="hole_fill" default="false"/>
     <arg name="relay_on" default="false" />
     <!-- number of moving objects -->
     <arg name="obj_num" value="10" />
@@ -22,6 +23,8 @@
 
     <!-- v6.2 §一.3: stereo_depth_bridge 节点（双目活流->SGBM->32FC1 米制深度；sim-only RED LINE #19；战役目录轻量包经 ROS_PACKAGE_PATH 解析） -->
     <node pkg="stereo_depth_bridge" type="stereo_depth_bridge_node.py" name="stereo_depth_bridge" output="screen">
+      <!-- v8.2 route-A hole-filling (default OFF = archived v6 behavior; enable via hole_fill:=true) -->
+      <param name="hole_fill" value="$(arg hole_fill)"/>
       <param name="fx" value="387.5078"/>
       <param name="baseline" value="0.0493"/>
       <param name="cx" value="323.5014"/>

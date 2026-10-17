@@ -46,9 +46,32 @@ def texture_mask(gray, thresh=8.0, win=25):
     std = np.sqrt(np.maximum(m2 - m1 * m1, 0.0))
     return std >= thresh
 
+def fill_holes(disp, valid, kernel=5, inpaint_radius=3):
+    """Route-A hole filling (v8.2 §一.A): 5x5 morphological CLOSE on the valid mask
+    defines small holes; TELEA inpaint on the DISPARITY map fills them (disp is the
+    locally-smooth quantity and uint8 covers the 0-96 SGBM range without rescaling;
+    TELEA's boundary-inward propagation = edge-aware, confined to valid-region
+    borders by construction). Returns (disp, hole_mask, n_filled); no-op when the
+    close finds no hole."""
+    k = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel, kernel))
+    closed = cv2.morphologyEx((valid * 255).astype(np.uint8), cv2.MORPH_CLOSE, k) > 0
+    holes = closed & ~valid
+    if not np.any(holes):
+        return disp, holes, 0
+    disp8 = np.clip(disp, 0, 255).astype(np.uint8)
+    inp = cv2.inpaint(disp8, (holes * 255).astype(np.uint8), inpaint_radius,
+                      cv2.INPAINT_TELEA)
+    out = disp.copy()
+    out[holes] = inp[holes].astype(np.float32)
+    return out, holes, int(np.count_nonzero(holes))
+
 def compute_depth(left_gray, right_gray, fx=387.5078, baseline=0.0493, sgbm=None,
-                  min_valid_disp=0.5, half_res=False, tex_thresh=8.0):
-    """Return float32 depth map (meters); invalid pixels = 0.0."""
+                  min_valid_disp=0.5, half_res=False, tex_thresh=8.0,
+                  hole_fill=False, hole_kernel=5, hole_radius=3, fill_stats=None):
+    """Return float32 depth map (meters); invalid pixels = 0.0.
+    hole_fill=True enables route-A disparity-domain hole filling (default OFF —
+    archived v6 behavior is byte-identical when False); fill_stats (dict) receives
+    per-frame registration: n_valid, n_filled, n_holes."""
     if sgbm is None:
         sgbm = make_sgbm()
     if half_res:
@@ -58,6 +81,14 @@ def compute_depth(left_gray, right_gray, fx=387.5078, baseline=0.0493, sgbm=None
         lg, rg = left_gray, right_gray
     disp = sgbm.compute(lg, rg).astype(np.float32) / 16.0
     valid = disp >= min_valid_disp
+    n_filled = 0
+    if hole_fill:
+        disp, holes, n_filled = fill_holes(disp, valid, hole_kernel, hole_radius)
+        valid = disp >= min_valid_disp      # fills below min disparity are dropped
+    if fill_stats is not None:
+        fill_stats['n_valid'] = int(np.count_nonzero(valid))
+        fill_stats['n_filled'] = n_filled
+        fill_stats['n_invalid'] = int(disp.size - np.count_nonzero(valid))
     depth = np.zeros(disp.shape, np.float32)
     fx_eff = fx * (0.5 if half_res else 1.0)
     depth[valid] = fx_eff * baseline / disp[valid]
@@ -102,10 +133,13 @@ def main():
     BLOCK = rospy.get_param('~block_size', 5)
     UNIQ = rospy.get_param('~uniqueness', 15)
     TEX_TH = rospy.get_param('~tex_thresh', 8.0)
+    HOLE_FILL = rospy.get_param('~hole_fill', False)      # route-A, default OFF (v6 archive behavior)
+    HOLE_KERNEL = rospy.get_param('~hole_kernel', 5)
+    HOLE_RADIUS = rospy.get_param('~hole_radius', 3)
 
     rospy.init_node('stereo_depth_bridge')
     pub = rospy.Publisher('/sdb/depth/image_raw', Image, queue_size=2)
-    pub_ci = rospy.Publisher('/sdb/depth/camera_info', CameraInfo, queue_size=2, latch=True)
+    pub_ci = rospy.Publisher('/sdb/depth/camera_info', CameraInfo, latch=True)
 
     sgbm = make_sgbm(NUMD, BLOCK, UNIQ)
     right_buf = []            # (stamp, msg) small ring
@@ -113,7 +147,8 @@ def main():
     busy = threading.Event()  # worker busy flag
     mail = []                 # handed-over pair
     stat = dict(left_in=0, right_in=0, paired=0, unpaired_drop=0, busy_drop=0, published=0,
-                lat_wall_ms=[], lat_sim_ms=[], finite_ratio=[], last_depth_med=0.0)
+                lat_wall_ms=[], lat_sim_ms=[], finite_ratio=[], last_depth_med=0.0,
+                fill_px=[], fill_hole_px=[], fill_frames=0)   # route-A per-frame registration
 
     def on_ci(msg):
         ci = CameraInfo()
@@ -135,7 +170,15 @@ def main():
             ls, lmsg, rmsg = mail.pop(0)
             gl = msg_to_gray(lmsg)
             gr = msg_to_gray(rmsg)
-            depth = compute_depth(gl, gr, FX, BASELINE, sgbm, half_res=HALF_RES, tex_thresh=TEX_TH)
+            fs = {} if HOLE_FILL else None
+            depth = compute_depth(gl, gr, FX, BASELINE, sgbm, half_res=HALF_RES,
+                                  tex_thresh=TEX_TH, hole_fill=HOLE_FILL,
+                                  hole_kernel=HOLE_KERNEL, hole_radius=HOLE_RADIUS,
+                                  fill_stats=fs)
+            if fs:
+                stat['fill_frames'] += 1
+                stat['fill_hole_px'].append(fs['n_filled'])
+                stat['fill_px'].append(fs['n_valid'])
             out = Image()
             out.header = lmsg.header
             out.height, out.width = depth.shape
@@ -209,18 +252,35 @@ def main():
     rate = rospy.Rate(0.2)
     while not rospy.is_shutdown():
         rate.sleep()
+        # v7.1 hot-reload: re-read hole_fill every cycle (belt-and-suspenders against
+        # launch-arg propagation gaps; runtime `rosparam set` takes effect <=5s)
+        try:
+            nh = rospy.get_param('~hole_fill', HOLE_FILL)
+            if isinstance(nh, bool):
+                if nh != HOLE_FILL:
+                    rospy.loginfo('[SDB] hole_fill hot-switch %s -> %s', HOLE_FILL, nh)
+                HOLE_FILL = nh
+        except Exception:
+            pass
         lw = stat['lat_wall_ms'][-150:] if stat['lat_wall_ms'] else [0]
         ls = stat['lat_sim_ms'][-150:] if stat['lat_sim_ms'] else [0]
         fr = stat['finite_ratio'][-150:] if stat['finite_ratio'] else [0]
         drops = stat['unpaired_drop'] + stat['busy_drop']
         tot = max(stat['left_in'], 1)
+        fh = stat['fill_hole_px'][-150:] if stat['fill_hole_px'] else [0]
+        fill_summary = None
+        if HOLE_FILL:
+            fill_summary = dict(on=True, frames=stat['fill_frames'],
+                                hole_px_med=int(np.median(fh)), hole_px_max=int(np.max(fh)),
+                                fill_rate_med=round(float(np.median(fh)) / (480 * 640), 5))
         s = dict(n_left=stat['left_in'], n_pub=stat['published'], drop_unpaired=stat['unpaired_drop'],
                  drop_busy=stat['busy_drop'], drop_rate=round(drops / tot, 4),
                  lat_wall_p50=round(float(np.percentile(lw, 50)), 1), lat_wall_p95=round(float(np.percentile(lw, 95)), 1),
                  lat_sim_p50=round(float(np.nanpercentile(ls, 50)), 1), lat_sim_p95=round(float(np.nanpercentile(ls, 95)), 1),
                  finite_ratio_last=round(float(fr[-1]) if fr else 0, 3), finite_ratio_med=round(float(np.median(fr)), 3),
                  depth_med=round(stat['last_depth_med'], 2),
-                 params=dict(fx=FX, B=BASELINE, numd=NUMD, block=BLOCK, uniq=UNIQ, half=HALF_RES, tex=TEX_TH))
+                 params=dict(fx=FX, B=BASELINE, numd=NUMD, block=BLOCK, uniq=UNIQ, half=HALF_RES, tex=TEX_TH),
+                 hole_fill=fill_summary)
         rospy.loginfo('[SDB-STAT] %s', json.dumps(s))
 
 if __name__ == '__main__':
