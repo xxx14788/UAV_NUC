@@ -1,0 +1,9 @@
+7f4130088a67eb24cef40eb9ad025812  gate2C/gate2C_slice20s.bag
+ef656aff0fb20019e33865d33153fa29  gate2f/gate2f_slice20s.bag
+# 六袋处置登记（v8.6 §四.3；2026-10-17 夜）
+# 判读毕删除（路 A/C 复测链，本战役 v8.2 会话产物）：
+#   gate2C/gate2C.bag (1.7G, 路C σ9 判据袋) -> 20s 切片在案
+#   gate2f/gate2f.bag (5.0G, 路A 终版激活复测) -> 20s 切片在案
+#   gate2d/gate2d.bag (5.6G, 路A 中间迭代 r2 延迟复测) -> 判读毕删（终版 gate2f 链在案）
+#   gate2e/gate2e.bag (4.9G, 路A 中间迭代) -> 判读毕删
+# 保留不动（v6.2 会话域,跨域不处置）：gate1/ gate2/ gate2b/ gate2g/ gate2h/ gate2i
