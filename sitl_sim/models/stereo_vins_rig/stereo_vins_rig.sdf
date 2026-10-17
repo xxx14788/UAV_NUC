@@ -3,7 +3,9 @@
   <!-- A7 双目 rig 子模型（include 模式 + 双 camera sensor）。
        v3：multicamera 在 headless gzserver 不激活（2026-09-26），回退双
        camera sensor；VINS 侧用 estimate_extrinsic:2 在线标定外参兜底。
-       左右目 640x480@30Hz 基线 10cm；光学中心机体系 (0.12,±0.05,0.035)。 -->
+       左右目 640x480@30Hz 基线 49.3mm（D435 对齐 2026-10-17 用户裁定：实机标定值；55mm 机械读数备选注记）。
+       光学中心机体系 (0.12,±0.02465,0.035)；hfov=1.38053965rad(79.0991deg)→fx=fy=387.5078（实机标定）。
+       渲染主点=图像中心(gazebo classic 边界,无主点域)；yaml 标定主点 cx323.5014/cy232.6917 与渲染中心差 ~3.5/7.3px=已知边界注记。 -->
   <model name="stereo_vins_rig">
     <pose>0 0 0.035 0 0 0</pose>
     <link name="link">
@@ -30,7 +32,7 @@
         <always_on>true</always_on>
         <update_rate>30</update_rate>
         <visualize>false</visualize>
-        <pose>0.02 0.05 0 0 0 0</pose>
+        <pose>0.02 0.02465 0 0 0 0</pose>
         <camera>
           <!-- T2-R3.3: 仿真相机噪声修复(实机 readout 噪声的 sim 等价物)。
                根因:无噪声合成图像弱纹理区梯度严格=0,pyrLK 光流方程奇异,
@@ -42,7 +44,7 @@
             <mean>0.0</mean>
             <stddev>0.004</stddev>
           </noise>
-          <horizontal_fov>1.2</horizontal_fov>
+          <horizontal_fov>1.38053965</horizontal_fov>
           <image>
             <format>R8G8B8</format>
             <width>640</width>
@@ -68,7 +70,7 @@
         <always_on>true</always_on>
         <update_rate>30</update_rate>
         <visualize>false</visualize>
-        <pose>0.02 -0.05 0 0 0 0</pose>
+        <pose>0.02 -0.02465 0 0 0 0</pose>
         <camera>
           <!-- T2-R3.3: 仿真相机噪声修复(实机 readout 噪声的 sim 等价物)。
                根因:无噪声合成图像弱纹理区梯度严格=0,pyrLK 光流方程奇异,
@@ -80,7 +82,7 @@
             <mean>0.0</mean>
             <stddev>0.004</stddev>
           </noise>
-          <horizontal_fov>1.2</horizontal_fov>
+          <horizontal_fov>1.38053965</horizontal_fov>
           <image>
             <format>R8G8B8</format>
             <width>640</width>
