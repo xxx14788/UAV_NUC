@@ -99,7 +99,7 @@
     <param name="grid_map/local_update_range_x"  value="5.5" /> 
     <param name="grid_map/local_update_range_y"  value="5.5" /> 
     <param name="grid_map/local_update_range_z"  value="4.5" /> 
-    <param name="grid_map/obstacles_inflation"     value="0.299" /> 
+    <param name="grid_map/obstacles_inflation"     value="0.15" /> <!-- v8.2 tune r3-4: single-variable per sec-2 diagnosis (0.299 upstream default blocked box-hugging in v9 2.5m-gap corridor; audit trail tuning_v82) --> 
     <param name="grid_map/local_map_margin" value="10"/>
     <param name="grid_map/ground_height"        value="-0.01"/>
     <!-- camera parameter: Gazebo iris_depth_camera, 848x480, hfov=1.5009831567 -->
