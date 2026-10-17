@@ -1,0 +1,57 @@
+{
+ "V88C3": {
+  "min_truth": 4.677,
+  "last": 5.436,
+  "arrived_rejudge": false
+ },
+ "V88C5": {
+  "min_truth": 0.407,
+  "last": 2.611,
+  "arrived_rejudge": true
+ },
+ "V88C8": {
+  "min_truth": 4.677,
+  "last": 5.292,
+  "arrived_rejudge": false
+ },
+ "V88C10": {
+  "min_truth": 4.616,
+  "last": 5.299,
+  "arrived_rejudge": false
+ },
+ "V88C12": {
+  "min_truth": 3.004,
+  "last": 3.326,
+  "arrived_rejudge": false
+ },
+ "V88C14": {
+  "min_truth": 4.132,
+  "last": 4.132,
+  "arrived_rejudge": false
+ },
+ "V88C15": {
+  "min_truth": 3.582,
+  "last": 3.768,
+  "arrived_rejudge": false
+ },
+ "V88C16": {
+  "min_truth": 4.677,
+  "last": 5.148,
+  "arrived_rejudge": false
+ },
+ "V88R3": {
+  "min_truth": 2.478,
+  "last": 3.368,
+  "arrived_rejudge": false
+ },
+ "V88R4": {
+  "min_truth": 0.317,
+  "last": 1.498,
+  "arrived_rejudge": true
+ },
+ "V88R6": {
+  "min_truth": 0.258,
+  "last": 0.474,
+  "arrived_rejudge": true
+ }
+}
