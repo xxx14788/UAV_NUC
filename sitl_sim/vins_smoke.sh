@@ -11,6 +11,12 @@ source /opt/ros/noetic/setup.bash          # 先 source 再 set -u(V3 教训)
 source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会覆盖掉 ws 包路径(X1轮1教训)
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
+# v6.2 §一.3: C3A_BRIDGE=1 -> planner 桥接变体(/sdb/depth + D435 对齐内参 + stereo_depth_bridge 节点)
+PLAUNCH=run_planner_sitl_vins.launch
+if [ "${C3A_BRIDGE:-0}" = "1" ]; then
+  PLAUNCH=run_planner_sitl_vins_bridge.launch
+  export ROS_PACKAGE_PATH="$HOME/sitl_sim/c3_v62_bridge/bridge_pkg:$ROS_PACKAGE_PATH"
+fi
 GATE=0
 WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""; IMGREC=0
 while [ $# -gt 0 ]; do case "$1" in
@@ -231,7 +237,7 @@ LOG "preflight 全绿(双目纹理/域/IMU/真值 X1.1 覆盖)"
 nohup roslaunch px4ctrl run_ctrl_sitl_vins.launch > "$EV/px4ctrl.log" 2>&1 &
 sleep 3
 rostopic info /px4ctrl/takeoff_land 2>/dev/null | grep -q Publishers || { LOG "FATAL px4ctrl 无响应"; exit 1; }
-nohup roslaunch ego_planner run_planner_sitl_vins.launch > "$EV/planner.log" 2>&1 &
+nohup roslaunch ego_planner "$PLAUNCH" > "$EV/planner.log" 2>&1 &
 sleep 4
 rostopic info /position_cmd 2>/dev/null | grep -q Publishers || { LOG "FATAL planner 无 position_cmd"; exit 1; }
 LOG "五件套齐(px4ctrl+ego)"
@@ -457,7 +463,7 @@ if [ "$WARMUP" = "1" ]; then
     mv "$EV/planner.log" "$EV/planner_starved_wu_1.log" 2>/dev/null
     bash "$L/kill_planner_all.sh" > "$EV/planner_kill_wu.log" 2>&1
     sleep 2
-    nohup roslaunch ego_planner run_planner_sitl_vins.launch > "$EV/planner.log" 2>&1 &
+    nohup roslaunch ego_planner "$PLAUNCH" > "$EV/planner.log" 2>&1 &
     if ! wait_planner_ready 25; then
       LOG "WARN WU-goal-fix W2: 重启后就绪门超时(25s)——照发 mission goal, 判读面注记"
       echo "$(date '+%F %T') W2-READY-TIMEOUT" >> "$EV/warmup_goal_adopted.txt"
@@ -508,7 +514,7 @@ if ! target_moved && ! awk "BEGIN{exit !($PC > 1.0)}"; then
   mv "$EV/planner.log" "$EV/planner_starved_1.log"
   bash "$L/kill_planner_all.sh" > "$EV/planner_kill_starve.log" 2>&1
   sleep 2
-  nohup roslaunch ego_planner run_planner_sitl_vins.launch > "$EV/planner.log" 2>&1 &
+  nohup roslaunch ego_planner "$PLAUNCH" > "$EV/planner.log" 2>&1 &
   if ! wait_planner_ready 25; then LOG "重启后订阅就绪门仍超时(25s)——二次停摆,按 WARN 走"; fi
   for k in 1 2; do goal_pub; sleep 2; done
   LOG "goal 再发(重启后 2×8s)"
