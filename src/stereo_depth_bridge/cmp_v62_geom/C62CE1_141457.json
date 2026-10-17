@@ -1,0 +1,67 @@
+{
+ "bag": "/home/ghj/sitl_sim/vins_smoke_runs/run_C62CE1_141457/flight.bag",
+ "lane": "E",
+ "n_truth": 26454,
+ "path_len": 17.326,
+ "straight_len": 13.047,
+ "ratio": 1.3279,
+ "box_min_center": 1.161,
+ "box_min_center_box": "cB3",
+ "box_min_surface": 0.482,
+ "box_min_surface_box": "cB3",
+ "box_min_inflated": 0.183,
+ "box_min_inflated_box": "cB3",
+ "max_lat_dev": 2.131,
+ "detour_segments": [
+  {
+   "side": "S",
+   "t0": 49.7,
+   "t1": 61.42,
+   "peak": 0.853,
+   "vflip": 0
+  },
+  {
+   "side": "N",
+   "t0": 67.36,
+   "t1": 91.24,
+   "peak": 2.131,
+   "vflip": 0
+  }
+ ],
+ "n_detours": 2,
+ "per_box": {
+  "cB1": {
+   "min_surf": 0.811,
+   "min_infl": 0.512
+  },
+  "cB2": {
+   "min_surf": 1.143,
+   "min_infl": 0.844
+  },
+  "cB3": {
+   "min_surf": 0.482,
+   "min_infl": 0.183
+  },
+  "cN1": {
+   "min_surf": 2.957,
+   "min_infl": 2.658
+  },
+  "cN2": {
+   "min_surf": 3.347,
+   "min_infl": 3.048
+  },
+  "cN3": {
+   "min_surf": 5.056,
+   "min_infl": 4.757
+  }
+ },
+ "n_boxes_interact_lt0.2": 1,
+ "min_surf_all": 0.482,
+ "gate_interact_ge3_infl_lt0.2": false,
+ "gate_no_collision_surf_gt0": true,
+ "vins_cross_min_inflated": 0.0,
+ "gate_min_inflated_lt_0.2": true,
+ "gate_ratio_ge_1.25": true,
+ "gate_maxlat_ge_0.8": true,
+ "gate_ndetour_ge_3": false
+}
