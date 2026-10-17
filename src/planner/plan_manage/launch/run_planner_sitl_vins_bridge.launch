@@ -52,7 +52,7 @@
         <arg name="fx" value="387.5078"/>
         <arg name="fy" value="387.5078"/>
         <!-- 保守起步（任务书 A3）；catkin_make/SITL 冒烟后再提 -->
-        <arg name="max_vel" value="0.5" />
+        <arg name="max_vel" value="0.75" /> <!-- v8.6 sec-1 A/B verdict: B-tier fast arm locked (S-gate 3/6 vs 1/6) -->
         <arg name="max_acc" value="6.0" />
         <!--always set to 1.5 times grater than sensing horizen-->
         <arg name="planning_horizon" value="6" />
