@@ -16,7 +16,9 @@ BOX = {"box_A": (3.5,-1.5,0.0,1.0,1.0,1.8), "box_B": (5.0,-2.5,0.0,1.5,1.0,1.2),
        "box_C": (4.5,-3.5,0.0,1.0,1.0,2.2)}
 if world.endswith('_v2'):
     BOX["box_D"] = (6.4,-2.0,0.0,1.0,1.0,2.8); BOX["box_E"] = (6.4,0.5,0.0,1.0,1.0,2.8)
-if "corridor" in world:   # v1.5c C3: GAZEBO frame (truth tong zhen; jiubiao A/B/C shi odom zuobiao dai ±1m xitong cha de lishi baoliu mian). zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8
+if world.endswith('_v9'):
+    BOX = {"cL1": (2.4384, 2.6629, 0.0, 0.602, 0.602, 1.5), "cL2": (4.4607, 4.1761, 0.0, 0.602, 0.602, 1.5)}  # P0-2 fix 2026-10-17: v9 rounds previously fell into 13m cB/cN table = phantom min_dist (frame+table mismatch, P02 filing); gazebo-frame ground truth from sitl_world_corridor_v9.world poses; thin-panel box equivalent solid
+elif "corridor" in world:   # v1.5c C3: GAZEBO frame (truth tong zhen; jiubiao A/B/C shi odom zuobiao dai ±1m xitong cha de lishi baoliu mian). zhengyuan=~/sitl_sim/c3_corridor_20261013/world_design_rationale.md sec8
     BOX = {"cB1": (4.457,0.737,0.0,1.0,1.0,1.8), "cB2": (7.010,0.127,0.0,1.0,1.0,1.8),
            "cB3": (9.442,1.112,0.0,1.0,1.0,1.8), "cB4": (11.995,0.502,0.0,1.0,1.0,1.8),
            "cN1": (2.544,3.100,0.0,1.0,1.0,1.8), "cN2": (4.875,4.295,0.0,1.0,1.0,1.8),
@@ -173,7 +175,7 @@ if hasl2 and t2_start:
     dv2 = leg_min(prop, (l2x,l2y,l2z), t2_start, t_end, anchored=False)
     ok[0] = ok[0] and (dt2 < GATE)
     print('leg2 到位(真值) min=%.3f m (<%.2f,与leg1合并判)->%d | leg2(VINS自报) min=%.3f m' % (dt2, GATE, dt2 < GATE, dv2))
-print('避障 min_dist=%.3f m (>0.349)->%d' % (mind, ok[1]))
+print('避障 min_dist=%.3f m (>0.349)->%d [P0-2: v9 表已修 2026-10-17; 13m 历史轮该行禁引—帧系+版本双错配, 净距唯一正源=audit min_surf]' % (mind, ok[1]))
 print('poscmd %.1f Hz (>=50)->%d' % (hz, ok[2]))
 print('auto_disarm->%d' % ok[3])
 print('LANDING: z_end=%.3f m (<0.15)->%d' % (z_end, 1 if land_ok else 0))
