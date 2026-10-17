@@ -332,3 +332,18 @@ N1 c6 geom 双前缀/N2 flight.bag 无图像域/N3 Win md5sum 格式/N4 ssh 复�
 21. **rostopic hz 无 timeout 同步调用挂起**（gate1_run 等待环卡死根因）：脚本内 rostopic hz 必须 timeout 包裹。
 22. bash "&&"链与"&"优先级：cd+子 shell 整链后台化致后续命令在原 cwd 找不到文件（N4 族变体复发）。
 23. **手动复刻栈缺 harness 预热/持续起飞指令域**：干测脚本 12s 单发 takeoff_land 投递窗不足（首 boot 慢投递）→NEVER-FLEW 假象；飞行轮一律走 vins_smoke.sh 权威入口（N7 正字复发域）。
+
+### v8.x 会话坑并档（2026-10-17 v8.6 终版批收口版回写；承 v8.3 N18-N21 编号勘误=月报 24-27 续号）
+
+24. **teleport 位=机体原点非相机位**（承 N18）：set_model_state 语义按 model 原点，近箱距离分析若按相机位换算需显式偏移 body_T_cam。
+25. **launch arg→param 传递断链**（承 N19，根因未定案）：dump-params 解析正确+命令行正确+运行时节点读 False；绕行=rosparam 直设+运行时热更（N19 断链坑内嵌 v8.6 红——参数注入禁 launch arg 新参数）。
+26. **TELEA 大洞延迟陷阱**（承 N20）：万级像素洞填充 ~160ms/帧→p95 206ms 爆表——空洞填充类算法上线前必测洞面积-延迟曲线。
+27. **v9 tag 真加载点=/usr/share/gazebo-11/media/materials/textures**（承 N21）：world uri file://media 解析到 gazebo 安装前缀，~/.gazebo/models 非加载点——tag PNG 变更必须落真加载点+渲染验证（帧差/白体 std）。
+28. **if-if 分支穿透（v8.6 会话 P0-2 修复实录）**：条件分支插入已有 if 链时若不改 elif，后分支持续覆盖前分支（v9 表被 13m 表静默覆盖，三次跑错值才定位）——教训=**判读/工具行修改必须即时数值回归**（预期值对正源）而非只验语法。
+
+### v8.6 条目回写四条（2026-10-17）
+
+- **IR 投射器（路 C 条件收档）**：v9.1b=白基 250+σ9 iid 全幅（种子 20261017）随 v9 飞；渲染衰减壁定案=mipmap 5 级+AA 把像素 iid 噪声衰减到纹理门 T8 下（近距三版 49.4/50.4/50.3% 稳定带）；σ 上限被 plane-truth 不劣化锁死（1.69%）；60% 几何门未达维持路 B 功能覆判过（差异文档 IR 节=routeC_final.md 文案）。
+- **inflation 调优**：0.299→0.15（git 1f682e2）——上游默认在 v9 2.5m 箱距走廊致膨胀域禁贴箱（infl 门 0/2→6/6 双档验证）。
+- **双 lane 勘误（v9 对角单 lane）**：v8.5 双 lane 设计勘误——反方向=箱背无 tag 面搅浑 H-dJ2，v9 注册=单对角 lane spawn(0.8,0.8)→goal(5.0,5.0)=odom(4.2,4.2)（红 36）。
+- **±15pp 扩样勘误**：旧扩 35口径在 p 居中带只给 ±16.6pp（N=35, p=0.5）——改为 Wilson 95% 半宽 ≤15pp 实算触发（最坏 p=0.5 需 N≈43；运行中每 6 轮实算，>15pp 续飞至达标或 N=45 硬顶）。
