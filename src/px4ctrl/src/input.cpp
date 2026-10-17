@@ -179,6 +179,35 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
                 ROS_INFO("[px4ctrl] P1: odom gap-rebirth re-aligned (offset %.2fm <= %.2fm).",
                          p1_off, p1_cfg.birth_thresh);
         }
+        // C3-v88 B1: landing-episode perception tube clamp (clamp-not-reject;
+        // placed after P1 so the rebirth gate keeps raw-domain semantics).
+        // Wall-contact frames zero the poisoned axis velocity (drift vz
+        // ~-0.49 m/s would otherwise keep a 0.74 m/s^2 climb command alive
+        // through the Kv damping term).
+        if (land_guard_cfg.enabled && land_guard_st.active)
+        {
+            bool zc = false, xyc = false;
+            const Eigen::Vector3d p_g = land_guard_clamp(land_guard_cfg, land_guard_st,
+                                                         p_in, now.toSec(), zc, xyc);
+            if (zc || xyc)
+            {
+                if (land_guard_st.clamped == 1 || land_guard_st.clamped % 200 == 0)
+                    ROS_ERROR("[LANDDRIFT] tube clamp #%ld raw z=%.2f -> %.2f (anchor z=%.2f), excursion_max=%.2f%s",
+                              land_guard_st.clamped, p_in(2), p_g(2), land_guard_st.anchor(2),
+                              land_guard_st.excursion_max,
+                              land_guard_st.alarm_latched ? " ALARM-LATCHED" : "");
+                p_in = p_g;
+                if (zc) v_in(2) = 0.0;
+                if (xyc) { v_in(0) = 0.0; v_in(1) = 0.0; }
+            }
+            if (land_guard_st.alarm && !land_guard_alarm_reported)
+            {
+                land_guard_alarm_reported = true;
+                ROS_ERROR("[LANDDRIFT] ALARM latched: excursion %.2fm > %.2fm sustained %.1fs (runaway signature; rung-A consumers take over)",
+                          land_guard_st.excursion_max, land_guard_cfg.alarm_thresh,
+                          land_guard_cfg.alarm_sustain);
+            }
+        }
         msg = *pMsg;
         rcv_stamp = now;
         recv_new_msg = true;

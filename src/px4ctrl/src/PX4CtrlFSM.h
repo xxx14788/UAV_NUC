@@ -55,6 +55,9 @@ public:
 	uint32_t p3_last_msg = 0;
 	bool p3_notify_seen = false;
 	int ha_stage = 0;
+	// C3-v88 B3: near-ground descent cap engagement latch (AUTO_LAND descending)
+	double b3_engaged_z = -999.0;
+	double b3_engaged_t = 0.0;
 public:
 	void p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg);
 

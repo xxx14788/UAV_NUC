@@ -15,6 +15,7 @@
 #include "PX4CtrlParam.h"
 #include "odom_sanity.h"
 #include "odom_sanity_v2.h"  // Z1.2 (v11.17 2.2)
+#include "land_drift_guard.h"  // C3-v88 (2026-10-17) landing drift guard
 
 class RC_Data_t
 {
@@ -85,6 +86,21 @@ public:
     double birth_thresh = 0.75;
   } p1_cfg;
   bool birth_mismatch = false;
+
+  // C3-v88: landing-episode drift guard (clamp-not-reject tube; see
+  // land_drift_guard.h). Episode latched by the FSM at AUTO_LAND entries.
+  LandGuardConfig land_guard_cfg;
+  LandGuardState land_guard_st;
+  bool land_guard_alarm_reported = false;
+
+  void land_guard_begin(const Eigen::Vector3d &anchor, double t)
+  {
+    ::land_guard_begin(land_guard_st, anchor, t);
+    land_guard_alarm_reported = false;
+  }
+  void land_guard_end() { ::land_guard_end(land_guard_st); }
+  bool land_guard_active() const { return land_guard_st.active; }
+  bool land_guard_alarm() const { return land_guard_st.alarm_latched; }
 
   Odom_Data_t();
   void feed(nav_msgs::OdometryConstPtr pMsg);

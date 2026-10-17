@@ -149,6 +149,18 @@ int main(int argc, char *argv[])
     fsm.odom_data.p1_cfg.enabled = param.p1_rebirth.enabled;
     fsm.odom_data.p1_cfg.gap_sec = param.p1_rebirth.gap_sec;
     fsm.odom_data.p1_cfg.birth_thresh = param.p1_rebirth.birth_thresh;
+    // C3-v88: landing drift guard config injection (SITL yaml only)
+    fsm.odom_data.land_guard_cfg.enabled = param.land_guard.enabled;
+    fsm.odom_data.land_guard_cfg.z_floor = param.land_guard.z_floor;
+    fsm.odom_data.land_guard_cfg.z_down_extra = param.land_guard.z_down_extra;
+    fsm.odom_data.land_guard_cfg.z_up = param.land_guard.z_up;
+    fsm.odom_data.land_guard_cfg.xy_cap = param.land_guard.xy_cap;
+    fsm.odom_data.land_guard_cfg.alarm_thresh = param.land_guard.alarm_thresh;
+    fsm.odom_data.land_guard_cfg.alarm_sustain = param.land_guard.alarm_sustain;
+    fsm.odom_data.land_guard_cfg.rung_b2_land_xy_freeze = param.land_guard.rung_b2_land_xy_freeze;
+    fsm.odom_data.land_guard_cfg.rung_b3_descent_cap = param.land_guard.rung_b3_descent_cap;
+    fsm.odom_data.land_guard_cfg.b3_cap_mps = param.land_guard.b3_cap_mps;
+    fsm.odom_data.land_guard_cfg.rung_a_drift_hold = param.land_guard.rung_a_drift_hold;
     // T1-P2 (v11.4 unit 3): cmd-response divergence gate (default OFF)
     fsm.p2_cfg.enabled = param.p2_cmdresp.enabled;
     fsm.p2_cfg.win_sec = param.p2_cmdresp.win_sec;

@@ -4,6 +4,7 @@
 #include <std_msgs/String.h>
 #include <algorithm>
 #include <cmath>
+#include "land_drift_guard.h"  // C3-v88 (2026-10-17)
 
 using namespace std;
 using namespace uav_utils;
@@ -89,6 +90,11 @@ void PX4CtrlFSM::process()
 	fd_in.no_rc = param.takeoff_land.no_RC;
 	fd_in.cmdresp_divergent = p2_st.latched; // T1-P2: cmd-response divergence latch
 	fd_in.ha_blind_land = (ha_stage >= 2);   // T1-v1139 梯①盲降: HAFIX LAND 期 decide_land odom 门旁路
+	// C3-v88: landing-episode drift guard bookkeeping — episode ends on
+	// landed / disarmed / new takeoff; anchor re-arms at next AUTO_LAND entry.
+	if (odom_data.land_guard_active() &&
+	    (fd_in.landed || !fd_in.armed || state == AUTO_TAKEOFF))
+		odom_data.land_guard_end();
 	if (state_data.rcv_stamp != ros::Time(0) && // 首帧保护留在调用点(纯函数不建模,审计表#S0)
 	    fsm_decision::step0_global(fd_state_of(state), fd_in).next == fsm_decision::MANUAL_CTRL)
 	{
@@ -119,12 +125,19 @@ void PX4CtrlFSM::process()
 	if (param.ha_fix.enabled && !p3_window)
 	{
 		const bool odom_dead = !odom_is_received(now_time);
+		// C3-v88 A-rung: drift alarm feeds the same HAFIX ladder (blind-land
+		// handover). The alarm is an already-sustained confirmed signature, so
+		// the dead_s confirmation window is waived (dead_elapsed floored).
+		const bool drift_alarm = param.land_guard.enabled && param.land_guard.rung_a_drift_hold &&
+		    odom_data.land_guard_alarm();
 		// T1-v1139 P-1/P-2: 决策权威=decide_hafix(纯函数);副作用逐分支映射(行为等价,F3 同构)。
 		fsm_decision::HafixInputs ha_in;
 		ha_in.enabled = true;
 		ha_in.stage = ha_stage;
-		ha_in.flying = fd_in.armed && !fd_in.landed && odom_dead; // watch 域=飞行∧流死
+		ha_in.flying = fd_in.armed && !fd_in.landed && (odom_dead || drift_alarm); // watch 域=飞行∧(流死∨漂移告警) C3-v88
 		ha_in.dead_elapsed = (ha_stage != 0) ? (now_time - ha_dead_since).toSec() : 0.0;
+		if (drift_alarm && ha_in.dead_elapsed < param.ha_fix.dead_s)
+			ha_in.dead_elapsed = param.ha_fix.dead_s; // C3-v88: alarm = confirmed signature, waive watch window
 		ha_in.landed = fd_in.landed;
 		ha_in.armed = fd_in.armed;
 		ha_in.dead_s = param.ha_fix.dead_s;
@@ -148,6 +161,11 @@ void PX4CtrlFSM::process()
 			toggle_offboard_mode(true);
 			ROS_ERROR("[HAFIX] dead %.1fs >= %.1fs -> AUTO_LAND (blind-descend on stale odom)",
 			          ha_in.dead_elapsed, param.ha_fix.dead_s);
+			if (param.land_guard.enabled)
+			{
+				odom_data.land_guard_begin(odom_data.p, now_time.toSec());
+				b3_engaged_z = -999.0;
+			}
 		}
 		// T1-v1139 梯①弹回防护: HAFIX LAND 期 FSM 不得弹回 MANUAL(decide_land 旁路为主,
 		// 本重断言=保险层;反复出现=旁路失效须查)
@@ -158,6 +176,11 @@ void PX4CtrlFSM::process()
 			takeoff_land.toggle_takeoff_land_time = now_time;
 			toggle_offboard_mode(true);
 			ROS_ERROR("[HAFIX] re-assert AUTO_LAND (blind-descend FSM bounce guard)");
+			if (param.land_guard.enabled)
+			{
+				odom_data.land_guard_begin(odom_data.p, now_time.toSec());
+				b3_engaged_z = -999.0;
+			}
 		}
 		// P-1 梯②: KILL 到期即发,双命令(三次修复 C-1 终局, 号勘定 185/400——旧 400p1=1=ARM
 		// 空转与旧 179=SET_HOME 均非停电机, 详 fsm_decision.h 注): ①cmd185 param1=1.0
@@ -345,6 +368,11 @@ void PX4CtrlFSM::process()
 		{
 			state = AUTO_LAND;
 			set_start_pose_for_takeoff_land(odom_data);
+			if (param.land_guard.enabled)
+			{
+				odom_data.land_guard_begin(odom_data.p, now_time.toSec()); // C3-v88: episode anchor at land entry
+				b3_engaged_z = -999.0;
+			}
 
 			ROS_INFO("\033[32m[px4ctrl] AUTO_HOVER(L2) --> AUTO_LAND\033[32m");
 		}
@@ -450,12 +478,36 @@ void PX4CtrlFSM::process()
 		{
 			state = AUTO_HOVER;
 			set_hov_with_odom();
+			// C3-v88 B2: near-ground re-anchor xy freeze (horizontal ratchet cut;
+			// rung default OFF). Note B1 already bounds the re-anchor inside the
+			// tube via the clamped perception; B2 pins it to the episode anchor.
+			if (param.land_guard.enabled && param.land_guard.rung_b2_land_xy_freeze &&
+			    odom_data.land_guard_active() && odom_data.p(2) < 0.6)
+			{
+				Eigen::Vector3d hp = hover_pose.head<3>();
+				land_guard_b2_freeze_xy(odom_data.land_guard_cfg, odom_data.land_guard_st, hp);
+				hover_pose.head<3>() = hp;
+			}
 			des = get_hover_des();
 			ROS_INFO("[px4ctrl] From AUTO_LAND to AUTO_HOVER(L2)!");
 		}
 		else if (!fd_o.disarm) // descending
 		{
 			des = get_takeoff_land_des(-param.takeoff_land.speed);
+			// C3-v88 B3: near-ground descent cap (rung default OFF), target-
+			// continuous: capped target never below the engage-point descent line.
+			if (param.land_guard.enabled && param.land_guard.rung_b3_descent_cap &&
+			    odom_data.land_guard_active() && odom_data.p(2) < 0.6)
+			{
+				if (b3_engaged_z < -100.0 || odom_data.p(2) > b3_engaged_z + 0.05)
+				{
+					b3_engaged_z = odom_data.p(2);
+					b3_engaged_t = now_time.toSec();
+				}
+				des.p(2) = land_guard_b3_target_z(des.p(2), b3_engaged_z, b3_engaged_t,
+				                                  now_time.toSec(), param.land_guard.b3_cap_mps);
+				des.v(2) = std::max(des.v(2), -param.land_guard.b3_cap_mps);
+			}
 		}
 		else
 		{

@@ -36,6 +36,18 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	nh.param("ha_fix/dead_s", ha_fix.dead_s, 5.0);
 	nh.param("ha_fix/kill_s", ha_fix.kill_s, 15.0);
 	nh.param("ha_fix/p3_max_recovery_s", ha_fix.p3_max_recovery_s, 30.0); // T1 v11.31 2f P3 契约默认
+	// C3-v88: landing drift guard (defaults OFF = legacy; SITL yaml enables)
+	nh.param("land_guard/enabled", land_guard.enabled, false);
+	nh.param("land_guard/z_floor", land_guard.z_floor, -0.10);
+	nh.param("land_guard/z_down_extra", land_guard.z_down_extra, 1.20);
+	nh.param("land_guard/z_up", land_guard.z_up, 0.30);
+	nh.param("land_guard/xy_cap", land_guard.xy_cap, 1.50);
+	nh.param("land_guard/alarm_thresh", land_guard.alarm_thresh, 0.40);
+	nh.param("land_guard/alarm_sustain", land_guard.alarm_sustain, 1.0);
+	nh.param("land_guard/rung_b2_land_xy_freeze", land_guard.rung_b2_land_xy_freeze, false);
+	nh.param("land_guard/rung_b3_descent_cap", land_guard.rung_b3_descent_cap, false);
+	nh.param("land_guard/b3_cap_mps", land_guard.b3_cap_mps, 0.35);
+	nh.param("land_guard/rung_a_drift_hold", land_guard.rung_a_drift_hold, false);
 	nh.param("odom_gate/enabled", odom_gate.enabled, false);
 	nh.param("odom_gate/max_vel", odom_gate.max_vel, 5.0);
 	nh.param("odom_gate/max_acc", odom_gate.max_acc, 10.0);

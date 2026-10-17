@@ -91,3 +91,20 @@ p1_rebirth:
   enabled: true
   gap_sec: 2.0
   birth_thresh: 0.75
+
+# C3-v88 (2026-10-17): landing-episode drift guard — runaway root-cause fix
+# (tuning_v82/runaway_root_cause.md; prereg = tuning_v82/fix_design_prereg_v88.md)
+# B1+B3+A live (ladder converged: each rung individually dry-tested before combining; B2 stays OFF - xy ratchet already bounded by B1 tube).
+# Real-machine yaml carries no key = OFF there (red-40: no auto deploy).
+land_guard:
+  enabled: true
+  z_floor: -0.10
+  z_down_extra: 1.20
+  z_up: 0.30
+  xy_cap: 1.50
+  alarm_thresh: 0.40
+  alarm_sustain: 1.0
+  rung_b2_land_xy_freeze: false
+  rung_b3_descent_cap: true
+  b3_cap_mps: 0.35
+  rung_a_drift_hold: true

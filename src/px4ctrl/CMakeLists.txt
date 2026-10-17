@@ -74,4 +74,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_cmdresp_gate
     test/test_cmdresp_gate.cpp)
   target_link_libraries(test_cmdresp_gate ${catkin_LIBRARIES})
+
+  # C3-v88: landing drift guard deterministic chain-break dry test
+  # (three frame-level runaway signature types + transparency negatives)
+  catkin_add_gtest(test_land_drift_guard
+    test/test_land_drift_guard.cpp)
+  target_link_libraries(test_land_drift_guard ${catkin_LIBRARIES})
 endif()

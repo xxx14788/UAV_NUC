@@ -95,6 +95,25 @@ public:
 		double p3_max_recovery_s; // T1 v11.31 2f P3: 计划内恢复窗(reboot_notify 后 HAFIX 挂起窗)
 	};
 	HaFix_t ha_fix;
+	// C3-v88 (2026-10-17): landing-episode perception drift guard
+	// (runaway_root_cause.md B/A candidate rungs; red-40 sim-domain scope;
+	// prereg = tuning_v82/fix_design_prereg_v88.md). Defaults OFF = legacy
+	// bit-exact; real-machine yaml carries no key (no auto deploy).
+	struct LandGuard_t
+	{
+		bool enabled;
+		double z_floor;
+		double z_down_extra;
+		double z_up;
+		double xy_cap;
+		double alarm_thresh;
+		double alarm_sustain;
+		bool rung_b2_land_xy_freeze;
+		bool rung_b3_descent_cap;
+		double b3_cap_mps;
+		bool rung_a_drift_hold;
+	};
+	LandGuard_t land_guard;
 	// T1-P1 (v11.0 unit 2): rebirth birth-offset gate params
 	struct
 	{
