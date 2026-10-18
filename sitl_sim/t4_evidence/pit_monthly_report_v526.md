@@ -347,3 +347,21 @@ N1 c6 geom 双前缀/N2 flight.bag 无图像域/N3 Win md5sum 格式/N4 ssh 复�
 - **inflation 调优**：0.299→0.15（git 1f682e2）——上游默认在 v9 2.5m 箱距走廊致膨胀域禁贴箱（infl 门 0/2→6/6 双档验证）。
 - **双 lane 勘误（v9 对角单 lane）**：v8.5 双 lane 设计勘误——反方向=箱背无 tag 面搅浑 H-dJ2，v9 注册=单对角 lane spawn(0.8,0.8)→goal(5.0,5.0)=odom(4.2,4.2)（红 36）。
 - **±15pp 扩样勘误**：旧扩 35口径在 p 居中带只给 ±16.6pp（N=35, p=0.5）——改为 Wilson 95% 半宽 ≤15pp 实算触发（最坏 p=0.5 需 N≈43；运行中每 6 轮实算，>15pp 续飞至达标或 N=45 硬顶）。
+
+### v8.8 会话坑五条并档（2026-10-18 补并；承 28 续号）
+
+29. **catkin_pkg 1.1.0 邮箱校验阻断 workspace 解析**：bridge package.xml maintainer `dev@local` 不合新校验→整树 catkin build 挂；修=bridge@example.com（git 146582f）——依赖升级后先干跑 workspace parse。
+30. **bag-FSM 钟偏移 +25.34s**：imu_propagate 流 t0=bag+25.34s（VINS 晚起）——bag 重放判读必须做 FSM 钟→bag 戳映射（首版误用致 episode 早开 25s/误差虚高 12.43m）。
+31. **nohup 重定向目录前置**：`nohup cmd > dir/log` 的 dir 若由后置命令创建则重定向失败——先 mkdir 再 nohup。
+32. **git push github 慢通道纪律**：push 偶发分钟级阻塞——一律 nohup 后台化+回查退出码，禁前台等。
+33. **中文 % 格式转义**：python % 格式串里裸中文+百分号组合易吞参数——统一 f-string。
+
+### v9.0 终收口会话坑七条（2026-10-18；终收口总册连续执行版）
+
+34. **ssh 双引号链 awk 转义失效**：`ssh h "awk '/x/{print \$0}'"` 的 `\\$` 多层转义在 Git Bash→bash 链被吃（unexpected character '\'）——修法=脚本 scp 上去远端执行，禁单行转义特技。
+35. **pkill -f 自匹配杀 ssh 会话**（N4 族新咬）：`ssh h "pkill -f foo.sh; bash foo.sh"` 命令行自身含 foo.sh 被匹配→杀掉自己的 ssh；修法=分两次连接或 pkill -f '^bash /path'。
+36. **bash 脚本 $0 递归自执行**：`$( $0 md5 $f )` 意图子命令实为重跑整个脚本→无限递归卡死（无输出无报错）；教训=脚本内禁裸 $0 分派，须显式 case "$1"。
+37. **非交互 ssh 无 rosbag**（老坑确认）：`ssh h "python3 x.py"` 不载 ROS env→import rosbag 静默 ModuleNotFound（stdout 只见 WARNING 行）；修法=命令前置 `source /opt/ros/noetic/setup.bash &&`。
+38. **v9_dashboard.py 死轮 KeyError 'sform'**：批内死轮（mavros 失败）无 GATES-V9 行→r['sform'] 崩于 cleanS 统计行；热修=v9_dashboard_45.py 全 .get()——判读工具对缺字段轮必须宽容（死轮是语料常态）。
+39. **判读器 NF 漏计（本批最大教训）**：N25 段 NEVER-FLEW 解析只抓 3/5（C8/C15 漏）→有效分母虚高 2、到位率失真（63.6%→修正 70.0%）；教训=**判读器产出后必须过"轮数守恒式"：总轮=有效+NF+死轮+无判读，四类加总逐批对账**（本批 48=41+7+0 守恒闭合）。
+40. **git add 仓外路径静默失败**：add 带不存在于仓内的路径配 2>/dev/null=错误被吞、staged 为空却以为成功；修法=正源先 cp 进仓再 add；git add 禁配错误重定向。
