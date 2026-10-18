@@ -1,0 +1,242 @@
+{
+ "V88C1": {
+  "drift_init": 0.15087727644014237,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C2": {
+  "drift_init": 0.13627276192974053,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C3": {
+  "drift_init": 3.3676525794215473,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88C4": {
+  "drift_init": 0.12542362904345558,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C5": {
+  "drift_init": 0.2930368378540624,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C6": {
+  "drift_init": 0.1366109860125792,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C7": {
+  "drift_init": 0.12950828916557502,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C8": {
+  "drift_init": 49.628890298536305,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88C9": {
+  "drift_init": 0.1525585709892673,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C10": {
+  "drift_init": 9.385717741978961,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88C11": {
+  "drift_init": 0.08019084062579396,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C12": {
+  "drift_init": 0.6786142478464162,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C13": {
+  "drift_init": 0.1807576943913868,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C14": {
+  "drift_init": 0.7586655096114518,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88C15": {
+  "drift_init": 1.960098429930856,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88C16": {
+  "drift_init": 1.1462338836517592,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88R1": {
+  "drift_init": 1.048174222881952,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88R2": {
+  "drift_init": 46.87620286779817,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88R3": {
+  "drift_init": 1.559451631420011,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88R4": {
+  "drift_init": 0.15257045188924476,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88R5": {
+  "drift_init": 0.2121999988050514,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88R6": {
+  "drift_init": 0.11708879042073297,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88R7": {
+  "drift_init": 0.09402364168299876,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88R8": {
+  "drift_init": 0.12440080596155172,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88R9": {
+  "drift_init": 0.1012372124926899,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S1": {
+  "drift_init": 0.28158597977211475,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S2": {
+  "drift_init": 0.1289455201345788,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S3": {
+  "drift_init": 2.118428128145339,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88S4": {
+  "drift_init": 0.08864067596158656,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S5": {
+  "drift_init": 0.221415623172672,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S6": {
+  "drift_init": 0.16574861567776547,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S7": {
+  "drift_init": 0.4550738538810345,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S8": {
+  "drift_init": 0.11891959168979845,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S9": {
+  "drift_init": 0.1641191817355883,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S10": {
+  "drift_init": 0.17647663381042566,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S11": {
+  "drift_init": 20.078026253146167,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88S12": {
+  "drift_init": 0.12465838425589688,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S13": {
+  "drift_init": 0.2640503643776429,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S14": {
+  "drift_init": 0.11060767679305027,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S15": {
+  "drift_init": 0.11060161181224622,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S16": {
+  "drift_init": 0.08696598952706586,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S17": {
+  "drift_init": 0.13553795963938262,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S18": {
+  "drift_init": 19.79390188753264,
+  "note": "ok",
+  "healthy": false
+ },
+ "V88S19": {
+  "drift_init": 0.08026291138430584,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S20": {
+  "drift_init": 0.18885602028781526,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S21": {
+  "drift_init": 0.19051805269643493,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S22": {
+  "drift_init": 0.17218527862925723,
+  "note": "ok",
+  "healthy": true
+ },
+ "V88S23": {
+  "drift_init": 1.320859751183623,
+  "note": "ok",
+  "healthy": false
+ }
+}
