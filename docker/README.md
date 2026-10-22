@@ -34,3 +34,19 @@ docker/scripts/sync_runtime_harness.sh \
 ```
 
 同步只复制 `git ls-files sitl_sim` 列出的受管文件，并记录在 `.uav-sim-managed-files`；不使用广义 `--delete`，不会删除 `vins_smoke_runs/`、bag 或日志。容器启动时会刷新受管文件，因此不应直接修改 runtime 副本；修改必须回写 Git 正本。
+
+## 默认 headless 容器
+
+首次构建和启动：
+
+```bash
+cd /home/rick/桌面/UAV_NUC
+mkdir -p external/PX4-Autopilot runtime/sitl_sim runtime/ros_logs
+LOCAL_UID=$(id -u) LOCAL_GID=$(id -g) docker compose build sim-headless
+LOCAL_UID=$(id -u) LOCAL_GID=$(id -g) docker compose up -d sim-headless
+docker compose exec sim-headless bash
+```
+
+默认容器名为 `uav-sim-dev`，常驻命令只是 `sleep infinity`。入口脚本会同步 harness 并 source ROS/catkin 环境，但不会自动启动仿真或执行飞行。
+
+停止和重建容器不会删除宿主机的代码、PX4、bag 和 ROS 日志。本阶段不包含 GPU、Gazebo GUI 或 RViz 配置。
