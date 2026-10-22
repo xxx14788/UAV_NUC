@@ -55,6 +55,14 @@ if grep -Eiq 'catkin[_ -]?build|catkin_make' docker/Dockerfile; then
   fail 'Dockerfile builds the catkin workspace'
 fi
 grep -q '^empy>=3\.3,<4$' docker/dependencies/python.txt || fail 'empy range is not pinned below v4'
+grep -q 'Acquire::Retries.*5' docker/Dockerfile || fail 'APT download retries are not configured'
+grep -q 'Acquire::http::Timeout.*60' docker/Dockerfile || fail 'APT HTTP timeout is not configured'
+grep -q 'pip install --retries 10 --timeout 60' docker/Dockerfile || fail 'pip retries and timeout are not configured'
+if grep -q "pip install.*setuptools" docker/Dockerfile; then
+  fail 'Dockerfile unnecessarily replaces the distro setuptools package'
+fi
+run_count=$(grep -c '^RUN ' docker/Dockerfile)
+[ "$run_count" -ge 5 ] || fail 'networked install phases are not split into cacheable layers'
 for pkg in build-essential python3-catkin-tools ros-noetic-mavros ros-noetic-mavros-extras \
            gazebo11 libgazebo11-dev libeigen3-dev libopencv-dev libpcl-dev libceres-dev \
            libsuitesparse-dev libgflags-dev libgoogle-glog-dev xvfb mesa-utils geographiclib-tools; do

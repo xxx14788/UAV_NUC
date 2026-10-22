@@ -1,4 +1,4 @@
-FROM osrf/ros:noetic-desktop-full-focal
+FROM osrf/ros:noetic-desktop-full-focal@sha256:f138c82f326f179e8510eb03f40ee7ccaf16538e5577ab8550af74c4e12616de
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -15,12 +15,20 @@ ENV LANG=C.UTF-8 \
 COPY docker/dependencies/apt.txt /tmp/uav-apt.txt
 COPY docker/dependencies/python.txt /tmp/uav-python.txt
 
+RUN printf '%s\n' \
+      'Acquire::Retries "5";' \
+      'Acquire::http::Timeout "60";' \
+      'Acquire::https::Timeout "60";' \
+      > /etc/apt/apt.conf.d/80-uav-network
+
 RUN apt-get update \
     && xargs -r apt-get install -y --no-install-recommends < /tmp/uav-apt.txt \
-    && python3 -m pip install --no-cache-dir --upgrade 'pip<25' 'setuptools<70' wheel \
-    && python3 -m pip install --no-cache-dir -r /tmp/uav-python.txt \
-    && /opt/ros/noetic/lib/mavros/install_geographiclib_datasets.sh \
-    && rm -rf /var/lib/apt/lists/* /root/.cache/pip /tmp/uav-apt.txt /tmp/uav-python.txt
+    && rm -rf /var/lib/apt/lists/* /tmp/uav-apt.txt
+
+RUN python3 -m pip install --retries 10 --timeout 60 --no-cache-dir --upgrade 'pip<25'
+RUN python3 -m pip install --retries 10 --timeout 60 --no-cache-dir -r /tmp/uav-python.txt \
+    && rm -rf /root/.cache/pip /tmp/uav-python.txt
+RUN /opt/ros/noetic/lib/mavros/install_geographiclib_datasets.sh
 
 RUN set -eux; \
     if ! getent group "${USER_GID}" >/dev/null; then groupadd --gid "${USER_GID}" ghj; fi; \

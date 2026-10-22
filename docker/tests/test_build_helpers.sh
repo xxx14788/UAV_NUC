@@ -63,4 +63,6 @@ diff -u "$TMP/expected.calls" "$CATKIN_CALLS" || fail 'catkin invocation contrac
 
 assert_fails missing_build env CATKIN_WS="$TMP/catkin ws" PX4_DIR="$TMP/px4 clean" "$VERIFY" --require-built
 
+grep -q 'pcl_common-1\.10' "$VERIFY" || fail 'PCL probe does not support Ubuntu 20.04 versioned pkg-config name'
+
 echo 'PASS: PX4 and catkin build helpers reject unsafe state'

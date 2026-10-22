@@ -62,7 +62,15 @@ rm -f /tmp/uav-python-probe.txt
 
 [ -f /usr/include/eigen3/Eigen/Core ] && pass cpp.eigen /usr/include/eigen3 || fail cpp.eigen missing
 pkg-config --exists opencv4 2>/dev/null && pass cpp.opencv "$(pkg-config --modversion opencv4)" || fail cpp.opencv missing
-pkg-config --exists pcl_common 2>/dev/null && pass cpp.pcl "$(pkg-config --modversion pcl_common)" || fail cpp.pcl missing
+pcl_pkg=
+for candidate in pcl_common pcl_common-1.10; do
+  if pkg-config --exists "$candidate" 2>/dev/null; then pcl_pkg=$candidate; break; fi
+done
+if [ -n "$pcl_pkg" ]; then
+  pass cpp.pcl "$(pkg-config --modversion "$pcl_pkg") ($pcl_pkg)"
+else
+  fail cpp.pcl missing
+fi
 if dpkg-query -W -f='${Status} ${Version}' libceres-dev 2>/dev/null | grep -q '^install ok installed '; then
   pass cpp.ceres "$(dpkg-query -W -f='${Version}' libceres-dev)"
 else
