@@ -52,3 +52,7 @@ pose_graph/
 bags/
 nohup.out
 sitl_sim/t1_evidence/**/*.log
+
+# ---------- 4. Docker 外部源码与运行数据 ----------
+/external/
+/runtime/
