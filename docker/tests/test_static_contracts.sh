@@ -6,7 +6,8 @@ cd "$ROOT"
 fail() { echo "FAIL: $*" >&2; exit 1; }
 
 for path in compose.yaml .dockerignore docker/Dockerfile docker/entrypoint.sh \
-            docker/dependencies/apt.txt docker/dependencies/python.txt; do
+            docker/dependencies/apt.txt docker/dependencies/python.txt \
+            .devcontainer/devcontainer.json; do
   [ -s "$path" ] || fail "missing required file: $path"
 done
 
@@ -44,6 +45,28 @@ assert mounts == {
     "/home/ghj/.ros/log": os.path.join(root, "runtime/ros_logs"),
 }, mounts
 assert all("docker.sock" not in v["source"] for v in svc["volumes"])
+PY
+
+python3 - .devcontainer/devcontainer.json <<'PY'
+import json, sys
+
+cfg = json.load(open(sys.argv[1]))
+assert cfg["dockerComposeFile"] == "../compose.yaml"
+assert cfg["service"] == "sim-headless"
+assert cfg["workspaceFolder"] == "/home/ghj/catkin_ws"
+assert cfg["remoteUser"] == "ghj"
+assert cfg["shutdownAction"] == "none"
+assert "image" not in cfg and "build" not in cfg
+vscode = cfg["customizations"]["vscode"]
+extensions = set(vscode["extensions"])
+assert {"ms-iot.vscode-ros", "ms-vscode.cpptools", "ms-python.python"} <= extensions
+watchers = vscode["settings"]["files.watcherExclude"]
+for path in ("**/build/**", "**/logs/**", "**/runtime/**"):
+    assert watchers.get(path) is True, path
+includes = vscode["settings"]["C_Cpp.default.includePath"]
+assert "/opt/ros/noetic/include" in includes
+assert "${containerWorkspaceFolder}/devel/include" in includes
+assert cfg["remoteEnv"]["ROS_DISTRO"] == "noetic"
 PY
 
 grep -qxF '**' .dockerignore || fail '.dockerignore must default-deny build context'

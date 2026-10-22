@@ -1,0 +1,44 @@
+{
+  "name": "UAV_NUC ROS Noetic headless",
+  "dockerComposeFile": "../compose.yaml",
+  "service": "sim-headless",
+  "workspaceFolder": "/home/ghj/catkin_ws",
+  "remoteUser": "ghj",
+  "shutdownAction": "none",
+  "overrideCommand": false,
+  "remoteEnv": {
+    "ROS_DISTRO": "noetic",
+    "ROS_MASTER_URI": "http://localhost:11311",
+    "PX4_DIR": "/home/ghj/PX4-Autopilot",
+    "SITL_RUNTIME": "/home/ghj/sitl_sim"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-iot.vscode-ros",
+        "ms-vscode.cpptools",
+        "ms-python.python",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "cmake.configureOnOpen": false,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "C_Cpp.default.includePath": [
+          "${containerWorkspaceFolder}/src/**",
+          "${containerWorkspaceFolder}/devel/include",
+          "/opt/ros/noetic/include",
+          "/usr/include/**"
+        ],
+        "files.watcherExclude": {
+          "**/build/**": true,
+          "**/devel/**": true,
+          "**/log/**": true,
+          "**/logs/**": true,
+          "**/runtime/**": true,
+          "**/external/PX4-Autopilot/build/**": true
+        }
+      }
+    }
+  }
+}

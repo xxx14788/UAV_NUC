@@ -51,6 +51,24 @@ docker compose exec sim-headless bash
 
 停止和重建容器不会删除宿主机的代码、PX4、bag 和 ROS 日志。本阶段不包含 GPU、Gazebo GUI 或 RViz 配置。
 
+## 使用 VS Code 打开
+
+先按上面的命令启动 `sim-headless`，然后在宿主机 VS Code 中打开
+`/home/rick/桌面/UAV_NUC`，执行 **Dev Containers: Reopen in Container**。配置会复用
+`compose.yaml` 中现有的 `uav-sim-dev`，工作区为 `/home/ghj/catkin_ws`，远程用户为
+`ghj`；不会创建另一套镜像或容器。
+
+关闭 VS Code 不会停止容器（`shutdownAction` 为 `none`）。需要停止时显式执行：
+
+```bash
+cd /home/rick/桌面/UAV_NUC
+docker compose down
+```
+
+容器终端默认仍是 headless 空闲状态。需要仿真时再手动执行相应 launch/smoke
+命令。仓库原有 `.vscode/` 配置未被改写；Dev Container 专用的 ROS Noetic、C++、
+Python 与文件监听设置只保存在 `.devcontainer/devcontainer.json`。
+
 ## 可复现构建命令
 
 进入容器后，先准备干净的 PX4 v1.17.0，再构建 PX4 SITL 与 catkin 工作空间：
