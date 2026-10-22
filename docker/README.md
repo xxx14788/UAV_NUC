@@ -50,3 +50,17 @@ docker compose exec sim-headless bash
 默认容器名为 `uav-sim-dev`，常驻命令只是 `sleep infinity`。入口脚本会同步 harness 并 source ROS/catkin 环境，但不会自动启动仿真或执行飞行。
 
 停止和重建容器不会删除宿主机的代码、PX4、bag 和 ROS 日志。本阶段不包含 GPU、Gazebo GUI 或 RViz 配置。
+
+## 可复现构建命令
+
+进入容器后，先准备干净的 PX4 v1.17.0，再构建 PX4 SITL 与 catkin 工作空间：
+
+```bash
+prepare_px4.sh
+cd "$HOME/PX4-Autopilot"
+make px4_sitl_default
+build_workspace.sh
+verify_environment.sh --require-built
+```
+
+`prepare_px4.sh` 对已有目录只做 remote、tag commit、洁净度和 submodule 校验；如果存在本地修改、错误 remote 或错误版本，它会拒绝继续，不会执行 reset 或覆盖。`build_workspace.sh` 默认按可用内存保守选择并行数，也可用 `CATKIN_JOBS=<N>` 显式覆盖。
