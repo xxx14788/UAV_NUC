@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# PX4's sitl_run.sh resolves `gzserver` through PATH. Keep the ROS system
+# plugin policy in the existing wrapper while exposing the command name that
+# the upstream launcher actually invokes.
+exec "$(dirname "$0")/gzserver_wrapper.sh" "$@"

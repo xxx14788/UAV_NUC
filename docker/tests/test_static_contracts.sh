@@ -104,6 +104,30 @@ grep -q '/home/ghj/\.ros /home/ghj/\.ros/log' docker/Dockerfile \
   || fail 'Dockerfile does not give the developer ownership of the .ros parent directory'
 grep -Fq '/usr/local/bin/run_px4_vins_sitl.sh' sitl_sim/start_sitl_vins.sh \
   || fail 'VINS launcher must use the clean-PX4 runtime overlay helper'
+[ -x sitl_sim/gzserver ] \
+  || fail 'PATH-prepended Gazebo ROS wrapper is not installed under the gzserver command name'
+grep -Fq 'gzserver_wrapper.sh' sitl_sim/gzserver \
+  || fail 'gzserver command entry does not delegate to the ROS system-plugin wrapper'
+if grep -Fq 'tail -1 | grep -oE' sitl_sim/env_health_check.sh; then
+  fail 'health check discards the average-rate line before parsing rostopic hz output'
+fi
+if grep -Eq "pkill[^\n]*sleep infinit" sitl_sim/vins_smoke.sh; then
+  fail 'smoke cleanup can kill the container sleep-infinity PID 1'
+fi
+grep -Fq 'pkill -TERM -P "$HBPID"' sitl_sim/vins_smoke.sh \
+  || fail 'smoke cleanup leaves the heartbeat sleep child orphaned'
+python3 - <<'PY'
+from pathlib import Path
+text = Path("sitl_sim/vins_smoke.sh").read_text()
+final_log = text.rfind('LOG "轮完成 bag=$BAG"')
+final_cleanup = text.rfind('\ncleanup\n')
+assert final_log >= 0 and final_cleanup >= 0 and final_log < final_cleanup, \
+    "smoke writes to its process-substitution pipe after cleanup kills tee"
+PY
+grep -Fq 'depth_camera.sdf.jinja' sitl_sim/env_health_check.sh \
+  || fail 'health check does not derive the depth-rate contract from the pinned PX4 model'
+grep -Fq 'DEPTH_MIN_FACTOR:-0.8' sitl_sim/env_health_check.sh \
+  || fail 'health check lacks the declared model-relative depth-rate floor'
 [ -s src/stereo_depth_bridge/CMakeLists.txt ] \
   || fail 'stereo_depth_bridge is not a buildable catkin package'
 grep -q '<buildtool_depend>catkin</buildtool_depend>' src/stereo_depth_bridge/package.xml \

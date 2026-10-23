@@ -86,6 +86,9 @@ cleanup() {
   [ -n "$RTFPID" ] && kill "$RTFPID" 2>/dev/null
   pkill -f "t1_gate_watc[h] --inflight $EV" 2>/dev/null
   pkill -f "t1_rtf_prob[e] $EV" 2>/dev/null
+  # hbloop may be blocked in its five-minute sleep. Reap that child before
+  # terminating the loop shell, otherwise the sleep is adopted by PID 1.
+  pkill -TERM -P "$HBPID" 2>/dev/null
   kill "$HBPID" 2>/dev/null
   pkill -f "tee $EV/round.lo[g]" 2>/dev/null   # exec>(tee) 进程替换会让 bash 退出时等 tee,tee 等 stdout 写者→挂壳;杀之解锁(E2 验收实测)
   pkill -f 'vins_to_mavro[s]' 2>/dev/null; kill_vins_my_domain
@@ -93,7 +96,9 @@ cleanup() {
   pkill -f 'simulator_mavlin[k]' 2>/dev/null; pkill -f 'sitl_run.s[h]' 2>/dev/null
   pkill -9 -f 'bin/px[4]' 2>/dev/null; pkill -9 -x gzserver 2>/dev/null
   pkill -x gzclient 2>/dev/null
-  pkill -f 'start_sitl_vin[s]' 2>/dev/null; pkill -f 'sleep infinit[y]' 2>/dev/null
+  # start_sitl_vins owns and reaps its PX4 pipeline process group. Do not match
+  # the container's `sleep infinity` PID 1 while cleaning that child stack.
+  pkill -f 'start_sitl_vin[s]' 2>/dev/null
   pkill -f '02_start_mavro[s]' 2>/dev/null; pkill -x mavros_node 2>/dev/null
   pkill -f 'run_ctrl_sitl_vin[s]' 2>/dev/null; pkill -f 'run_planner_sitl_vin[s]' 2>/dev/null
   pkill -f 'src/launch/sim_vins.launc[h]' 2>/dev/null
@@ -669,6 +674,8 @@ if [ -n "$IMGRECPID" ]; then
   [ -f "$EV/images_raw.bag" ] && LOG "δA: 图像袋 $(du -h "$EV/images_raw.bag" | cut -f1) (裁决=drill 层绿轮抽样)"
 fi
 
-# ---------- 清场(函数已前置+EXIT trap;正常路径显式调一遍) ----------
-cleanup
 LOG "轮完成 bag=$BAG"
+# ---------- 清场(函数已前置+EXIT trap;正常路径显式调一遍) ----------
+# This must be the last stdout-producing phase: cleanup terminates the tee
+# process substitution deliberately, so logging after it would return SIGPIPE.
+cleanup

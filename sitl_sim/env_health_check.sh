@@ -8,7 +8,8 @@
 #      EKF2_MAG_DECL 应为 0、SENS_BOARD_ROT 默认——2026-09-27 磁污染事故后防线）
 #   2) /dev/shm 残留与 gazebo 共享内存段
 #   3) SITL 相关进程孤儿（无锁却跑着 gzserver/px4/Xvfb/rosbag）
-#   4) 深度流频率（--with-sitl: 名义 30Hz，<20Hz 判 FAIL——llvmpipe 饱和前兆）
+#   4) 深度流频率（--with-sitl: 从固定 PX4 模型读取名义频率，低于其 80%
+#      判 FAIL；无法读取模型时沿用历史 20Hz 下限）
 #   5) 日志体量（~/.ros/log >2GB WARN）
 #   6) 实机零 GPS 配置卫生（T1-V2：调 param_hygiene.sh 静态扫描，R5 落地）
 # T1-V3 修复(09-28)：原为 set -u 在 source 之前——ROS setup.bash 引用未定义变量
@@ -84,16 +85,29 @@ fi
 echo "-- 4) 深度流频率 --"
 # v6-V6 (2026-09-29): 深度探针双前缀(iris_depth_camera 独立机型 / iris_stereo_vins rig 内嵌)
 DEPTH_TOPIC=""
+DEPTH_NOMINAL=""
+DEPTH_MIN=20
+for _model in \
+    "$HOME/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/depth_camera/depth_camera.sdf" \
+    "$HOME/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/depth_camera/depth_camera.sdf.jinja"; do
+    [ -f "$_model" ] || continue
+    _rate=$(sed -nE 's|.*<update_rate>([0-9.]+)</update_rate>.*|\1|p' "$_model" | head -1)
+    if echo "$_rate" | grep -qE '^[0-9]+([.][0-9]+)?$'; then
+        DEPTH_NOMINAL=$_rate
+        DEPTH_MIN=$(awk -v rate="$_rate" -v factor="${DEPTH_MIN_FACTOR:-0.8}" 'BEGIN { printf "%.3f", rate * factor }')
+        break
+    fi
+done
 if [ "$WITH_SITL" -eq 1 ]; then
     for _t in /iris_depth_camera/camera/depth/image_raw /iris_stereo_vins/camera/depth/image_raw; do
         rostopic list 2>/dev/null | grep -qx "$_t" && DEPTH_TOPIC="$_t" && break
     done
 fi
 if [ "$WITH_SITL" -eq 1 ] && [ -n "$DEPTH_TOPIC" ]; then
-    hz=$(timeout 22 rostopic hz "$DEPTH_TOPIC" 2>/dev/null | tail -1 | grep -oE 'average rate: [0-9.]+' | awk '{print $3}')
+    hz=$(timeout 22 rostopic hz "$DEPTH_TOPIC" 2>/dev/null | grep -oE 'average rate: [0-9.]+' | tail -1 | awk '{print $3}')
     if [ -z "$hz" ]; then fail "深度流 20s 无输出(渲染饿死,relay 事故签名)"; \
-    elif awk "BEGIN{exit !($hz < 20)}"; then fail "深度流 ${hz}Hz < 20Hz(llvmpipe 饱和前兆)"; \
-    else pass "深度流 ${hz}Hz"; fi
+    elif awk "BEGIN{exit !($hz < $DEPTH_MIN)}"; then fail "深度流 ${hz}Hz < ${DEPTH_MIN}Hz(模型名义 ${DEPTH_NOMINAL:-unknown}Hz 的健康下限)"; \
+    else pass "深度流 ${hz}Hz (模型名义 ${DEPTH_NOMINAL:-unknown}Hz, 下限 ${DEPTH_MIN}Hz)"; fi
 else
     warn "深度相机话题不可达,跳过(--with-sitl 且 SITL 在跑时执行)"
 fi
