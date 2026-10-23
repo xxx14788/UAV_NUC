@@ -27,5 +27,10 @@ set +u
 source "$ros_setup"
 set -u
 cd "$workspace"
-catkin config --extend /opt/ros/noetic --cmake-args -DCMAKE_BUILD_TYPE=Release
+# The default image is deliberately simulation-only.  The RealSense driver is
+# for physical hardware, while rviz_plugins has a legacy multi_map_server
+# dependency that is unrelated to the headless flight chain.
+catkin config --extend /opt/ros/noetic \
+  --skiplist realsense2_camera realsense2_description rviz_plugins \
+  --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build --jobs "$jobs"

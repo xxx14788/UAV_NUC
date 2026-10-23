@@ -18,8 +18,18 @@ services:
       - SYS_PTRACE
     environment:
       DISPLAY: ":99"
+      CMAKE_PREFIX_PATH: /opt/ros/noetic
+      LD_LIBRARY_PATH: /opt/ros/noetic/lib
+      PATH: /opt/ros/noetic/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PKG_CONFIG_PATH: /opt/ros/noetic/lib/pkgconfig
+      PYTHONPATH: /opt/ros/noetic/lib/python3/dist-packages
       ROS_DISTRO: noetic
+      ROS_ETC_DIR: /opt/ros/noetic/etc/ros
       ROS_MASTER_URI: http://localhost:11311
+      ROS_PACKAGE_PATH: /opt/ros/noetic/share
+      ROS_PYTHON_VERSION: "3"
+      ROS_ROOT: /opt/ros/noetic/share/ros
+      ROS_VERSION: "1"
     working_dir: /home/ghj/catkin_ws
     volumes:
       - .:/home/ghj/catkin_ws

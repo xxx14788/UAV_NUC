@@ -23,6 +23,8 @@ libgl1-mesa-dri
 libgl1-mesa-glx
 libglu1-mesa-dev
 libgoogle-glog-dev
+libgstreamer-plugins-base1.0-dev
+libgstreamer1.0-dev
 libopencv-dev
 libpcl-dev
 libsuitesparse-dev
@@ -48,6 +50,7 @@ python3-setuptools
 python3-wheel
 python3-yaml
 ros-noetic-cv-bridge
+ros-noetic-ddynamic-reconfigure
 ros-noetic-gazebo-plugins
 ros-noetic-gazebo-ros
 ros-noetic-gazebo-ros-pkgs

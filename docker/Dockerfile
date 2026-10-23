@@ -41,7 +41,7 @@ RUN set -eux; \
     fi; \
     printf '%s\n' 'ghj ALL=(root) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/rosdep' > /etc/sudoers.d/ghj-dev; \
     chmod 0440 /etc/sudoers.d/ghj-dev; \
-    install -d -o "${USER_UID}" -g "${USER_GID}" /home/ghj/catkin_ws /home/ghj/PX4-Autopilot /home/ghj/sitl_sim /home/ghj/.ros/log
+    install -d -o "${USER_UID}" -g "${USER_GID}" /home/ghj/catkin_ws /home/ghj/PX4-Autopilot /home/ghj/sitl_sim /home/ghj/.ros /home/ghj/.ros/log
 
 COPY docker/scripts/*.sh /usr/local/bin/
 COPY docker/entrypoint.sh /usr/local/bin/uav-sim-entrypoint

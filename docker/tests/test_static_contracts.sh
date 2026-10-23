@@ -33,6 +33,13 @@ assert svc.get("privileged", False) is False
 assert not svc.get("devices")
 assert svc["cap_add"] == ["SYS_PTRACE"]
 assert svc["environment"]["DISPLAY"] == ":99"
+assert svc["environment"]["ROS_DISTRO"] == "noetic"
+assert svc["environment"]["ROS_VERSION"] == "1"
+assert svc["environment"]["ROS_PYTHON_VERSION"] == "3"
+assert svc["environment"]["CMAKE_PREFIX_PATH"] == "/opt/ros/noetic"
+assert svc["environment"]["PYTHONPATH"] == "/opt/ros/noetic/lib/python3/dist-packages"
+assert svc["environment"]["ROS_PACKAGE_PATH"] == "/opt/ros/noetic/share"
+assert svc["environment"]["PATH"].split(":")[0] == "/opt/ros/noetic/bin"
 assert svc["command"] == ["sleep", "infinity"]
 assert svc["working_dir"] == "/home/ghj/catkin_ws"
 args = svc["build"]["args"]
@@ -88,9 +95,19 @@ run_count=$(grep -c '^RUN ' docker/Dockerfile)
 [ "$run_count" -ge 5 ] || fail 'networked install phases are not split into cacheable layers'
 for pkg in build-essential python3-catkin-tools ros-noetic-mavros ros-noetic-mavros-extras \
            gazebo11 libgazebo11-dev libeigen3-dev libopencv-dev libpcl-dev libceres-dev \
-           libsuitesparse-dev libgflags-dev libgoogle-glog-dev xvfb mesa-utils geographiclib-tools; do
+           libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+           libsuitesparse-dev libgflags-dev libgoogle-glog-dev xvfb mesa-utils geographiclib-tools \
+           ros-noetic-ddynamic-reconfigure; do
   grep -qx "$pkg" docker/dependencies/apt.txt || fail "missing apt dependency: $pkg"
 done
+grep -q '/home/ghj/\.ros /home/ghj/\.ros/log' docker/Dockerfile \
+  || fail 'Dockerfile does not give the developer ownership of the .ros parent directory'
+grep -Fq '/usr/local/bin/run_px4_vins_sitl.sh' sitl_sim/start_sitl_vins.sh \
+  || fail 'VINS launcher must use the clean-PX4 runtime overlay helper'
+[ -s src/stereo_depth_bridge/CMakeLists.txt ] \
+  || fail 'stereo_depth_bridge is not a buildable catkin package'
+grep -q '<buildtool_depend>catkin</buildtool_depend>' src/stereo_depth_bridge/package.xml \
+  || fail 'stereo_depth_bridge does not declare the catkin build tool'
 
 grep -q 'exec "\$@"' docker/entrypoint.sh || fail 'entrypoint does not exec the requested command'
 if grep -Eiq '(^|[[:space:]])(roscore|roslaunch|px4|gzserver|gazebo|04_takeoff)([[:space:]]|$)' docker/entrypoint.sh; then

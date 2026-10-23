@@ -17,10 +17,9 @@ set -u
 export DISPLAY=:99
 export VERBOSE_SIM=1
 export PATH="$HOME/sitl_sim:$PATH"  # 前置 gzserver wrapper
-export PX4_SITL_WORLD="${SITL_WORLD:-}"
 cd "$HOME/PX4-Autopilot" || exit 1
 
-setsid bash -c 'sleep infinity | HEADLESS=1 exec make px4_sitl gazebo-classic_iris_stereo_vins' &
+setsid bash -c 'sleep infinity | HEADLESS=1 exec /usr/local/bin/run_px4_vins_sitl.sh' &
 STACK_PID=$!
 
 reap() {

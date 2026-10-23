@@ -12,6 +12,7 @@ install/
 logs/
 .catkin_workspace
 *.catkin_workspace
+/.catkin_tools/
 
 # ---------- 2. 编译中间件 ----------
 *.o
