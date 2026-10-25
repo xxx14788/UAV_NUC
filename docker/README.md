@@ -1,5 +1,17 @@
 # UAV 仿真 Docker 环境
 
+## 本机基线（升级分支）
+
+协议与边界见 `docs/2026-10-25_baseline-protocol.md`。先确认无其他仿真/ROS master，再在宿主执行：
+
+```bash
+python3 docker/tests/test_baseline_probe.py
+bash docker/scripts/sync_runtime_harness.sh "$PWD" "$PWD/runtime/sitl_sim"
+docker exec uav-sim-dev bash -lc 'python3 docker/scripts/run_baseline_suite.py'
+```
+
+脚本依次执行地面静态40秒、纯悬停40秒、导航观察180秒（均为wall时间），不会修改算法/传感器参数，也不配置GPU或启用桥接/R7。大文件保留在 gitignored `runtime/baselines/` 和 `runtime/sitl_sim/vins_smoke_runs/`。可用 `--modes static` 等单独运行；每次生成新快照，不覆盖失败记录。已有原始冒烟入口不变。
+
 本目录是 ROS Noetic + PX4 SITL 默认无头开发环境的可复现配置正本。项目源码、PX4 外部源码和运行数据都保留在宿主机，不烘焙到镜像。
 
 ## 旧容器迁移

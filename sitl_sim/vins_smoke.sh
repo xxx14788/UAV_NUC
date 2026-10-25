@@ -19,6 +19,8 @@ if [ "${C3A_BRIDGE:-0}" = "1" ]; then
 fi
 GATE=0
 WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""; IMGREC=0
+# Opt-in measurement only. Legacy invocations retain the original path.
+BASELINE_MODE=none; BASELINE_SECONDS=""; BASELINE_PID=""; BASELINE_RC=0
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -31,8 +33,16 @@ while [ $# -gt 0 ]; do case "$1" in
   --warmup) WARMUP=1; shift;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
   --img-record) IMGREC=1; shift;;  # δ 政策 A(2026-10-11 裁定 A): 独立图像袋,绿轮抽样由 drill 层裁决
+  --baseline-mode) BASELINE_MODE="$2"; shift 2;;
+  --baseline-seconds) BASELINE_SECONDS="$2"; shift 2;;
   *) echo "unknown arg $1"; exit 2;;
 esac; done
+case "$BASELINE_MODE" in none|static|hover|nav) ;; *) echo 'invalid baseline mode'; exit 2;; esac
+if [ "$BASELINE_MODE" != none ]; then
+  [ -n "$BASELINE_SECONDS" ] || { BASELINE_SECONDS=40; [ "$BASELINE_MODE" = nav ] && BASELINE_SECONDS=180; }
+  [[ "$BASELINE_SECONDS" =~ ^[0-9]+$ ]] && [ "$BASELINE_SECONDS" -ge 1 ] && [ "$BASELINE_SECONDS" -le 3600 ] || { echo 'baseline seconds must be 1..3600'; exit 2; }
+  [ "${C3A_BRIDGE:-0}" = 0 ] && [ "$HASL2" = 0 ] && [ "$WARMUP" = 0 ] && [ "$GATE" = 0 ] && [ "$STOPLOSS" = 0 ] && [ "$PROBECHECK" = 0 ] || { echo 'baseline requires default depth, no leg2/warmup/gate/stoploss/probecheck'; exit 2; }
+fi
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
 
 # v11.17 1.2: vins_node 按 master 域过滤杀(私有 master 回放件保护,04:26 事故机理)
@@ -80,6 +90,11 @@ B=$(pgrep -xc gzserver 2>/dev/null || true); B=${B:-0}
 MYOWNER=$(readlink "$LOCK" 2>/dev/null || true)
 "$SL" hbloop "$MYSTREAM" & HBPID=$!
 cleanup() {
+  if [ -n "$BASELINE_PID" ]; then
+    kill -TERM "$BASELINE_PID" 2>/dev/null || true
+    wait "$BASELINE_PID" 2>/dev/null || true
+    BASELINE_PID=""
+  fi
   [ -n "$HWPID" ] && kill "$HWPID" 2>/dev/null
   pkill -f "t1_hwmon_prob[e] $EV" 2>/dev/null
   [ -n "$GATEPID" ] && kill "$GATEPID" 2>/dev/null
@@ -159,6 +174,9 @@ while [ $(( $(date +%s) - T0G )) -lt 300 ]; do
 done
 [ $ok = 1 ] || { LOG "FATAL 300s 内 VINS 未 init"; exit 1; }
 LOG "VINS init 完成 (+$(( $(date +%s) - T0G ))s)"
+if [ "$BASELINE_MODE" != none ]; then
+  rosparam dump "$EV/rosparams_before_measurement.yaml" || { LOG 'FATAL baseline rosparam snapshot failed'; exit 4; }
+fi
 # ---------- 1a 起飞前门(v11.20 单元1a;--gate 1 启用;纯脚本面) ----------
 # init 健康度三指标(init 终值 cost/|Bas| 中位/track) vs 健康分位带(t1_gate_params.json,
 # T2 科学包填参冻结;null=OBSERVE 直通)。不健康→vins 重启再 init(≤2)→仍不健康→
@@ -227,6 +245,24 @@ if [ "$PROBECHECK" = "1" ]; then
   grep -m 3 "E2uls" "$EV/simvins.log" 2>/dev/null || true
   if [ "$E2ULS" -ge 1 ]; then LOG "PROBECHECK PASS: probe chain transmits (E2uls lines in simvins.log)"; exit 0
   else LOG "PROBECHECK FAIL: VINS init but zero E2uls lines - probe chain broken"; exit 1; fi
+fi
+if [ "$BASELINE_MODE" = static ]; then
+  LOG "BASELINE static: unarmed ground observation ${BASELINE_SECONDS}s wall time"
+  python3 "$HOME/catkin_ws/sitl_sim/baseline_probe.py" --output "$EV" --seconds "$BASELINE_SECONDS" --mode static > "$EV/baseline_probe.log" 2>&1 &
+  BASELINE_PID=$!
+  wait "$BASELINE_PID"; BASELINE_RC=$?; BASELINE_PID=""
+  python3 - "$EV" <<'PYEOF' > "$EV/RESULT.txt"
+import json, sys
+from pathlib import Path
+r = json.loads((Path(sys.argv[1]) / 'timing_summary.json').read_text())
+ok = r['measurement_complete'] and r['static_unarmed']
+print('RESULT=' + ('MEASUREMENT-COMPLETE' if ok else 'MEASUREMENT-INCOMPLETE'))
+print('Static observation only: no takeoff, navigation or obstacle acceptance.')
+PYEOF
+  [ $? = 0 ] || BASELINE_RC=4
+  grep -q 'RESULT=MEASUREMENT-COMPLETE' "$EV/RESULT.txt" || BASELINE_RC=4
+  cat "$EV/RESULT.txt"
+  exit "$BASELINE_RC"
 fi
 if ! python3 "$HOME/catkin_ws/sitl_sim/analysis/t2_preflight_check.py" 10 > "$EV/preflight.txt" 2>&1; then
   REDS=$(grep -c '红' "$EV/preflight.txt" || true); REDS=${REDS:-0}
@@ -419,6 +455,14 @@ fi
 LOG "已等离地稳定(truth z=$LZ)"
 [ "$GATE" = "1" ] && gate_hit && gate_abort hover
 [ "$STOPLOSS" = "1" ] && stoploss_hit && gate_abort hover stoploss
+if [ "$BASELINE_MODE" = hover ] || [ "$BASELINE_MODE" = nav ]; then
+  LOG "BASELINE $BASELINE_MODE: observing ${BASELINE_SECONDS}s wall time"
+  python3 "$HOME/catkin_ws/sitl_sim/baseline_probe.py" --output "$EV" --seconds "$BASELINE_SECONDS" --mode "$BASELINE_MODE" > "$EV/baseline_probe.log" 2>&1 &
+  BASELINE_PID=$!
+fi
+
+# Hover baseline sends no navigation goals; retain the original landing path.
+if [ "$BASELINE_MODE" != hover ]; then
 
 # ---------- goal（v11.17 starve 修复：订阅就绪门+停摆一次性重启，任务书 1.1a/1.1b） ----------
 # 病灶（X4 批 2/8 轮；X2g3_042025=189B planner.log 实证）：FSM 事件循环停摆——
@@ -629,6 +673,11 @@ if [ $HASL2 = 1 ]; then
   LOG "leg2 到位: $ARR2"
 fi
 timeout 8 rostopic hz /position_cmd 2>/dev/null | grep 'average rate' | tail -1 > "$EV/poscmd_hz.txt"
+fi
+if [ -n "$BASELINE_PID" ]; then
+  wait "$BASELINE_PID"; BASELINE_RC=$?; BASELINE_PID=""
+  LOG "BASELINE observation finished rc=$BASELINE_RC"
+fi
 
 # ---------- 停 planner(H-1 修复 2026-10-04: LAND 前置) ----------
 # H-1: CMD_CTRL 态 LAND 被 px4ctrl 设计性拒(ROS_ERROR 在案)且 position_cmd 流不断则永不回 AUTO_HOVER
@@ -661,12 +710,34 @@ if ! pgrep -x gzserver >/dev/null 2>&1 || ! pgrep -x px4 >/dev/null 2>&1; then
 fi
 
 # ---------- 四指标 RESULT(独立脚本 round_result.sh,与 resume 共用) ----------
-bash "$HOME/sitl_sim/round_result.sh" "$BAG" "$GX" "$GY" "$GZ" "$WORLD" "$EV" "$ARR" "$ARR2" "$HASL2" "$L2X" "$L2Y" "$L2Z" > "$EV/RESULT.txt" 2>&1
+if [ "$BASELINE_MODE" = hover ]; then
+  python3 "$HOME/catkin_ws/sitl_sim/baseline_landing.py" "$BAG" > "$EV/landing.json" 2> "$EV/landing_error.log" || BASELINE_RC=4
+  python3 - "$EV" <<'PYEOF' > "$EV/RESULT.txt"
+import json, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+timing = json.loads((p / 'timing_summary.json').read_text())
+land = json.loads((p / 'landing.json').read_text())
+ok = timing['hover_window_valid'] and land['takeoff_observed'] and land['landed'] and land['disarmed_at_end']
+print('RESULT=' + ('HOVER-BASELINE-PASS' if ok else 'HOVER-BASELINE-FAIL'))
+print(json.dumps(land))
+print('No navigation goal; no obstacle acceptance or legacy poscmd-rate requirement.')
+PYEOF
+  [ $? = 0 ] || BASELINE_RC=4
+  grep -q 'RESULT=HOVER-BASELINE-PASS' "$EV/RESULT.txt" || BASELINE_RC=4
+else
+  bash "$HOME/sitl_sim/round_result.sh" "$BAG" "$GX" "$GY" "$GZ" "$WORLD" "$EV" "$ARR" "$ARR2" "$HASL2" "$L2X" "$L2Y" "$L2Z" > "$EV/RESULT.txt" 2>&1
+fi
+if [ "$BASELINE_MODE" = nav ]; then
+  echo "BASELINE-MEASUREMENT rc=$BASELINE_RC (timing_summary.json; legacy RESULT remains separate)" >> "$EV/RESULT.txt"
+fi
 tail -10 "$EV/RESULT.txt"
 grep -q "RESULT=ENV-FAIL" "$EV/RESULT.txt" && LOG "ENV-FAIL 环境性崩溃口径(E4.2):重试不计入飞行预算"
 
 # ---------- 留痕落盘(任务书 v11.17 §1.1d): goal 发布 vs FSM 状态变化对表 ----------
-python3 "$HOME/catkin_ws/sitl_sim/t1_goal_trace.py" "$EV" >/dev/null 2>&1 || LOG "WARN goal_trace 失败(留痕面注记)"
+if [ "$BASELINE_MODE" != hover ]; then
+  python3 "$HOME/catkin_ws/sitl_sim/t1_goal_trace.py" "$EV" >/dev/null 2>&1 || LOG "WARN goal_trace 失败(留痕面注记)"
+fi
 
 # δA: 轮毕先关图像袋(flush 落盘),尺寸留痕;保留/删除裁决在 drill 层
 if [ -n "$IMGRECPID" ]; then
@@ -679,3 +750,4 @@ LOG "轮完成 bag=$BAG"
 # This must be the last stdout-producing phase: cleanup terminates the tee
 # process substitution deliberately, so logging after it would return SIGPIPE.
 cleanup
+exit "$BASELINE_RC"
