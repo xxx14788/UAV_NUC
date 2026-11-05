@@ -566,6 +566,26 @@ void PX4CtrlFSM::process()
 		break;
 	}
 
+	// 2026-11-05（用户指令）：垂直积分配平。原垂直通道只有 P(+D)、推力映射开环，
+	// 悬停稳态留 3-6cm 高度误差（实测 0.44-0.47 vs 目标 0.50）。
+	// 只在 AUTO_HOVER/CMD_CTRL 积分；起飞/降落/手动一律清零，防 windup。
+	static double z_trim = 0.0;
+	static ros::Time z_trim_t;
+	if (state == AUTO_HOVER || state == CMD_CTRL)
+	{
+		const double dt = z_trim_t.isZero() ? 0.0 : (now_time - z_trim_t).toSec();
+		if (dt > 0.0 && dt < 0.2 && param.gain.z_trim_ki > 0.0)
+			z_trim += param.gain.z_trim_ki * (des.p(2) - odom_data.p(2)) * dt;
+		if (z_trim > param.gain.z_trim_max) z_trim = param.gain.z_trim_max;
+		if (z_trim < -param.gain.z_trim_max) z_trim = -param.gain.z_trim_max;
+		des.a(2) += z_trim;
+	}
+	else
+	{
+		z_trim = 0.0;
+	}
+	z_trim_t = now_time;
+
 	// STEP2: estimate thrust model
 	if ((state == AUTO_HOVER || state == CMD_CTRL) && state_data.current_state.armed
       && !rotor_low_speed_during_land )
