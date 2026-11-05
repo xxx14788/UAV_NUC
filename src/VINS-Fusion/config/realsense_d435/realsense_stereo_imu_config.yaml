@@ -55,16 +55,16 @@ max_num_iterations: 8
 keyframe_parallax: 10.0
 
 #imu parameters 
-acc_n: 0.1
-gyr_n: 0.01
+acc_n: 0.26
+gyr_n: 0.03
 acc_w: 0.001
 gyr_w: 0.0001
 g_norm: 9.805
 
 #unsynchronization parameters
 estimate_extrinsic: 1
-estimate_td: 1
-td: -0.05
+estimate_td: 0
+td: 0.0
 
 
 # 求解器参数
