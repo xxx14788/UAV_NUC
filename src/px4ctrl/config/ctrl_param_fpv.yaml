@@ -40,10 +40,11 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     K2: 1.6942 # Needs precise calibration!
     K3: 0.6786 # Needs precise calibration! K3 equals THR_MDL_FAC in https://docs.px4.io/master/en/config_mc/pid_tuning_guide_multicopter.html.
     # approximate thrust mapping parameters
-    # 2026-11-05：语义=归一化推力指令里悬停对应的值。PX4 约定 thrust_body 0.5=悬停，
-    # 再由 MPC_THR_HOVER(0.6)+MPC_USE_HTE(1) 映射到执行机构域。填 0.55 等于恒定多给
-    # 约 8-10% 推力（实测起飞爬 0.66m/s vs 目标 0.45、悬停偏高 7cm、RLS 收敛到 0.48-0.52）。
-    hover_percentage: 0.50
+    # 2026-11-05 推力模型实测（两轮，稳态悬停段反推）：
+    #   u_hover 随电池衰减单调上升：进悬停+3s 0.491/0.507  ->  悬停末 0.520/0.552 (+6~9%)
+    #   起飞瞬间（最新电池）约 0.48；本参数=RLS 的冷启动初值，稳态由 RLS(5s 窗) 接管。
+    #   P-only 稳态偏差 = (u_true/u_est-1)*g/Kp2 = 6.53 m/单位相对误差。
+    hover_percentage: 0.48
 
 gain: 
     # Cascade PID controller. Recommend to read the code.

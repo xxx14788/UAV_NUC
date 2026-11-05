@@ -153,11 +153,28 @@ TEST(FsmTakeoff, ClimbingStays)
     EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.5).next);
 }
 
-// 2026-11-05: 到位判据加速度条件——到高度但仍在上冲时必须继续飞，不能切悬停
-TEST(FsmTakeoff, AtHeightButStillClimbingStays)
+// 2026-11-05: 预测式到位——剩余距离 + k*vz 到高度就切，落点与爬升速度无关
+TEST(FsmTakeoff, PredictiveArrivalUsesStopDistance)
 {
     Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.45;
-    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.0).next);
+    const double k = 0.208;
+    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.89, k).next);
+    EXPECT_EQ(AUTO_HOVER,   decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.91, k).next);
+}
+// 爬升越快切得越早（0.90 m/s 时 0.70 m 就切；0.45 m/s 时同一高度不切）
+TEST(FsmTakeoff, FasterClimbSwitchesEarlier)
+{
+    // 同一高度 0.85 m：vz=0.90 已满足(0.85+0.187>=1)，vz=0.45 还不满足(0.85+0.094<1)
+    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.90;
+    EXPECT_EQ(AUTO_HOVER, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.85, 0.208).next);
+    Inputs j = base(); j.dt_takeoff = 10.0; j.armed = true; j.odom_vz = 0.45;
+    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(j, 3.0, 5.0, 1.0, 0.0, 0.85, 0.208).next);
+}
+// 兜底：vz 异常（负值）时仍靠 height+0.10 收口
+TEST(FsmTakeoff, FallbackStillFiresWithBadVz)
+{
+    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = -1.0;
+    EXPECT_EQ(AUTO_HOVER, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.10, 0.208).next);
 }
 // 速度条件一直不满足时，height+0.10 兜底必须强制切悬停
 TEST(FsmTakeoff, FallbackAboveHeightForcesHover)

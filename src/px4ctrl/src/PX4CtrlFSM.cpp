@@ -424,7 +424,8 @@ void PX4CtrlFSM::process()
 		// T1-F3: 判定权威=decide_takeoff(含 T1-W1 F2 看门狗);副作用映射(行为等价,审计表)
 		fsm_decision::Outcome fd_o = fsm_decision::decide_takeoff(
 		    fd_in, AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME, AutoTakeoffLand_t::TAKEOFF_ABORT_TIMEOUT,
-		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2));
+		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2),
+		    1.0 / (2.0 * param.gain.Kv2));   // 预测到位：刹车距离系数 k=1/(2*Kv2)
 		// T1-W1 F2: 起飞看门狗 — 电机加速结束后这么久仍 disarmed 且未离地,说明起飞从未推进
 		// (ARM 被拒 / FCU 重启)。回退 MANUAL_CTRL。armed 态不受影响。
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)

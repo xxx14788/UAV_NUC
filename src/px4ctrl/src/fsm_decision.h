@@ -178,19 +178,25 @@ inline Outcome decide_cmd(const Inputs &in)
 // AUTO_TAKEOFF case, watchdog = T1-W1 F2
 inline Outcome decide_takeoff(const Inputs &in, double speedup_time = 3.0,
                               double abort_timeout = 5.0, double height = 1.0, double start_z = 0.0,
-                              double cur_z = 0.0, double arrive_vmax = 0.15)
+                              double cur_z = 0.0, double arrive_k = 0.208)
 {
     Outcome o;
     o.next = AUTO_TAKEOFF;
     if (in.dt_takeoff > speedup_time + abort_timeout && !in.armed && (cur_z - start_z) < 0.3)
     { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }              // watchdog
     if (in.dt_takeoff < speedup_time) return o;                             // speedup window
-    // 2026-11-05（实测 20261105_134350）：原判据只看高度，切悬停那一刻 vz 仍有 0.47 m/s，
-    // 滑行 v/(2*Kv2)≈0.10 m，峰值冲到 0.65（目标 0.5）。加"速度已收敛"条件，
-    // 等梯形剖面的减速走完再切，峰值降到 ~0.56。
-    if ((cur_z - start_z) >= height && in.odom_vz > -arrive_vmax && in.odom_vz < arrive_vmax)
-    { o.next = AUTO_HOVER; return o; }                                      // reached & settled
-    // 兜底：速度条件迟迟不满足时，超出 height+0.10 也强制切（不比原超调更差）
+
+    // 2026-11-05（用户要求"onboard 闭环内做好的起飞"）：预测式到位。
+    // 原来判据是"z >= height 就切"，切的那一刻还有 0.4-0.9 m/s 的爬升速度，
+    // 靠位置误差硬刹，滑行 v/(2*Kv2) 直接变成超调（实测峰值 0.65-0.81）。
+    // 现在把"刹车距离"算进判据：剩余距离 <= k*vz 就切悬停，随后靠 Kv2 自然减速，
+    // 落点与爬升速度无关。k = 1/(2*Kv2) 由调用方传入（Kv2=2.4 -> 0.208 s）。
+    //   爬升 0.45 m/s -> 0.406 m 切换 -> 滑行 0.094 -> 0.50
+    //   爬升 0.90 m/s -> 0.313 m 切换 -> 滑行 0.188 -> 0.50
+    const double vz_up = (in.odom_vz > 0.0) ? in.odom_vz : 0.0;
+    if ((cur_z - start_z) + arrive_k * vz_up >= height)
+    { o.next = AUTO_HOVER; return o; }                                      // predictive arrival
+    // 兜底：速度异常（或 vz 估计失效）时，超出 height+0.10 强制切
     if ((cur_z - start_z) >= height + 0.10) { o.next = AUTO_HOVER; return o; }
     return o;                                                               // climbing
 }
