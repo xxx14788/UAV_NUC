@@ -116,7 +116,12 @@ LinearControl::calculateControl(const Desired_State_t &des,
   debug_msg_.des_a_y = des_acc(1);
   debug_msg_.des_a_z = des_acc(2);
   
-  debug_msg_.hover_percentage = param_.gra / thr2acc_;   // 2026-11-05: 实时等价 hover 比例（RLS 是否在动，看这个）
+  {
+    // 2026-11-05: 暴露实时推力模型；用与 computeDesiredCollectiveThrustSignal 相同的限幅值，
+    // 保证这里看到的就是控制真正用到的等价 hover 比例
+    const double thr2acc_used = std::max(5.0, std::min(40.0, thr2acc_));
+    debug_msg_.hover_percentage = param_.gra / thr2acc_used;
+  }
   debug_msg_.des_q_x = u.q.x();
   debug_msg_.des_q_y = u.q.y();
   debug_msg_.des_q_z = u.q.z();
