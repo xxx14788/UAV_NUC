@@ -52,3 +52,8 @@ pose_graph/
 bags/
 nohup.out
 sitl_sim/t1_evidence/**/*.log
+
+# ---------- 6. 本机补丁备份 / reindex 产物（2026-11-05） ----------
+*.bak_*
+*.orig
+.catkin_tools/
