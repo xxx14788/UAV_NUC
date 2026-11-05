@@ -40,7 +40,10 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     K2: 1.6942 # Needs precise calibration!
     K3: 0.6786 # Needs precise calibration! K3 equals THR_MDL_FAC in https://docs.px4.io/master/en/config_mc/pid_tuning_guide_multicopter.html.
     # approximate thrust mapping parameters
-    hover_percentage: 0.55  # Thrust percentage in Stabilize/Arco mode # *
+    # 2026-11-05：语义=归一化推力指令里悬停对应的值。PX4 约定 thrust_body 0.5=悬停，
+    # 再由 MPC_THR_HOVER(0.6)+MPC_USE_HTE(1) 映射到执行机构域。填 0.55 等于恒定多给
+    # 约 8-10% 推力（实测起飞爬 0.66m/s vs 目标 0.45、悬停偏高 7cm、RLS 收敛到 0.48-0.52）。
+    hover_percentage: 0.50
 
 gain: 
     # Cascade PID controller. Recommend to read the code.
@@ -50,8 +53,8 @@ gain:
     Kv0: 1.5
     Kv1: 1.5
     Kv2: 2.4
-    z_trim_ki: 0.5    # 2026-11-05 垂直积分配平增益 (1/s^2)；<=0 关闭
-    z_trim_max: 1.0   # 配平限幅 (m/s^2，约 10% g)
+    # 2026-11-05：垂直积分(z_trim)已撤除。z 方向的模型误差由 hover_percentage(0.50)
+    # + estimateThrustModel(RLS) 承担；Kvi0/1/2 上游遗留、未使用。
     # ↓↓↓ No use now --
     Kvi0: 0.0
     Kvi1: 0.0

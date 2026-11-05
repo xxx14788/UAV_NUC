@@ -11,9 +11,6 @@ public:
 		double Kp0, Kp1, Kp2;
 		double Kv0, Kv1, Kv2;
 		double Kvi0, Kvi1, Kvi2;
-		// 2026-11-05：垂直积分配平（消除 P-only + 推力模型误差留下的稳态高度差）
-		double z_trim_ki;   // 积分增益 (1/s^2)
-		double z_trim_max;  // 限幅 (m/s^2)
 		double Kvd0, Kvd1, Kvd2;
 		double KAngR, KAngP, KAngY;
 	};
