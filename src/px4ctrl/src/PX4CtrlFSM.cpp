@@ -81,6 +81,7 @@ void PX4CtrlFSM::process()
 	fd_in.offboard_confirmed = state_data.current_state.mode == "OFFBOARD";
 	fd_in.armed = state_data.current_state.armed;
 	fd_in.odom_v = odom_data.v.norm();
+	fd_in.odom_vz = odom_data.v(2);
 	fd_in.landed = get_landed();
 	fd_in.px4_on_ground = extended_state_data.current_extended_state.landed_state ==
 	    mavros_msgs::ExtendedState::LANDED_STATE_ON_GROUND;
@@ -472,7 +473,13 @@ void PX4CtrlFSM::process()
 		// 2026-11-05 修正: AUTO_LAND 的 start_pose(2) 是"降落起点高度"(~0.5m),
 		// 第一版拿它当地面锚 -> |0.088-0.497|=0.41 恒不成立, 怠速从未触发(实测)。
 		// VINS z 原点=起飞时地面, 故直接用绝对高度判"已到地面附近"。
-		const bool near_ground = odom_data.p(2) < 0.20;
+		// 2026-11-05：绝对高度 odom.z<0.20 会被飞行中的 z 漂移破坏（实测 40s 漂 +8.8cm，
+		// 2 分钟级别就会越过 20cm，导致怠速永不触发）。增加"相对降落起点已下降"判据：
+		// AUTO_LAND 里 start_pose(2) 就是降落起点高度，飞行期间的 z 漂移两边同时存在、可抵消。
+		const double descended = takeoff_land.start_pose(2) - odom_data.p(2);
+		const bool near_ground =
+		    (odom_data.p(2) < 0.20) ||
+		    (takeoff_land.start_pose(2) > 0.05 && descended > (param.takeoff_land.height - 0.20));
 		// 2026-11-05 安全补丁：HAFIX 盲降期 odom 是冻结的，near_ground 可能对冻结值假成立，
 		// 配合 C1 就能在半空切零推力。盲降有自己的梯③(触地 forced disarm)，不走这条。
 		// 同时记录怠速起点，供 disarm 超时兜底。

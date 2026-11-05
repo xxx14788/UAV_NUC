@@ -156,19 +156,19 @@ TEST(FsmTakeoff, ClimbingStays)
 // 2026-11-05: 到位判据加速度条件——到高度但仍在上冲时必须继续飞，不能切悬停
 TEST(FsmTakeoff, AtHeightButStillClimbingStays)
 {
-    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_v = 0.45;
+    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.45;
     EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.0).next);
 }
 // 速度条件一直不满足时，height+0.10 兜底必须强制切悬停
 TEST(FsmTakeoff, FallbackAboveHeightForcesHover)
 {
-    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_v = 0.45;
+    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.45;
     EXPECT_EQ(AUTO_HOVER, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.10).next);
 }
 // 到高度且已稳定（|v|<0.15）→ 切悬停
 TEST(FsmTakeoff, AtHeightAndSettledGoesHover)
 {
-    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_v = 0.05;
+    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.05;
     EXPECT_EQ(AUTO_HOVER, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.0).next);
 }
 

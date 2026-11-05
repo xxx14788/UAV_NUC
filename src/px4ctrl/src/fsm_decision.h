@@ -69,6 +69,7 @@ struct Inputs
     bool offboard_confirmed = false; // state.mode == "OFFBOARD"
     bool armed = false;
     double odom_v = 0.0;        // ‖v‖
+    double odom_vz = 0.0;       // v_z（垂直速度，起飞到位判据用）
     bool landed = true;         // get_landed()
     bool px4_on_ground = false; // extended_state LANDED_STATE_ON_GROUND
     bool fcu_state_stale = false; // STEP0: /mavros/state stream >3s stale
@@ -187,7 +188,7 @@ inline Outcome decide_takeoff(const Inputs &in, double speedup_time = 3.0,
     // 2026-11-05（实测 20261105_134350）：原判据只看高度，切悬停那一刻 vz 仍有 0.47 m/s，
     // 滑行 v/(2*Kv2)≈0.10 m，峰值冲到 0.65（目标 0.5）。加"速度已收敛"条件，
     // 等梯形剖面的减速走完再切，峰值降到 ~0.56。
-    if ((cur_z - start_z) >= height && in.odom_v < arrive_vmax)
+    if ((cur_z - start_z) >= height && in.odom_vz > -arrive_vmax && in.odom_vz < arrive_vmax)
     { o.next = AUTO_HOVER; return o; }                                      // reached & settled
     // 兜底：速度条件迟迟不满足时，超出 height+0.10 也强制切（不比原超调更差）
     if ((cur_z - start_z) >= height + 0.10) { o.next = AUTO_HOVER; return o; }
