@@ -52,7 +52,53 @@ LinearControl::calculateControl(const Desired_State_t &des,
       // 行为与 0de090e 内联版一致（护栏/退化兜底/构造次序均不变）。
       Eigen::Quaterniond q =
           px4ctrl_att::attitudeFromAccel(des_acc, des.yaw, param_.gra);
-      u.q = imu.q * odom.q.inverse() * q;
+      /* FIX-20261022（两轮翻机根因，判读v3/v4）: 原式 u.q = imu.q*odom.q⁻¹*q
+       * 用双实时估计搬运坐标系——odom 冻结/发散时正反馈（机体转→imu.q 跟转→
+       * 搬运项放大→指令更转，轮2实测 0.5s 自旋至倒扣）。直发模式：倾角对任意
+       * 两重力对齐世界系不变（tilt 不变性），代价仅恒定 yaw 偏差（起降/悬停
+       * 无害）。frame_offset/direct: false 回滚 legacy。 */
+      if (param_.frame_off_hold)
+      {
+        ros::Time now_t = ros::Time::now();
+        double odom_age = (now_t - odom.rcv_stamp).toSec();
+        double imu_age = (now_t - imu.rcv_stamp).toSec();
+        bool q_ok = odom.q.coeffs().allFinite() && imu.q.coeffs().allFinite();
+        bool fresh = q_ok && odom_age >= 0.0 && odom_age < 0.2 && imu_age >= 0.0 && imu_age < 0.2;
+        if (!fresh)
+        {
+          if (odom_age > 0.3) off_relock_armed_ = true; // 断流武装重锁（吸收 VINS 重启换世界系）
+          off_fresh_t0_ = -1.0;
+        }
+        else
+        {
+          Eigen::Quaterniond off_now = imu.q * odom.q.inverse();
+          if (!off_valid_)
+          {
+            off_filt_ = off_now; off_valid_ = true;
+          }
+          else if (off_relock_armed_)
+          {
+            double tn = now_t.toSec();
+            if (off_fresh_t0_ < 0.0) off_fresh_t0_ = tn;
+            if (tn - off_fresh_t0_ > 0.5)
+            {
+              off_filt_ = off_now; off_relock_armed_ = false; off_fresh_t0_ = -1.0;
+              ROS_WARN("[FIX-1022r2] frame offset relocked (post-gap stable 0.5s)");
+            }
+          }
+          else
+          {
+            // 偏离滤波值超 dev_max = 估计分叉（正反馈形态）→ 拒收本帧偏置（冻结）
+            if (off_now.angularDistance(off_filt_) < param_.frame_off_dev_max_deg * M_PI / 180.0)
+              off_filt_ = off_filt_.slerp(0.05, off_now); // 低通跟随慢漂（τ≈0.2s@100Hz）
+          }
+        }
+        u.q = (off_valid_ ? off_filt_ : Eigen::Quaterniond::Identity()) * q;
+      }
+      else
+      {
+        u.q = imu.q * odom.q.inverse() * q; // legacy（frame_offset/hold:false 回滚）
+      }
 
 
   /* WRITE YOUR CODE HERE */

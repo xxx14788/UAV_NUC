@@ -55,6 +55,9 @@ public:
 	uint32_t p3_last_msg = 0;
 	bool p3_notify_seen = false;
 	int ha_stage = 0;
+	// F-1 (2026-10-22 判读v5): VINS 空中重初始化守卫状态（详 PX4CtrlFSM.cpp STEP0.6）
+	bool reinit_poisoned_{false};      // reboot(ev=1) 置位；disarm 清除（resume 不清——世界系可能已换）
+	bool reinit_handover_done_{false}; // 已交还手动（抑制 HAFIX auto_land 抢回）；disarm 清除
 public:
 	void p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg);
 
@@ -119,6 +122,7 @@ private:
 
 	// ---- tools ----
 	void set_hov_with_odom();
+	void set_hov_at_takeoff_xy(const Odom_Data_t &odom);
 	void set_hov_with_rc();
 
 	bool toggle_offboard_mode(bool on_off); // It will only try to toggle once, so not blocked.

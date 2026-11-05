@@ -63,6 +63,9 @@ public:
 		// C3-B2 H4-F3（设计文档 §11 回炉增补预注册）：姿态门控推力
 		double att_gate_deg;  // >0：实际倾角超此值期间推力压到平衡档（-1=关闭）
 		double gated_thrust;  // 门控期推力上限（0=关闭）
+		double land_speed;    // 2026-11-04 用户指令：降落速度（0=沿用 takeoff_land_speed）
+		// 2026-11-05 用户指令：悬停锚点锁定起飞点 xy（false=旧行为：锁进入悬停瞬间位置）
+		bool hover_at_takeoff_xy;
 	};
 
 	struct OdomSanityGate_t
@@ -85,6 +88,11 @@ public:
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
 	OdomSanityGate_t odom_gate;
+	// FIX-20261022r2: 帧偏置保持（true=修复；false=legacy 实时搬运）
+	bool frame_off_hold;
+	// F-1 (2026-10-22 判读v5): REINIT_RESET 分支开关（false=状态机零行为变化）
+	bool reinit_reset_enabled;
+	double frame_off_dev_max_deg;
 
 	// T1-v1125-4b HAFIX (D1 演练实证:飞行期 VINS 死亡=盲飞+disarm=0 炸机路径)
 	struct HaFix_t

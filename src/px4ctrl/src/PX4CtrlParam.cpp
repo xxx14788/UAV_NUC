@@ -40,6 +40,12 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	nh.param("odom_gate/max_vel", odom_gate.max_vel, 5.0);
 	nh.param("odom_gate/max_acc", odom_gate.max_acc, 10.0);
 	nh.param("odom_gate/max_jump", odom_gate.max_jump, 1.0);
+	// FIX-20261022r2（判读v5复查）: 帧偏置保持，默认 true=修复生效
+	nh.param("frame_offset/hold", frame_off_hold, true);
+	nh.param("frame_offset/dev_max_deg", frame_off_dev_max_deg, 8.0);
+	// F-1 (2026-10-22 判读v5): VINS 空中重初始化守卫（reboot_notify ev=1 且 armed 飞行
+	// → 交还手动 + odom 毒化拒收；启用=呈裁项，默认 false）
+	nh.param("reinit_reset/enabled", reinit_reset_enabled, false);
 	// Z1.2 (v11.17 2.2): v2 总开关参数读取(缺键=false=v1 行为逐位不变)
 	nh.param("odom_gate/enabled_v2", odom_gate.enabled_v2, false);
 	ROS_WARN("[px4ctrl] odom sanity gate: enabled=%d v2=%d max_vel=%.1f max_acc=%.1f max_jump=%.2f",
@@ -88,6 +94,8 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
     read_essential_param(nh, "auto_takeoff_land/no_RC", takeoff_land.no_RC);
 	read_essential_param(nh, "auto_takeoff_land/takeoff_height", takeoff_land.height);
 	read_essential_param(nh, "auto_takeoff_land/takeoff_land_speed", takeoff_land.speed);
+	nh.param("auto_takeoff_land/land_speed", takeoff_land.land_speed, 0.0);
+	nh.param("auto_takeoff_land/hover_at_takeoff_xy", takeoff_land.hover_at_takeoff_xy, true);
 	// C3-B2 H4-FIX（B1 预注册）：可选起飞包络参数，缺省=旧行为（关闭）
 	nh.param("auto_takeoff_land/takeoff_thrust_cap", takeoff_land.thrust_cap, 0.0);
 	nh.param("auto_takeoff_land/takeoff_tilt_max_deg", takeoff_land.tilt_max_deg, -1.0);

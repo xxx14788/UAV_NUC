@@ -26,8 +26,11 @@ auto_takeoff_land:
     enable: true
     enable_auto_arm: true
     no_RC: false
-    takeoff_height: 0.75 # m
-    takeoff_land_speed: 0.5 # m/s   //<1.5
+    takeoff_height: 0.5 # m  # 2026-11-04 用户裁定悬停 0.5m（0.8→0.5）
+    takeoff_land_speed: 0.45 # m/s   //<1.5  # 2026-11-04 用户指令：0.5→0.45
+    takeoff_tilt_max_deg: 10.0 # deg 2026-11-04 兜底：起飞窗(离地<0.3m)内倾角上限
+    land_speed: 0.15
+    hover_at_takeoff_xy: true  # 2026-11-05 用户指令：悬停锁起飞点 xy（不锁"进悬停瞬间"的漂移位置）         # m/s 2026-11-04 用户指令：降落固定 0.15
 
 thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(Unit:N): F=K1*Voltage^K2*(K3*u^2+(1-K3)*u). 
     print_value: true # display the value of “thr_scale_compensate” or “hover_percentage” during thrust model estimating.
@@ -37,7 +40,7 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     K2: 1.6942 # Needs precise calibration!
     K3: 0.6786 # Needs precise calibration! K3 equals THR_MDL_FAC in https://docs.px4.io/master/en/config_mc/pid_tuning_guide_multicopter.html.
     # approximate thrust mapping parameters
-    hover_percentage: 0.35  # Thrust percentage in Stabilize/Arco mode # *
+    hover_percentage: 0.55  # Thrust percentage in Stabilize/Arco mode # *
 
 gain: 
     # Cascade PID controller. Recommend to read the code.
@@ -46,7 +49,7 @@ gain:
     Kp2: 1.5
     Kv0: 1.5
     Kv1: 1.5
-    Kv2: 1.5
+    Kv2: 2.4
     # ↓↓↓ No use now --
     Kvi0: 0.0
     Kvi1: 0.0
@@ -71,3 +74,19 @@ msg_timeout:
     cmd:  0.5
     imu:  0.5
     bat:  0.5
+
+# ===== 2026-10-22 两轮翻机修复配套（判读 v3/v4；补丁脚本=Win scripts/实飞/px4ctrl_fix_20261022.py） =====
+odom_gate:
+    enabled: true      # T1-D2 值域门启用：拒收 |v|>5 / |a|>10 / 跳变>0.6（轮1毒速度24m/s防线；拒收=保持末好帧→走既有超时降级）
+    max_vel: 5.0
+    max_acc: 10.0
+    max_jump: 0.6
+frame_offset:
+    hold: true         # r2 帧偏置保持（健康锁定/分叉冻结/断流重锁）；false=回滚 legacy
+    dev_max_deg: 8.0   # 偏置瞬时偏离门(度)，超过=估计分叉冻结
+
+# ===== F-1 (2026-10-22 判读v5): VINS 空中重初始化守卫（REINIT_RESET）=====
+# reboot_notify ev=1 且 armed 飞行 → odom 毒化拒收（=断流语义）+ 交还 MANUAL（空中重置即接管降落）
+# false=零行为变化。启用=飞行安全逻辑红线呈裁项。
+reinit_reset:
+    enabled: false

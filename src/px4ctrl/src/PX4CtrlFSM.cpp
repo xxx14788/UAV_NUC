@@ -136,7 +136,7 @@ void PX4CtrlFSM::process()
 			ha_dead_since = now_time;
 			ROS_ERROR("[HAFIX] odom stream dead @flying -- watch start");
 		}
-		if (ha_o.auto_land && state != AUTO_LAND)
+		if (ha_o.auto_land && state != AUTO_LAND && !reinit_handover_done_) // F-1: 交还手动后 HAFIX 不抢回（组合面呈裁）
 		{
 			state = AUTO_LAND;
 			// T1-v1139 梯①盲降锚: start_pose=最后已知位(陈旧 odom)+时基锚+OFFBOARD 重入
@@ -198,6 +198,25 @@ void PX4CtrlFSM::process()
 			          (int)fd_in.landed, (int)fd_in.armed, (int)!odom_dead, ha_stage);
 		}
 		ha_stage = ha_o.stage_next;
+	}
+
+	// STEP0.6 (F-1 2026-10-22 判读v5): REINIT_RESET 分支——VINS 空中重初始化（reboot_notify
+	// ev=1 锁存）且 armed 未落地且在自动态 → 立即交还手动（首飞铁律"空中重置即接管降落"）。
+	// off-by-default: reinit_reset/enabled=false 时本分支零执行（毒化拒收仍生效=断流语义）。
+	if (param.reinit_reset_enabled && reinit_poisoned_ &&
+	    state_data.current_state.armed && !get_landed() && state != MANUAL_CTRL)
+	{
+		state = MANUAL_CTRL;
+		toggle_offboard_mode(false);
+		reinit_handover_done_ = true;
+		ROS_ERROR("[REINIT_RESET] VINS re-init while FLYING -> MANUAL handed to pilot. Land manually (CH5), ground-restart VINS before next round!");
+	}
+	if (!state_data.current_state.armed && (reinit_poisoned_ || reinit_handover_done_))
+	{
+		reinit_poisoned_ = false;
+		reinit_handover_done_ = false;
+		odom_data.poisoned = false;
+		ROS_WARN("[REINIT_RESET] poison cleared on disarm (ground realign via vins_restart expected).");
 	}
 
 	// STEP1: state machine runs
@@ -417,7 +436,10 @@ void PX4CtrlFSM::process()
 		if (fd_o.next == fsm_decision::AUTO_HOVER) // reach the desired height
 		{
 			state = AUTO_HOVER;
-			set_hov_with_odom();
+			if (param.takeoff_land.hover_at_takeoff_xy)
+				set_hov_at_takeoff_xy(odom_data);
+			else
+				set_hov_with_odom();
 			ROS_INFO("\033[32m[px4ctrl] AUTO_TAKEOFF --> AUTO_HOVER(L2)\033[32m");
 
 			takeoff_land.delay_trigger.first = true;
@@ -439,6 +461,20 @@ void PX4CtrlFSM::process()
 	{
 		// T1-F3: 判定权威=decide_land;副作用映射(行为等价,审计表;disarm 序列逐行原样)
 		fsm_decision::Outcome fd_o = fsm_decision::decide_land(fd_in);
+		// 2026-11-05 修复(实测 20261105_001147): PX4 落地检测要求"指令油门降到
+		// min+10%(hover-min)"(MulticopterLandDetector::_get_maybe_landed_state),
+		// 而 px4ctrl 的 disarm 又要求 PX4 先报 on_ground —— 互为前提死锁。
+		// 该次飞行落地后本机判定(C1 target 低于实位 0.5m + C2 |v|<0.1)已连续满足 12.2s,
+		// 但 thr 恒 0.34、PX4 landed_state 恒 IN_AIR(2),20s 未 disarm。
+		// 修法: 自己的落地判定成立且仍在起飞锚附近(防"悬停追不上下降目标"误判)即怠速
+		// (thrust 0.04), PX4 随后可报 on_ground 完成 disarm。锚判据留 15cm 余量
+		// (本次 VINS z 残差实测 1.6cm)。
+		// 2026-11-05 修正: AUTO_LAND 的 start_pose(2) 是"降落起点高度"(~0.5m),
+		// 第一版拿它当地面锚 -> |0.088-0.497|=0.41 恒不成立, 怠速从未触发(实测)。
+		// VINS z 原点=起飞时地面, 故直接用绝对高度判"已到地面附近"。
+		const bool near_ground = odom_data.p(2) < 0.20;
+		if (fd_in.landed && fd_in.odom_ok && near_ground)
+			rotor_low_speed_during_land = true;
 		if (fd_o.next == fsm_decision::MANUAL_CTRL && !fd_o.disarm)
 		{
 			state = MANUAL_CTRL;
@@ -455,7 +491,9 @@ void PX4CtrlFSM::process()
 		}
 		else if (!fd_o.disarm) // descending
 		{
-			des = get_takeoff_land_des(-param.takeoff_land.speed);
+			// 2026-11-04 用户指令：降落固定速度 land_speed（0=沿用 takeoff_land_speed）
+			const double land_v = (param.takeoff_land.land_speed > 0.0) ? param.takeoff_land.land_speed : param.takeoff_land.speed;
+			des = get_takeoff_land_des(-land_v);
 		}
 		else
 		{
@@ -518,8 +556,15 @@ void PX4CtrlFSM::process()
 		const bool takeoff_env =
 		    (state == AUTO_TAKEOFF) &&
 		    ((odom_data.p(2) - takeoff_land.start_pose(2)) < param.takeoff_land.cap_release_z);
+		/* FIX-20261022: max_angle 接线修复——原代码只传 takeoff 专属键（yaml 缺省
+		 * -1=不限幅），全局 max_angle 从未生效（参数审计#3）。现在：takeoff 专属键
+		 * >0 用之，否则回退 max_angle（param.max_angle 已转弧度，此处转回度）。 */
+		double tilt_deg_fix =
+		    (takeoff_env && param.takeoff_land.tilt_max_deg > 0.0)
+		        ? param.takeoff_land.tilt_max_deg
+		        : param.max_angle * (180.0 / M_PI);
 		debug_msg = controller.calculateControl(des, odom_data, imu_data, u,
-		    takeoff_env ? param.takeoff_land.tilt_max_deg : -1.0);
+		    tilt_deg_fix);
 		if (takeoff_env && param.takeoff_land.thrust_cap > 0.0 &&
 		    u.thrust > param.takeoff_land.thrust_cap)
 		{
@@ -645,9 +690,9 @@ void PX4CtrlFSM::land_detector(const State_t state, const Desired_State_t &des, 
 	}
 
 	// land_detector parameters
-	constexpr double POSITION_DEVIATION_C = -0.5; // Constraint 1: target position below real position for POSITION_DEVIATION_C meters.
+	constexpr double POSITION_DEVIATION_C = -0.20;  // Constraint 1: target position below real position for POSITION_DEVIATION_C meters.
 	constexpr double VELOCITY_THR_C = 0.1;		  // Constraint 2: velocity below VELOCITY_MIN_C m/s.
-	constexpr double TIME_KEEP_C = 3.0;			  // Constraint 3: Time(s) the Constraint 1&2 need to keep.
+	constexpr double TIME_KEEP_C = 1.5;			  // Constraint 3: Time(s) the Constraint 1&2 need to keep.
 
 	static ros::Time time_C12_reached; // time_Constraints12_reached
 	static bool is_last_C12_satisfy;
@@ -731,14 +776,57 @@ Desired_State_t PX4CtrlFSM::get_takeoff_land_des(const double speed)
 	// takeoff_land.start_pose(2) += speed * delta_t;
 
 	Desired_State_t des;
-	des.p = takeoff_land.start_pose.head<3>() + Eigen::Vector3d(0, 0, speed * delta_t);
-	des.v = Eigen::Vector3d(0, 0, speed);
+	if (speed > 0.0)
+	{
+		// 2026-11-05 用户指令：起飞改梯形速度剖面，消除顶部超调。
+		// 原实现全程 des.v=speed，到顶瞬间置零——0.45m/s 的动量靠 Kv2 刹车，
+		// 停车距离 v^2/(2a)≈0.09m + 控制延迟 ≈0.15m（实测峰值 0.65 vs 目标 0.5）。
+		// 现在距顶 v^2/(2a) 处开始线性减速，到顶速度归零。
+		// aim 比 height 高 5cm：AUTO_HOVER 的触发判据是 (cur_z-start_z)>=height，
+		// 若目标正好停在 height，P 控制器的稳态误差会让它永远差一点、切不出去。
+		const double a = 1.0;   // 减速度 m/s^2
+		const double aim = param.takeoff_land.height + 0.05;
+		const double t_dec = std::max(0.0, (aim - speed * speed / (2.0 * a)) / speed);
+		double dz, v;
+		if (delta_t <= t_dec)
+		{
+			dz = speed * delta_t;
+			v = speed;
+		}
+		else
+		{
+			const double t2 = std::min(delta_t - t_dec, speed / a);
+			dz = (aim - speed * speed / (2.0 * a)) + speed * t2 - 0.5 * a * t2 * t2;
+			v = std::max(0.0, speed - a * t2);
+		}
+		des.p = takeoff_land.start_pose.head<3>() + Eigen::Vector3d(0, 0, dz);
+		des.v = Eigen::Vector3d(0, 0, v);
+	}
+	else
+	{
+		des.p = takeoff_land.start_pose.head<3>() + Eigen::Vector3d(0, 0, speed * delta_t);
+		des.v = Eigen::Vector3d(0, 0, speed);
+	}
 	des.a = Eigen::Vector3d::Zero();
 	des.j = Eigen::Vector3d::Zero();
 	des.yaw = takeoff_land.start_pose(3);
 	des.yaw_rate = 0.0;
 
 	return des;
+}
+
+// 2026-11-05（用户指令"悬停改定点"）：悬停锚点=起飞点 xy + 起飞时 yaw；
+// z 仍用进入悬停瞬间的实测高度（高度行为保持不变）。
+// 原实现把"进入悬停那一刻的位置"当目标——起飞段漂多少就锁多少，之后位置环不再回原点
+// （实测 20261105_003830：最大漂 1.12m，落点偏离起飞点 0.45m）。
+void PX4CtrlFSM::set_hov_at_takeoff_xy(const Odom_Data_t &odom)
+{
+	hover_pose.head<2>() = takeoff_land.start_pose.head<2>();
+	// 2026-11-05 用户指令：z 锁参数高度。基准取起飞时刻地面 z —— 与 decide_takeoff 的
+	// (cur_z - start_z) >= height 判据同一基准；直接用绝对 height 会把 VINS 零点误差带进来。
+	hover_pose(2) = takeoff_land.start_pose(2) + param.takeoff_land.height;
+	hover_pose(3) = takeoff_land.start_pose(3);
+	last_set_hover_pose_time = ros::Time::now();
 }
 
 void PX4CtrlFSM::set_hov_with_odom()
@@ -982,4 +1070,12 @@ void PX4CtrlFSM::p3NotifyFeed(const std_msgs::UInt32::ConstPtr &msg)
 	const uint32_t ev = msg->data >> 16, cnt = msg->data & 0xFFFFu;
 	ROS_WARN("[P3] reboot_notify ev=%u cnt=%u (1=reboot 2=resume) -- HAFIX watch reset", ev, cnt);
 	if (ha_stage <= 1) { ha_stage = 0; } // watch 期让路; 梯②③不回退
+	// F-1 (2026-10-22 判读v5): 空中重初始化守卫——reboot 事件锁存毒化。整块挂
+	// reinit_reset/enabled 开关（false=本补丁零行为变化，仅保留既有 P3 日志）。
+	if (ev == 1 && param.reinit_reset_enabled)
+	{
+		reinit_poisoned_ = true;
+		odom_data.poisoned = true; // feed() 拒收=等同断流，走既有超时降级路径
+		ROS_ERROR("[REINIT_RESET] VINS reboot detected -- odom poisoned, control handover next beat");
+	}
 }

@@ -64,6 +64,10 @@ public:
   ros::Time rcv_stamp;
   bool recv_new_msg;
 
+  // F-1 (2026-10-22 判读v5): REINIT_RESET 毒化锁存——VINS 空中重初始化后世界系已换，
+  // armed 态由 FSM 置位、feed() 首行拒收；disarm 清除（落地后地面重启 VINS 重锚=既有流程）。
+  bool poisoned{false};
+
   // T1-D2 (2026-09-29): value-sanity gate state (flyaway defense). Injected
   // from params in node main; default disabled = legacy behavior.
   OdomSanityConfig sanity_cfg;

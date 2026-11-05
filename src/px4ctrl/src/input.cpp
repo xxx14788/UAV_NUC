@@ -125,6 +125,9 @@ Odom_Data_t::Odom_Data_t()
 
 void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
 {
+    // F-1 (2026-10-22 判读v5): REINIT_RESET 毒化期拒收（msg/rcv_stamp 保持末好帧 →
+    // 新鲜度走既有超时路径=等同真实断流，无新行为类；与 T1-D2 同构）
+    if (poisoned) return;
     ros::Time now = ros::Time::now();
 
     // T1-D2 (2026-09-29): value-sanity gate. Violating frames are REJECTED

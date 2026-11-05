@@ -80,6 +80,12 @@ private:
 
   double computeDesiredCollectiveThrustSignal(const Eigen::Vector3d &des_acc);
   double fromQuaternion2yaw(Eigen::Quaterniond q);
+
+  // FIX-20261022r2: 帧偏置保持状态（判读 v5 复查升级）
+  Eigen::Quaterniond off_filt_ = Eigen::Quaterniond::Identity();
+  bool off_valid_ = false;
+  bool off_relock_armed_ = false;
+  double off_fresh_t0_ = -1.0;
 };
 
 

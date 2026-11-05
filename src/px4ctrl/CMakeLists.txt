@@ -74,4 +74,9 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_cmdresp_gate
     test/test_cmdresp_gate.cpp)
   target_link_libraries(test_cmdresp_gate ${catkin_LIBRARIES})
+
+  # F-1 (2026-10-22 判读v5): REINIT_RESET 毒化拒收 gtest（input.cpp 数据面语义）
+  catkin_add_gtest(test_reinit_reset
+    test/test_reinit_reset.cpp src/input.cpp)
+  target_link_libraries(test_reinit_reset ${catkin_LIBRARIES})
 endif()
