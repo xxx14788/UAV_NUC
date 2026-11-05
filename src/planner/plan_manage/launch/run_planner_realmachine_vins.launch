@@ -1,0 +1,63 @@
+<launch>
+    <!-- EGO-Planner 实机-VINS 适配稿（T1 v11.39 2e；depth 复活后贯通面）。
+         基=SITL 同构入口 run_planner_sitl_vins.launch，差异面三处（其余参数集不动）：
+         ① depth 话题=实机 rs 对齐深度流 /camera/aligned_depth_to_color/image_raw
+            （2a 复苏实测 30.06Hz 在役；640x480x30 显式参数栈正源=realmachine_2a_reboot_stack.sh）
+         ② 内参=D435 factory fx/fy=387.508（v11.28 阶段1 实测），640x480 → cx/cy=320/240
+         ③ odom 维持 /vins_estimator/imu_propagate（VINS 直供，与实机 px4ctrl 链同源）
+         注：map_size 30x30 起步（与 SITL 同参保守起步）；camera_pose/cloud 占位 nouse 同 SITL。 -->
+    <arg name="obj_num" value="10" />
+    <arg name="drone_id" value="0"/>
+
+    <arg name="map_size_x" value="30"/>
+    <arg name="map_size_y" value="30"/>
+    <arg name="map_size_z" value="3.0"/>
+    <arg name="odom_topic" value="/vins_estimator/imu_propagate"/>
+
+    <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
+        <arg name="drone_id" value="$(arg drone_id)"/>
+        <arg name="map_size_x_" value="$(arg map_size_x)"/>
+        <arg name="map_size_y_" value="$(arg map_size_y)"/>
+        <arg name="map_size_z_" value="$(arg map_size_z)"/>
+        <arg name="odometry_topic" value="$(arg odom_topic)"/>
+        <arg name="obj_num_set" value="$(arg obj_num)" />
+        <arg name="camera_pose_topic" value="nouse1"/>
+        <!-- 实机 D435 对齐深度：32FC1 米制，grid_map 自动 x1000 转 16UC1（与 SITL openni 同链） -->
+        <arg name="depth_topic" value="/camera/aligned_depth_to_color/image_raw"/>
+        <arg name="cloud_topic" value="nouse2"/>
+        <!-- D435i factory 内参（v11.28 阶段1 实测 fx=387.508；640x480 中心） -->
+        <arg name="cx" value="320.0"/>
+        <arg name="cy" value="240.0"/>
+        <arg name="fx" value="387.508"/>
+        <arg name="fy" value="387.508"/>
+        <arg name="max_vel" value="0.5" />
+        <arg name="max_acc" value="6.0" />
+        <arg name="planning_horizon" value="6" />
+        <arg name="use_distinctive_trajs" value="false" />
+        <arg name="flight_type" value="1" />
+        <arg name="point_num" value="1" />
+        <arg name="point0_x" value="0.0" />
+        <arg name="point0_y" value="0.0" />
+        <arg name="point0_z" value="1.0" />
+        <!-- point1-4: include 全参校验必填(point_num=1 不消费),值同 SITL 占位 -->
+        <arg name="point1_x" value="0.0" />
+        <arg name="point1_y" value="0.0" />
+        <arg name="point1_z" value="1.0" />
+        <arg name="point2_x" value="0.0" />
+        <arg name="point2_y" value="0.0" />
+        <arg name="point2_z" value="1.0" />
+        <arg name="point3_x" value="0.0" />
+        <arg name="point3_y" value="0.0" />
+        <arg name="point3_z" value="1.0" />
+        <arg name="point4_x" value="0.0" />
+        <arg name="point4_y" value="0.0" />
+        <arg name="point4_z" value="1.0" />
+    </include>
+    <!-- trajectory server：源码发布绝对话题 /position_cmd，与 px4ctrl ~cmd 对接
+         （yaw 基准=机体实际朝向经 odom，SITL 同款 W7-Y2 修复） -->
+    <node pkg="ego_planner" name="drone_$(arg drone_id)_traj_server" type="traj_server" output="screen">
+        <remap from="~planning/bspline" to="drone_$(arg drone_id)_planning/bspline"/>
+        <param name="traj_server/time_forward" value="1.0" type="double"/>
+        <param name="traj_server/odom_topic" value="/vins_estimator/imu_propagate"/>
+    </node>
+</launch>
