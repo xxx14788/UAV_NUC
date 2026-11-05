@@ -473,8 +473,32 @@ void PX4CtrlFSM::process()
 		// 第一版拿它当地面锚 -> |0.088-0.497|=0.41 恒不成立, 怠速从未触发(实测)。
 		// VINS z 原点=起飞时地面, 故直接用绝对高度判"已到地面附近"。
 		const bool near_ground = odom_data.p(2) < 0.20;
-		if (fd_in.landed && fd_in.odom_ok && near_ground)
+		// 2026-11-05 安全补丁：HAFIX 盲降期 odom 是冻结的，near_ground 可能对冻结值假成立，
+		// 配合 C1 就能在半空切零推力。盲降有自己的梯③(触地 forced disarm)，不走这条。
+		// 同时记录怠速起点，供 disarm 超时兜底。
+		static ros::Time idle_since;
+		const bool idle_now =
+		    fd_in.landed && fd_in.odom_ok && near_ground && !fd_in.ha_blind_land;
+		if (idle_now)
+		{
+			if (idle_since.isZero())
+				idle_since = now_time;
 			rotor_low_speed_during_land = true;
+		}
+		else
+		{
+			idle_since = ros::Time(0);
+		}
+		// 2026-11-05 兜底：即使 PX4 落地检测始终不触发，怠速满 5s 也强行走 disarm 分支。
+		// decide_land 的 disarm 只在 px4_on_ground 时给出，这里绕过它（前提已由 landed+
+		// near_ground+非盲降 三重确认）。
+		const bool idle_timeout = !idle_since.isZero() && (now_time - idle_since).toSec() > 5.0;
+		if (idle_timeout)
+		{
+			fd_o.next = fsm_decision::MANUAL_CTRL;
+			fd_o.disarm = true;
+			fd_o.offboard_off = true;
+		}
 		if (fd_o.next == fsm_decision::MANUAL_CTRL && !fd_o.disarm)
 		{
 			state = MANUAL_CTRL;
@@ -509,7 +533,8 @@ void PX4CtrlFSM::process()
 				print_once_flag = false;
 			}
 
-			if (fd_in.px4_on_ground) // PX4 allows disarm after this (判定经 fd_in,行为等价)
+			const bool allow_disarm = fd_in.px4_on_ground || idle_timeout;
+			if (allow_disarm) // 2026-11-05: 增加怠速超时兜底（原仅 px4_on_ground）
 			{
 				static double last_trial_time = 0; // Avoid too frequent calls
 				if (now_time.toSec() - last_trial_time > 1.0)
