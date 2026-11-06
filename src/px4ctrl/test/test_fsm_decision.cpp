@@ -169,39 +169,29 @@ TEST(FsmTakeoff, ClimbingStays)
     EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.5).next);
 }
 
-// 2026-11-06（数据驱动）：交接判据改成"到高度 + 垂直速度已收敛"。
-// 旧判据 dz + k*vz >= height 在 dz=0.634、vz=0.45 就切，飞机带着 0.45m/s 动量进悬停；
-// 而电机/桨推力滞后使刹车比模型慢，实测冲过 8.5cm 再回弹 12.9cm（周期 4.8s）。
-// 新判据等剖面的减速段跑完（|vz|<=0.15）再切 —— 以接近零速度抵达。
-TEST(FsmTakeoff, WaitsForProfileDeceleration)
+// 2026-11-06（数据+仿真）：预测式到位，k=0.25（有效刹车权威按 kp_v/2 算，给推力滞后留余量）
+// 注意本组 height=1.0：dz + 0.25*vz >= 1.0 才切。
+TEST(FsmTakeoff, SwitchesEarlyToLeaveBrakingRoom)
 {
-    // 到高度了但还在以 0.45 爬 -> 继续飞（这正是旧代码会切、导致冲高的工况）
+    // dz=0.90, vz=0.45 -> 0.90+0.1125=1.0125 >= 1.0 -> 切（留 0.10m 刹车距离）
     Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.45;
-    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.00).next);
-    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.04).next);
-    // 速度收敛后才切
-    Inputs j = base(); j.dt_takeoff = 10.0; j.armed = true; j.odom_vz = 0.14;
-    EXPECT_EQ(AUTO_HOVER, decide_takeoff(j, 3.0, 5.0, 1.0, 0.0, 1.00).next);
-    EXPECT_EQ(AUTO_HOVER, decide_takeoff(j, 3.0, 5.0, 1.0, 0.0, 1.04).next);
+    EXPECT_EQ(AUTO_HOVER,   decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.90).next);
+    // dz=0.80 -> 0.9125 < 1.0 -> 继续飞
+    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.80).next);
 }
-// 高度不到就绝不切（哪怕速度已经很小）
+// vz=0 时需 dz>=height 才切
 TEST(FsmTakeoff, BelowHeightNeverSwitches)
 {
     Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.0;
-    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.95).next);
+    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.99).next);
+    EXPECT_EQ(AUTO_HOVER,   decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.00).next);
 }
-// 兜底：真超调（>= height+0.15）强制切，防死锁
-TEST(FsmTakeoff, FallbackOnOvershoot)
-{
-    Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = 0.45;
-    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.10).next);
-    EXPECT_EQ(AUTO_HOVER,   decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.16).next);
-}
-// vz 估计失效（负值/NaN 风险）时，仍靠 height+0.15 收口
-TEST(FsmTakeoff, FallbackStillFiresWithBadVz)
+// vz 为负（估计异常）时被夹成 0 -> 只要 dz>=height 就切（不需要额外兜底分支）
+TEST(FsmTakeoff, NegativeVzTreatedAsZero)
 {
     Inputs i = base(); i.dt_takeoff = 10.0; i.armed = true; i.odom_vz = -1.0;
-    EXPECT_EQ(AUTO_HOVER, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.16).next);
+    EXPECT_EQ(AUTO_TAKEOFF, decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 0.99).next);
+    EXPECT_EQ(AUTO_HOVER,   decide_takeoff(i, 3.0, 5.0, 1.0, 0.0, 1.00).next);
 }
 // 到高度且已稳定（|v|<0.15）→ 切悬停
 TEST(FsmTakeoff, AtHeightAndSettledGoesHover)
