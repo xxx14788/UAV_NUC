@@ -1,6 +1,11 @@
 <launch>
 
-	<node pkg="px4ctrl" type="px4ctrl_node" name="px4ctrl" output="screen">
+	<!-- 2026-11-06：launch-prefix="stdbuf -oL" —— 让节点的 stdout 行缓冲。
+	     不加的话 INFO 走 stdout 被块缓冲（重定向到文件时），日志会延迟数秒才落盘、
+	     最后一行常常是截断的；飞行中"状态转移"这类 INFO 可能来不及刷就被杀，
+	     导致录制脚本的时间窗截取（px4ctrl_window.log）取不到内容。 -->
+	<node pkg="px4ctrl" type="px4ctrl_node" name="px4ctrl" output="screen"
+	      launch-prefix="stdbuf -oL">
         	<!-- <remap from="~odom" to="/vicon_imu_ekf_odom" /> -->
 			
 			<remap from="~odom" to="/vins_estimator/imu_propagate" />
