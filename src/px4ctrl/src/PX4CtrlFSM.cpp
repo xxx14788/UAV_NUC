@@ -426,11 +426,7 @@ void PX4CtrlFSM::process()
 		// T1-F3: 判定权威=decide_takeoff(含 T1-W1 F2 看门狗);副作用映射(行为等价,审计表)
 		fsm_decision::Outcome fd_o = fsm_decision::decide_takeoff(
 		    fd_in, AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME, AutoTakeoffLand_t::TAKEOFF_ABORT_TIMEOUT,
-		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2),
-		    // 2026-11-06: k 必须跟着"谁在实际刹车"走。legacy 的刹车权威是 Kv2=2.4 (k=0.208)；
-		    // v2 的串级里是 kp_v_z=4.0 (k=0.125)。用错会让切换点提前 ~7 cm（爬一半停住）。
-		    fsm_decision::arriveK(param.ctrl_v2.enabled ? px4ctrl_core::kV2Zv
-		                                                : param.gain.Kv2));
+		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2));
 		// T1-W1 F2: 起飞看门狗 — 电机加速结束后这么久仍 disarmed 且未离地,说明起飞从未推进
 		// (ARM 被拒 / FCU 重启)。回退 MANUAL_CTRL。armed 态不受影响。
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)

@@ -24,6 +24,7 @@
  *******************************************************/
 #pragma once
 #include <cstdint>
+#include <cmath>   // std::fabs（2026-11-06：交接判据用 |vz| 门）
 
 namespace fsm_decision
 {
@@ -100,15 +101,6 @@ struct Outcome
 // STEP0: FCU link-liveness self-heal (T1-W1 F3). Disarmed + state stream
 // stale >3s + not already MANUAL -> clean reset. armed bytes untouched.
 // NOTE: the rcv_stamp!=0 first-frame guard stays at the call site (audit #S0).
-// 预测式到位系数：k = 1/(2a)，a = 实际刹车权威 [1/s]。
-// legacy 用 gain.Kv2；v2 用 ctrl_core.h 的 kV2Zv（PX4 MPC_Z_VEL_P，已锁死不可调）。
-// 两者混用会让切换点提前/滞后
-// （Kv2=2.4 -> k=0.208；kp_v_z=4.0 -> k=0.125，差 0.083*0.85 ≈ 7 cm）。
-inline double arriveK(double brake_gain)
-{
-    return brake_gain > 0.0 ? 1.0 / (2.0 * brake_gain) : 0.0;
-}
-
 inline Outcome step0_global(State s, const Inputs &in)
 {
     Outcome o;
@@ -195,7 +187,7 @@ inline Outcome decide_cmd(const Inputs &in)
 // AUTO_TAKEOFF case, watchdog = T1-W1 F2
 inline Outcome decide_takeoff(const Inputs &in, double speedup_time = 3.0,
                               double abort_timeout = 5.0, double height = 1.0, double start_z = 0.0,
-                              double cur_z = 0.0, double arrive_k = 0.208)
+                              double cur_z = 0.0)
 {
     Outcome o;
     o.next = AUTO_TAKEOFF;
@@ -203,18 +195,26 @@ inline Outcome decide_takeoff(const Inputs &in, double speedup_time = 3.0,
     { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }              // watchdog
     if (in.dt_takeoff < speedup_time) return o;                             // speedup window
 
-    // 2026-11-05（用户要求"onboard 闭环内做好的起飞"）：预测式到位。
-    // 原来判据是"z >= height 就切"，切的那一刻还有 0.4-0.9 m/s 的爬升速度，
-    // 靠位置误差硬刹，滑行 v/(2*Kv2) 直接变成超调（实测峰值 0.65-0.81）。
-    // 现在把"刹车距离"算进判据：剩余距离 <= k*vz 就切悬停，随后靠 Kv2 自然减速，
-    // 落点与爬升速度无关。k = 1/(2*Kv2) 由调用方传入（Kv2=2.4 -> 0.208 s）。
-    //   爬升 0.45 m/s -> 0.406 m 切换 -> 滑行 0.094 -> 0.50
-    //   爬升 0.90 m/s -> 0.313 m 切换 -> 滑行 0.188 -> 0.50
-    const double vz_up = (in.odom_vz > 0.0) ? in.odom_vz : 0.0;
-    if ((cur_z - start_z) + arrive_k * vz_up >= height)
-    { o.next = AUTO_HOVER; return o; }                                      // predictive arrival
-    // 兜底：速度异常（或 vz 估计失效）时，超出 height+0.10 强制切
-    if ((cur_z - start_z) >= height + 0.10) { o.next = AUTO_HOVER; return o; }
+    const double dz = cur_z - start_z;
+
+    // 2026-11-06（数据驱动）：交接判据改成"**让剖面减速段跑完再切**"。
+    //
+    // 旧判据 dz + arrive_k*vz >= height（arrive_k = 1/(2*kp_v) = 0.125）在
+    // dz=0.634、vz=0.45 就切了——飞机带着 0.45 m/s 的动量进悬停。
+    // 它假设刹车权威就是 kp_v，但**电机/桨有推力滞后**，实测（20261106_222806）：
+    //   峰值 0.785（+8.5 cm）-> 谷 0.656（-4.4 cm）-> 回升，回弹周期 ~4.8 s
+    // 比模型预测的 2 cm 大 4 倍，说明主导因素是动量而不是模型误差（模型误差只占 ±2 cm）。
+    //
+    // 而起飞剖面本来就从 dz = aim - v^2/(2a) = 0.649 开始以 1.0 m/s^2 减速。
+    // 让它跑完（v 降到 0.15 以下）再切，飞机是"以接近零速度抵达"，无需硬刹：
+    //   切点 dz≈0.74（v≈0.14）-> 参考落到 anchor(0.70) -> 平滑下降 4 cm，无回弹
+    // 代价：climb_s 从 1.19 s 增到约 1.7 s（判据 1.5 -> 2.0，见 AMENDMENT-009）。
+    // 用 `>= height`（不是 height+0.02）：飞机若因模型误差停在 height+0.01 附近，
+    // 用 +0.02 会永远切不出去 = 死锁。>= height 且速度收敛即可。
+    if (dz >= height && std::fabs(in.odom_vz) <= 0.15)
+    { o.next = AUTO_HOVER; return o; }                                      // profile finished
+    // 兜底：速度估计异常/超调过大时强制切（比旧兜底更早，防真超调）
+    if (dz >= height + 0.15) { o.next = AUTO_HOVER; return o; }
     return o;                                                               // climbing
 }
 
