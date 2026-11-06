@@ -246,6 +246,16 @@ void Imu_Data_t::feed(sensor_msgs::ImuConstPtr pMsg)
     q.y() = msg.orientation.y;
     q.z() = msg.orientation.z;
     q.w() = msg.orientation.w;
+
+    // 2026-11-06：一次性说明本拍的加速度来源。data_raw 已在喂 -> data 不再覆盖 a/w，
+    // 只贡献姿态。这条只在启动后打一次，用来证明互斥门真的生效（而不是两条流在互相覆盖）。
+    static bool src_reported = false;
+    if (!src_reported && accel_from_raw)
+    {
+        ROS_WARN("[px4ctrl] imu source: accel/gyro <- /mavros/imu/data_raw (high rate), "
+                 "attitude <- /mavros/imu/data (~50Hz). data will NOT overwrite accel.");
+        src_reported = true;
+    }
 }
 
 /* 2026-11-06：高速率加速度通道。只写 a/w 与时间戳，**绝不碰 q**。
@@ -264,19 +274,28 @@ void Imu_Data_t::feed_accel(sensor_msgs::ImuConstPtr pMsg)
     w(1) = pMsg->angular_velocity.y;
     w(2) = pMsg->angular_velocity.z;
 
-    // check the frequency
-    static int one_min_count = 9999;
-    static ros::Time last_clear_count_time = ros::Time(0.0);
-    if ( (now - last_clear_count_time).toSec() > 1.0 )
+    // 2026-11-06：周期性报"px4ctrl 真正吃到的加速度速率"。
+    // 为什么不靠 rostopic hz：那是订阅端的视角，证明不了本节点的回调真在跑这个速率。
+    // 这个数字才是 RLS 的 35-45 ms 配对窗口实际有多少样本的依据。
+    //   速率 ~190Hz -> 窗口内 7-8 个样本（设计值）
+    //   速率 ~50Hz  -> 窗口内 2 个样本，配对量化 ±10ms（飞控重启后没补发 511 的症状）
+    static int acc_cnt = 0;
+    static ros::Time acc_t0 = ros::Time::now();
+    acc_cnt++;
+    const double acc_el = (now - acc_t0).toSec();
+    if (acc_el >= 5.0)
     {
-        if ( one_min_count < 100 )
-        {
-            ROS_WARN("IMU accel (data_raw) frequency < 100Hz (got %d/s) -- RLS window 35-45ms will be coarse!", one_min_count);
-        }
-        one_min_count = 0;
-        last_clear_count_time = now;
+        const double hz = acc_cnt / acc_el;
+        const double n_win = hz * 0.040;   // 35-45ms 窗口取中值 40ms
+        if (hz < 100.0)
+            ROS_WARN("[px4ctrl] imu accel rate = %.1f Hz (from data_raw), RLS 40ms window -> %.1f samples "
+                     "TOO COARSE -- 补发 511/105/4000us: ~/set_imu_rate.sh", hz, n_win);
+        else
+            ROS_INFO("[px4ctrl] imu accel rate = %.1f Hz (from data_raw), RLS 40ms window -> %.1f samples",
+                     hz, n_win);
+        acc_cnt = 0;
+        acc_t0 = now;
     }
-    one_min_count ++;
 }
 
 State_Data_t::State_Data_t()
