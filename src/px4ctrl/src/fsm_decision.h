@@ -101,7 +101,8 @@ struct Outcome
 // stale >3s + not already MANUAL -> clean reset. armed bytes untouched.
 // NOTE: the rcv_stamp!=0 first-frame guard stays at the call site (audit #S0).
 // 预测式到位系数：k = 1/(2a)，a = 实际刹车权威 [1/s]。
-// legacy 用 gain.Kv2；v2 用 ctrl_v2.kp_v_z。两者混用会让切换点提前/滞后
+// legacy 用 gain.Kv2；v2 用 ctrl_core.h 的 kV2Zv（PX4 MPC_Z_VEL_P，已锁死不可调）。
+// 两者混用会让切换点提前/滞后
 // （Kv2=2.4 -> k=0.208；kp_v_z=4.0 -> k=0.125，差 0.083*0.85 ≈ 7 cm）。
 inline double arriveK(double brake_gain)
 {

@@ -104,8 +104,13 @@ public:
   sensor_msgs::Imu msg;
   ros::Time rcv_stamp;
 
+  // 2026-11-06：加速度来源标记。true = 已有 /mavros/imu/data_raw 在喂 a/w，
+  // 此时 feed() 只贡献姿态，不再用 50 Hz 的 data 覆盖 190 Hz 的加速度。
+  bool accel_from_raw = false;
+
   Imu_Data_t();
-  void feed(sensor_msgs::ImuConstPtr pMsg);
+  void feed(sensor_msgs::ImuConstPtr pMsg);        // 姿态 + 加速度（/mavros/imu/data, ~50Hz）
+  void feed_accel(sensor_msgs::ImuConstPtr pMsg);  // 仅 a/w（/mavros/imu/data_raw, ~190Hz）
 };
 
 class State_Data_t

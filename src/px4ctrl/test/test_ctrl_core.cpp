@@ -9,7 +9,9 @@
  *       加积分后 → 平衡高度回到 aim（这就是"破死锁"的数学形式）
  *   T05 模型无扰切换：改 thr2acc 后同 u 反算的加速度不变
  *   T06 倾角 1/cos 补偿：10° 时推力放大约 1.0154
- *   T07 RLS 门控：in_air=false 不更新；无激励不更新；存储点限幅；P 保正
+ *   （T07 已删：测的是 ctrl_core.h 里那套从未接线的 RLS；2026-11-06 单一化后不存在）
+ *   （T12 已删：它测的 integrate 开关是为一个**被撤回的**结论加的，已移除）
+ *   注意：所有用例都必须显式给 c.thr2acc —— 它没有默认值了（见 T13）
  *   T08 起飞参考：末态恰为 (height,0,0)（消除 +9.4 cm 阶跃的根因）
  *   T09 降落：高度参考不穿地；到地即 done；速率不超过 v_cmd
  *   T10 倾角限幅斜率：每拍变化 <= rate*dt
@@ -49,6 +51,9 @@ TEST(CtrlCore, T01_IntegralLimit)
 TEST(CtrlCore, T02_SaturationFreeze)
 {
   AxisCfg c;
+  // 2026-11-06：thr2acc 不再有默认值（AxisCfg::thr2acc 已改为 0 = 未初始化，
+  // 命中即"不出力"）。测试必须像真实调用方一样显式给。
+  c.thr2acc = G / 0.54;
   c.kp_v = 4.0; c.ki_v = 2.0; c.i_lim = 0.3 * G;
   AxisMem m;
   m.i = 0.0;
@@ -165,31 +170,6 @@ TEST(CtrlCore, T06_TiltCosCompensation)
   EXPECT_LE(u_guard, 1.0);
 }
 
-// ---------------------------------------------------------------- T07
-TEST(CtrlCore, T07_RlsGates)
-{
-  RlsCfg c;
-  RlsState s;
-  // 地面（in_air=false）不更新
-  double k0 = s.k;
-  EXPECT_FALSE(rlsUpdate(s, c, 0.52, 9.81, false));
-  EXPECT_DOUBLE_EQ(s.k, k0);
-  // 空中 + 有激励 → 更新
-  EXPECT_TRUE(rlsUpdate(s, c, 0.52, 9.9, true));
-  // 无激励（u 不变）→ 不更新
-  double k1 = s.k;
-  EXPECT_FALSE(rlsUpdate(s, c, 0.52, 9.9, true));
-  EXPECT_DOUBLE_EQ(s.k, k1);
-  // 极端值：存储点限幅
-  RlsState s2;
-  for (int i = 0; i < 20000; ++i)
-    rlsUpdate(s2, c, (i % 2) ? 1.0 : 0.05, 1e6, true);
-  EXPECT_LE(s2.k, c.k_max);
-  EXPECT_GE(s2.k, c.k_min);
-  EXPECT_GT(s2.P, 0.0) << "P 必须保持为正";
-  EXPECT_TRUE(std::isfinite(s2.k));
-}
-
 // ---------------------------------------------------------------- T08
 TEST(CtrlCore, T08_TakeoffRefEndsAtHeight)
 {
@@ -240,6 +220,65 @@ TEST(CtrlCore, T09_LandProfile)
   EXPECT_NEAR(m.p_d, ground, 1e-9);
   // 已到地再调用 → 不再下降
   EXPECT_DOUBLE_EQ(landStep(c, m, ground, dt), 0.0);
+}
+
+// ---------------------------------------------------------------- T11
+// 2026-11-06（顾问自审补）：水平轴的饱和上限是**倾角预算**，不是推力。
+// 没有 acc_lim 时 u=(acc+g)/(k*ct) 对 x/y 恒在 [0,1] 内 -> 水平积分永不冻结 ->
+// 大步长机动后积到 i_lim 再花 Ti 解开，表现为 ~i_lim/(kp_v*kp_p) 的位置过冲
+// （默认参数 = 1.4715/(1.8*0.55) ≈ 1.49 m）。本测试锚定修复。
+TEST(CtrlCore, T11_HorizontalAntiWindupByAccLimit)
+{
+  const double kp_p = 0.55, kp_v = 1.80, ki = 0.40, i_lim = 1.4715;
+  const double a_max = G * std::tan(25.0 * M_PI / 180.0);   // 25deg 倾角预算 ≈ 4.57
+
+  // (a) 不设 acc_lim（修复前的行为）：持续同向误差 -> 积分一路积到 i_lim
+  {
+    AxisCfg c; c.thr2acc = G / 0.54;
+    c.kp_p = kp_p; c.kp_v = kp_v; c.ki_v = ki; c.i_lim = i_lim;
+    AxisMem m;
+    for (int k = 0; k < 2000; ++k)
+      axisStep(c, m, 10.0 /*远处目标*/, 0.0, 0.0, 0.0, 0.0, 1.0, 0.01);
+    EXPECT_NEAR(i_lim, m.i, 1e-9) << "无 acc_lim 时水平积分应积满（这就是缺陷）";
+  }
+  // (b) 设 acc_lim：加速度指令一旦顶到倾角预算，积分立即冻结
+  {
+    AxisCfg c; c.thr2acc = G / 0.54;
+    c.kp_p = kp_p; c.kp_v = kp_v; c.ki_v = ki; c.i_lim = i_lim;
+    c.acc_lim = a_max;
+    AxisMem m;
+    for (int k = 0; k < 2000; ++k)
+      axisStep(c, m, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.01);
+    EXPECT_LT(std::fabs(m.i), 0.05) << "acc_lim 生效后积分不应积满";
+  }
+  // (c) 小误差（正常悬停）不误触发：acc 远低于 a_max，积分照常工作
+  {
+    AxisCfg c; c.thr2acc = G / 0.54;
+    c.kp_p = kp_p; c.kp_v = kp_v; c.ki_v = ki; c.i_lim = i_lim;
+    c.acc_lim = a_max;
+    AxisMem m;
+    for (int k = 0; k < 1000; ++k)
+      axisStep(c, m, 0.05 /*5cm*/, 0.0, 0.0, 0.0, 0.0, 1.0, 0.01);
+    EXPECT_GT(m.i, 0.10) << "正常小误差下积分必须能工作（不能把抗饱和做成死区）";
+  }
+}
+
+// ---------------------------------------------------------------- T13
+// 2026-11-06（砍旋钮）：AxisCfg::thr2acc 不再有默认值 G/0.48（会和 hover_percentage 脱钩）。
+// 未初始化时必须"不出力"，绝不能除零 -> inf -> clamp 到 u_max=1.0 = 满推力。
+TEST(CtrlCore, T13_UninitializedModelGivesNoThrust)
+{
+  AxisCfg c; c.kp_p = 1.0; c.kp_v = 4.0; c.ki_v = 2.0;
+  c.thr2acc = 0.0;                      // 未初始化
+  AxisMem m;
+  AxisDebug d = axisStep(c, m, 0.50, 0.0, 0.45, 0.0, 0.0, 1.0, 0.01);
+  EXPECT_DOUBLE_EQ(0.0, d.u) << "模型未初始化时推力必须为 0（安全方向）";
+  EXPECT_LT(d.sat, 0.0) << "应报下限饱和，让条件积分冻结";
+
+  // 灌入真值后立刻恢复
+  retargetThrustModel(c, m, 18.5, 0.0, 1.0);
+  AxisDebug d2 = axisStep(c, m, 0.50, 0.0, 0.45, 0.0, 0.0, 1.0, 0.01);
+  EXPECT_GT(d2.u, 0.4) << "模型就位后应正常出力";
 }
 
 // ---------------------------------------------------------------- T10

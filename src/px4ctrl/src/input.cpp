@@ -227,18 +227,42 @@ void Imu_Data_t::feed(sensor_msgs::ImuConstPtr pMsg)
     msg = *pMsg;
     rcv_stamp = now;
 
-    w(0) = msg.angular_velocity.x;
-    w(1) = msg.angular_velocity.y;
-    w(2) = msg.angular_velocity.z;
+    // 2026-11-06：加速度/角速度**只在没有 data_raw 时**才从 data 取。
+    // 原因见 px4ctrl_node.cpp 的双订阅注释：data 是 mavros 在 ATTITUDE 回调里发的
+    // （PX4 默认 50 Hz），加速度被降采样；data_raw 才是 190 Hz。
+    // 姿态 q 只能来自 data —— data_raw 的 orientation 是全零，用它算推力会直接错。
+    if (!accel_from_raw)
+    {
+        w(0) = msg.angular_velocity.x;
+        w(1) = msg.angular_velocity.y;
+        w(2) = msg.angular_velocity.z;
 
-    a(0) = msg.linear_acceleration.x;
-    a(1) = msg.linear_acceleration.y;
-    a(2) = msg.linear_acceleration.z;
+        a(0) = msg.linear_acceleration.x;
+        a(1) = msg.linear_acceleration.y;
+        a(2) = msg.linear_acceleration.z;
+    }
 
     q.x() = msg.orientation.x;
     q.y() = msg.orientation.y;
     q.z() = msg.orientation.z;
     q.w() = msg.orientation.w;
+}
+
+/* 2026-11-06：高速率加速度通道。只写 a/w 与时间戳，**绝不碰 q**。
+   频率告警也从 feed() 挪到这里 —— 现在它才是真正的高频流。 */
+void Imu_Data_t::feed_accel(sensor_msgs::ImuConstPtr pMsg)
+{
+    ros::Time now = ros::Time::now();
+    rcv_stamp = now;
+    accel_from_raw = true;
+
+    a(0) = pMsg->linear_acceleration.x;
+    a(1) = pMsg->linear_acceleration.y;
+    a(2) = pMsg->linear_acceleration.z;
+
+    w(0) = pMsg->angular_velocity.x;
+    w(1) = pMsg->angular_velocity.y;
+    w(2) = pMsg->angular_velocity.z;
 
     // check the frequency
     static int one_min_count = 9999;
@@ -247,7 +271,7 @@ void Imu_Data_t::feed(sensor_msgs::ImuConstPtr pMsg)
     {
         if ( one_min_count < 100 )
         {
-            ROS_WARN("IMU frequency seems lower than 100Hz, which is too low!");
+            ROS_WARN("IMU accel (data_raw) frequency < 100Hz (got %d/s) -- RLS window 35-45ms will be coarse!", one_min_count);
         }
         one_min_count = 0;
         last_clear_count_time = now;

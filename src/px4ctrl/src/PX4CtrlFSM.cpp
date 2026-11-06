@@ -429,7 +429,8 @@ void PX4CtrlFSM::process()
 		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2),
 		    // 2026-11-06: k 必须跟着"谁在实际刹车"走。legacy 的刹车权威是 Kv2=2.4 (k=0.208)；
 		    // v2 的串级里是 kp_v_z=4.0 (k=0.125)。用错会让切换点提前 ~7 cm（爬一半停住）。
-		    fsm_decision::arriveK(param.ctrl_v2.enabled ? param.ctrl_v2.kp_v_z : param.gain.Kv2));
+		    fsm_decision::arriveK(param.ctrl_v2.enabled ? px4ctrl_core::kV2Zv
+		                                                : param.gain.Kv2));
 		// T1-W1 F2: 起飞看门狗 — 电机加速结束后这么久仍 disarmed 且未离地,说明起飞从未推进
 		// (ARM 被拒 / FCU 重启)。回退 MANUAL_CTRL。armed 态不受影响。
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)
@@ -572,8 +573,11 @@ void PX4CtrlFSM::process()
 	}
 
 	// STEP2: estimate thrust model
+	// 2026-11-06：imu_is_received() 原来是**定义了从未调用**的死代码（DEF-13）。
+	// 在这里复活它——RLS 学的是 "a_z = k*u"，用陈旧加速度会学出错的模型。
+	// **不用它当推力门**：IMU 短时陈旧时继续用上一拍姿态比"零推力"安全得多。
 	if ((state == AUTO_HOVER || state == CMD_CTRL) && state_data.current_state.armed
-      && !rotor_low_speed_during_land )
+      && !rotor_low_speed_during_land && imu_is_received(now_time) )
 	{
 		// controller.estimateThrustModel(imu_data.a, bat_data.volt, param);
 		controller.estimateThrustModel(imu_data.a,param);
@@ -630,6 +634,9 @@ void PX4CtrlFSM::process()
 		    (odom_data.rcv_stamp - odom_data.msg.header.stamp).toSec() * 1000.0;
 		debug_msg.odom_staleness_ms =
 		    (now_time - odom_data.rcv_stamp).toSec() * 1000.0;
+		// 2026-11-06：voltage 字段原来从未填（一直 0）。填上实测电池电压——
+		// 没有它就无法把 hover_percentage 和电池状态对上（也是 hp 不能按电压标定的原因之一）。
+		debug_msg.voltage = bat_data.volt;
 		debug_msg.header.stamp = now_time;
 		debug_pub.publish(debug_msg);
 	}

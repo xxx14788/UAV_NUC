@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "attitude_utils.h"
+#include <cmath>   // M_PI / std::isfinite / std::tan（原来靠 Eigen 间接带进来）
 
 using namespace std;
 
@@ -17,20 +18,25 @@ LinearControl::LinearControl(Parameter_t &param) : param_(param)
   applyV2Config();
 }
 
-// W4/W5/W6：把参数灌进控制核心配置（垂直照 PX4 ωn=2.0/ζ=1.0/Ti=2.0，水平照 ζ=0.90）
+// v2 控制核心配置（2026-11-06 砍旋钮：全部取 ctrl_core.h 里的 PX4 参考常量，
+// 不再从 yaml 读 13 个没人标定过的键。yaml 只剩 ctrl_v2/enabled 一个开关。）
 void LinearControl::applyV2Config()
 {
-  const Parameter_t::CtrlV2_t &v = param_.ctrl_v2;
-  cfg_z_.kp_p = v.kp_p_z;  cfg_z_.kp_v = v.kp_v_z;  cfg_z_.ki_v = v.ki_v_z;
-  cfg_z_.i_lim = v.i_lim_z; cfg_z_.vel_max_up = v.vel_max_up; cfg_z_.vel_max_dn = v.vel_max_dn;
-  cfg_z_.cos_tilt_min = v.cos_tilt_min; cfg_z_.u_min = v.u_min; cfg_z_.u_max = v.u_max;
+  cfg_z_.kp_p = px4ctrl_core::kV2Zp;
+  cfg_z_.kp_v = px4ctrl_core::kV2Zv;
+  cfg_z_.ki_v = px4ctrl_core::kV2Zi;
+  cfg_z_.i_lim = px4ctrl_core::kV2Zilim;
+  cfg_z_.vel_max_up = cfg_z_.vel_max_dn = px4ctrl_core::kV2ZvelMax;
+  cfg_z_.cos_tilt_min = px4ctrl_core::kV2CosMin;
+  cfg_z_.u_min = 0.0; cfg_z_.u_max = 1.0;
+  cfg_z_.thr2acc = thr2acc_;          // 与当前估计同步，避免首拍对着默认值做无扰切换
   cfg_x_ = cfg_y_ = cfg_z_;
-  cfg_x_.kp_p = cfg_y_.kp_p = v.kp_p_xy;
-  cfg_x_.kp_v = cfg_y_.kp_v = v.kp_v_xy;
-  cfg_x_.ki_v = cfg_y_.ki_v = v.ki_v_xy;
-  cfg_x_.i_lim = cfg_y_.i_lim = v.i_lim_xy;
-  cfg_x_.vel_max_up = cfg_x_.vel_max_dn = v.vel_max_xy;
-  cfg_y_.vel_max_up = cfg_y_.vel_max_dn = v.vel_max_xy;
+  cfg_x_.kp_p = cfg_y_.kp_p = px4ctrl_core::kV2ZpXY;
+  cfg_x_.kp_v = cfg_y_.kp_v = px4ctrl_core::kV2ZvXY;
+  cfg_x_.ki_v = cfg_y_.ki_v = px4ctrl_core::kV2ZiXY;
+  cfg_x_.i_lim = cfg_y_.i_lim = px4ctrl_core::kV2XYilim;
+  cfg_x_.vel_max_up = cfg_x_.vel_max_dn = px4ctrl_core::kV2XYvelMax;
+  cfg_y_.vel_max_up = cfg_y_.vel_max_dn = px4ctrl_core::kV2XYvelMax;
 }
 
 // 实测 dt（用 WallRate 驱动的真实间隔，钳位照 PX4 `MulticopterPositionControl.cpp:396`）
@@ -40,9 +46,9 @@ double LinearControl::stepDt()
   if (!v2_primed_) { v2_primed_ = true; last_step_t_ = now; return 0.01; }
   double dt = (now - last_step_t_).toSec();
   last_step_t_ = now;
-  const Parameter_t::CtrlV2_t &v = param_.ctrl_v2;
   if (!(dt > 0.0)) dt = 0.01;
-  return std::max(v.dt_min, std::min(v.dt_max, dt));
+  // 钳位值锁在 ctrl_core.h（照 PX4 MulticopterPositionControl.cpp:396）
+  return std::max(px4ctrl_core::kV2DtMin, std::min(px4ctrl_core::kV2DtMax, dt));
 }
 
 /* 
@@ -69,26 +75,45 @@ LinearControl::calculateControl(const Desired_State_t &des,
            - 模型变更时用积分做无扰切换（照 PX4 updateHoverThrust）
            legacy 分支（下方）逐位保留，enabled=false 时零行为变化。 */
         const double dt = stepDt();
-        // 2026-11-06 护栏（顾问加）：1/cos(倾角) 补偿依赖 imu.q，而 **imu_is_received()
-        // 是死代码、从未被调用**（PX4CtrlFSM.cpp:925 定义无调用点）。若 imu.q 尚未被
-        // 任何 IMU 消息写入（Eigen 默认构造不初始化）或是全零，zb(2)≈0 ->
+        // 2026-11-06 护栏（顾问加）：1/cos(倾角) 补偿依赖 imu.q。imu_is_received() 原先
+        // 是死代码（现已在 FSM STEP2 里用作 RLS 门），但**控制路径没有 IMU 门**：
+        // 若 imu.q 尚未被任何 IMU 消息写入（Eigen 默认构造不初始化）或是全零，zb(2)≈0 ->
         // cos_tilt 落到下限 -> u 被放大 2~10 倍并 clip 到 1.0 = 满推力。
         // 失效方向必须选"不补偿"（0~2% 误差），绝不能选"放大推力"。
         const double qn = imu.q.norm();
         const bool q_ok = (qn > 0.5 && qn < 1.5);
         const Eigen::Vector3d zb = q_ok ? (imu.q * Eigen::Vector3d::UnitZ())
                                         : Eigen::Vector3d::UnitZ();
-        const double cos_tilt = std::max(0.1, std::fabs(zb(2)));
+        const double cos_tilt = std::max(cfg_z_.cos_tilt_min, std::fabs(zb(2)));
         if (!q_ok)
         {
           ROS_WARN_THROTTLE(5.0, "[px4ctrl] v2: imu.q 无效 (|q|=%.3f)，本拍按零倾角处理"
                             "（放弃 1/cos 补偿，不做推力放大）", qn);
         }
+        // 模型兜底：thr2acc 必须 > 1（否则 axisStep 会走"零推力"安全分支）。
+        // 正常路径不会到这里（构造时 resetThrustMapping 已灌值）；万一到了，
+        // 退回冷启值 hover_percentage —— 这是唯一有物理意义的兜底。
+        // **不能让它输出 0 推力**：在地面是"不起飞"，在空中就是掉下来。
+        if (!(cfg_z_.thr2acc > 1.0))
+          cfg_z_.thr2acc = param_.gra / param_.thr_map.hover_percentage;
         // 模型变更检测：thr2acc_ 与 cfg_z_.thr2acc 不一致 → 无扰切换
         if (std::fabs(cfg_z_.thr2acc - thr2acc_) > 1e-9)
         {
           px4ctrl_core::retargetThrustModel(cfg_z_, mem_z_, thr2acc_, last_u_, cos_tilt,
-                                            param_.ctrl_v2.cos_tilt_min);
+                                            cfg_z_.cos_tilt_min);
+        }
+        // 2026-11-06（顾问自审补）：水平轴的饱和上限 = 倾角预算换算的加速度
+        // a_max = g*tan(tilt_max)。tilt<=0（不限幅）时置 0 = 关闭该判据。
+        // 这修的是"水平积分抗饱和形同虚设"（见 ctrl_core.h AxisCfg::acc_lim 注释）。
+        if (tilt_max_deg > 0.0)
+        {
+          const double t = std::min(px4ctrl_core::kV2AccLimTiltMaxDeg, tilt_max_deg)
+                           * M_PI / 180.0;
+          cfg_x_.acc_lim = cfg_y_.acc_lim = param_.gra * std::tan(t);
+        }
+        else
+        {
+          cfg_x_.acc_lim = cfg_y_.acc_lim = 0.0;
         }
         px4ctrl_core::AxisDebug dz = px4ctrl_core::axisStep(
             cfg_z_, mem_z_, des.p(2), odom.p(2), des.v(2), odom.v(2), des.a(2), cos_tilt, dt);
@@ -196,6 +221,14 @@ LinearControl::calculateControl(const Desired_State_t &des,
   debug_msg_.des_a_x = des_acc(0);
   debug_msg_.des_a_y = des_acc(1);
   debug_msg_.des_a_z = des_acc(2);
+
+  // 2026-11-06：fb_a_* 原来从未填过（一直是 0）。这里填 IMU 实测比力，
+  // 判读时能直接对比"指令加速度 vs 实际加速度"，是 z_eq 定律的现场验证量。
+  debug_msg_.fb_a_x = imu.a(0);
+  debug_msg_.fb_a_y = imu.a(1);
+  debug_msg_.fb_a_z = imu.a(2);
+  // 仍未填（保留字段，别误读）：err_axisang_* / fb_rate_* 属 bodyrate 控制器
+  // （use_bodyrate_ctrl=false，本机不用）；thr_scale_compensate 已由 thrust_model 取代。
   
   {
     // 2026-11-05: 暴露实时推力模型；用与 computeDesiredCollectiveThrustSignal 相同的限幅值，
@@ -250,10 +283,9 @@ LinearControl::estimateThrustModel(
   // 2026-11-06 DEF-11：v2 下 NaN 门**无条件**生效（原实现只在 rls_air_gate=true 时才挡，
   // 而那个开关名字暗示的是"空中门"，名不副实）。legacy 路径仍未加（DEF-06 部分修）。
   // 注意：这里不做 z 空中门 —— RLS 本来就只在 AUTO_HOVER/CMD_CTRL 更新（FSM STEP2）。
-  if (param_.ctrl_v2.enabled)
-  {
-    if (!(est_a.allFinite())) return false;
-  }
+  // NaN 门：v2 下本来就无条件；2026-11-06 起 legacy 也加上（原 DEF-06 只部分修）。
+  // 不修的话 imu.a 一旦含 NaN -> thr2acc_=NaN -> u=NaN 直接发给 PX4（推力无防护）。
+  if (!(est_a.allFinite())) return false;
   ros::Time t_now = ros::Time::now();
   while (timed_thrust_.size() >= 1)
   {
@@ -285,6 +317,12 @@ LinearControl::estimateThrustModel(
     double K = gamma * P_ * thr;
     thr2acc_ = thr2acc_ + K * (est_a(2) - thr * thr2acc_);
     P_ = (1 - K * thr) * P_ / rho2_;
+    // 2026-11-06：把已删除的那套死实现里的两个好主意并进来（单一实现，取两者之长）
+    //   ① P 保正：病态时重置信任，避免 P 变负后 gain 反号发散
+    //   ② **存储点**限幅：原来只在"使用点"钳位（computeDesiredCollectiveThrustSignal），
+    //      内部状态可以一路跑偏，一旦松开钳位就是暴力阶跃。现在直接把状态夹住。
+    if (!std::isfinite(P_) || P_ <= 0.0) P_ = 1e6;
+    thr2acc_ = std::max(5.0, std::min(40.0, thr2acc_));
     //printf("%6.3f,%6.3f,%6.3f,%6.3f\n", thr2acc_, gamma, K, P_);
     //fflush(stdout);
 

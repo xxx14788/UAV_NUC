@@ -54,10 +54,24 @@ int main(int argc, char *argv[])
                                                       ros::VoidConstPtr(),
                                                       ros::TransportHints().tcpNoDelay());
 
+    // 2026-11-06（顾问）：**不改**上面这条 —— 上游 "do NOT change it to data_raw" 是对的，
+    // 因为 data_raw 的 orientation 是全零（covariance[0] = -1），拿它当姿态会直接把推力算错。
+    // 这里做的是**双订阅**：data 只贡献姿态，data_raw 贡献加速度/角速度。
+    // 为什么要改：mavros 的 imu 插件在 ATTITUDE 回调里发 /mavros/imu/data，
+    // 所以加速度被降采样到 ~50 Hz（实测 49.98）；data_raw 实测 190.8 Hz。
+    // RLS 用"35-45 ms 前的推力"配对"当前加速度"，50 Hz 下配对量化误差 ±10 ms；
+    // 进悬停那一拍推力约 12%/40 ms 在变，±10 ms 就是 ~3% 模型误差 ——
+    // 实测 222712 的 12.7% 模型跳变，至少一半来自这个降采样。
     ros::Subscriber imu_sub =
         nh.subscribe<sensor_msgs::Imu>("/mavros/imu/data", // Note: do NOT change it to /mavros/imu/data_raw !!!
                                        100,
                                        boost::bind(&Imu_Data_t::feed, &fsm.imu_data, _1),
+                                       ros::VoidConstPtr(),
+                                       ros::TransportHints().tcpNoDelay());
+    ros::Subscriber imu_accel_sub =
+        nh.subscribe<sensor_msgs::Imu>("/mavros/imu/data_raw", // 高速率加速度（无姿态）
+                                       200,
+                                       boost::bind(&Imu_Data_t::feed_accel, &fsm.imu_data, _1),
                                        ros::VoidConstPtr(),
                                        ros::TransportHints().tcpNoDelay());
 

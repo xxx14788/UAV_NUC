@@ -24,7 +24,46 @@
 namespace px4ctrl_core
 {
 
+// ============================================================================
+// 接线状态（2026-11-06，必须与实际调用点一致；改代码请同步这张表）
+//
+// **已接线**（controller.cpp / PX4CtrlFSM.cpp 有真实调用）：
+//   axisStep, thrustFromAcc, retargetThrustModel, kV2* 常量
+// **未接线**（已单测覆盖，等下一阶段；不是死代码，是保留件）：
+//   shapeRef / refSettled / takeoffRef / takeoffArrived  -> W6 起飞参考整形
+//   landStep                                             -> W6 降落参考
+//   slewTilt                                             -> 倾角斜率限幅
+//   eqHeight / maxHoverableThrust                        -> 判读用解析式（E9 定律）
+// 为什么保留：这三组是 W6 的内容，接线会改起飞/降落剖面，**必须在 v2 垂直环
+// 飞验证之后单独一批做**；现在接等于两个变量一起动，出问题分不清是谁。
+// ============================================================================
+
 constexpr double G = 9.81;
+
+// ============================================================================
+// v2 增益与限幅：**锁死在这里，不暴露成 yaml 参数**（2026-11-06 砍旋钮）
+// 理由：这些是 PX4 的参考值，没有"按机器调"的正当理由；把它们做成参数只会
+//       制造 13 个没人标定过的旋钮。真正需要知道的只有 hover_percentage（电池属性）。
+// 来源：PX4-Autopilot src/modules/mc_pos_control/PositionControl.cpp 及参数表。
+// ============================================================================
+constexpr double kV2Zp = 1.0;    // MPC_Z_P      位置环 P        [1/s]
+constexpr double kV2Zv = 4.0;    // MPC_Z_VEL_P  速度环 P        [1/s]  -> ωn=2.0
+constexpr double kV2Zi = 2.0;    // MPC_Z_VEL_I  速度环 I        [1/s^2]-> ζ=0.69, Ti=2.0s
+constexpr double kV2ZpXY = 0.55; // MPC_XY_P
+constexpr double kV2ZvXY = 1.80; // MPC_XY_VEL_P
+constexpr double kV2ZiXY = 0.40; // MPC_XY_VEL_I  -> Ti=4.5s
+constexpr double kV2ZvelMax = 3.0;   // MPC_Z_VEL_MAX_UP/DN
+constexpr double kV2XYvelMax = 12.0;
+// 积分限幅：覆盖 hp∈[0.46,0.62] 的冷启偏差
+//   I_need = u_hover*(G/hp) - G；hp=0.54 时 u=0.62 -> +1.46，u=0.46 -> -1.45
+constexpr double kV2Zilim = 0.3 * G;    // 2.943，余量 2x
+constexpr double kV2XYilim = 0.15 * G;  // 1.4715，吃 0.209 m/s^2 常值扰动绰绰有余
+constexpr double kV2CosMin = 0.5;       // = cos(60deg)，1/cos 补偿护栏
+constexpr double kV2DtMin = 0.002;      // 照 PX4 的 dt 钳位
+constexpr double kV2DtMax = 0.040;
+// 水平抗饱和的加速度上限 = g*tan(tilt)；倾角上限本身来自 takeoff_land/max_angle，
+// 这里只限制"换算用的倾角不超过 60°"，避免 tan 发散。
+constexpr double kV2AccLimTiltMaxDeg = 60.0;
 
 // ---------------------------------------------------------------- 垂直/水平通用
 struct AxisCfg
@@ -35,10 +74,19 @@ struct AxisCfg
   double vel_max_up = 3.0;    // 速度指令上限（正方向）[m/s]
   double vel_max_dn = 3.0;    // 速度指令下限（负方向）[m/s]
   double i_lim = 0.3 * G;     // 积分限幅 [m/s^2]（任务书 W4 步骤2：±0.3g）
-  double thr2acc = G / 0.48;  // u -> 加速度 斜率 [m/s^2 per unit u]
+  double thr2acc = 0.0;       // u -> 加速度 斜率 [m/s^2 per unit u]
+  // 0 = 未初始化。**故意不设默认值**：写死 G/0.48 会和 hover_percentage 脱钩
+  // （2026-11-06 实测已不一致）。调用方必须先用 retargetThrustModel() 灌入真值；
+  // 若仍是 0，axisStep 走"不出力"分支（安全方向），不会除零放大推力。
   double cos_tilt_min = 0.5;  // 1/cos 补偿的护栏（等效最大倾角 60°）
   double u_min = 0.0;         // 推力下限（怠速用 0.04 由调用方给）
   double u_max = 1.0;
+  // 2026-11-06（顾问自审补）：该轴的**加速度指令上限** [m/s^2]，0=不限。
+  // 为什么需要它：水平轴的执行器上限是**倾角**，不是推力。而 axisStep 的饱和判据
+  // 用的是 u=(acc+g)/(k*ct)，对 x/y 来说 acc 只有几 m/s^2，u 恒在 [0,1] 内 ->
+  // 水平积分**永不冻结**（抗饱和形同虚设），大步长机动后会积到 i_lim 再花 Ti 解开，
+  // 表现为 ~1.5 m 的位置过冲。垂直轴保持只用 u 判（推力就是它的执行器）。
+  double acc_lim = 0.0;
 };
 
 struct AxisMem
@@ -77,6 +125,15 @@ inline AxisDebug axisStep(const AxisCfg &c, AxisMem &m,
   double acc = c.kp_v * d.e_v + m.i + a_ff;
   d.acc = acc;
 
+  // (3.5) 模型未初始化 -> 不出力（安全方向）。绝不能让 thr2acc=0 走除法：
+  //       那会得到 inf -> 被 clamp 到 u_max=1.0 = 满推力。
+  if (!(c.thr2acc > 1.0))
+  {
+    d.u = 0.0;
+    d.sat = -1.0;
+    d.cos_comp = 1.0;
+    return d;
+  }
   // (4) 推力（含 1/cos 倾角补偿与限幅）
   double ct = std::max(cos_tilt, c.cos_tilt_min);
   d.cos_comp = 1.0 / ct;
@@ -84,6 +141,12 @@ inline AxisDebug axisStep(const AxisCfg &c, AxisMem &m,
   double u = std::max(c.u_min, std::min(c.u_max, u_raw));
   d.sat = (u_raw > c.u_max) ? 1.0 : ((u_raw < c.u_min) ? -1.0 : 0.0);
   d.u = u;
+  // 该轴另有加速度上限时（水平轴=倾角预算），并入饱和判据
+  if (c.acc_lim > 0.0)
+  {
+    if (acc >= c.acc_lim)       d.sat = 1.0;
+    else if (acc <= -c.acc_lim) d.sat = -1.0;
+  }
 
   // (5) 条件积分抗饱和：饱和且误差指向饱和方向 → 本拍不积分
   bool frozen = (d.sat > 0.0 && d.e_v > 0.0) || (d.sat < 0.0 && d.e_v < 0.0);
@@ -270,44 +333,6 @@ inline double eqHeight(double aim, double u_hover, double thr2acc_est, double kp
 inline double maxHoverableThrust(double aim, double thr2acc_est, double kp_p)
 {
   return (kp_p * aim + G) / std::max(thr2acc_est, 1e-9);
-}
-
-// ---------------------------------------------------------------- RLS（W4）
-struct RlsCfg
-{
-  double rho2 = 0.998;
-  double k_min = 5.0;        // 存储点限幅下限（防发散，照 controller.cpp:155 的意图）
-  double k_max = 40.0;
-  double excite_min = 1e-3;  // 激励门：|u - u_prev| 小于此值视为无激励（不更新）
-};
-
-struct RlsState
-{
-  double k = G / 0.48;
-  double P = 1e6;
-  double u_prev = -1.0;
-  bool primed = false;
-};
-
-/* 带门的 RLS 更新。in_air=false 或 excited=false 时不更新（返回 false）。
-   **限幅作用在存储点**（不像原实现在使用点钳位），并把 P 保正。 */
-inline bool rlsUpdate(RlsState &s, const RlsCfg &c, double u, double az, bool in_air)
-{
-  if (!in_air || !std::isfinite(u) || !std::isfinite(az))
-    return false;
-  bool excited = s.primed ? (std::fabs(u - s.u_prev) >= c.excite_min) : true;
-  s.u_prev = u;
-  s.primed = true;
-  if (!excited)
-    return false;
-  double gamma = 1.0 / (c.rho2 + u * s.P * u);
-  double K = gamma * s.P * u;
-  s.k = s.k + K * (az - u * s.k);
-  s.P = (1.0 - K * u) * s.P / c.rho2;
-  if (!std::isfinite(s.P) || s.P <= 0.0)
-    s.P = 1e6;                                   // P 保正：病态时重置信任
-  s.k = std::max(c.k_min, std::min(c.k_max, s.k));  // 存储点限幅
-  return true;
 }
 
 // ---------------------------------------------------------------- 降落（W6）

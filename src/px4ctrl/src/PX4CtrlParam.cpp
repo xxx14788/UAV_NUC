@@ -77,23 +77,6 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 
 	// W4/W5/W6 控制核心 v2（optional；缺键=全默认；enabled=false 时零行为变化）
 	nh.param("ctrl_v2/enabled", ctrl_v2.enabled, false);
-	nh.param("ctrl_v2/kp_p_z", ctrl_v2.kp_p_z, 1.0);
-	nh.param("ctrl_v2/kp_v_z", ctrl_v2.kp_v_z, 4.0);
-	nh.param("ctrl_v2/ki_v_z", ctrl_v2.ki_v_z, 2.0);
-	nh.param("ctrl_v2/i_lim_z", ctrl_v2.i_lim_z, 2.943);
-	nh.param("ctrl_v2/vel_max_up", ctrl_v2.vel_max_up, 3.0);
-	nh.param("ctrl_v2/vel_max_dn", ctrl_v2.vel_max_dn, 3.0);
-	nh.param("ctrl_v2/kp_p_xy", ctrl_v2.kp_p_xy, 0.55);
-	nh.param("ctrl_v2/kp_v_xy", ctrl_v2.kp_v_xy, 1.80);
-	nh.param("ctrl_v2/ki_v_xy", ctrl_v2.ki_v_xy, 0.40);
-	nh.param("ctrl_v2/i_lim_xy", ctrl_v2.i_lim_xy, 1.4715);
-	nh.param("ctrl_v2/vel_max_xy", ctrl_v2.vel_max_xy, 12.0);
-	nh.param("ctrl_v2/cos_tilt_min", ctrl_v2.cos_tilt_min, 0.5);
-	nh.param("ctrl_v2/dt_min", ctrl_v2.dt_min, 0.002);
-	nh.param("ctrl_v2/dt_max", ctrl_v2.dt_max, 0.040);
-	ROS_WARN("[px4ctrl] ctrl_v2: enabled=%d (kp_p_z=%.2f kp_v_z=%.2f ki_v_z=%.2f | kp_p_xy=%.2f kp_v_xy=%.2f ki_v_xy=%.2f)",
-	         (int)ctrl_v2.enabled, ctrl_v2.kp_p_z, ctrl_v2.kp_v_z, ctrl_v2.ki_v_z,
-	         ctrl_v2.kp_p_xy, ctrl_v2.kp_v_xy, ctrl_v2.ki_v_xy);
 
 	read_essential_param(nh, "pose_solver", pose_solver);
 	read_essential_param(nh, "mass", mass);
@@ -143,6 +126,20 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 		takeoff_land.enable_auto_arm = false;
 		ROS_ERROR("\"enable_auto_arm\" is only allowd with \"auto_takeoff_land\" enabled.");
 	}
+
+	// 2026-11-06: dump the values that actually decide flight behaviour.
+	// Must sit AFTER every read above (a first attempt sat before the reads and
+	// printed all zeros), and stays ASCII: the FCU-side locale is not UTF-8,
+	// so Chinese turns into "?" in rosout and in the terminal.
+	ROS_WARN("[px4ctrl] v2=%d | hp(cold-start bias)=%.3f | g=%.2f | mass=%.3f",
+	         (int)ctrl_v2.enabled, thr_map.hover_percentage, gra, mass);
+	ROS_WARN("[px4ctrl] tilt: global max_angle=%.1f deg | takeoff window(<%.2fm) takeoff_tilt_max=%.1f deg %s",
+	         max_angle * (180.0 / M_PI), takeoff_land.cap_release_z, takeoff_land.tilt_max_deg,
+	         (takeoff_land.tilt_max_deg > 0.0 ? "(takeoff window uses it)" : "(falls back to global)"));
+	// hp is a COLD-START BIAS, not a calibrated hover throttle. Bias it HIGH:
+	// too high -> climbs and the integrator pulls it back; too low -> no thrust at all.
+	ROS_WARN("[px4ctrl] I_need = u_hover*(g/hp)-g must stay inside +-i_lim=%.2f",
+	         0.3 * gra);
 	if ( takeoff_land.no_RC && (!takeoff_land.enable_auto_arm || !takeoff_land.enable) )
 	{
 		takeoff_land.no_RC = false;
