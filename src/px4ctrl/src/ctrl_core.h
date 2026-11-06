@@ -47,8 +47,16 @@ constexpr double G = 9.81;
 // 来源：PX4-Autopilot src/modules/mc_pos_control/PositionControl.cpp 及参数表。
 // ============================================================================
 constexpr double kV2Zp = 1.0;    // MPC_Z_P      位置环 P        [1/s]
-constexpr double kV2Zv = 4.0;    // MPC_Z_VEL_P  速度环 P        [1/s]  -> ωn=2.0
-constexpr double kV2Zi = 2.0;    // MPC_Z_VEL_I  速度环 I        [1/s^2]-> ζ=0.69, Ti=2.0s
+constexpr double kV2Zv = 6.0;    // 速度环 P [1/s]  2026-11-06: 4.0->6.0
+// 为什么偏离 PX4 的 4.0：PX4 的悬停油门是准的，不会激励垂直模态；我们有 5-10% 冷启
+// 模型误差，正好把它踢起来。实测（20261106_222806）峰值 0.785、谷 0.656，摆幅 12.9cm。
+// 仿真扫描（同一套数学，三轮实测 u_hover，aim=0.75/k=0.25）：
+//   kp_v=4, ki=2 -> 峰 0.736 谷 0.659 摆幅 0.077   （当前）
+//   kp_v=6, ki=3 -> 峰 0.706 谷 0.669 摆幅 0.037   （摆幅减半，ζ 仍 0.70）
+//   kp_v=8, ki=3 -> 峰 0.708 谷 0.670 摆幅 0.038   （边际递减）
+// 稳态不受影响（30s 误差 0.0000）。**注意**：仿真没有推力滞后，提带宽遇到未建模滞后
+// 有振荡风险 -> 首飞必须盯"周期>5s 的摆动"这条中止条件。
+constexpr double kV2Zi = 3.0;    // 速度环 I [1/s^2]  2026-11-06: 2.0->3.0（Ti=2.0s, ζ=0.70）
 constexpr double kV2ZpXY = 0.55; // MPC_XY_P
 constexpr double kV2ZvXY = 1.80; // MPC_XY_VEL_P
 constexpr double kV2ZiXY = 0.40; // MPC_XY_VEL_I  -> Ti=4.5s
