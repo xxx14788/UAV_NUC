@@ -90,8 +90,10 @@ void PX4CtrlFSM::process()
 	fd_in.no_rc = param.takeoff_land.no_RC;
 	fd_in.cmdresp_divergent = p2_st.latched; // T1-P2: cmd-response divergence latch
 	fd_in.ha_blind_land = (ha_stage >= 2);   // T1-v1139 梯①盲降: HAFIX LAND 期 decide_land odom 门旁路
-	if (state_data.rcv_stamp != ros::Time(0) && // 首帧保护留在调用点(纯函数不建模,审计表#S0)
-	    fsm_decision::step0_global(fd_state_of(state), fd_in).next == fsm_decision::MANUAL_CTRL)
+	// 2026-11-06 DEF-01: 用纯函数给出的 reset 标志判断"本拍是否真的发生了重置"。
+	// 原写法 `.next == MANUAL_CTRL` 在已经是 MANUAL_CTRL 时恒真 -> 地面上 100 Hz 误触发。
+	const fsm_decision::Outcome fd_step0 = fsm_decision::step0_global(fd_state_of(state), fd_in);
+	if (state_data.rcv_stamp != ros::Time(0) && fd_step0.reset) // 首帧保护留在调用点(纯函数不建模,审计表#S0)
 	{
 		state = MANUAL_CTRL;
 		takeoff_land_data.triggered = false;
@@ -99,7 +101,7 @@ void PX4CtrlFSM::process()
 		controller.resetThrustMapping();
 		set_hov_with_odom();
 		// 不调 toggle_offboard_mode(false):链路已断,服务调用只会阻塞后失败
-		ROS_WARN("[px4ctrl] FCU state stream lost for %.1fs while disarmed, FSM reset to MANUAL_CTRL.",
+		ROS_WARN_THROTTLE(5.0, "[px4ctrl] FCU state stream lost for %.1fs while disarmed, FSM reset to MANUAL_CTRL.",
 		         (now_time - state_data.rcv_stamp).toSec());
 	}
 
@@ -425,7 +427,9 @@ void PX4CtrlFSM::process()
 		fsm_decision::Outcome fd_o = fsm_decision::decide_takeoff(
 		    fd_in, AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME, AutoTakeoffLand_t::TAKEOFF_ABORT_TIMEOUT,
 		    param.takeoff_land.height, takeoff_land.start_pose(2), odom_data.p(2),
-		    1.0 / (2.0 * param.gain.Kv2));   // 预测到位：刹车距离系数 k=1/(2*Kv2)
+		    // 2026-11-06: k 必须跟着"谁在实际刹车"走。legacy 的刹车权威是 Kv2=2.4 (k=0.208)；
+		    // v2 的串级里是 kp_v_z=4.0 (k=0.125)。用错会让切换点提前 ~7 cm（爬一半停住）。
+		    fsm_decision::arriveK(param.ctrl_v2.enabled ? param.ctrl_v2.kp_v_z : param.gain.Kv2));
 		// T1-W1 F2: 起飞看门狗 — 电机加速结束后这么久仍 disarmed 且未离地,说明起飞从未推进
 		// (ARM 被拒 / FCU 重启)。回退 MANUAL_CTRL。armed 态不受影响。
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)

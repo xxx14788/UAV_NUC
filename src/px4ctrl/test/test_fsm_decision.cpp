@@ -40,6 +40,31 @@ TEST(FsmStep0, ManualStaysManual)
 {
     Inputs i = base(); i.armed = false; i.fcu_state_stale = true;
     EXPECT_EQ(MANUAL_CTRL, step0_global(MANUAL_CTRL, i).next);
+    // 2026-11-06 DEF-01: 已经是 MANUAL_CTRL 时**不得**声称发生了重置。
+    // 原调用点用 `.next == MANUAL_CTRL` 判断 -> 该式恒真 -> 地面上 100 Hz 重置推力模型
+    // + 打一条假的 "FCU state stream lost"（004602 实测 1304 条 = 93% 日志）。
+    EXPECT_FALSE(step0_global(MANUAL_CTRL, i).reset);
+}
+// reset 标志必须"只在真的发生状态转移时"为真 —— 这是调用点唯一的判据
+TEST(FsmStep0, ResetFlagOnlyOnRealTransition)
+{
+    Inputs i = base(); i.armed = false; i.fcu_state_stale = true;
+    for (State s : {AUTO_HOVER, CMD_CTRL, AUTO_TAKEOFF, AUTO_LAND})
+        EXPECT_TRUE(step0_global(s, i).reset) << s;
+    Inputs a = base(); a.armed = true; a.fcu_state_stale = true;
+    EXPECT_FALSE(step0_global(AUTO_HOVER, a).reset);          // 已解锁不重置
+    Inputs f = base(); f.armed = false; f.fcu_state_stale = false;
+    EXPECT_FALSE(step0_global(AUTO_HOVER, f).reset);          // 链路新鲜不重置
+}
+
+// 预测式到位系数 k=1/(2a)：legacy 与 v2 的刹车权威不同，k 必须跟着走
+TEST(FsmTakeoff, ArriveKFollowsBrakeAuthority)
+{
+    EXPECT_NEAR(1.0 / (2.0 * 2.4), arriveK(2.4), 1e-12);      // legacy Kv2=2.4 -> 0.2083
+    EXPECT_NEAR(1.0 / (2.0 * 4.0), arriveK(4.0), 1e-12);      // v2 kp_v_z=4.0 -> 0.1250
+    // 用错会让切换点提前 (0.2083-0.1250)*0.85 = 7.1 cm —— 表现为"爬一半停住"
+    EXPECT_GT(arriveK(2.4) - arriveK(4.0), 0.08);
+    EXPECT_DOUBLE_EQ(0.0, arriveK(0.0));                      // 防除零
 }
 
 // ---------- MANUAL_CTRL ----------

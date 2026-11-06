@@ -68,6 +68,29 @@ public:
 		bool hover_at_takeoff_xy;
 	};
 
+	// W4/W5/W6（2026-11-06）：控制核心 v2（串级+积分+参考整形+1/cos+无扰切换）。
+	// **默认 enabled=false = 逐位保留 legacy 行为**；参数全为 optional（缺键用默认）。
+	struct CtrlV2_t
+	{
+		bool enabled = false;
+		// 垂直
+		double kp_p_z = 1.0, kp_v_z = 4.0, ki_v_z = 2.0, i_lim_z = 2.943;  // 照 PX4 ωn=2.0/ζ=1.0/Ti=2.0
+		double vel_max_up = 3.0, vel_max_dn = 3.0;
+		// 水平
+		double kp_p_xy = 0.55, kp_v_xy = 1.80, ki_v_xy = 0.40, i_lim_xy = 1.4715; // 照 PX4 ζ=0.90
+		double vel_max_xy = 12.0;
+		// 公共
+		double cos_tilt_min = 0.5;     // 1/cos 护栏（等效 60°）
+		double dt_min = 0.002, dt_max = 0.040;  // 照 PX4 的 dt 钳位
+		double u_min = 0.0, u_max = 1.0;
+		// 2026-11-06 DEF-11：原 rls_air_gate / rls_air_z_min / rls_excite_min 三个参数
+		// 从未接线（rls_air_z_min 与 rls_excite_min 全树零消费者，rls_air_gate 只挡了 NaN）。
+		// 已删除，改为 v2 下 NaN 门无条件生效（见 controller.cpp estimateThrustModel）。
+		// 真正的"空中门"**故意不做**：RLS 本来就只在 AUTO_HOVER/CMD_CTRL 更新
+		// （PX4CtrlFSM.cpp STEP2），起飞段根本不进；而起飞段 z<0.20 m 若被门挡住，
+		// 恰恰会挡掉唯一需要它的时候。
+	};
+
 	struct OdomSanityGate_t
 	{
 		// T1-D2 (2026-09-29): odom value-sanity gate. Defaults keep legacy
@@ -88,6 +111,7 @@ public:
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
 	OdomSanityGate_t odom_gate;
+	CtrlV2_t ctrl_v2;
 	// FIX-20261022r2: 帧偏置保持（true=修复；false=legacy 实时搬运）
 	bool frame_off_hold;
 	// F-1 (2026-10-22 判读v5): REINIT_RESET 分支开关（false=状态机零行为变化）

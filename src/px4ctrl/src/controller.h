@@ -10,6 +10,7 @@
 #include <queue>
 
 #include "input.h"
+#include "ctrl_core.h"   // W4/W5/W6: 纯函数控制核心（gtest: test_ctrl_core）
 #include <Eigen/Dense>
 
 struct Desired_State_t
@@ -80,6 +81,16 @@ private:
 
   double computeDesiredCollectiveThrustSignal(const Eigen::Vector3d &des_acc);
   double fromQuaternion2yaw(Eigen::Quaterniond q);
+
+  // ---- W4/W5/W6: 控制核心 v2 状态（enabled=false 时从不参与运算）----
+  px4ctrl_core::AxisCfg cfg_x_, cfg_y_, cfg_z_;
+  px4ctrl_core::AxisMem mem_x_, mem_y_, mem_z_;
+  ros::Time last_step_t_;
+  bool v2_primed_ = false;
+  double last_u_ = 0.0;          // 上一拍发出的推力（无扰切换用）
+  double last_cos_tilt_ = 1.0;
+  void applyV2Config();          // 把 param_.ctrl_v2 灌进 cfg_*
+  double stepDt();               // 实测 dt（钳位 [dt_min, dt_max]）
 
   // FIX-20261022r2: 帧偏置保持状态（判读 v5 复查升级）
   Eigen::Quaterniond off_filt_ = Eigen::Quaterniond::Identity();

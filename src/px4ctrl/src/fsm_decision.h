@@ -90,17 +90,33 @@ struct Outcome
     bool disarm = false;
     bool reject = false;        // transition request refused (stay)
     RejectReason reason = RJ_NONE;
+    // 2026-11-06 DEF-01: "本拍真的发生了 STEP0 重置" 的显式标志。
+    // 原调用点用 `.next == MANUAL_CTRL` 判断是否重置 —— 已经是 MANUAL_CTRL 时该式恒真，
+    // 于是地面上每 10 ms 重置一次推力模型并打一条假告警（004602 实测 1304 条 = 93% 日志，
+    // 且"FCU 链路丢失"这个安全告警变成常亮灯，真丢了分辨不出）。纯函数必须自己说清楚。
+    bool reset = false;
 };
 
 // STEP0: FCU link-liveness self-heal (T1-W1 F3). Disarmed + state stream
 // stale >3s + not already MANUAL -> clean reset. armed bytes untouched.
 // NOTE: the rcv_stamp!=0 first-frame guard stays at the call site (audit #S0).
+// 预测式到位系数：k = 1/(2a)，a = 实际刹车权威 [1/s]。
+// legacy 用 gain.Kv2；v2 用 ctrl_v2.kp_v_z。两者混用会让切换点提前/滞后
+// （Kv2=2.4 -> k=0.208；kp_v_z=4.0 -> k=0.125，差 0.083*0.85 ≈ 7 cm）。
+inline double arriveK(double brake_gain)
+{
+    return brake_gain > 0.0 ? 1.0 / (2.0 * brake_gain) : 0.0;
+}
+
 inline Outcome step0_global(State s, const Inputs &in)
 {
     Outcome o;
     o.next = s;
     if (!in.armed && in.fcu_state_stale && s != MANUAL_CTRL)
+    {
         o.next = MANUAL_CTRL;
+        o.reset = true;
+    }
     return o;
 }
 

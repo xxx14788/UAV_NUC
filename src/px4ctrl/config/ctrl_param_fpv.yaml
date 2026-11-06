@@ -44,7 +44,16 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     #   u_hover 随电池衰减单调上升：进悬停+3s 0.491/0.507  ->  悬停末 0.520/0.552 (+6~9%)
     #   起飞瞬间（最新电池）约 0.48；本参数=RLS 的冷启动初值，稳态由 RLS(5s 窗) 接管。
     #   P-only 稳态偏差 = (u_true/u_est-1)*g/Kp2 = 6.53 m/单位相对误差。
-    hover_percentage: 0.48
+    # 2026-11-06 顾问改 0.48 -> 0.53。**与 ctrl_v2.enabled 绑定，必须成对切换**
+    #   （用 ~/ctrl_mode.sh v2|legacy 一键切，别手改单个键）。
+    # 它是"冷启动偏置"，不是"真实悬停油门标定值"。方向必须往高偏：
+    #   偏高 -> 冲高，P 项+积分能拉回，不危险；偏低 -> 推不动，直接躺地上（11-06 三连败就是 0.48）。
+    # 0.53 ≈ PX4 等效值：MPC_THR_HOVER=0.6 在电机档位域，折算推力域 = 0.3*0.6^2+0.7*0.6 = 0.528。
+    # 灵敏度：每偏 1% 平衡高度偏 6.5 cm（g/Kp2 = 6.53 m/单位相对误差）。
+    # 积分需求 I_need = u_hover*(g/hp)-g：hp=0.53 时在 [-0.54,+0.91]，i_lim=2.943 余量 69%；
+    #   hp 不得低于 0.50（0.45 时需求 2.81，余量只剩 5%）。
+    # legacy（v2 关闭）时必须回到 0.48，否则 P-only 会冲到 ~0.75 m（"飞太高"复发）。
+    hover_percentage: 0.53
 
 gain: 
     # Cascade PID controller. Recommend to read the code.
@@ -96,3 +105,32 @@ frame_offset:
 # false=零行为变化。启用=飞行安全逻辑红线呈裁项。
 reinit_reset:
     enabled: false
+
+# ============================================================================
+# ctrl_v2：串级 + 积分（2026-11-06，W4/W5 控制核心）
+# 默认 enabled=false -> 现网行为与 legacy 逐位相同。
+# 打开前必须确认：
+#   1) hover_percentage 同时改到 0.53（冷启偏置宁可过推，不可欠推：偏低=推不动躺地上）
+#   2) ki_v_z 起步 1.0（积分与 RLS 是同一个误差的两个积分器，全速同跑有慢振荡风险）
+#   3) i_lim_z=2.943 必须 >= u_hover_max*(g/hp)-g = 0.579*(9.81/0.53)-9.81 = 0.91
+# ============================================================================
+ctrl_v2:
+  # 2026-11-06 顾问打开（首飞 v2）。回退：~/ctrl_mode.sh legacy（同时把 hp 改回 0.48）
+  enabled: true
+  # 垂直（照 PX4 MPC_Z_P=1.0 / MPC_Z_VEL_P=4.0 / MPC_Z_VEL_I=2.0，起步 I 降半）
+  kp_p_z: 1.0
+  kp_v_z: 4.0
+  ki_v_z: 1.0
+  i_lim_z: 2.943
+  vel_max_up: 3.0
+  vel_max_dn: 3.0
+  # 水平（照 PX4 MPC_XY_P=0.55 / MPC_XY_VEL_P=1.8 / MPC_XY_VEL_I=0.4）
+  kp_p_xy: 0.55
+  kp_v_xy: 1.80
+  ki_v_xy: 0.40
+  i_lim_xy: 1.4715
+  vel_max_xy: 12.0
+  # 公共
+  cos_tilt_min: 0.5
+  dt_min: 0.002
+  dt_max: 0.040

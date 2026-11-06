@@ -37,3 +37,8 @@ float64 fb_rate_z
 # Filled in FSM debug path only (idle else-branch): idle/spin-up blind zone per C10 r3 caveat.
 float64 odom_delay_ms
 float64 odom_staleness_ms
+
+# 2026-11-06: v2 串级观测（顾问加）。legacy 下 i_z 恒 0、v_d_z = des_v_z。
+# i_z 是垂直速度环积分 [m/s^2]，是判断"积分有没有在干活"的唯一直接证据。
+float64 i_z
+float64 v_d_z

@@ -75,6 +75,26 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	         (int)p2_cmdresp.enabled, p2_cmdresp.win_sec, p2_cmdresp.eps_static_m,
 	         p2_cmdresp.drift_rate_mps);
 
+	// W4/W5/W6 控制核心 v2（optional；缺键=全默认；enabled=false 时零行为变化）
+	nh.param("ctrl_v2/enabled", ctrl_v2.enabled, false);
+	nh.param("ctrl_v2/kp_p_z", ctrl_v2.kp_p_z, 1.0);
+	nh.param("ctrl_v2/kp_v_z", ctrl_v2.kp_v_z, 4.0);
+	nh.param("ctrl_v2/ki_v_z", ctrl_v2.ki_v_z, 2.0);
+	nh.param("ctrl_v2/i_lim_z", ctrl_v2.i_lim_z, 2.943);
+	nh.param("ctrl_v2/vel_max_up", ctrl_v2.vel_max_up, 3.0);
+	nh.param("ctrl_v2/vel_max_dn", ctrl_v2.vel_max_dn, 3.0);
+	nh.param("ctrl_v2/kp_p_xy", ctrl_v2.kp_p_xy, 0.55);
+	nh.param("ctrl_v2/kp_v_xy", ctrl_v2.kp_v_xy, 1.80);
+	nh.param("ctrl_v2/ki_v_xy", ctrl_v2.ki_v_xy, 0.40);
+	nh.param("ctrl_v2/i_lim_xy", ctrl_v2.i_lim_xy, 1.4715);
+	nh.param("ctrl_v2/vel_max_xy", ctrl_v2.vel_max_xy, 12.0);
+	nh.param("ctrl_v2/cos_tilt_min", ctrl_v2.cos_tilt_min, 0.5);
+	nh.param("ctrl_v2/dt_min", ctrl_v2.dt_min, 0.002);
+	nh.param("ctrl_v2/dt_max", ctrl_v2.dt_max, 0.040);
+	ROS_WARN("[px4ctrl] ctrl_v2: enabled=%d (kp_p_z=%.2f kp_v_z=%.2f ki_v_z=%.2f | kp_p_xy=%.2f kp_v_xy=%.2f ki_v_xy=%.2f)",
+	         (int)ctrl_v2.enabled, ctrl_v2.kp_p_z, ctrl_v2.kp_v_z, ctrl_v2.ki_v_z,
+	         ctrl_v2.kp_p_xy, ctrl_v2.kp_v_xy, ctrl_v2.ki_v_xy);
+
 	read_essential_param(nh, "pose_solver", pose_solver);
 	read_essential_param(nh, "mass", mass);
 	read_essential_param(nh, "gra", gra);
