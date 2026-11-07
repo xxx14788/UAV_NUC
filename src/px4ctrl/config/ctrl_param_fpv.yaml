@@ -31,6 +31,9 @@ auto_takeoff_land:
     takeoff_tilt_max_deg: 10.0 # deg 2026-11-04 兜底：起飞窗(离地<0.3m)内倾角上限
     land_speed: 0.15
     hover_at_takeoff_xy: true  # 2026-11-05 用户指令：悬停锁起飞点 xy（不锁"进悬停瞬间"的漂移位置）         # m/s 2026-11-04 用户指令：降落固定 0.15
+    # 2026-11-07（判读 v1 §5 批2）：起飞参考整形，0=关=旧行为（速度阶跃）。
+    # 打开建议 0.6~1.0；本批**不启用**（与 ground_lock 一起开会分不清是谁的效果）。
+    takeoff_ref_accel: 0.0
 
 thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(Unit:N): F=K1*Voltage^K2*(K3*u^2+(1-K3)*u). 
     print_value: true # display the value of “thr_scale_compensate” or “hover_percentage” during thrust model estimating.
@@ -124,3 +127,17 @@ reinit_reset:
 # ============================================================================
 ctrl_v2:
   enabled: true
+
+# ============================================================================
+# 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3 主修）
+# 地面阶段：不产生任何水平力需求 + 姿态指令走执行器侧(PX4)估计姿态 = 严格零力矩；
+# 离地确认那一拍把起飞锚点 xy/yaw 重捕为此刻（z 锚不动）。
+# 回退：enable: false = 逐位等价旧行为。
+# ============================================================================
+ground_lock:
+    enable: true          # 本批唯一启用的变量
+    z_release: 0.06       # 离地判据 dz [m]
+    vz_release: 0.05      # 离地判据 vz [m/s]
+    confirm_s: 0.15       # 双门同时成立需持续 [s]
+    blend_s: 0.25         # 释放后姿态指令交叉 [s]
+    guard_tilt_deg: 5.0   # 锁定期间实测倾角超此值打 ERROR（只告警不动作）

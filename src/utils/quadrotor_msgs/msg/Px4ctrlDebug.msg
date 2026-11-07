@@ -42,3 +42,15 @@ float64 odom_staleness_ms
 # i_z 是垂直速度环积分 [m/s^2]，是判断"积分有没有在干活"的唯一直接证据。
 float64 i_z
 float64 v_d_z
+
+# ===== 2026-11-07 起飞地面锁定（判读 v1）=====
+# i_x/i_y     : xy 速度环积分 [m/s^2]。"姿态指令是斜的"的直接证据。
+# v_d_x/v_d_y : xy 速度指令 [m/s]。
+# gl_locked   : 1 = 地面锁定生效（水平通道关闭 + 姿态 pass-through）。
+# gl_kick_deg : 锁定期间实测倾角峰值 [deg]（验收量；改前 5.3~9.5）。
+float64 i_x
+float64 i_y
+float64 v_d_x
+float64 v_d_y
+float64 gl_locked
+float64 gl_kick_deg

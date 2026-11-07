@@ -66,8 +66,26 @@ public:
 		double land_speed;    // 2026-11-04 用户指令：降落速度（0=沿用 takeoff_land_speed）
 		// 2026-11-05 用户指令：悬停锚点锁定起飞点 xy（false=旧行为：锁进入悬停瞬间位置）
 		bool hover_at_takeoff_xy;
+		// 2026-11-07（判读 v1 §5 批2，默认关）：起飞参考整形。
+		// >0：用 ctrl_core::takeoffRef 的"加速-匀速-减速"剖面替换"速度阶跃到 speed"；
+		// 取值 = 加减速度 [m/s^2]。0 = 关闭 = 旧行为（速度阶跃，实测推力尖峰
+		// 0.15->0.675 = 1.26~1.36x 悬停，是离地冲击的能量源）。
+		// **本批只落地不启用**：与 ground_lock 一起开会分不清是谁的效果。
+		double ref_accel;
 	};
 
+	// 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3，本批主修）
+	// 地面阶段：不产生任何水平力需求 + 姿态指令走执行器侧(PX4)估计姿态；
+	// 离地确认那一拍把起飞锚点 xy/yaw 重捕为此刻。enable=false 等价旧行为。
+	struct GroundLock
+	{
+		bool enable = false;         // 实机 yaml 置 true
+		double z_release = 0.06;     // 离地判据 dz [m]
+		double vz_release = 0.05;    // 离地判据 vz [m/s]
+		double confirm_s = 0.15;     // 双门同时成立需持续 [s]
+		double blend_s = 0.25;       // 释放后姿态指令交叉 [s]
+		double guard_tilt_deg = 5.0; // 锁定期间实测倾角超此值打 ERROR（只告警不动作）
+	};
 	// W4/W5/W6（2026-11-06）：控制核心 v2（串级+积分+参考整形+1/cos+无扰切换）。
 	// **默认 enabled=false = 逐位保留 legacy 行为**；参数全为 optional（缺键用默认）。
 	// 2026-11-06 砍旋钮：原 CtrlV2_t 有 13 个键，全部收进 ctrl_core.h 的 PX4 参考常量。
@@ -96,6 +114,7 @@ public:
 	RCReverse rc_reverse;
 	ThrustMapping thr_map;
 	AutoTakeoffLand takeoff_land;
+	GroundLock ground_lock;   // 2026-11-07 起飞地面锁定
 	OdomSanityGate_t odom_gate;
 	CtrlV2_t ctrl_v2;
 	// FIX-20261022r2: 帧偏置保持（true=修复；false=legacy 实时搬运）

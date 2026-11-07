@@ -106,6 +106,15 @@ void Parameter_t::config_from_ros_handle(const ros::NodeHandle &nh)
 	// C3-B2 H4-F3（设计文档 §11）：姿态门控推力，缺省=关闭
 	nh.param("auto_takeoff_land/takeoff_att_gate_deg", takeoff_land.att_gate_deg, -1.0);
 	nh.param("auto_takeoff_land/takeoff_gated_thrust", takeoff_land.gated_thrust, 0.0);
+	// 2026-11-07 起飞参考整形（默认关，本批不启用）
+	nh.param("auto_takeoff_land/takeoff_ref_accel", takeoff_land.ref_accel, 0.0);
+	// 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3）
+	nh.param("ground_lock/enable", ground_lock.enable, false);
+	nh.param("ground_lock/z_release", ground_lock.z_release, 0.06);
+	nh.param("ground_lock/vz_release", ground_lock.vz_release, 0.05);
+	nh.param("ground_lock/confirm_s", ground_lock.confirm_s, 0.15);
+	nh.param("ground_lock/blend_s", ground_lock.blend_s, 0.25);
+	nh.param("ground_lock/guard_tilt_deg", ground_lock.guard_tilt_deg, 5.0);
 
 	read_essential_param(nh, "thrust_model/print_value", thr_map.print_val);
 	read_essential_param(nh, "thrust_model/K1", thr_map.K1);

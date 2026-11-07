@@ -64,6 +64,12 @@ public:
       const double tilt_max_deg = -1.0);
   bool estimateThrustModel(const Eigen::Vector3d &est_v,
       const Parameter_t &param);
+  // 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3）：FSM 每拍喂状态
+  // true  = 锁定中：三轴积分清零 + 水平通道输出 0 + 姿态指令 = imu.q(pass-through)
+  // false = 若上一拍锁定，启动 blend_s 的姿态交叉（防阶跃）
+  // blend_on_release：只有"确认离地"这一条路要交叉（无阶跃）；中止/接管必须立刻生效
+  void setGroundLock(bool on, bool blend_on_release = true);
+  bool groundLocked(void) const { return gl_locked_; }
   void resetThrustMapping(void);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -92,6 +98,10 @@ private:
   void applyV2Config();          // 把 param_.ctrl_v2 灌进 cfg_*
   double stepDt();               // 实测 dt（钳位 [dt_min, dt_max]）
 
+  // ---- 2026-11-07 起飞地面锁定（判读 v1 §3）----
+  bool gl_locked_ = false;                                            // 当前锁定
+  ros::Time gl_release_t_;                                            // 释放时刻（0=无交叉）
+  Eigen::Quaterniond gl_q_passthru_ = Eigen::Quaterniond::Identity();  // 锁定末拍发令姿态
   // FIX-20261022r2: 帧偏置保持状态（判读 v5 复查升级）
   Eigen::Quaterniond off_filt_ = Eigen::Quaterniond::Identity();
   bool off_valid_ = false;

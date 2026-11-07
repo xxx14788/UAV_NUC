@@ -108,6 +108,11 @@ public:
 private:
 	State_t state; // Should only be changed in PX4CtrlFSM::process() function!
 	AutoTakeoffLand_t takeoff_land;
+	// 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3）
+	px4ctrl_core::GroundLockState gl_state_;
+	double gl_kick_max_deg_ = 0.0;     // 锁定期间实测倾角峰值（guard + 判读量）
+	bool gl_locked_this_tick_ = false;
+	bool updateGroundLock(const ros::Time &now); // 返回本拍是否锁定
 
 	// ---- control related ----
 	Desired_State_t get_hover_des();

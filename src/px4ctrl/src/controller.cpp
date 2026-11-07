@@ -50,6 +50,27 @@ double LinearControl::stepDt()
   // 钳位值锁在 ctrl_core.h（照 PX4 MulticopterPositionControl.cpp:396）
   return std::max(px4ctrl_core::kV2DtMin, std::min(px4ctrl_core::kV2DtMax, dt));
 }
+/* 2026-11-07 起飞地面锁定（判读 v1 §3）：FSM 每拍喂状态。
+ * true  -> 进入锁定（地面阶段：无水平力需求 + 姿态 pass-through）
+ * false -> 若上一拍锁定，记释放时刻并启动 blend_s 姿态交叉 */
+void LinearControl::setGroundLock(bool on, bool blend_on_release)
+{
+  if (on)
+  {
+    gl_locked_ = true;
+    gl_release_t_ = ros::Time(0);
+  }
+  else if (gl_locked_)
+  {
+    gl_locked_ = false;
+    // 中止/人工接管（CH5 拨低）必须立刻生效，不能被 0.25 s 交叉拖住 —— 安全线。
+    gl_release_t_ = blend_on_release ? ros::Time::now() : ros::Time(0);
+  }
+  else if (!blend_on_release)
+  {
+    gl_release_t_ = ros::Time(0); // 清掉可能还在跑的交叉
+  }
+}
 
 /* 
   compute u.thrust and u.q, controller gains and other parameters are in param_ 
@@ -121,6 +142,18 @@ LinearControl::calculateControl(const Desired_State_t &des,
             cfg_x_, mem_x_, des.p(0), odom.p(0), des.v(0), odom.v(0), des.a(0), cos_tilt, dt);
         px4ctrl_core::AxisDebug dy = px4ctrl_core::axisStep(
             cfg_y_, mem_y_, des.p(1), odom.p(1), des.v(1), odom.v(1), des.a(1), cos_tilt, dt);
+        /* 2026-11-07 起飞地面锁定（判读 v1 §3 公理B）：地面阶段水平通道输出恒 0。
+           为什么不是"限幅"或"只冻结积分"：地面按着，任何水平力需求都执行不了，
+           只会攒起来在离地瞬间释放（11-07 实测 des_a=(0.147,0.285) m/s^2，经怠速
+           小分母放大成 7.2 deg 指令 -> 离地 9.5 deg 冲击 -> 0.60 m 漂移）。
+           需求不存在，就没有可释放的东西，积分也没有可积的东西。
+           三轴一起清零：z 轴在地面期积的是上一轮残留（实测 i_z=-0.565 m/s^2）。 */
+        if (gl_locked_)
+        {
+          mem_x_.i = mem_y_.i = mem_z_.i = 0.0;
+          dx.acc = dy.acc = 0.0;
+          dx.v_d = dy.v_d = 0.0;
+        }
         // 姿态用的加速度向量（含重力），与 legacy 的 des_acc 语义一致
         des_acc = Eigen::Vector3d(dx.acc, dy.acc, dz.acc + param_.gra);
         u.thrust = dz.u;
@@ -131,6 +164,12 @@ LinearControl::calculateControl(const Desired_State_t &des,
         // 没有这两个量，判读时只能猜"是积分没吃住还是模型没收敛"——上一轮就是这么猜错的。
         debug_msg_.i_z = mem_z_.i;
         debug_msg_.v_d_z = dz.v_d;
+        // 2026-11-07（判读 v1）：xy 轴积分/速度指令也发出去。地面期"指令斜"的
+        // 直接证据就是这两个积分；没有它只能从 des_a 反推（11-07 判读绕了一大圈）。
+        debug_msg_.i_x = mem_x_.i;
+        debug_msg_.i_y = mem_y_.i;
+        debug_msg_.v_d_x = dx.v_d;
+        debug_msg_.v_d_y = dy.v_d;
       }
       else
       {
@@ -141,6 +180,10 @@ LinearControl::calculateControl(const Desired_State_t &des,
         last_u_ = u.thrust;
         debug_msg_.i_z = 0.0;          // legacy 无积分
         debug_msg_.v_d_z = des.v(2);   // legacy 的速度指令=前馈
+        debug_msg_.i_x = 0.0;          // legacy 无积分
+        debug_msg_.i_y = 0.0;
+        debug_msg_.v_d_x = des.v(0);
+        debug_msg_.v_d_y = des.v(1);
       }
       /* C3-B2 H4-F2（B1 预注册）：起飞倾角限幅。thrust 只取 des_acc(2) 且
          已在上行算毕，此处横向缩放不影响推力信号（thrust 不变性单测锚定）。 */
@@ -204,6 +247,38 @@ LinearControl::calculateControl(const Desired_State_t &des,
       else
       {
         u.q = imu.q * odom.q.inverse() * q; // legacy（frame_offset/hold:false 回滚）
+      }
+      /* 2026-11-07 起飞地面锁定（判读 v1 §3 公理A）：锁定期间姿态指令 = **真竖直 + 实测 yaw**
+         （yaw 取执行器侧 PX4 姿态，不用 VINS）。为什么不是"在 VINS 世界系里水平"：
+         那等价于把 VINS 与 PX4 的帧偏置 delta 当力矩打出去（11-05_003830 delta=+2.19 deg，
+         发布指令 pitch 恰好 -2.14 deg）。护栏：imu.q 非法时回退 off_filt_*odom.q。 */
+      if (gl_locked_)
+      {
+        const Eigen::Quaterniond qm = imu.q;
+        const bool qm_ok = qm.coeffs().allFinite() && std::fabs(qm.norm() - 1.0) < 0.5;
+        const Eigen::Quaterniond q_src =
+            qm_ok ? qm.normalized()
+                  : (off_valid_ ? (off_filt_ * odom.q.normalized()) : q);
+        /* 只保留 yaw：roll/pitch 置 0 = 推力沿真竖直。**不直接 pass-through 实测姿态**：
+           地面本身可能是斜的（11-07 静置实测 roll +0.16 / pitch -0.65 deg，来自地面），
+           pass-through 会把这个地面倾角原封不动带上去 —— 按 g*sin(0.65deg) 估，
+           1.5 s 爬升就是 ~0.12 m 漂移，吃掉验收线(<0.15 m)一大半。
+           零 roll/pitch 才同时满足零水平力和真竖直。 */
+        u.q = Eigen::Quaterniond(
+            Eigen::AngleAxisd(fromQuaternion2yaw(q_src), Eigen::Vector3d::UnitZ()));
+        gl_q_passthru_ = u.q;
+      }
+      else if (!gl_release_t_.isZero())
+      {
+        /* 释放交叉：从锁定末拍的 pass-through 姿态 slerp 到闭环指令。
+           锚点已在离地瞬间重捕（位置误差=0），所以这一步数学上是空操作；
+           存在只为兜"任何意外源"（frame_offset 突变 / 参考初始化）的阶跃。 */
+        const double s = (ros::Time::now() - gl_release_t_).toSec();
+        const double Tb = param_.ground_lock.blend_s;
+        if (Tb > 1e-6 && s >= 0.0 && s < Tb)
+          u.q = gl_q_passthru_.slerp(s / Tb, u.q);   // Eigen: slerp(t, other)
+        else
+          gl_release_t_ = ros::Time(0);
       }
 
 

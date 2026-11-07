@@ -53,10 +53,55 @@ static fsm_decision::State fd_state_of(PX4CtrlFSM::State_t s)
 	return fsm_decision::MANUAL_CTRL;
 }
 
+/* 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3）：每拍判"还在不在"地面。
+ * 锁定中：控制器不产生水平力需求 + 姿态指令走执行器侧 pass-through（controller.cpp）。
+ * 确认离地的那一拍：把起飞锚点的 xy/yaw 重捕为此刻（公理C：垂直起飞 = 从离地点
+ * 垂直上升），**z 锚不动** —— decide_takeoff 的 (cur_z-start_z)>=height 判据不受影响。 */
+bool PX4CtrlFSM::updateGroundLock(const ros::Time &now)
+{
+	const auto &glc = param.ground_lock;
+	px4ctrl_core::GroundLockCfg cfg;
+	cfg.enable = glc.enable;
+	cfg.z_release = glc.z_release;
+	cfg.vz_release = glc.vz_release;
+	cfg.confirm_s = glc.confirm_s;
+
+	const double dz = odom_data.p(2) - takeoff_land.start_pose(2);
+	const px4ctrl_core::GroundLockOut out = px4ctrl_core::groundLockStep(
+	    state == AUTO_TAKEOFF, dz, odom_data.v(2), now.toSec(), cfg, gl_state_);
+	gl_state_ = out.next;
+
+	// 锁定期间统计实测倾角峰值：既是"脚架/地面异常"的现场量，也是下一轮验收量。
+	if (out.locked)
+	{
+		const Eigen::Vector3d zb = imu_data.q * Eigen::Vector3d::UnitZ();
+		const double tilt = std::acos(std::min(1.0, std::max(-1.0, zb(2)))) * 180.0 / M_PI;
+		if (tilt > gl_kick_max_deg_)
+			gl_kick_max_deg_ = tilt;
+		if (glc.guard_tilt_deg > 0.0 && tilt > glc.guard_tilt_deg)
+			ROS_ERROR_THROTTLE(1.0,
+			    "[GL] 地面锁定期间实测倾角 %.1f deg > %.1f deg（脚架/地面异常？锁定继续，需人工判读）",
+			    tilt, glc.guard_tilt_deg);
+	}
+	if (out.just_airborne)
+	{
+		takeoff_land.start_pose.head<2>() = odom_data.p.head<2>();
+		takeoff_land.start_pose(3) = uav_utils::get_yaw_from_quaternion(odom_data.q);
+		ROS_INFO("\033[32m[GL] airborne confirmed: dz=%.3f m vz=%.2f m/s, "
+		         "anchor xy re-captured at liftoff point, tilt_peak=%.1f deg\033[32m",
+		         dz, odom_data.v(2), gl_kick_max_deg_);
+	}
+	return out.locked;
+}
 void PX4CtrlFSM::process()
 {
 
 	ros::Time now_time = ros::Time::now();
+	// 2026-11-07 地面锁定（判读 v1 §3）：在状态机之前判一次（滞后 <=1 拍 = 10 ms；
+	// 转 AUTO_TAKEOFF 的那一拍锚点刚捕获、误差=0，所以这一拍滞后无影响）。
+	gl_locked_this_tick_ = updateGroundLock(now_time);
+	// 只有"确认离地"这条路要交叉；中止/接管立刻放（见 controller.cpp 注释）
+	controller.setGroundLock(gl_locked_this_tick_, gl_state_.airborne);
 	Controller_Output_t u;
 	Desired_State_t des(odom_data);
 	bool rotor_low_speed_during_land = false;
@@ -283,6 +328,9 @@ void PX4CtrlFSM::process()
 			}
 
 			state = AUTO_TAKEOFF;
+			// 2026-11-07 地面锁定：新一次起飞，重置离地判定与峰值统计
+			gl_state_ = px4ctrl_core::GroundLockState();
+			gl_kick_max_deg_ = 0.0;
 			controller.resetThrustMapping();
 			set_start_pose_for_takeoff_land(odom_data);
 			if (!toggle_offboard_mode(true)) // toggle on offboard before arm (T1-W1 F1: 失败必须回退,否则封死在无出口的 AUTO_TAKEOFF)
@@ -456,6 +504,15 @@ void PX4CtrlFSM::process()
 		{
 			des = get_takeoff_land_des(param.takeoff_land.speed);
 		}
+		// 2026-11-07 地面锁定（判读 v1 公理B/C）：水平参考=实测 -> 误差恒 0 ->
+		// 姿态指令天然水平；yaw 也跟实测（地面上被拧几度，离地会甩）。
+		if (gl_locked_this_tick_)
+		{
+			des.p.head<2>() = odom_data.p.head<2>();
+			des.v.head<2>().setZero();
+			des.a.head<2>().setZero();
+			des.yaw = uav_utils::get_yaw_from_quaternion(odom_data.q);
+		}
 
 		break;
 	}
@@ -602,6 +659,8 @@ void PX4CtrlFSM::process()
 		        : param.max_angle * (180.0 / M_PI);
 		debug_msg = controller.calculateControl(des, odom_data, imu_data, u,
 		    tilt_deg_fix);
+		debug_msg.gl_locked = gl_locked_this_tick_ ? 1.0 : 0.0;
+		debug_msg.gl_kick_deg = gl_kick_max_deg_;
 		if (takeoff_env && param.takeoff_land.thrust_cap > 0.0 &&
 		    u.thrust > param.takeoff_land.thrust_cap)
 		{
@@ -828,7 +887,21 @@ Desired_State_t PX4CtrlFSM::get_takeoff_land_des(const double speed)
 		const double aim = param.takeoff_land.height + 0.05;
 		const double t_dec = std::max(0.0, (aim - speed * speed / (2.0 * a)) / speed);
 		double dz, v;
-		if (delta_t <= t_dec)
+		/* 2026-11-07（判读 v1 §5 批2，默认关）：加速-匀速-减速剖面，替换"速度阶跃
+		   到 speed"。阶跃经速度环 P=6.0 变成 +2.7 m/s^2 的推力尖峰（实测 u 0.15->0.675），
+		   那是离地冲击的能量源。ref_accel>0 才走这条；=0 逐位保持旧行为。 */
+		if (param.takeoff_land.ref_accel > 0.0)
+		{
+			px4ctrl_core::TakeoffCfg c;
+			c.height = aim;
+			c.speed = speed;
+			c.acc = param.takeoff_land.ref_accel;
+			c.spinup = 0.0; // 本函数只在 MOTORS_SPEEDUP_TIME 之后被调用
+			const px4ctrl_core::Ref r = px4ctrl_core::takeoffRef(delta_t, c);
+			dz = r.p;
+			v = r.v;
+		}
+		else if (delta_t <= t_dec)
 		{
 			dz = speed * delta_t;
 			v = speed;

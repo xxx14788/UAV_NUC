@@ -387,6 +387,77 @@ inline double slewTilt(double cur, double target, double rate_deg_s, double dt)
   return cur + d;
 }
 
+// ============================================================================
+// 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1 §3）：离地判定纯函数
+//
+// 背景（实测）：起飞前姿态指令是斜的（地面段 roll -6.44 / pitch +3.25 deg），
+// 地面按着执行不了，离地瞬间释放成横向冲量 —— 离地后 0~2 s 漂移 0.25~0.60 m。
+// 治本 = 地面阶段不产生水平力需求 + 姿态指令走执行器侧 pass-through；
+// 本函数只负责"还在不在"地面：双门(dz / vz) + 确认窗 + 滞回，防单点抖动提前放锁
+// （提前放锁 = 锚点取在离地前 = 等于没改）。
+//
+// 无 ROS 依赖；gtest: test_ground_lock。
+// ============================================================================
+struct GroundLockCfg
+{
+  bool enable = false;      // 总开关（代码默认关；实机 yaml 打开）
+  double z_release = 0.06;  // 离地判据：dz 超锚 [m]
+  double vz_release = 0.05; // 离地判据：vz 超此值 [m/s]
+  double confirm_s = 0.15;  // 两门同时成立需持续 [s]
+};
+
+struct GroundLockState
+{
+  bool airborne = false; // 本次起飞已确认离地（不再回退）
+  double since = -1.0;   // 确认窗起点 [s]，<0 = 未开始
+};
+
+struct GroundLockOut
+{
+  bool locked = false;        // 本拍是否锁定（=仍在地面）
+  bool just_airborne = false; // 本拍刚确认离地（调用方此刻重捕锚点）
+  GroundLockState next;
+};
+
+inline GroundLockOut groundLockStep(bool in_takeoff, double dz, double vz,
+                                    double now, const GroundLockCfg &c,
+                                    const GroundLockState &s)
+{
+  GroundLockOut o;
+  o.next = s;
+  if (!c.enable || !in_takeoff)
+  {
+    // 非起飞态 / 总开关关：复位，保证下一次起飞重新判定
+    o.next.airborne = false;
+    o.next.since = -1.0;
+    o.locked = false;
+    return o;
+  }
+  if (!s.airborne)
+  {
+    const bool hit = (dz > c.z_release) && (vz > c.vz_release);
+    if (hit)
+    {
+      const double since = (s.since < 0.0) ? now : s.since;
+      if (now - since >= c.confirm_s)
+      {
+        o.next.airborne = true;
+        o.next.since = -1.0;
+        o.just_airborne = true;
+      }
+      else
+      {
+        o.next.since = since;
+      }
+    }
+    else
+    {
+      o.next.since = -1.0; // 双门任一掉落即重计时（防抖）
+    }
+  }
+  o.locked = !o.next.airborne;
+  return o;
+}
 } // namespace px4ctrl_core
 
 #endif

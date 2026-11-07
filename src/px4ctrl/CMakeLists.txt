@@ -79,6 +79,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_ctrl_core
     test/test_ctrl_core.cpp)
   target_link_libraries(test_ctrl_core ${catkin_LIBRARIES})
+  # 2026-11-07 起飞地面锁定（GROUND_LOCK，判读 v1）：离地判定纯函数 gtest
+  catkin_add_gtest(test_ground_lock
+    test/test_ground_lock.cpp)
+  target_link_libraries(test_ground_lock ${catkin_LIBRARIES})
 
   # F-1 (2026-10-22 判读v5): REINIT_RESET 毒化拒收 gtest（input.cpp 数据面语义）
   catkin_add_gtest(test_reinit_reset
