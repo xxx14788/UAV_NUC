@@ -135,7 +135,8 @@ inline Outcome decide_manual(const Inputs &in)
         if (in.cmd_ok)       { o.reject = true; o.reason = RJ_CMD_ACTIVE; return o; }
         if (in.odom_v > 0.1) { o.reject = true; o.reason = RJ_VEL; return o; }
         if (!in.landed)      { o.reject = true; o.reason = RJ_NOT_LANDED; return o; }
-        if (in.rc_is_received && (!in.rc_hover || !in.rc_cmd || !in.rc_centered))
+        // 2026-11-07 用户令：CH6 不再参与判定，只看 CH5 + 四杆居中
+        if (in.rc_is_received && (!in.rc_hover || !in.rc_centered))
         { o.reject = true; o.reason = RJ_RC_GUARD; return o; }
         o.next = AUTO_TAKEOFF; o.offboard_on = true; o.arm = true; return o;
     }
@@ -163,7 +164,9 @@ inline Outcome decide_hover(const Inputs &in)
     Outcome o;
     o.next = AUTO_HOVER;
     if (!in.rc_hover || !in.odom_ok) { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }
-    if (in.rc_cmd && in.cmd_ok)
+    // 2026-11-07 用户令：**只要在 OFFBOARD 且收到 position_cmd 就进任务**，不看 CH6。
+    // 悬停 vs 任务由脚本决定（不同脚本天然区分），不由遥控器区分。
+    if (in.cmd_ok)
     {
         if (in.offboard_confirmed) { o.next = CMD_CTRL; }
         return o;
@@ -179,7 +182,8 @@ inline Outcome decide_cmd(const Inputs &in)
     Outcome o;
     o.next = CMD_CTRL;
     if (!in.rc_hover || !in.odom_ok) { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }
-    if (!in.rc_cmd || !in.cmd_ok)    { o.next = AUTO_HOVER; return o; }
+    // 2026-11-07 用户令：指令流断就回 AUTO_HOVER，不看 CH6。
+    if (!in.cmd_ok)                  { o.next = AUTO_HOVER; return o; }
     if (in.land_trigger)             { o.reject = true; o.reason = RJ_STATE; return o; }
     return o;
 }
@@ -227,7 +231,6 @@ inline Outcome decide_land(const Inputs &in)
     // T1-v1139 梯①盲降: HAFIX 盲降中旁路 odom 门(盲降=时基开环下降,不依赖 odom;
     // 其余门(rc_hover/rc_cmd)保留——RC 语义不变)
     if (!in.rc_hover || (!in.odom_ok && !in.ha_blind_land)) { o.next = MANUAL_CTRL; o.offboard_off = true; return o; }
-    if (!in.rc_cmd)                  { o.next = AUTO_HOVER; return o; }     // abort land
     if (!in.landed)                  return o;                              // descending
     if (in.px4_on_ground)            { o.next = MANUAL_CTRL; o.disarm = true; o.offboard_off = true; return o; }
     return o;                                                               // waiting (rotor low speed)
