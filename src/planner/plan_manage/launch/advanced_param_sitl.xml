@@ -14,6 +14,13 @@
   <arg name="camera_pose_topic"/>
   <arg name="depth_topic"/>
   <arg name="cloud_topic"/>
+  <!-- 2026-11-07 审查修正（D7）：目标点话题参数化。
+       默认值保持原行为（/move_base_simple/goal），实机用 goal_gate 覆盖它。
+       为什么要参数化：ego_replan_fsm.cpp:68 写死了
+         nh.subscribe("/move_base_simple/goal", ...)
+       而 roslaunch 顶层 <remap> **不作用于 <include> 内的节点**，
+       所以之前实机那个 remap 完全没生效，任务脚本的校验门是死的。 -->
+  <arg name="goal_topic" default="/move_base_simple/goal"/>
 
   <arg name="cx"/>
   <arg name="cy"/>
@@ -63,6 +70,7 @@
     <remap from="~grid_map/cloud" to="$(arg cloud_topic)"/>
     <remap from="~grid_map/pose"   to = "$(arg camera_pose_topic)"/> 
     <remap from="~grid_map/depth" to="$(arg depth_topic)"/>
+    <remap from="/move_base_simple/goal" to="$(arg goal_topic)"/>
     
 
     <!-- planning fsm -->

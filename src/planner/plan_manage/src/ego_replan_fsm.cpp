@@ -1,4 +1,5 @@
 
+#include <cmath>
 #include <plan_manage/ego_replan_fsm.h>
 
 namespace ego_planner
@@ -14,6 +15,9 @@ namespace ego_planner
 
     /*  fsm param  */
     nh.param("fsm/flight_type", target_type_, -1);
+    nh.param("fsm/manual_goal_z", manual_goal_z_, 1.0);
+    nh.param("fsm/manual_goal_use_msg_z", manual_goal_use_msg_z_, false);
+    nh.param("fsm/manual_goal_max_distance", manual_goal_max_distance_, 2.0);
     nh.param("fsm/thresh_replan_time", replan_thresh_, -1.0);
     nh.param("fsm/thresh_no_replan_meter", no_replan_thresh_, -1.0);
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
@@ -217,7 +221,15 @@ namespace ego_planner
     // trigger_ = true;
     init_pt_ = odom_pos_;
 
-    Eigen::Vector3d end_wp(msg->pose.position.x, msg->pose.position.y, 1.0);
+    const double dx = msg->pose.position.x - odom_pos_.x();
+    const double dy = msg->pose.position.y - odom_pos_.y();
+    if (!std::isfinite(dx) || !std::isfinite(dy) || std::hypot(dx, dy) > manual_goal_max_distance_) {
+      ROS_ERROR("Reject RViz goal: horizontal distance exceeds %.2f m", manual_goal_max_distance_);
+      return;
+    }
+    const double goal_z = manual_goal_use_msg_z_ ? msg->pose.position.z : manual_goal_z_;
+    if (!std::isfinite(goal_z)) { ROS_ERROR("Reject RViz goal: non-finite z"); return; }
+    Eigen::Vector3d end_wp(msg->pose.position.x, msg->pose.position.y, goal_z);
 
     planNextWaypoint(end_wp);
   }

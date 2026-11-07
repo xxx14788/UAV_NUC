@@ -55,6 +55,9 @@ namespace ego_planner
 
     /* parameters */
     int target_type_; // 1 mannual select, 2 hard code
+    double manual_goal_z_;
+    double manual_goal_max_distance_;
+    bool manual_goal_use_msg_z_;
     double no_replan_thresh_, replan_thresh_;
     double waypoints_[50][3];
     int waypoint_num_, wp_id_;
