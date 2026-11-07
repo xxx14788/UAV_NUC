@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Read-only ROS wiring and parameter audit for the flight_v1 stack."""
+import json
+import math
+import sys
+import time
+
+import rosgraph
+import rospy
+
+
+def main():
+    master = rosgraph.Master("/readonly_flight_interface_audit")
+    publishers, subscribers, _ = master.getSystemState()
+    checks = []
+
+    def subscriptions(node):
+        return sorted(topic for topic, nodes in subscribers if node in nodes)
+
+    def check(name, ok, actual):
+        checks.append({"name": name, "ok": bool(ok), "actual": actual})
+
+    def number(path, expected):
+        value = rospy.get_param(path, None)
+        ok = isinstance(value, (int, float)) and not isinstance(value, bool)
+        check(path, ok and math.isfinite(value) and abs(value - expected) < 1e-6, value)
+
+    planner = "/drone_0_ego_planner_node"
+    ctrl = subscriptions("/px4ctrl")
+    required_ctrl = {"/mavros/imu/data", "/mavros/imu/data_raw",
+                     "/vins_estimator/imu_propagate", "/position_cmd"}
+    check("px4ctrl双IMU与控制输入接线", required_ctrl.issubset(ctrl), ctrl)
+
+    planner_inputs = subscriptions(planner)
+    required_planner = {"/camera/depth/image_rect_raw", "/planner/camera_pose",
+                        "/vins_estimator/imu_propagate", "/flight_v1/goal_gate"}
+    check("门控规划器输入接线", required_planner.issubset(planner_inputs)
+          and "/camera/aligned_depth_to_color/image_raw" not in planner_inputs,
+          planner_inputs)
+
+    for path, expected in (
+        (planner + "/grid_map/pose_type", 1),
+        (planner + "/fsm/manual_goal_z", 0.5),
+        (planner + "/fsm/manual_goal_max_distance", 2.0),
+        (planner + "/manager/max_vel", 0.25),
+        (planner + "/manager/max_acc", 1.0),
+        ("/px4ctrl/auto_takeoff_land/takeoff_height", 0.5),
+    ):
+        number(path, expected)
+
+    position_sources = next((nodes for topic, nodes in publishers
+                             if topic == "/position_cmd"), [])
+    check("position_cmd唯一来源", position_sources == ["/drone_0_traj_server"],
+          position_sources)
+    camera_sources = next((nodes for topic, nodes in publishers
+                           if topic == "/planner/camera_pose"), [])
+    check("相机位姿转接发布器", camera_sources == ["/planner_camera_pose_relay"],
+          camera_sources)
+
+    params = {key: rospy.get_param(key, None) for key in (
+        "/px4ctrl/ctrl_v2", "/px4ctrl/thrust_model", "/px4ctrl/msg_timeout",
+        "/px4ctrl/auto_takeoff_land", "/px4ctrl/use_px4_position_ctrl",
+        planner + "/grid_map", planner + "/fsm")}
+    result = {"checked_at_epoch": time.time(), "checks": checks, "parameters": params,
+              "verdict": "PASS" if all(item["ok"] for item in checks) else "FAIL",
+              "scope": "接口与参数检查；不代表传感器活性、地面验图或起飞许可。RC 未连接不作为此检查失败项。"}
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0 if result["verdict"] == "PASS" else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

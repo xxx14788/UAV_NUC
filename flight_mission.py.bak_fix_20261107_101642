@@ -1,0 +1,606 @@
+#!/usr/bin/env python3
+"""Guarded takeoff, one RViz goal, endpoint hover, and explicit landing."""
+import argparse
+import fcntl
+import math
+import os
+import re
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+
+HOME = Path.home()
+FLOW = HOME / "sitl_realmachine" / "flight_v1"
+STATE_DIR = FLOW / "runtime"
+LANDING_FILE = STATE_DIR / "landing.requested"
+STOP_FILE = STATE_DIR / "stopping"
+# 2026-11-07：不再硬编码。preflight 里从 /px4ctrl/auto_takeoff_land/takeoff_height 读，
+# 并要求规划器的 manual_goal_z 与之相等（单一来源，改高度只动 px4ctrl 的 yaml）。
+TARGET_Z = None
+GOAL_RADIUS = 3.5   # 2026-11-07 用户令：2.0 -> 3.5 m
+
+
+def validate_rc_channels(channels):
+    ch = list(channels)
+    if len(ch) < 8 or any(x < 800 or x > 2200 for x in ch[:8]):
+        raise ValueError("遥控器通道数量/范围异常")
+    # 2026-11-07（审查修正）：油门杆(ch2)允许"在底"或"居中"。
+    # OFFBOARD 模式下 PX4 用推力设定值、不看油门杆；松手的自然位置是杆底。
+    # 原来要求四杆全居中 -> 正常状态被判"未居中"，takeoff 直接拒绝。
+    if any(abs(ch[i] - 1500) > 125 for i in (0, 1, 3)):
+        raise ValueError("roll/pitch/yaw 必须居中（ch0=%.0f ch1=%.0f ch3=%.0f）"
+                         % (ch[0], ch[1], ch[3]))
+    if not (ch[2] <= 1100 or abs(ch[2] - 1500) <= 125):
+        raise ValueError("油门杆位置异常 ch2=%.0f（应在底部或居中）" % ch[2])
+    if ch[4] <= 1750 or ch[5] <= 1750:
+        raise ValueError("起飞前需保持 CH5 悬停档、CH6 指令档")
+
+
+def validate_goal(frame, stamp, now, goal_xy, current_xy, anchor_z):
+    if TARGET_Z is None:
+        raise ValueError("目标高度未初始化（preflight 未跑，或读不到 px4ctrl takeoff_height）")
+    if frame != "world":
+        raise ValueError("RViz 目标 frame 必须是 world")
+    age = now - stamp
+    if stamp <= 0 or age < -0.1 or age > 2.0:
+        raise ValueError("RViz 目标时间戳过期或无效")
+    gx, gy = goal_xy
+    distance = math.hypot(gx - current_xy[0], gy - current_xy[1])
+    if not math.isfinite(distance) or distance > GOAL_RADIUS:
+        raise ValueError("目标超出当前位置水平 3.5 m 限制")
+    return (gx, gy, anchor_z + TARGET_Z), distance
+
+
+def finite_pose(msg):
+    p = msg.pose.pose.position
+    v = msg.twist.twist.linear
+    return all(math.isfinite(x) for x in (p.x, p.y, p.z, v.x, v.y, v.z))
+
+
+def acquire_lock(name):
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    stream = open(STATE_DIR / name, "w")
+    try:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        stream.close()
+        raise RuntimeError("同类飞行命令正在运行，拒绝重复操作")
+    return stream
+
+
+def lock_is_free(name):
+    stream = open(STATE_DIR / name, "a+")
+    try:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return True
+    except BlockingIOError:
+        return False
+    finally:
+        stream.close()
+
+
+class RosFlight:
+    def __init__(self):
+        import rospy
+        from geometry_msgs.msg import PoseStamped
+        from mavros_msgs.msg import ExtendedState, RCIn, State
+        # 2026-11-07 审查修正：mavros_msgs 里没有 Imu 消息类型（IMU 是 sensor_msgs/Imu）。
+        # 原来写在一起 -> import 直接抛 ImportError，flight.sh stop/takeoff 全崩。
+        from sensor_msgs.msg import Imu
+        from nav_msgs.msg import Odometry
+        from quadrotor_msgs.msg import PositionCommand, TakeoffLand
+        from std_msgs.msg import String
+
+        self.rospy = rospy
+        self.PoseStamped = PoseStamped
+        self.TakeoffLand = TakeoffLand
+        self.cache = {}
+        self.times = {}
+        self.history = {}
+        self.pose_history = []
+        self.seq = {}
+        self.rc = None
+        self.goal_used = False
+        self.phase = "preflight"
+        self.anchor = None
+        # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
+        self.next_goal_deadline = None
+        self.goal_count = 0
+        self.target = None
+        self.nav_done = False
+        self.nav_fail = None
+        self.stable_since = None
+        rospy.init_node("flight_v1_mission", anonymous=False, disable_signals=True)
+
+        def sub(topic, msg_type, callback=None):
+            def receive(msg):
+                now = time.monotonic()
+                self.cache[topic] = msg
+                self.times[topic] = now
+                history = self.history.setdefault(topic, [])
+                history.append(now)
+                cutoff = now - 8.0
+                while history and history[0] < cutoff:
+                    history.pop(0)
+                if topic == "/vins_estimator/odometry" and finite_pose(msg):
+                    p = msg.pose.pose.position
+                    self.pose_history.append((now, p.x, p.y, p.z))
+                    while self.pose_history and self.pose_history[0][0] < cutoff:
+                        self.pose_history.pop(0)
+                self.seq[topic] = self.seq.get(topic, 0) + 1
+                if callback:
+                    callback(msg)
+            rospy.Subscriber(topic, msg_type, receive, queue_size=20)
+
+        sub("/mavros/state", State)
+        sub("/mavros/extended_state", ExtendedState)
+        sub("/mavros/rc/in", RCIn, self._rc_cb)
+        sub("/mavros/imu/data", Imu)
+        sub("/mavros/imu/data_raw", Imu)
+        sub("/vins_estimator/odometry", Odometry)
+        sub("/vins_estimator/imu_propagate", Odometry)
+        sub("/debugPx4ctrl/fsm_state", String)
+        sub("/position_cmd", PositionCommand)
+        sub("/move_base_simple/goal", PoseStamped, self._goal_cb)
+        self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
+        self.goal_pub = rospy.Publisher("/flight_v1/goal_gate", PoseStamped, queue_size=2)
+
+    def _rc_cb(self, msg):
+        self.rc = msg
+
+    def _fresh(self, topic, max_age=1.0):
+        return topic in self.cache and time.monotonic() - self.times[topic] <= max_age
+
+    def _fresh_stamp(self, msg, max_age):
+        stamp = msg.header.stamp.to_sec()
+        now = self.rospy.Time.now().to_sec()
+        age = now - stamp
+        return stamp > 0 and -0.05 <= age <= max_age
+
+    def _state(self):
+        if not self._fresh("/mavros/state", 1.5):
+            raise RuntimeError("MAVROS state 未知或过期，拒绝动作")
+        msg = self.cache["/mavros/state"]
+        if not self._fresh_stamp(msg, 1.5):
+            raise RuntimeError("MAVROS state 时间戳无效或过期，拒绝动作")
+        return msg
+
+    def _fsm(self):
+        if not self._fresh("/debugPx4ctrl/fsm_state", 2.5):
+            return None
+        return self.cache["/debugPx4ctrl/fsm_state"].data.split()[0]
+
+    def _odom(self):
+        topic = "/vins_estimator/imu_propagate"
+        if not self._fresh(topic, 0.25):
+            raise RuntimeError("VINS 里程计已过期")
+        msg = self.cache[topic]
+        if not self._fresh_stamp(msg, 0.25) or not finite_pose(msg):
+            raise RuntimeError("VINS 里程计含 NaN/Inf")
+        return msg
+
+    def _check_rc(self, require_centered=True):
+        if (not self._fresh("/mavros/rc/in", 0.5) or self.rc is None
+                or not self._fresh_stamp(self.rc, 0.5)):
+            raise RuntimeError("遥控器数据未连接或已过期")
+        channels = list(self.rc.channels)
+        if require_centered:
+            validate_rc_channels(channels)
+        elif len(channels) < 8 or any(x < 800 or x > 2200 for x in channels[:8]):
+            raise RuntimeError("遥控器通道数量/范围异常")
+        if channels[4] <= 1750 or channels[5] <= 1750:
+            raise RuntimeError("必须保持 CH5 悬停档、CH6 指令档")
+
+    def _goal_cb(self, msg):
+        if self.phase != "await_goal" or self.goal_used or LANDING_FILE.exists() or STOP_FILE.exists():
+            print("忽略目标：当前不在可选点阶段，或降落已开始", flush=True)
+            return
+        try:
+            state = self._state()
+            odom = self._odom()
+            self._check_rc()
+            # 2026-11-07：首个目标时 FSM=AUTO_HOVER；后续目标时已在 CMD_CTRL。
+            # 原来只允许 AUTO_HOVER -> 永远点不了第二个目标。
+            if not state.connected or not state.armed or \
+                    self._fsm() not in ("AUTO_HOVER", "CMD_CTRL"):
+                raise RuntimeError("目标只在已解锁且 AUTO_HOVER/CMD_CTRL 时接收")
+            stamp = msg.header.stamp.to_sec()
+            p = odom.pose.pose.position
+            gx, gy = msg.pose.position.x, msg.pose.position.y
+            target, distance = validate_goal(
+                msg.header.frame_id, stamp, self.rospy.Time.now().to_sec(),
+                (gx, gy), (p.x, p.y), self.anchor)
+            gated = self.PoseStamped()
+            gated.header.stamp = self.rospy.Time.now()
+            gated.header.frame_id = "world"
+            gated.pose = msg.pose
+            gated.pose.position.z = target[2]
+            self.goal_used = True
+            self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
+            self.target = target
+            self.phase = "navigation"
+            self.goal_pub.publish(gated)
+            print("已接收目标：距离 %.2f m，目标相对起飞高度 %.2f m" % (distance, TARGET_Z), flush=True)
+        except Exception as exc:
+            print("拒绝 RViz 目标：%s" % exc, flush=True)
+
+    def _pub_takeoff(self):
+        msg = self.TakeoffLand()
+        msg.takeoff_land_cmd = 1
+        self.takeoff_pub.publish(msg)
+
+    def _pub_land(self):
+        msg = self.TakeoffLand()
+        msg.takeoff_land_cmd = 2
+        self.takeoff_pub.publish(msg)
+
+    def _initial_wait(self, seconds):
+        deadline = time.monotonic() + seconds
+        while time.monotonic() < deadline and not self.rospy.is_shutdown():
+            self.rospy.sleep(0.05)
+
+    def preflight(self):
+        if STOP_FILE.exists():
+            raise RuntimeError("检测到停栈流程，拒绝起飞")
+        self._initial_wait(8.0)
+        failures = []
+        state = self._state()
+        if not state.connected or state.armed:
+            failures.append("飞控必须连接且明确未解锁")
+        ext = self.cache.get("/mavros/extended_state")
+        if (not self._fresh("/mavros/extended_state", 2.5) or ext.landed_state != 1
+                or not self._fresh_stamp(ext, 2.5)):
+            failures.append("飞控未提供新鲜 ON_GROUND 状态")
+        if self._fsm() != "MANUAL_CTRL":
+            failures.append("px4ctrl 必须在 MANUAL_CTRL；不自动重启控制器")
+        try:
+            self._check_rc()
+        except RuntimeError as exc:
+            failures.append(str(exc))
+
+        for topic, minimum in (("/mavros/imu/data", 40),
+                               ("/mavros/imu/data_raw", 190),
+                               ("/vins_estimator/odometry", 8),
+                               ("/vins_estimator/imu_propagate", 40)):
+            times = self.history.get(topic, [])
+            span = times[-1] - times[0] if len(times) > 1 else 0.0
+            hz = (len(times) - 1) / span if span > 0 else 0.0
+            print("%s %.1f Hz" % (topic, hz))
+            if span < 6.0 or hz < minimum:
+                failures.append("%s 最近窗口 %.1f Hz，要求 >=%d Hz" % (topic, hz, minimum))
+        for topic in ("/mavros/imu/data", "/mavros/imu/data_raw",
+                      "/vins_estimator/odometry", "/vins_estimator/imu_propagate"):
+            if not self._fresh(topic, 0.25):
+                failures.append("输入过期：%s" % topic)
+
+        try:
+            vins = self.cache["/vins_estimator/odometry"]
+            imu = self.cache["/mavros/imu/data"]
+            err = self._tilt_error(vins.pose.pose.orientation, imu.orientation)
+            print("VINS/PX4 倾斜差 %.2f deg（门限 <0.7 deg）" % err)
+            if err >= 0.7:
+                failures.append("姿态一致性未通过；请地面检查/重新初始化 VINS 后重跑")
+        except Exception:
+            failures.append("姿态一致性数据不足")
+        if len(self.pose_history) < 30:
+            failures.append("静置位置样本不足")
+        else:
+            columns = list(zip(*(row[1:] for row in self.pose_history)))
+            spans = [max(axis) - min(axis) for axis in columns]
+            if max(spans) > 0.15:
+                failures.append("地面静置 8 秒位置极差超限：%.3f m" % max(spans))
+
+        log_candidates = list((HOME / "sitl_realmachine").glob("vins_*.log"))
+        log_candidates += list((HOME / "sitl_realmachine").glob("*/vins_*.log"))
+        if log_candidates:
+            latest = max(log_candidates, key=lambda p: p.stat().st_mtime)
+            text = latest.read_text(errors="replace")
+            log_ok = True
+            for name, limit in (("Bas", 0.8), ("Bgs", 0.02), ("final_cost", 1e4)):
+                if name == "final_cost":
+                    vals = [float(x) for x in re.findall(r"final_cost=([0-9.eE+-]+)", text)[-20:]]
+                else:
+                    vals = [float(x) for x in re.findall(r"\|%s\|=([0-9.eE+-]+)" % name, text)[-20:]]
+                if not vals:
+                    print("VINS 日志缺少 %s，按旧流程仅提示" % name)
+                    continue
+                vals.sort()
+                median = vals[len(vals) // 2]
+                print("VINS %s 中位数 %.6g（限值 %.6g）" % (name, median, limit))
+                log_ok = log_ok and math.isfinite(median) and median <= limit
+            if not log_ok:
+                failures.append("VINS 收敛日志超出 |Bas|/|Bgs|/cost 门限")
+
+        # 2026-11-07（方案A）：高度以 px4ctrl 的 takeoff_height 为唯一来源。
+        # 原来这里硬断言两者都 == 0.5，改高度就得改脚本；现在只要求两者相等。
+        global TARGET_Z
+        _h_px4 = self.rospy.get_param("/px4ctrl/auto_takeoff_land/takeoff_height", None)
+        _h_pln = self.rospy.get_param("/drone_0_ego_planner_node/fsm/manual_goal_z", None)
+        if _h_px4 is None or not math.isfinite(_h_px4) or _h_px4 <= 0.0:
+            failures.append("读不到 /px4ctrl/auto_takeoff_land/takeoff_height（或非正数）")
+        elif _h_pln is None or abs(_h_pln - _h_px4) > 1e-6:
+            failures.append("规划器 manual_goal_z=%.3f 与 px4ctrl takeoff_height=%.3f 不一致"
+                            % (_h_pln if _h_pln is not None else float("nan"), _h_px4))
+        else:
+            TARGET_Z = float(_h_px4)
+            print("目标高度（单一来源 /px4ctrl/auto_takeoff_land/takeoff_height）= %.3f m" % TARGET_Z)
+
+        for key, expected in (
+                              ("/drone_0_ego_planner_node/fsm/manual_goal_max_distance", 3.5),
+                              ("/drone_0_ego_planner_node/manager/max_vel", 0.25),
+                              ("/drone_0_ego_planner_node/manager/max_acc", 1.0),
+                              ("/drone_0_ego_planner_node/grid_map/pose_type", 1)):
+            value = self.rospy.get_param(key, None)
+            if not isinstance(value, (int, float)) or abs(value - expected) > 1e-6:
+                failures.append("参数 %s=%r，预期 %s" % (key, value, expected))
+        if LANDING_FILE.exists():
+            failures.append("检测到本轮降落标志；请完成停栈后再开始新轮")
+
+        # Existing calibration monitor is read-only. WARN remains a pass under its documented gate.
+        result = subprocess.run([sys.executable, str(HOME / "sitl_realmachine" / "att_gate.py")],
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                universal_newlines=True, timeout=8)
+        print(result.stdout.strip())
+        if "ATT_GATE: PASS" not in result.stdout and "ATT_GATE: WARN" not in result.stdout:
+            failures.append("姿态一致性闸门失败")
+        if failures:
+            raise RuntimeError("起飞前置检查失败：\n- " + "\n- ".join(failures))
+        pose = self.cache["/vins_estimator/odometry"].pose.pose.position
+        self.anchor = pose.z
+        self.anchor_xy = (pose.x, pose.y)
+        print("起飞前检查通过：RC 四杆居中、CH5 悬停、CH6 指令；目标高度相对锚点 %.3f m" % self.anchor)
+
+    @staticmethod
+    def _tilt_error(vins, px4):
+        def gravity(q):
+            x, y, z, w = q.x, q.y, q.z, q.w
+            g = (-2 * (x * z - w * y), -2 * (y * z + w * x),
+                 -(1 - 2 * (x * x + y * y)))
+            norm = math.sqrt(sum(a * a for a in g))
+            return tuple(a / norm for a in g)
+        a, b = gravity(vins), gravity(px4)
+        return math.degrees(math.acos(max(-1.0, min(1.0, sum(x*y for x, y in zip(a, b))))))
+
+    def takeoff(self):
+        self.preflight()
+        self.phase = "takeoff"
+        print("发出 TAKEOFF；在升至 %.2f m 并稳定 30 秒前不接收 RViz 目标。" % TARGET_Z, flush=True)
+        deadline = time.monotonic() + 120.0
+        takeoff_started = time.monotonic()
+        next_pub = 0.0
+        while time.monotonic() < deadline and not self.rospy.is_shutdown():
+            now = time.monotonic()
+            if now >= next_pub and self._fsm() in ("MANUAL_CTRL", "AUTO_TAKEOFF"):
+                self._pub_takeoff()
+                next_pub = now + 1.0
+            state = self._state()
+            if not state.connected:
+                raise RuntimeError("飞控连接丢失；遥控器接管")
+            fsm = self._fsm()
+            if not state.armed and now - takeoff_started > 15.0:
+                raise RuntimeError("TAKEOFF 后 15 秒仍未确认解锁；遥控器接管")
+            if state.armed and fsm == "MANUAL_CTRL":
+                raise RuntimeError("已解锁但 px4ctrl 退回 MANUAL_CTRL；遥控器接管")
+            if fsm == "AUTO_HOVER":
+                odom = self._odom()
+                p, v = odom.pose.pose.position, odom.twist.twist.linear
+                in_band = abs((p.z - self.anchor) - TARGET_Z) <= 0.15
+                settled = in_band and math.hypot(p.x - self.anchor_xy[0], p.y - self.anchor_xy[1]) < 0.20
+                settled = settled and math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z) < 0.15
+                if settled:
+                    self.stable_since = self.stable_since or now
+                    if now - self.stable_since >= 30.0:
+                        self.phase = "await_goal"
+                        print("已在相对起飞高度 %.2f m 稳定悬停 30 秒。现在可在 RViz 点一个 3.5 m 内目标。" % TARGET_Z, flush=True)
+                        return
+                else:
+                    self.stable_since = None
+            else:
+                self.stable_since = None
+            if fsm not in ("MANUAL_CTRL", "AUTO_TAKEOFF", "AUTO_HOVER"):
+                raise RuntimeError("起飞期间 FSM 异常：%s；遥控器接管" % fsm)
+            if LANDING_FILE.exists():
+                raise RuntimeError("收到降落请求；中止自动起飞监测")
+            if STOP_FILE.exists():
+                raise RuntimeError("收到停栈请求；中止自动起飞监测")
+            self.rospy.sleep(0.1)
+        raise RuntimeError("120 秒内未确认稳定悬停；遥控器接管，不自动执行其他动作")
+
+    def navigation_monitor(self):
+        """2026-11-07 多航点：到点后给 NEXT_GOAL_WAIT 秒点下一个目标，超时自动降落。
+
+        为什么要多航点：ego_planner 是**局部**规划器（视界 4 m，无全局路径），
+        两组箱子时它不保证自己找到 S 形。用人工拐点把 S 形变成几何约束，最确定。
+        """
+        NEXT_GOAL_WAIT = 20.0
+        print("目标已发送；到点稳定 5s 后，%.0f 秒内可在 RViz 点下一个目标"
+              "（依次点几个拐点 = S 形绕行），否则自动降落。" % NEXT_GOAL_WAIT, flush=True)
+        deadline = None
+        while not self.rospy.is_shutdown():
+            if LANDING_FILE.exists() or STOP_FILE.exists():
+                return
+            if not self.goal_used:
+                # 没有待飞目标：首个目标无限等；后续目标只等 NEXT_GOAL_WAIT
+                if (self.next_goal_deadline is not None
+                        and time.monotonic() >= self.next_goal_deadline):
+                    print("没有更多目标；自动降落。", flush=True)
+                    self.land()
+                    return
+                self.rospy.sleep(0.1)
+                continue
+            if deadline is None:
+                deadline = time.monotonic() + 180.0
+            if time.monotonic() >= deadline:
+                break
+            state = self._state()
+            fsm = self._fsm()
+            if not state.connected or not state.armed or fsm == "MANUAL_CTRL":
+                raise RuntimeError("导航中飞控/FSM 状态异常；遥控器接管")
+            if not self._fresh("/position_cmd", 0.5):
+                self.rospy.sleep(0.1)
+                continue
+            odom = self._odom()
+            p, v = odom.pose.pose.position, odom.twist.twist.linear
+            d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
+            speed = math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+            if fsm == "CMD_CTRL" and d <= 0.2 and speed <= 0.15:
+                self.stable_since = self.stable_since or time.monotonic()
+                if time.monotonic() - self.stable_since >= 5.0:
+                    # 到点：进入"等下一个目标"窗口，不立刻降落
+                    self.goal_count += 1
+                    self.nav_done = True
+                    self.goal_used = False
+                    self.stable_since = None
+                    self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+                    self.phase = "await_goal"
+                    deadline = None
+                    print("第 %d 个目标到达并稳定。%.0f 秒内可点下一个目标，否则自动降落。"
+                          % (self.goal_count, NEXT_GOAL_WAIT), flush=True)
+                    continue
+            else:
+                self.stable_since = None
+            self.rospy.sleep(0.1)
+        raise RuntimeError("导航 180 秒内未确认目标点稳定；遥控器接管")
+
+    def land(self):
+        if STOP_FILE.exists():
+            raise RuntimeError("正在停栈，拒绝发送 LAND")
+        state = self._state()
+        if not state.connected:
+            raise RuntimeError("MAVROS 未连接，飞行状态未知；不发送 LAND")
+        if not state.armed:
+            ext = self.cache.get("/mavros/extended_state")
+            if (self._fresh("/mavros/extended_state", 2.5) and ext.landed_state == 1
+                    and self._fresh_stamp(ext, 2.5)):
+                print("飞控已明确未解锁且在地面，无需 LAND")
+                return
+            raise RuntimeError("未解锁但没有新鲜地面状态，不能证明已落地")
+        if self._fsm() == "AUTO_LAND":
+            raise RuntimeError("控制器已处于 AUTO_LAND；继续观察飞控状态，不能重复初始化降落")
+        else:
+            if self._fsm() not in ("AUTO_HOVER", "CMD_CTRL"):
+                raise RuntimeError("当前 FSM 不能安全接受降落：%s" % self._fsm())
+            # Persist before stopping the trajectory source so the goal callback closes first.
+            LANDING_FILE.write_text("requested %.3f\n" % time.time())
+            traj_node = "/drone_0_traj_server"
+
+            def ros_nodes():
+                result = subprocess.run(["rosnode", "list"], capture_output=True,
+                                        text=True, timeout=4)
+                if result.returncode != 0:
+                    raise RuntimeError("无法读取 ROS 节点列表：" + result.stdout.strip())
+                return set(result.stdout.splitlines())
+
+            if traj_node in ros_nodes():
+                killed = subprocess.run(["rosnode", "kill", traj_node],
+                                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                        universal_newlines=True, timeout=5)
+                if killed.returncode != 0 and traj_node in ros_nodes():
+                    raise RuntimeError("停止轨迹发布器失败：" + killed.stdout.strip())
+            limit = time.monotonic() + 8.0
+            while time.monotonic() < limit:
+                if traj_node not in ros_nodes():
+                    break
+                self.rospy.sleep(0.2)
+            else:
+                raise RuntimeError("轨迹发布器仍在运行；未发送 LAND")
+            quiet_since = None
+            deadline = time.monotonic() + 5.0
+            while time.monotonic() < deadline:
+                if not self._fresh("/position_cmd", 0.65):
+                    quiet_since = quiet_since or time.monotonic()
+                    if time.monotonic() - quiet_since >= 0.7 and self._fsm() == "AUTO_HOVER":
+                        break
+                else:
+                    quiet_since = None
+                self.rospy.sleep(0.1)
+            else:
+                raise RuntimeError("命令流未停止或 FSM 未回 AUTO_HOVER；未发送 LAND，遥控器接管")
+            self._check_rc(require_centered=False)
+            print("轨迹命令已停止，FSM 回到 AUTO_HOVER，持续发送 LAND 并等待飞控着地确认。", flush=True)
+            next_pub = 0.0
+            deadline = time.monotonic() + 120.0
+            landed_since = None
+            while time.monotonic() < deadline and not self.rospy.is_shutdown():
+                now = time.monotonic()
+                if now >= next_pub:
+                    self._pub_land()
+                    next_pub = now + 1.0
+                state = self._state()
+                ext = self.cache.get("/mavros/extended_state")
+                grounded = (not state.armed and self._fresh("/mavros/extended_state", 2.5)
+                            and ext.landed_state == 1 and self._fresh_stamp(ext, 2.5)
+                            and self._fresh("/mavros/state", 1.5))
+                if grounded:
+                    landed_since = landed_since or now
+                    if now - landed_since >= 2.0:
+                        print("已连续确认 ON_GROUND 且未解锁。", flush=True)
+                        return
+                else:
+                    landed_since = None
+                self.rospy.sleep(0.1)
+            raise RuntimeError("120 秒内未确认落地；保持栈运行，由遥控器接管")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("action", choices=("takeoff", "land", "assert-ground", "self-test"))
+    args = parser.parse_args()
+    if args.action == "self-test":
+        # 2026-11-07 审查修正（独立审计发现）：self-test 不跑 preflight，
+        # TARGET_Z 仍是 None -> validate_goal 直接抛 ValueError，自检必然失败。
+        global TARGET_Z
+        if TARGET_Z is None:
+            TARGET_Z = 0.5   # 自检只验逻辑；真实值由 preflight 从 px4ctrl 参数读
+        validate_rc_channels([1500, 1500, 1500, 1500, 2000, 2000, 1500, 1500])
+        try:
+            validate_rc_channels([1500, 1630, 1500, 1500, 2000, 2000, 1500, 1500])
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("non-centered stick accepted")
+        goal, distance = validate_goal("world", 10.0, 10.1, (1.2, 0.0), (0.0, 0.0), 4.0)
+        assert abs(distance - 1.2) < 1e-9 and abs(goal[2] - 4.5) < 1e-9
+        try:
+            # 2026-11-07 审查修正：GOAL_RADIUS 已由 2.0 改为 3.5，越界用例跟着改
+            validate_goal("world", 10.0, 10.1, (3.51, 0.0), (0.0, 0.0), 4.0)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("goal beyond 2 m accepted")
+        print("SELF-TEST PASS: RC guard, 3.5 m goal bound, and relative 0.5 m target")
+        return 0
+    lock = None
+    try:
+        if args.action in ("takeoff", "land") and STOP_FILE.exists():
+            raise RuntimeError("正在停栈，拒绝并发飞行命令")
+        lock = acquire_lock("mission.lock" if args.action == "takeoff" else "landing.lock")
+        flight = RosFlight()
+        if args.action == "takeoff":
+            flight.takeoff()
+            flight.navigation_monitor()
+        elif args.action == "land":
+            flight.land()
+        else:
+            flight._initial_wait(2.2)
+            if not lock_is_free("mission.lock"):
+                raise RuntimeError("起飞/导航监测进程还未退出；等它退出后再停栈")
+            state = flight._state()
+            ext = flight.cache.get("/mavros/extended_state")
+            if (state.armed or not state.connected or not flight._fresh("/mavros/extended_state", 2.5)
+                    or ext.landed_state != 1 or not flight._fresh_stamp(ext, 2.5)):
+                raise RuntimeError("状态未知/仍解锁/未确认落地，拒绝停栈")
+            print("新鲜 MAVROS 状态确认：connected、disarmed、ON_GROUND")
+    except Exception as exc:
+        print("FLIGHT FAIL: %s" % exc, file=sys.stderr)
+        return 1
+    finally:
+        if lock:
+            lock.close()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

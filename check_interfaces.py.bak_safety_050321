@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""Read-only ROS wiring and parameter audit for the flight_v1 stack."""
+import json
+import math
+import os
+import re
+import sys
+import time
+
+import rosgraph
+import rospy
+
+
+def main():
+    master = rosgraph.Master("/readonly_flight_interface_audit")
+    publishers, subscribers, _ = master.getSystemState()
+    checks = []
+
+    def subscriptions(node):
+        return sorted(topic for topic, nodes in subscribers if node in nodes)
+
+    def check(name, ok, actual):
+        checks.append({"name": name, "ok": bool(ok), "actual": actual})
+
+    def number(path, expected):
+        value = rospy.get_param(path, None)
+        ok = isinstance(value, (int, float)) and not isinstance(value, bool)
+        check(path, ok and math.isfinite(value) and abs(value - expected) < 1e-6, value)
+
+    planner = "/drone_0_ego_planner_node"
+    ctrl = subscriptions("/px4ctrl")
+    required_ctrl = {"/mavros/imu/data", "/mavros/imu/data_raw",
+                     "/vins_estimator/imu_propagate", "/position_cmd"}
+    check("px4ctrl双IMU与控制输入接线", required_ctrl.issubset(ctrl), ctrl)
+
+    planner_inputs = subscriptions(planner)
+    required_planner = {"/camera/depth/image_rect_raw", "/planner/camera_pose",
+                        "/vins_estimator/imu_propagate", "/flight_v1/goal_gate"}
+    check("门控规划器输入接线", required_planner.issubset(planner_inputs)
+          and "/camera/aligned_depth_to_color/image_raw" not in planner_inputs,
+          planner_inputs)
+
+    # 2026-11-07 审查修正（独立审计发现，明天任务B的硬阻塞）：
+    # 原来这里硬编码 manual_goal_z=0.5 / max_distance=2.0 / takeoff_height=0.5，
+    # 而实机已改成 0.7 / 3.5 / 0.7 -> 本脚本 FAIL exit 1，
+    # 配合 flight.sh 的 `set -eo pipefail`，`flight.sh takeoff` 在起飞前就被阻断。
+    # 改成**一致性检查**而不是硬编码常量：高度只有一个真源（px4ctrl takeoff_height），
+    # 规划器的 manual_goal_z 必须与它相等；目标半径必须与任务脚本 GOAL_RADIUS 相等。
+    for path, expected in (
+        (planner + "/grid_map/pose_type", 1),
+        (planner + "/manager/max_vel", 0.25),
+        (planner + "/manager/max_acc", 1.0),
+    ):
+        number(path, expected)
+
+    takeoff_height = rospy.get_param("/px4ctrl/auto_takeoff_land/takeoff_height", None)
+    manual_goal_z = rospy.get_param(planner + "/fsm/manual_goal_z", None)
+    manual_goal_max_distance = rospy.get_param(planner + "/fsm/manual_goal_max_distance", None)
+    goal_radius = None
+    try:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "flight_mission.py"),
+                  encoding="utf-8") as fh:
+            mm = re.search(r"^GOAL_RADIUS\s*=\s*([0-9.]+)", fh.read(), re.M)
+        goal_radius = float(mm.group(1)) if mm else None
+    except Exception:
+        goal_radius = None
+
+    check("起飞高度单一来源(规划器 manual_goal_z == px4ctrl takeoff_height)",
+          takeoff_height is not None and manual_goal_z is not None
+          and abs(float(manual_goal_z) - float(takeoff_height)) < 1e-6,
+          {"manual_goal_z": manual_goal_z, "takeoff_height": takeoff_height})
+    check("目标半径一致(规划器 manual_goal_max_distance == flight_mission GOAL_RADIUS)",
+          goal_radius is not None and manual_goal_max_distance is not None
+          and abs(float(manual_goal_max_distance) - goal_radius) < 1e-6,
+          {"manual_goal_max_distance": manual_goal_max_distance, "GOAL_RADIUS": goal_radius})
+
+    position_sources = next((nodes for topic, nodes in publishers
+                             if topic == "/position_cmd"), [])
+    check("position_cmd唯一来源", position_sources == ["/drone_0_traj_server"],
+          position_sources)
+    camera_sources = next((nodes for topic, nodes in publishers
+                           if topic == "/planner/camera_pose"), [])
+    check("相机位姿转接发布器", camera_sources == ["/planner_camera_pose_relay"],
+          camera_sources)
+
+    params = {key: rospy.get_param(key, None) for key in (
+        "/px4ctrl/ctrl_v2", "/px4ctrl/thrust_model", "/px4ctrl/msg_timeout",
+        "/px4ctrl/auto_takeoff_land", "/px4ctrl/use_px4_position_ctrl",
+        planner + "/grid_map", planner + "/fsm")}
+    result = {"checked_at_epoch": time.time(), "checks": checks, "parameters": params,
+              "verdict": "PASS" if all(item["ok"] for item in checks) else "FAIL",
+              "scope": "接口与参数检查；不代表传感器活性、地面验图或起飞许可。RC 未连接不作为此检查失败项。"}
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0 if result["verdict"] == "PASS" else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
