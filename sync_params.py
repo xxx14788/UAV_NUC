@@ -100,6 +100,7 @@ def derive():
     d = {}
     d['map_size_z'] = round(P['ceiling_max'] - P['ground_height'], 2)
     d['eff_infl'] = math.ceil(P['inflation'] / P['resolution']) * P['resolution']
+    d['self_bubble'] = round(float(P.get('self_bubble') or d['eff_infl']), 3)   # 缺省=等效膨胀
     if 'depth_mindist' in P:
         d['mindist'] = round(float(P['depth_mindist']), 3)   # 用户令：显式值优先
     else:
@@ -140,8 +141,18 @@ def read(p):
 
 
 def write(p, t):
-    os.makedirs(os.path.dirname(p), exist_ok=True) if os.path.dirname(p) else None
+    """只在内容变化时写盘并返回 True（保 mtime，便于"源比二进制新"这类判定）。"""
+    d = os.path.dirname(p)
+    if d:
+        os.makedirs(d, exist_ok=True)
+    if os.path.exists(p):
+        try:
+            if read(p) == t:
+                return False
+        except Exception:
+            pass
     open(p, 'w', encoding='utf-8', newline=NL).write(t)
+    return True
 
 
 def rep(t, old, new, tag):
@@ -161,8 +172,8 @@ def launch_block(d):
             % (P['takeoff_height'], P['goal_radius'], P['inflation'], P['ground_height']))
     prim2 = ('               ceiling_max %.2f / max_ray %.1f / max_vel %.1f / resolution %.2f'
              % (P['ceiling_max'], P['max_ray'], P['max_vel'], P['resolution']))
-    deriv = ('       派生: map_size_z=%.2f (天花板 %.2f) / eff_inflation=%.2f / depth_mindist=%.3f -->'
-             % (d['map_size_z'], d['ceiling'], d['eff_infl'], d['mindist']))
+    deriv = ('       派生: map_size_z=%.2f (天花板 %.2f) / eff_inflation=%.2f / mindist=%.3f / self_bubble=%.2f -->'
+             % (d['map_size_z'], d['ceiling'], d['eff_infl'], d['mindist'], d['self_bubble']))
     return join(
         '  <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====',
         prim, prim2, deriv,
@@ -172,6 +183,7 @@ def launch_block(d):
         '  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="%.1f"/>' % P['max_ray'],
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>',
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="%.3f"/>' % d['mindist'],
+        '  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="%.3f"/>' % d['self_bubble'],
         '  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="%d"/>' % P['pose_type'],
         '  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="%d"/>' % P['local_map_margin'],
         '  <param name="/drone_0_ego_planner_node/grid_map/resolution" value="%.2f"/>' % P['resolution'],
@@ -337,6 +349,7 @@ def params_block(d):
         '  map_size_z: %.2f             # 天花板 = %.2f' % (d['map_size_z'], d['ceiling']),
         '  ceiling_max: %.1f' % P['ceiling_max'],
         '  depth_mindist: %.3f          # 近场剔除下限（显式；几何门: mindist+cam_fwd <= eff_inflation）' % d['mindist'],
+        '  self_bubble: %.3f            # 自机气泡半径（bspline 与 A* 共用；缺省=等效膨胀）' % d['self_bubble'],
         '',
         'runtime:',
         '  # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。',
@@ -446,12 +459,20 @@ def main():
     if not a.apply:
         return 0
     ts = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    changed, changed_cpp = [], []
     for p, t in ((LAUNCH, L), (CONTRACT, C), (GM, g), (PX4YAML, px), (GEN_TOPICS, tp),
                  (FSM, f), (FSMH, fh)):
-        if os.path.exists(p):
-            shutil.copy2(p, p + '.bak_sync_' + ts)
+        if read(p) == t:
+            continue                      # 内容没变就不碰（mtime 保持，便于判"要不要重建"）
+        shutil.copy2(p, p + '.bak_sync_' + ts)
         write(p, t)
-    print('已落盘 .bak_sync_%s' % ts)
+        changed.append(os.path.basename(p))
+        if p in (GM, FSM, FSMH):
+            changed_cpp.append(os.path.basename(p))
+    print('已落盘 .bak_sync_%s：%s' % (ts, ', '.join(changed) if changed else '内容全同，未写盘'))
+    if changed_cpp:
+        print('!! C++ 源已改：%s' % ', '.join(changed_cpp))
+        print('!! 必须重建再起栈：catkin build plan_env path_searching bspline_opt ego_planner')
     return 0
 
 

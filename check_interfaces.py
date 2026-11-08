@@ -92,6 +92,43 @@ class Checker:
 
 
 # ---------------------------------------------------------------- static
+def build_freshness_check(ck, contract, paths):
+    """2026-11-08（用户令）：源比二进制新 = 改了 C++ 却没重建 —— 这类"跑了半天其实跑的是旧
+    二进制"最容易骗过人，必须做成硬门。判据：每个 .cpp/.h 的 mtime 不得晚于它所属的库/节点。"""
+    ws = os.path.expanduser("~/catkin_ws")
+    devel = os.path.join(ws, "devel/.private")
+    pairs = [
+        (os.path.join(ws, "src/planner/plan_env/src/grid_map.cpp"),
+         [os.path.join(devel, "plan_env/lib/libplan_env.so"),
+          os.path.join(devel, "ego_planner/lib/ego_planner/ego_planner_node")]),
+        (os.path.join(ws, "src/planner/plan_env/include/plan_env/grid_map.h"),
+         [os.path.join(devel, "plan_env/lib/libplan_env.so")]),
+        (os.path.join(ws, "src/planner/bspline_opt/src/bspline_optimizer.cpp"),
+         [os.path.join(devel, "bspline_opt/lib/libbspline_opt.so"),
+          os.path.join(devel, "ego_planner/lib/ego_planner/ego_planner_node")]),
+        (os.path.join(ws, "src/planner/path_searching/src/dyn_a_star.cpp"),
+         [os.path.join(devel, "path_searching/lib/libpath_searching.so"),
+          os.path.join(devel, "ego_planner/lib/ego_planner/ego_planner_node")]),
+        (os.path.join(ws, "src/planner/path_searching/include/path_searching/dyn_a_star.h"),
+         [os.path.join(devel, "path_searching/lib/libpath_searching.so")]),
+    ]
+    stale, missing = [], []
+    for src, outs in pairs:
+        if not os.path.exists(src):
+            continue
+        sm = os.path.getmtime(src)
+        for out in outs:
+            if not os.path.exists(out):
+                missing.append(os.path.basename(out))
+                continue
+            # 1 s 容差：同一次 build 里 copy 与 link 的先后
+            if sm > os.path.getmtime(out) + 1.0:
+                stale.append("%s > %s" % (os.path.basename(src), os.path.basename(out)))
+    ck.add("源码不新于二进制（改了 C++ 必须重建）", not stale and not missing,
+           {"stale": sorted(set(stale)), "missing": sorted(set(missing)),
+            "hint": "catkin build plan_env path_searching bspline_opt ego_planner"})
+
+
 def static_checks(ck, contract, paths):
     seams = contract.get("seams", {}) or {}
     params = contract.get("params", {}) or {}
@@ -131,6 +168,16 @@ def static_checks(ck, contract, paths):
             and abs(float(px_h) - float(lz)) < 1e-6 and abs(float(px_h) - float(cz)) < 1e-6)
     ck.add("接缝:起飞高度单一来源(px4ctrl == 规划器 == 契约)", ok_h,
            {"px4ctrl": px_h, "planner": lz, "contract": cz})
+
+    # 2026-11-08（用户令）：自机气泡是独立参数，launch 与契约必须同值
+    sb_l = _param_value(lt, "grid_map/self_bubble")
+    sb_c = _get(params, "self_bubble")
+    try:
+        sb_ok = sb_l is not None and sb_c is not None and abs(float(sb_l) - float(sb_c)) < 1e-6
+    except (TypeError, ValueError):
+        sb_ok = False
+    ck.add("自机气泡 launch == 契约 params.self_bubble", sb_ok,
+           {"launch": sb_l, "contract": sb_c})
 
     # 2026-11-08（用户令②）：px4ctrl yaml 的掉电保护阈值 == 契约（不依赖节点在跑）
     lv_y = _yaml_scalar(paths["px4ctrl_yaml"], "low_voltage")
@@ -186,6 +233,7 @@ def static_checks(ck, contract, paths):
 
     # 2026-11-08（用户令⑤）：录包清单存在性/关键话题
     topics_file_check(ck, contract, paths)
+    build_freshness_check(ck, contract, paths)
 
 
 def topics_file_check(ck, contract, paths):

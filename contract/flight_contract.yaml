@@ -48,6 +48,7 @@ params:
   map_size_z: 1.60             # 天花板 = 1.50
   ceiling_max: 1.5
   depth_mindist: 0.200          # 近场剔除下限（显式；几何门: mindist+cam_fwd <= eff_inflation）
+  self_bubble: 0.450            # 自机气泡半径（bspline 与 A* 共用；缺省=等效膨胀）
 
 runtime:
   # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。
