@@ -249,10 +249,15 @@ def live_checks(ck, contract, mode):
            and "/camera/aligned_depth_to_color/image_raw" not in planner_inputs,
            planner_inputs)
 
-    for path, expected in ((PLANNER + "/grid_map/pose_type", 1),
-                           (PLANNER + "/manager/max_vel", 0.15),
-                           (PLANNER + "/manager/max_acc", 1.0)):
-        number(path, expected)
+    # 2026-11-08：这三个值改从契约取（原来硬编码 1/0.15/1.0，改 launch 会误拦）
+    for path, key in ((PLANNER + "/grid_map/pose_type", "pose_type"),
+                      (PLANNER + "/manager/max_vel", "max_vel"),
+                      (PLANNER + "/manager/max_acc", "max_acc")):
+        exp = _get(contract, "params." + key)
+        value = rospy.get_param(path, None)
+        ck.add(path + " == 契约", isinstance(value, (int, float))
+               and exp is not None and abs(float(value) - float(exp)) < 1e-6,
+               {"runtime": value, "contract": exp})
 
     takeoff_height = rospy.get_param("/px4ctrl/auto_takeoff_land/takeoff_height", None)
     manual_goal_z = rospy.get_param(PLANNER + "/fsm/manual_goal_z", None)
@@ -270,8 +275,17 @@ def live_checks(ck, contract, mode):
     ceiling = None
     if isinstance(map_z, (int, float)) and isinstance(ground_z, (int, float)):
         ceiling = float(ground_z) + float(map_z)
-    ck.add("D6 天花板低于箱高 1.5m(ground_height+map_size_z <= 1.5)",
-           ceiling is not None and ceiling <= 1.5, {"ceiling_m": ceiling})
+    ceiling_max = float(_get(contract, "params.ceiling_max", 1.5))
+    ck.add("D6 天花板低于箱高(ground_height+map_size_z <= %.2f)" % ceiling_max,
+           ceiling is not None and ceiling <= ceiling_max,
+           {"ceiling_m": ceiling, "limit": ceiling_max})
+    # 2026-11-08（今早四袋）：地图底必须略高于真实地面，否则地板被当障碍
+    gh = rospy.get_param(PLANNER + "/grid_map/ground_height", None)
+    gh_exp = _get(contract, "params.ground_height")
+    ck.add("地图底略高于真实地面(ground_height > 0)",
+           isinstance(gh, (int, float)) and gh > 0.0 and gh_exp is not None
+           and abs(float(gh) - float(gh_exp)) < 1e-6,
+           {"runtime": gh, "contract": gh_exp})
 
     infl = rospy.get_param(PLANNER + "/grid_map/obstacles_inflation", None)
     ck.add("D5 实机膨胀不低于 0.30(ceil 后 >= 2 格)",

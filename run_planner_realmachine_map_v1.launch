@@ -14,7 +14,7 @@
          箱子高 1.5 m，取 map_size_z=1.6 -> 顶 1.30 m < 1.5 -> 箱顶以上在图上不存在 -> 规划器不可能从上面过。
          飞行高度 0.7 m，头顶留 0.60 m 余量。
          （原来的 3.0 会让地图顶到 2.70 m，规划器可以合法地从 1.5 m 箱子上方绕过去。） -->
-    <arg name="map_size_z_" value="1.6"/>
+    <arg name="map_size_z_" value="1.25"/>
     <arg name="odometry_topic" value="/vins_estimator/imu_propagate"/>
     <arg name="obj_num_set" value="10"/>
     <arg name="camera_pose_topic" value="/planner/camera_pose"/>
@@ -29,7 +29,7 @@
     <arg name="cy" value="$(arg depth_cy)"/>
     <arg name="fx" value="$(arg depth_fx)"/>
     <arg name="fy" value="$(arg depth_fy)"/>
-    <arg name="max_vel" value="0.15"/>
+    <arg name="max_vel" value="0.5"/>
     <arg name="max_acc" value="1.0"/>
     <arg name="planning_horizon" value="4.0"/>
     <arg name="use_distinctive_trajs" value="false"/>
@@ -57,7 +57,13 @@
        规划器真的从箱子**下面**钻过去（实测 z 掉到 -0.25，水平余量 -0.43m = 撞）。
        改成 ground_height=0.0（地板贴地）+ map_size_z=1.3（天花板仍 1.30m < 箱高 1.5m）。
        实测轨迹 z 恒 0.700，余量 +0.128m。 -->
-  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.30"/>
+    <!-- 2026-11-08（今早四袋判读）：-0.30 让**真实地板**落进地图（地板点在 z~0，
+       map 底 -0.30 -> 地板被当障碍 + 0.45m 膨胀 -> 规划器报 "drone is in obstacle"
+       并拒绝规划，实测发目标后 /position_cmd 0 条）。抬到 0.05 = 略高于地面，
+       地板近场点(7~22cm)直接落到图外。map_size_z 1.25 -> 天花板仍 1.30 < 箱高 1.5。 -->
+  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="0.05"/>
+  <!-- 近场剔除：机体/桨/地板在相机 0.1~0.3 m 内的点不要进图 -->
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.35"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.7"/>  <!-- 2026-11-07: 与 px4ctrl takeoff_height 对齐(0.5->0.7) -->
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>  <!-- 2026-11-07 用户令：2.0 -> 3.5 -->
   <!-- 2026-11-07 审查修正：原为 true -> 目标高度取自 RViz 消息 z。

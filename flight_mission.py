@@ -401,11 +401,15 @@ class RosFlight:
             TARGET_Z = float(_h_px4)
             print("目标高度（单一来源 /px4ctrl/auto_takeoff_land/takeoff_height）= %.3f m" % TARGET_Z)
 
+        # 2026-11-08：期望值全部从契约取（GOAL_RADIUS / max_vel / max_acc / pose_type）
         for key, expected in (
-                              ("/drone_0_ego_planner_node/fsm/manual_goal_max_distance", 3.5),
-                              ("/drone_0_ego_planner_node/manager/max_vel", 0.15),
-                              ("/drone_0_ego_planner_node/manager/max_acc", 1.0),
-                              ("/drone_0_ego_planner_node/grid_map/pose_type", 1)):
+                              ("/drone_0_ego_planner_node/fsm/manual_goal_max_distance", GOAL_RADIUS),
+                              ("/drone_0_ego_planner_node/manager/max_vel",
+                               _contract_value("params.max_vel", 0.5)),
+                              ("/drone_0_ego_planner_node/manager/max_acc",
+                               _contract_value("params.max_acc", 1.0)),
+                              ("/drone_0_ego_planner_node/grid_map/pose_type",
+                               _contract_value("params.pose_type", 1))):
             value = self.rospy.get_param(key, None)
             if not isinstance(value, (int, float)) or abs(value - expected) > 1e-6:
                 failures.append("参数 %s=%r，预期 %s" % (key, value, expected))

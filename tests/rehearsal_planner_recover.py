@@ -17,6 +17,7 @@
 """
 import array
 import json
+import math
 import os
 import signal
 import subprocess
@@ -137,6 +138,12 @@ def main():
         from geometry_msgs.msg import PoseStamped
         from quadrotor_msgs.msg import PositionCommand
 
+        # 2026-11-08（症状4）：轨迹回传节点也要一起验
+        FVdir = os.path.expanduser("~/sitl_realmachine/flight_v1")
+        pathpub = subprocess.Popen([sys.executable,
+                                    os.path.join(FVdir, "planned_path_pub.py")],
+                                   env=e, stdout=open("/tmp/pathpub.log", "w"),
+                                   stderr=subprocess.STDOUT)
         sensors = FakeSensors()
         cmd = {"v": 0.0, "p": None, "x": None}
 
@@ -168,7 +175,7 @@ def main():
         goal = PoseStamped()
         goal.header.frame_id = "world"
         goal.header.stamp = rospy.Time.now()
-        goal.pose.position.x = 0.8
+        goal.pose.position.x = 2.0   # 2 m 目标 -> 轨迹 ~4 s，保证断流发生在**执行中**
         goal.pose.position.y = 0.0
         goal.pose.position.z = 0.0
         goal.pose.orientation.w = 1.0
@@ -198,7 +205,10 @@ def main():
                 break
             rospy.sleep(0.1)
         ok("目标被消费:/position_cmd 有运动(P1 前置)", vmax > 0.05, "vmax=%.3f" % vmax)
-        time.sleep(3.0)  # 让轨迹跑完（时间参数化，非法依赖真实运动）
+        # 2026-11-08：max_vel 0.15->0.5 之后短轨迹几秒就跑完；
+        # 断流必须发生在**还在执行**的时候（否则 FSM 的 checkCollisionCallback 因
+        # start_time_ 失效而早退，根本不会进 EMERGENCY_STOP —— 这是测试时序问题，不是代码问题）。
+        time.sleep(0.8)
 
         # ---- 断 pose 2.5 s（模拟 20261107 的 1.885 s 断流）----
         print("  ...停发 camera_pose 2.5 s...", flush=True)
@@ -267,6 +277,33 @@ def main():
         except Exception:
             data = {"checks": []}
         edge = [c for c in data.get("checks", []) if c["name"].startswith(("边活性", "边对齐"))]
+        # ---- T5（症状4）：预期轨迹回传 + RViz 可绘 ----
+        from nav_msgs.msg import Path as RosPath
+        got = {"n": 0, "start": None, "end": None}
+
+        def on_plan(m):
+            if m.poses:
+                got["n"] += 1
+                got["start"] = (m.poses[0].pose.position.x, m.poses[0].pose.position.y)
+                got["end"] = (m.poses[-1].pose.position.x, m.poses[-1].pose.position.y)
+
+        rospy.Subscriber("/flight_v1/planned_path", RosPath, on_plan, queue_size=2)
+        rospy.sleep(2.0)
+        gx, gy = goal.pose.position.x, goal.pose.position.y
+        ok("T5 轨迹回传:/flight_v1/planned_path 有数据", got["n"] > 0, "n=%d" % got["n"])
+        if got["start"] and got["end"]:
+            # 说明：EGO 重规划时起点=**上一版轨迹上当前时刻的点**（前馈），不是 odom 位置；
+            # 所以这里只要求"起点在机体 1.5 m 内、且比终点更远离目标"。
+            ok("T5 路径起点合理(重规划起点=轨迹当前点)",
+               math.hypot(got["start"][0], got["start"][1]) < 1.5
+               and math.hypot(got["start"][0] - gx, got["start"][1] - gy)
+               > math.hypot(got["end"][0] - gx, got["end"][1] - gy),
+               "start=(%.2f,%.2f)" % got["start"])
+            ok("T5 路径终点≈目标点(<=0.5m)",
+               math.hypot(got["end"][0] - gx, got["end"][1] - gy) <= 0.5,
+               "end=(%.2f,%.2f) 目标=(%.2f,%.2f)" % (got["end"][0], got["end"][1], gx, gy))
+        pathpub.kill()
+
         ok("T3b 活边检查:深度活性/位姿活性/时戳对齐 三条全 PASS",
            len(edge) >= 3 and all(c["ok"] for c in edge),
            "; ".join("%s=%s" % (c["name"].replace("边活性:", "").replace("边对齐:", "")[:18],

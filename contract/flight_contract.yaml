@@ -39,6 +39,13 @@ params:
   # 现在 flight_mission 从契约读这两项，契约=5.0（与现网一致）。
   takeoff_hover_s: 5.0
   goal_hover_s: 5.0
+  # 2026-11-08：规划器行为参数也入契约（检查器与任务脚本共用，避免两处硬编码）。
+  max_vel: 0.5            # == manager/max_vel（0.15 只能爬：实测命令峰值 0.097 m/s）
+  max_acc: 1.0            # == manager/max_acc
+  pose_type: 1            # == grid_map/pose_type（1=吃 /planner/camera_pose）
+  ground_height: 0.05     # == grid_map/ground_height（地图底，略高于真实地面 -> 剔除地板点）
+  map_size_z: 1.25        # 顶 = ground_height + map_size_z = 1.30
+  ceiling_max: 1.5        # 天花板必须低于箱高，否则规划器会从箱顶过
 
 health_gate:
   depth_topic: /camera/depth/image_rect_raw   # 必须 == seams.depth.topic
