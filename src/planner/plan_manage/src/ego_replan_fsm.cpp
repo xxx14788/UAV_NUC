@@ -1,5 +1,6 @@
 
 #include <cmath>
+#include <std_msgs/String.h>
 #include <plan_manage/ego_replan_fsm.h>
 
 namespace ego_planner
@@ -66,6 +67,7 @@ namespace ego_planner
     broadcast_bspline_sub_ = nh.subscribe("planning/broadcast_bspline_to_planner", 100, &EGOReplanFSM::BroadcastBsplineCallback, this, ros::TransportHints().tcpNoDelay());
 
     bspline_pub_ = nh.advertise<traj_utils::Bspline>("planning/bspline", 10);
+  goal_status_pub_ = nh.advertise<std_msgs::String>("/flight_v1/goal_status", 10);   // P0-3
     data_disp_pub_ = nh.advertise<traj_utils::DataDisp>("planning/data_display", 100);
 
     if (target_type_ == TARGET_TYPE::MANUAL_TARGET)
@@ -686,6 +688,23 @@ namespace ego_planner
     start_vel_ = info->velocity_traj_.evaluateDeBoorT(t_cur);
     start_acc_ = info->acceleration_traj_.evaluateDeBoorT(t_cur);
 
+    // 2026-11-09（P0-4 用户批准重设计）：跟踪偏差大时以**实测状态**为起点。
+    // 原实现一律取"旧轨迹在 t_cur 的点"：飞行实测该点与真机差 0.13~0.27 m
+    // （悬停时只有 0.01 m），新轨迹从机身身后起步，控制器必须先追回来，
+    // 贴障时这一段"追差"会直接把飞机顶进障碍。这里不做"拒绝替换"的门，
+    // 而是从根上让新轨迹的起点就是飞机现在的位置/速度。
+    {
+      const double track_dev = (odom_pos_ - start_pt_).norm();
+      if (track_dev > 0.08)
+      {
+        ROS_WARN("[replan] start anchored to odom: projection dev %.2f m -> use measured state",
+                 track_dev);
+        start_pt_ = odom_pos_;
+        start_vel_ = odom_vel_;
+        start_acc_.setZero();
+      }
+    }
+
     bool success = callReboundReplan(false, false);
 
     if (!success)
@@ -892,6 +911,37 @@ namespace ego_planner
 
       /* 3. publish traj for visualization */
       visualization_->displayOptimalList(info->position_traj_.get_control_points(), 0);
+
+      /* 4. 2026-11-09（P0-3）：把实际轨迹终点回传任务层。
+            只有当局部目标已是全局目标时才判"是否被改写"，避免中途点误报。 */
+      if ((local_target_pt_ - end_pt_).norm() < 1e-3)
+      {
+        Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
+        const Eigen::Vector3d te = cp.col(cp.cols() - 1);
+        const double dx = te.x() - end_pt_.x(), dy = te.y() - end_pt_.y();
+        std_msgs::String st;
+        if (std::hypot(dx, dy) > 0.20)
+          st.data = "ADJUSTED " + std::to_string(dx) + " " + std::to_string(dy);
+        else
+          st.data = "OK";
+        goal_status_pub_.publish(st);
+      }
+      unreach_since_ = ros::Time(0);
+    }
+    else
+    {
+      /* 2026-11-09（P0-3）：连续失败 1.5 s 才报 UNREACHABLE（单拍失败是正常的） */
+      const ros::Time now = ros::Time::now();
+      if (unreach_since_.isZero())
+        unreach_since_ = now;
+      else if ((now - unreach_since_).toSec() > 1.5)
+      {
+        std_msgs::String st;
+        st.data = "UNREACHABLE";
+        goal_status_pub_.publish(st);
+        ROS_WARN("[replan] goal UNREACHABLE for >1.5 s, reported to mission");
+        unreach_since_ = ros::Time(0);
+      }
     }
 
     return plan_and_refine_success;
