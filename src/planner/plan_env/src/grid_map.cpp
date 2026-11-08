@@ -208,6 +208,14 @@ int GridMap::setCacheOccupancy(Eigen::Vector3d pos, int occ)
   return idx_ctns;
 }
 
+
+// 2026-11-08 (user order #2): self-occlusion rejection box, in CAMERA frame.
+// Body box |x|,|y| <= 0.32, z in [-0.16, 0.10] (props/guards/legs margin) mapped by
+// body_T_cam0 (vins_stereo_realmachine_v0.yaml:29-36) to an AABB in the camera frame.
+static const double SELF_BOX_LO_0 = -0.313, SELF_BOX_HI_0 = 0.347;
+static const double SELF_BOX_LO_1 = -0.018, SELF_BOX_HI_1 = 0.246;
+static const double SELF_BOX_LO_2 = -0.363, SELF_BOX_HI_2 = 0.298;
+
 void GridMap::projectDepthImage()
 {
   // md_.proj_points_.clear();
@@ -255,6 +263,7 @@ void GridMap::projectDepthImage()
     else
     {
       Eigen::Vector3d pt_cur, pt_world, pt_reproj;
+  Eigen::Vector3d pc;   // camera-frame point (self-box rejection)
 
       Eigen::Matrix3d last_camera_r_inv;
       last_camera_r_inv = md_.last_camera_r_m_.inverse();
@@ -293,6 +302,19 @@ void GridMap::projectDepthImage()
           {
             depth = mp_.max_ray_length_ + 0.1;
           }
+
+          /* 2026-11-08 (user order #2): reject the drone own body.
+             Near-field self points (props/guards/legs) measure 0.07~0.22 m. A single
+             depth_filter_mindist either leaks the 0.20~0.22 band or pushes the blind
+             face beyond the inflation radius. Geometric fix: drop points inside the
+             body AABB expressed in the camera frame (neither hit nor free). */
+          pc(0) = (u - mp_.cx_) * depth / mp_.fx_;
+          pc(1) = (v - mp_.cy_) * depth / mp_.fy_;
+          pc(2) = depth;
+          if (pc(0) > SELF_BOX_LO_0 && pc(0) < SELF_BOX_HI_0 &&
+              pc(1) > SELF_BOX_LO_1 && pc(1) < SELF_BOX_HI_1 &&
+              pc(2) > SELF_BOX_LO_2 && pc(2) < SELF_BOX_HI_2)
+            continue;
 
           // project to world frame
           pt_cur(0) = (u - mp_.cx_) * depth / mp_.fx_;

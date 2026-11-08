@@ -622,6 +622,17 @@ namespace ego_planner
       {
         callEmergencyStop(odom_pos_);
       }
+      else if (odom_vel_.norm() > 0.10)
+      {
+        /* 2026-11-08 (user order #3): real brake. It used to brake once on entry and
+           then just hold. Now: keep issuing brake trajectories at <=5 Hz while any
+           speed remains; only below 0.1 m/s does the recovery criterion apply. */
+        if ((ros::Time::now() - last_brake_t_).toSec() > 0.2)
+        {
+          last_brake_t_ = ros::Time::now();
+          callEmergencyStop(odom_pos_);
+        }
+      }
       else
       {
         if (enable_fail_safe_ && odom_vel_.norm() < 0.1)

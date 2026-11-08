@@ -75,6 +75,7 @@ namespace ego_planner
     ros::Time fail_safe_recover_window_t0_;
     bool fail_safe_recover_abort_reported_{false};
     ros::Time fail_safe_healthy_since_;
+    ros::Time last_brake_t_;   // 2026-11-08 user order #3: brake rate limit
 
     /* planning data */
     bool have_trigger_, have_target_, have_odom_, have_new_target_, have_recv_pre_agent_;
