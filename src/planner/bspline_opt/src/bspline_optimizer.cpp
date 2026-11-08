@@ -1235,8 +1235,9 @@ namespace ego_planner
               （地面测试实测 22203 次 "drone is in obstacle"）。无人机物理上就在那儿，
               所以**以起点为心、半径 = 膨胀半径**的球内一律当自由，再往后的点才看真实占据。 */
         const Eigen::Vector3d self_p = cps_.points.col(0);
-        const double self_bubble = grid_map_->getResolution() *
-                                   std::ceil(0.337 / grid_map_->getResolution());
+        // 2026-11-08（用户令 4）：气泡从参数派生，改 inflation 就自动跟着变，
+        // 不再硬编码（原来写 0.337，调膨胀后泡泡会悄悄错位）。
+        const double self_bubble = grid_map_->getEffectiveInflation();
         for (j = i - 1; j >= 0; --j)
         {
           const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));

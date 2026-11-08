@@ -17,6 +17,11 @@ void GridMap::initMap(ros::NodeHandle &nh)
   node_.param("grid_map/local_update_range_y", mp_.local_update_range_(1), -1.0);
   node_.param("grid_map/local_update_range_z", mp_.local_update_range_(2), -1.0);
   node_.param("grid_map/obstacles_inflation", mp_.obstacles_inflation_, -1.0);
+  // 2026-11-08：把等效膨胀打出来（自机气泡 / A* 豁免都取这个值，改参数时一眼可核）
+  ROS_INFO("[grid_map] res %.2f  infl_param %.3f -> eff_infl %.2f m  (ceil(infl/res)=%d)",
+           mp_.resolution_, mp_.obstacles_inflation_,
+           mp_.resolution_ * std::ceil(mp_.obstacles_inflation_ / mp_.resolution_),
+           (int)std::ceil(mp_.obstacles_inflation_ / mp_.resolution_));
 
   node_.param("grid_map/fx", mp_.fx_, -1.0);
   node_.param("grid_map/fy", mp_.fy_, -1.0);

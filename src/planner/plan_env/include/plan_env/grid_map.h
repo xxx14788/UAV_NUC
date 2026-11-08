@@ -180,6 +180,7 @@ public:
   bool odomValid();
   void getRegion(Eigen::Vector3d& ori, Eigen::Vector3d& size);
   inline double getResolution();
+  inline double getEffectiveInflation();   // 2026-11-08：等效膨胀 = ceil(infl/res)*res
   Eigen::Vector3d getOrigin();
   int getVoxelNum();
   bool getOdomDepthTimeout() { return md_.flag_depth_odom_timeout_; }
@@ -405,6 +406,15 @@ inline void GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Ei
 }
 
 inline double GridMap::getResolution() { return mp_.resolution_; }
+
+// 2026-11-08（用户令 4/5）：等效膨胀半径。地图按整格施加膨胀，所以实际生效的
+// 半径是 ceil(obstacles_inflation/res)*res（0.337 -> 0.45）。所有"自身气泡"
+// 都从这里取，不要再抄数字。
+inline double GridMap::getEffectiveInflation() {
+  const double r = mp_.resolution_;
+  if (r <= 1e-9) return 0.0;
+  return r * std::ceil(mp_.obstacles_inflation_ / r);
+}
 
 #endif
 

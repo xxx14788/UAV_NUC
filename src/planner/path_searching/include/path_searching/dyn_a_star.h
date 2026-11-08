@@ -60,7 +60,17 @@ private:
 
 	//bool (*checkOccupancyPtr)( const Eigen::Vector3d &pos );
 
-	inline bool checkOccupancy(const Eigen::Vector3d &pos) { return (bool)grid_map_->getInflateOccupancy(pos); }
+	// 2026-11-08（用户令 5）：与 bspline 优化器同一豁免 —— 离搜索起点
+	// 不超过等效膨胀半径的点视为自由（机体物理上就在那儿）。
+	Eigen::Vector3d self_pos_{0, 0, 0};
+	double self_bubble_{0.0};
+	inline bool inSelfBubble(const Eigen::Vector3d &pos) const {
+	  return self_bubble_ > 1e-9 && (pos - self_pos_).norm() <= self_bubble_;
+	}
+	inline bool checkOccupancy(const Eigen::Vector3d &pos) {
+	  if (inSelfBubble(pos)) return false;
+	  return (bool)grid_map_->getInflateOccupancy(pos);
+	}
 
 	std::vector<GridNodePtr> retrievePath(GridNodePtr current);
 

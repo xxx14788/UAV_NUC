@@ -88,6 +88,8 @@ vector<GridNodePtr> AStar::retrievePath(GridNodePtr current)
     return path;
 }
 
+static const int kMaxAdjustIters = 50;   // 2026-11-08：起终点外推上限（50*step≈够绕出膨胀层）
+
 bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d end_pt, Vector3i &start_idx, Vector3i &end_idx)
 {
     if (!Coord2Index(start_pt, start_idx) || !Coord2Index(end_pt, end_idx))
@@ -96,27 +98,44 @@ bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d en
     if (checkOccupancy(Index2Coord(start_idx)))
     {
         //ROS_WARN("Start point is insdide an obstacle.");
+        /* 2026-11-08（用户令 5）：加迭代上限。原实现是 do/while，若整条射线都在
+           膨胀层里就一路往外走，只能靠出图才退出（表现为规划器长时间卡住）。 */
+        int it = 0;
         do
         {
             start_pt = (start_pt - end_pt).normalized() * step_size_ + start_pt;
             if (!Coord2Index(start_pt, start_idx))
                 return false;
+            if (++it > kMaxAdjustIters)
+            {
+                ROS_WARN("[A*] start adjust hit cap (%d), give up", kMaxAdjustIters);
+                return false;
+            }
         } while (checkOccupancy(Index2Coord(start_idx)));
     }
 
     if (checkOccupancy(Index2Coord(end_idx)))
     {
         //ROS_WARN("End point is insdide an obstacle.");
+        // 2026-11-08（用户令 5）：同上，端点的自适应外推也必须有上限。
+        int it = 0;
         do
         {
             end_pt = (end_pt - start_pt).normalized() * step_size_ + end_pt;
             if (!Coord2Index(end_pt, end_idx))
                 return false;
+            if (++it > kMaxAdjustIters)
+            {
+                ROS_WARN("[A*] end adjust hit cap (%d), give up", kMaxAdjustIters);
+                return false;
+            }
         } while (checkOccupancy(Index2Coord(end_idx)));
     }
 
     return true;
 }
+
+static const int kMaxExpandIters = 200000;   // 2026-11-08：A* 展开上限
 
 bool AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d end_pt)
 {
@@ -125,6 +144,9 @@ bool AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d end_
 
     step_size_ = step_size;
     inv_step_size_ = 1 / step_size;
+    // 2026-11-08（用户令 5）：自身气泡圆心=本次搜索起点，半径=等效膨胀（参数派生）
+    self_pos_ = start_pt;
+    self_bubble_ = grid_map_->getEffectiveInflation();
     center_ = (start_pt + end_pt) / 2;
 
     Vector3i start_idx, end_idx;
@@ -162,6 +184,13 @@ bool AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d end_
     while (!openSet_.empty())
     {
         num_iter++;
+        if (num_iter > kMaxExpandIters)
+        {
+            // 2026-11-08（用户令 5）：展开上限。原来只靠 openSet 为空退出，
+            // 极端地图（大面积膨胀）可能吃掉整段规划预算。
+            ROS_WARN("[A*] expansion cap (%d) reached, give up", kMaxExpandIters);
+            break;
+        }
         current = openSet_.top();
         openSet_.pop();
 
