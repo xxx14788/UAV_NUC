@@ -46,7 +46,7 @@ P = {
     'ceiling_max': 1.5,
     'max_ray': 2.5,
     'max_vel': 0.5,
-    'max_acc': 6.0,
+    'max_acc': 3.0,                 # 2026-11-08 用户令：6.0 -> 3.0（太快）
     # 近场剔除下限：用户令 0.2（显式给定，不再按 eff 派生；几何自洽由 checker 把关）
     'depth_mindist': 0.2,
     'local_map_margin': 10,

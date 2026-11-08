@@ -65,13 +65,13 @@ GOAL_TOPIC = _contract_str("seams.goal.topic", "/flight_v1/goal_gate")
 
 def goal_stall_verdict(elapsed_s, dist_to_goal_m, vcmd_mps,
                        settle_s=5.0, min_gap_m=0.50, min_v_mps=0.05):
-    """目标金丝雀判据（纯函数；tests/test_contract.py 覆盖）。
+    """目标停滞判据（纯函数；tests/test_contract.py 覆盖）。
 
     2026-11-08 二审修正（原判据有两个真问题）：
       * 原来用"相对起点位移 <0.2 m"：对 <0.2 m 的近目标会**误中止**；
       * 原来起点取 /position_cmd 当前位置、不新鲜时回退 (0,0)：首个目标前该话题从无流
         （traj_server 只在收到 bspline 后才发），于是回退必发生；若悬停点离 VINS 原点
-        >0.2 m，"原地保持"指令本身位移就 >0.2 m -> 金丝雀**永远不触发**（事故形态复发）。
+        >0.2 m，"原地保持"指令本身位移就 >0.2 m -> 目标停滞判据**永远不触发**（事故形态复发）。
     现在按方案原文：**离目标还差 >0.5 m 且没有指令速度** -> 中止。
     """
     return bool(elapsed_s >= settle_s and dist_to_goal_m > min_gap_m
@@ -167,7 +167,7 @@ class RosFlight:
         self.anchor = None
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
-        # 2026-11-08（方案 v2 C3）：目标金丝雀状态（发目标后 5 s 内指令不动 -> 中止）
+        # 2026-11-08（方案 v2 C3）：目标停滞自降状态（发目标后 5 s 内指令不动 -> 中止）
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
         self.goal_count = 0
@@ -293,7 +293,7 @@ class RosFlight:
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
-            # 金丝雀起点（方案 v2 C3 + 二审 F2）：只记"目标 xy + 时刻"，
+            # 目标停滞起点（方案 v2 C3 + 二审 F2）：只记"目标 xy + 时刻"，
             # 判据用"指令离目标还差多少"，不再依赖 /position_cmd 是否已有流。
             self.goal_target_xy = (target[0], target[1])
             self.goal_cmd_t0 = time.monotonic()
@@ -565,7 +565,7 @@ class RosFlight:
                 continue
             if deadline is None:
                 deadline = time.monotonic() + 180.0
-            # 2026-11-08（方案 v2 C3）目标金丝雀：发目标后 5 s，若 /position_cmd 原地不动
+            # 2026-11-08（方案 v2 C3）目标停滞自降：发目标后 5 s，若 /position_cmd 原地不动
             # 就报根因并中止。22:36 那轮的形态：规划器 EMERGENCY_STOP -> traj_server 以
             # 100 Hz 发"原地保持" -> px4ctrl 因"有 cmd 流"进 CMD_CTRL -> 人只看到"点了不走"。
             if self.goal_cmd_t0 is not None and self.goal_target_xy is not None \
@@ -582,7 +582,7 @@ class RosFlight:
                                "'odom or depth lost'/'Depth Lost'）。检查 /planner/camera_pose "
                                "与 /camera/depth 是否断过流。"
                                % (time.monotonic() - self.goal_cmd_t0, gap, vcmd))
-                        print("!! 目标金丝雀触发：" + msg, flush=True)
+                        print("!! 目标停滞自降触发：" + msg, flush=True)
                         # 方案 v2 C3 承诺走既有自动降落路径（二审 F7）：先自动降落再抛错，
                         # 避免"规划器脑死 + 原地悬停到电量耗尽"。降落失败则退回人工接管。
                         try:
@@ -590,7 +590,7 @@ class RosFlight:
                         except Exception as lexc:
                             print("!! 自动降落失败（%s）；遥控器接管（CH5 拨低）" % lexc, flush=True)
                         raise RuntimeError(msg)
-                    self.goal_cmd_t0 = None  # 已在动/已接近，金丝雀完成使命
+                    self.goal_cmd_t0 = None  # 已在动/已接近，目标停滞完成使命
             if time.monotonic() >= deadline:
                 break
             state = self._state()

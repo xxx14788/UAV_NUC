@@ -98,6 +98,22 @@ case "$CMD" in
     running /drone_0_ego_planner_node && running /drone_0_traj_server || {
       echo "规划器未就绪；先完成 start、地面验图和 RViz 检查。" >&2; exit 1;
     }
+    # 2026-11-08（用户令）：**起飞即录包**。今晚 22:33-22:39 真正飞出去那次没有 bag，
+    # 事件无法复盘。这里若发现没在录，先自动起录；起不来就拒绝起飞。
+    if [ "${RECORD_AUTO:-1}" = "1" ]; then
+      if ! { [ -s "$STATE/record.pid" ] && kill -0 "$(cat "$STATE/record.pid")" 2>/dev/null; }; then
+        echo "!! 起飞前未在录包：自动启动（RECORD_AUTO=0 可关闭）"
+        LOG="$STATE/record_$(date +%Y%m%d_%H%M%S).log"
+        nohup bash "$HOME/realflight_record_v1.sh" > "$LOG" 2>&1 &
+        echo $! > "$STATE/record.pid"
+        sleep 2
+        if ! kill -0 "$(cat "$STATE/record.pid")" 2>/dev/null; then
+          echo "✗ 录包启动失败（$LOG），拒绝起飞" >&2
+          exit 1
+        fi
+        echo "录包已启动（日志 $LOG）"
+      fi
+    fi
     # 用户要求：去掉起飞前的多余配置审计；飞前门在 flight_mission.py 自己的 preflight。
     exec python3 "$FLOW/flight_mission.py" takeoff "${@:2}"
     ;;

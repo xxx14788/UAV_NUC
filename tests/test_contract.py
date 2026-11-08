@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""T1（方案 v2 / C1-C4）：接缝契约的静态检查 + **负测试** + 金丝雀纯函数。
+"""T1（方案 v2 / C1-C4）：接缝契约的静态检查 + **负测试** + 目标停滞纯函数。
 
 无 ROS 依赖，可在任何机器跑（必须在 NUC 上，因为要读真实文件）。
 
@@ -115,7 +115,7 @@ def main():
     finally:
         shutil.rmtree(tmpd, ignore_errors=True)
 
-    print("== D. 金丝雀判据（纯函数）+ 契约取值")
+    print("== D. 目标停滞判据（纯函数）+ 契约取值")
     sys.path.insert(0, FV)
     try:
         import flight_mission as fm
@@ -125,15 +125,15 @@ def main():
     if fm is not None:
         ok("flight_mission 可导入（无 ROS）", True)
         # 2026-11-08 二审：判据="离目标还差 >0.5 m 且没有指令速度"
-        ok("金丝雀:离目标 1.2 m 且不动 -> 中止",
+        ok("目标停滞:离目标 1.2 m 且不动 -> 中止",
            fm.goal_stall_verdict(5.0, 1.20, 0.001) is True)
-        ok("金丝雀:离目标 0.1 m（近目标已到）-> 不中止",
+        ok("目标停滞:离目标 0.1 m（近目标已到）-> 不中止",
            fm.goal_stall_verdict(5.0, 0.10, 0.0) is False)
-        ok("金丝雀:离目标 0.6 m 但在动 -> 不中止",
+        ok("目标停滞:离目标 0.6 m 但在动 -> 不中止",
            fm.goal_stall_verdict(5.0, 0.60, 0.12) is False)
-        ok("金丝雀:未到 5 s -> 不中止",
+        ok("目标停滞:未到 5 s -> 不中止",
            fm.goal_stall_verdict(3.0, 1.20, 0.0) is False)
-        ok("金丝雀:离目标 0.5 m 边界（> 才中止）-> 不中止",
+        ok("目标停滞:离目标 0.5 m 边界（> 才中止）-> 不中止",
            fm.goal_stall_verdict(5.0, 0.50, 0.0) is False)
         ok("契约取值:GOAL_RADIUS 来自契约",
            abs(fm.GOAL_RADIUS - 3.5) < 1e-9, str(fm.GOAL_RADIUS))
