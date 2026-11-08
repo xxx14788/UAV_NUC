@@ -65,6 +65,16 @@ namespace ego_planner
     double emergency_time_;
     bool flag_realworld_experiment_;
     bool enable_fail_safe_;
+    // 2026-11-08（方案 v2 P2）：急停自愈。fail_safe_cfg_ 记住参数原值；
+    // fail_safe_recover_=false 时逐位回到"一次超时永久急停"的旧行为。
+    bool fail_safe_cfg_{true};
+    bool fail_safe_recover_{true};
+    double fail_safe_recover_hold_s_{2.5};
+    // 2026-11-08（二审 F4）：抖动闸——30 s 窗口内自动放行超过 3 次就停止自动放行
+    int fail_safe_recover_count_{0};
+    ros::Time fail_safe_recover_window_t0_;
+    bool fail_safe_recover_abort_reported_{false};
+    ros::Time fail_safe_healthy_since_;
 
     /* planning data */
     bool have_trigger_, have_target_, have_odom_, have_new_target_, have_recv_pre_agent_;

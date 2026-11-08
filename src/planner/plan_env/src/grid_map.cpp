@@ -663,6 +663,16 @@ void GridMap::updateOccupancyCallback(const ros::TimerEvent & /*event*/)
     return;
   }
   md_.last_occ_update_time_ = ros::Time::now();
+  /* 2026-11-08（方案 v2 P1）：超时标志改**电平**。
+     原来 flag_depth_odom_timeout_ 只在构造里置 false、超时置 true，之后**永不复位**：
+     实测 20261107_223625 —— camera_pose 停发 1.885 s，一次超时就把整个进程永久钉在
+     EMERGENCY_STOP（数据 1 s 后就回来了，规划器却再也动不了，任务报废）。
+     现在：拿到新数据就清零并打一行恢复日志；持续丢数据时判定行为完全不变。 */
+  if (md_.flag_depth_odom_timeout_)
+  {
+    md_.flag_depth_odom_timeout_ = false;
+    ROS_WARN("[grid_map] depth/odom recovered -> timeout flag cleared");
+  }
 
   /* update occupancy */
   // ros::Time t1, t2, t3, t4;

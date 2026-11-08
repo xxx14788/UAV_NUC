@@ -25,6 +25,11 @@ namespace ego_planner
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
     nh.param("fsm/realworld_experiment", flag_realworld_experiment_, false);
     nh.param("fsm/fail_safe", enable_fail_safe_, true);
+    // 2026-11-08（方案 v2 P2）：急停自愈参数（缺省=开；=false 回到旧行为）
+    fail_safe_cfg_ = enable_fail_safe_;
+    nh.param("fsm/fail_safe_recover", fail_safe_recover_, true);
+    // 2026-11-08（二审 F4）：hold 必须 > odom_depth_timeout(1.0)，否则"来一帧就放行"。
+    nh.param("fsm/fail_safe_recover_hold_s", fail_safe_recover_hold_s_, 2.5);
 
     have_trigger_ = !flag_realworld_experiment_;
 
@@ -704,11 +709,68 @@ namespace ego_planner
       return;
 
     /* ---------- check lost of depth ---------- */
+    /* 2026-11-08（方案 v2 P2）：急停可自愈。
+       原来这里是**单向门**：enable_fail_safe_ 置 false 之后永不恢复，而 EMERGENCY_STOP
+       的出院条件（下方 case EMERGENCY_STOP: `enable_fail_safe_ && odom_vel<0.1`）就永远
+       不成立 —— 一次 1.9 s 断流 = 整轮任务报废（实测 20261107_223625）。
+       现在：数据健康**连续** fail_safe_recover_hold_s_（默认 1.0 s）后把 enable_fail_safe_
+       恢复到参数值，再由既有的"停稳(v<0.1)"条件出院重规划；持续丢深度则保持急停。
+       开关：fsm/fail_safe_recover（默认 true）；=false 时逐位回到旧行为。 */
     if (map->getOdomDepthTimeout())
     {
       ROS_ERROR("Depth Lost! EMERGENCY_STOP");
       enable_fail_safe_ = false;
+      fail_safe_healthy_since_ = ros::Time(0);
       changeFSMExecState(EMERGENCY_STOP, "SAFETY");
+    }
+    else if (!enable_fail_safe_ && fail_safe_recover_ && fail_safe_cfg_)
+    {
+      /* 2026-11-08 二审加固（F4）：放行必须"新鲜"，不能只看超时标志为假。
+         ① 放行时刻要求 occupancy 更新距今 <0.3 s（否则地图可能是 1~2 s 旧的）；
+         ② hold 默认 2.5 s（≥2× odom_depth_timeout=1.0），避免"来一帧就放行"的竞态；
+         ③ 30 s 内自动放行 >3 次 → 停止自动放行并 ERROR（防位姿流抖动导致反复急停/重规划）。
+            此时任务侧金丝雀会在 5 s 内报"规划器没有产生运动"并自动降落。 */
+      const bool fresh = (map->getOccUpdateAge() < 0.30);
+      if (!fresh)
+      {
+        fail_safe_healthy_since_ = ros::Time(0);
+      }
+      else if (fail_safe_healthy_since_.isZero())
+      {
+        fail_safe_healthy_since_ = ros::Time::now();
+      }
+      else if ((ros::Time::now() - fail_safe_healthy_since_).toSec() >=
+               fail_safe_recover_hold_s_)
+      {
+        if (fail_safe_recover_count_ >= 3)
+        {
+          if (!fail_safe_recover_abort_reported_)
+          {
+            ROS_ERROR("[SAFETY] depth/odom flapping (%d recoveries in window) -> "
+                      "auto-recover DISABLED; mission should land / pilot takeover",
+                      fail_safe_recover_count_);
+            fail_safe_recover_abort_reported_ = true;
+          }
+        }
+        else
+        {
+          enable_fail_safe_ = fail_safe_cfg_;
+          fail_safe_healthy_since_ = ros::Time(0);
+          if (fail_safe_recover_window_t0_.isZero())
+            fail_safe_recover_window_t0_ = ros::Time::now();
+          fail_safe_recover_count_ += 1;
+          ROS_WARN("[SAFETY] depth/odom healthy %.1f s (occ age %.2f s) -> fail-safe "
+                   "re-enabled #%d (hold, then replan)",
+                   fail_safe_recover_hold_s_, map->getOccUpdateAge(), fail_safe_recover_count_);
+        }
+      }
+      if (!fail_safe_recover_window_t0_.isZero() &&
+          (ros::Time::now() - fail_safe_recover_window_t0_).toSec() > 30.0)
+      {
+        fail_safe_recover_count_ = 0;
+        fail_safe_recover_window_t0_ = ros::Time(0);
+        fail_safe_recover_abort_reported_ = false;
+      }
     }
 
     /* ---------- check trajectory ---------- */
