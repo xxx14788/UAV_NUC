@@ -183,6 +183,9 @@ public:
   Eigen::Vector3d getOrigin();
   int getVoxelNum();
   bool getOdomDepthTimeout() { return md_.flag_depth_odom_timeout_; }
+  // 2026-11-08（方案 v2 二审 F4）：最后一次 occupancy 更新距今多久 [s]。
+  // 急停自愈放行前要求它很小（<0.3 s），否则就是"用 1~2 s 旧的局部地图去重规划"。
+  double getOccUpdateAge() { return (ros::Time::now() - md_.last_occ_update_time_).toSec(); }
 
   typedef std::shared_ptr<GridMap> Ptr;
 
