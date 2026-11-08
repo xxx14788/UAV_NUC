@@ -1229,9 +1229,13 @@ namespace ego_planner
         flag_new_obs_valid = true;
 
         int j;
+        /* 2026-11-08（今早四袋）：起点可行性的判据改**真实占据**。
+           原来用膨胀层：无人机在箱子区起飞时起点就在某个箱子的 0.45 m 膨胀里，
+           两个搜索都失败 -> "the drone is in obstacle" + "terminal point in obstacle"
+           -> 拒绝规划 -> /position_cmd 一条都不发（实测 8060+8060 次）。 */
         for (j = i - 1; j >= 0; --j)
         {
-          occ = grid_map_->getInflateOccupancy(cps_.points.col(j));
+          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));
           if (!occ)
           {
             in_id = j;
@@ -1246,7 +1250,7 @@ namespace ego_planner
 
         for (j = i + 1; j < cps_.size; ++j)
         {
-          occ = grid_map_->getInflateOccupancy(cps_.points.col(j));
+          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));  // 终点同理：只看真障碍
 
           if (!occ)
           {
@@ -1506,12 +1510,18 @@ namespace ego_planner
 
             if (t <= bspline_interval_) // First 3 control points in obstacles!
             {
-              // cout << cps_.points.col(1).transpose() << "\n"
-              //      << cps_.points.col(2).transpose() << "\n"
-              //      << cps_.points.col(3).transpose() << "\n"
-              //      << cps_.points.col(4).transpose() << endl;
-              ROS_WARN("First 3 control points in obstacles! return false, t=%f", t);
-              return false;
+              /* 2026-11-08（今早四袋）：只有真的在**障碍格**里才否决。
+                 起点贴着箱子/墙角时前三段必然落在**膨胀层**内，而膨胀是安全余量、
+                 不是"站不站得住"的判据——否则整个规划永远被否掉（实测拒绝 8060 次）。
+                 只落在膨胀层：接受，交给优化器的 cost 把轨迹推离。 */
+              if (grid_map_->getOccupancy(Eigen::Vector3d(traj.evaluateDeBoorT(t))))
+              {
+                ROS_WARN("First 3 control points in REAL obstacles! return false, t=%f", t);
+                return false;
+              }
+              ROS_WARN_THROTTLE(1.0, "[planner] first control points inside inflation only, "
+                                     "accept and let optimizer push away (t=%.2f)", t);
+              break;
             }
 
             break;
