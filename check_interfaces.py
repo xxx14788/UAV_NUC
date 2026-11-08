@@ -290,8 +290,8 @@ def live_checks(ck, contract, mode):
     blind = eff_infl = None
     if isinstance(mind, (int, float)) and isinstance(res, (int, float)) and isinstance(infl, (int, float)):
         eff_infl = math.ceil(float(infl) / float(res)) * float(res)   # 实际膨胀（整格施加）
-        blind = float(mind) + 0.034 + float(res)                      # 盲面 + 相机前移 + 1 格
-    ck.add("近场盲面 <= 膨胀半径(mindist+0.034+res <= ceil(infl/res)*res)",
+        blind = float(mind) + 0.034                                  # 盲面 = mindist + 相机前移（自机点由排除盒处理）
+    ck.add("近场盲面 <= 膨胀半径(mindist+0.034 <= ceil(infl/res)*res)",
            blind is not None and eff_infl is not None and blind <= eff_infl + 1e-9,
            {"blind_m": None if blind is None else round(blind, 3),
             "eff_inflation_m": None if eff_infl is None else round(eff_infl, 3)})
@@ -299,14 +299,26 @@ def live_checks(ck, contract, mode):
            isinstance(mind, (int, float)) and mind_exp is not None
            and abs(float(mind) - float(mind_exp)) < 1e-6,
            {"runtime": mind, "contract": mind_exp})
-    ck.add("地图底略高于真实地面(ground_height > 0)",
-           isinstance(gh, (int, float)) and gh > 0.0 and gh_exp is not None
-           and abs(float(gh) - float(gh_exp)) < 1e-6,
-           {"runtime": gh, "contract": gh_exp})
+    # 2026-11-08（用户令⑤）：改回上游 -0.01 = 地图底贴着真实地面（机体原点 z≈0.033 在图内）。
+    # 判据改成"与契约一致 + 与真实地面(0)差 <= 1 格"；地板是否被成图不再靠它规避，
+    # 而是靠"膨胀 0.15 = 1 格"与"自机排除盒"。
+    ck.add("地图底与真实地面差 <= 1 格(ground_height == 契约)",
+           isinstance(gh, (int, float)) and gh_exp is not None
+           and abs(float(gh) - float(gh_exp)) < 1e-6
+           and abs(float(gh)) <= float(res) + 1e-9,
+           {"runtime": gh, "contract": gh_exp, "resolution": res})
 
     infl = rospy.get_param(PLANNER + "/grid_map/obstacles_inflation", None)
-    ck.add("D5 实机膨胀不低于 0.30(ceil 后 >= 2 格)",
-           isinstance(infl, (int, float)) and float(infl) >= 0.30, infl)
+    # 2026-11-08（用户令①）：膨胀改 0.15 = 1 格；原来的 "D5 >= 0.30" 硬门随之作废，
+    # 改为"与契约一致"，并把等效半径一并报出来（0.15 -> ceil(1)=1 格 = 0.15 m）。
+    infl_exp = _get(contract, "params.obstacles_inflation")
+    eff_r = None
+    if isinstance(infl, (int, float)) and isinstance(res, (int, float)):
+        eff_r = math.ceil(float(infl) / float(res)) * float(res)
+    ck.add("膨胀 == 契约(等效半径 = ceil(infl/res)*res)",
+           isinstance(infl, (int, float)) and infl_exp is not None
+           and abs(float(infl) - float(infl_exp)) < 1e-6,
+           {"runtime": infl, "contract": infl_exp, "eff_radius_m": eff_r})
 
     ck.add("目标半径一致(规划器 manual_goal_max_distance == 契约)",
            goal_radius is not None and manual_goal_max_distance is not None

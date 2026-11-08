@@ -10,11 +10,11 @@
     <arg name="map_size_y_" value="30.0"/>
     <!-- 2026-11-07（用户令：禁止从箱子上方飞越）：map_size_z 就是**天花板**。
          grid_map.h:327 getInflateOccupancy(): 越界 return -1，调用点当 bool 用 -> -1 为真 -> 越界=占据=撞。
-         所以地图顶 = 地面(-0.30) + map_size_z。
-         箱子高 1.5 m，取 map_size_z=1.6 -> 顶 1.30 m < 1.5 -> 箱顶以上在图上不存在 -> 规划器不可能从上面过。
+         所以地图顶 = 地面(-0.01) + map_size_z。
+         箱子高 1.5 m，取 map_size_z=1.51 -> 顶 1.30 m < 1.5 -> 箱顶以上在图上不存在 -> 规划器不可能从上面过。
          飞行高度 0.7 m，头顶留 0.60 m 余量。
          （原来的 3.0 会让地图顶到 2.70 m，规划器可以合法地从 1.5 m 箱子上方绕过去。） -->
-    <arg name="map_size_z_" value="1.25"/>
+    <arg name="map_size_z_" value="1.51"/>
     <arg name="odometry_topic" value="/vins_estimator/imu_propagate"/>
     <arg name="obj_num_set" value="10"/>
     <arg name="camera_pose_topic" value="/planner/camera_pose"/>
@@ -49,9 +49,7 @@
          0.299 -> ceil(1.993)=2 格 -> 实际膨胀 0.30 m（实机在用的）
          0.337 -> ceil(2.247)=3 格 -> 实际膨胀 0.45 m（正确值）
        即实机每边少 15 cm 余量。这里覆盖回实机值。 -->
-  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.337"/>
   <!-- Advanced SITL params assume odometry input. This planner consumes T_world_cam directly. -->
-  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <!-- 2026-11-07 审查修正（D9，离线台子实测）：原来 ground_height=-0.30，
        而箱子坐在地面 z=0 上 -> 地图在 -0.30~0 留了一条 0.3m 的"地下走廊"，
        规划器真的从箱子**下面**钻过去（实测 z 掉到 -0.25，水平余量 -0.43m = 撞）。
@@ -61,13 +59,55 @@
        map 底 -0.30 -> 地板被当障碍 + 0.45m 膨胀 -> 规划器报 "drone is in obstacle"
        并拒绝规划，实测发目标后 /position_cmd 0 条）。抬到 0.05 = 略高于地面，
        地板近场点(7~22cm)直接落到图外。map_size_z 1.25 -> 天花板仍 1.30 < 箱高 1.5。 -->
-  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="0.05"/>
   <!-- 近场剔除：机体/桨/地板在相机 0.1~0.3 m 内的点不要进图 -->
   <!-- 2026-11-08（独立审计）：0.35 -> 0.2。
        盲面 = mindist + 相机前移 0.034；0.35 时 0.384 m，而膨胀实际 0.45 m（ceil(0.337/0.15)=3 格），
        余量再被 0.15 m 体素吃掉 = 零 -> "0.25~0.38 m 的真障碍看不见又被当可通行"。
        0.2 时盲面 0.234 m、余量 0.216 m；近场自机点实测 7~22 cm 仍被剔除（0.2 足够）。 -->
-  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.2"/>
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
+       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
+       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
+       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
+  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.15"/>
+  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.01"/>
+  <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.51"/>
+  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.115"/>
+  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
+  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.7"/>  <!-- 2026-11-07: 与 px4ctrl takeoff_height 对齐(0.5->0.7) -->
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>  <!-- 2026-11-07 用户令：2.0 -> 3.5 -->
   <!-- 2026-11-07 审查修正：原为 true -> 目标高度取自 RViz 消息 z。
