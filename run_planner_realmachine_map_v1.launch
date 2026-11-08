@@ -68,44 +68,22 @@
        ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
        primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
        derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
-  <!-- ===== 2026-11-08 user-order items: derived params; primitives live in
-       ~/sitl_realmachine/flight_v1/sync_params.py (change one, all follow) =====
-       primitives: resolution 0.15 / obstacles_inflation 0.15 / ground_height -0.01 / ceiling_max 1.50 / max_ray_length 2.5
-       derived: map_size_z = 1.51 -> ceiling 1.50 ; eff_inflation = ceil(0.15/0.15)*0.15 = 0.15 ; depth_mindist = 0.115 (blind 0.149 <= inflation 0.15) -->
   <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.15"/>
   <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.01"/>
   <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.51"/>
   <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.115"/>
+  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
+  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
+  <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.51"/>
+  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
+  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
+  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
+  <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.51"/>
+  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
   <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.7"/>  <!-- 2026-11-07: 与 px4ctrl takeoff_height 对齐(0.5->0.7) -->

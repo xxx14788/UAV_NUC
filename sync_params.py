@@ -85,26 +85,29 @@ def launch_block(d):
 
 
 def edit_launch(d):
-    """两遍：先滤掉旧的 ground_height/mindist 行并记录 inflation 行位置，再插派生块。
-    （一遍做会把刚插入块里的行又当旧行删掉 -> 每次运行都漂移。）"""
-    text_all = read(LAUNCH)
-    keep = []
-    infl_at = None
-    for ln in text_all.split(NL):
-        if '<param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation"' in ln:
-            if infl_at is None:          # 只认第一条，其余（历史遗留块）全部丢弃
-                infl_at = len(keep)
-                keep.append('@@INFL@@')
-            continue
-        if '<param' in ln and (
-                'grid_map/ground_height"' in ln or 'grid_map/depth_filter_mindist"' in ln):
-            continue                      # 旧值，由派生块统一给
-        keep.append(ln)
-    if infl_at is None:
-        raise AssertionError('launch: inflation anchor not found')
-    keep[infl_at] = launch_block(d)   # 两遍结构已保证幂等（块在过滤之后插入）
+    """整块替换：把历史遗留的派生块（从块头注释到 local_map_margin 行）整体删掉，
+    再在第一个块头的位置插入一块新的。这样无论跑多少次，块数恒为 1（幂等）。"""
+    lines = read(LAUNCH).split(NL)
+    HDR = '<!-- ===== 2026-11-08 user-order items'
     out = []
-    for ln in keep:
+    first_at = None
+    i = 0
+    while i < len(lines):
+        ln = lines[i]
+        if HDR in ln:                      # 整块丢弃
+            if first_at is None:
+                first_at = len(out)
+            while i < len(lines) and 'grid_map/local_map_margin' not in lines[i]:
+                i += 1
+            i += 1                          # 吃掉 local_map_margin 行
+            continue
+        out.append(ln)
+        i += 1
+    if first_at is None:                    # 没有旧块：插在 manual_goal_z 之前
+        first_at = next(k for k, l in enumerate(out) if 'fsm/manual_goal_z' in l)
+    out[first_at:first_at] = [launch_block(d)]
+    res = []
+    for ln in out:
         st = ln.strip()
         if st.startswith('<arg name="map_size_z_"'):
             ln = '    <arg name="map_size_z_" value="%.2f"/>' % d['map_size_z']
@@ -114,8 +117,8 @@ def edit_launch(d):
             ln = '    <arg name="max_acc" value="%.1f"/>' % MAX_ACC
         elif '地面(-0.30)' in ln:
             ln = ln.replace('地面(-0.30)', '地面(%.2f)' % GROUND)
-        out.append(ln)
-    return NL.join(out)
+        res.append(ln)
+    return NL.join(res)
 
 
 def edit_grid_map(d):
