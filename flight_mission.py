@@ -83,16 +83,19 @@ GOAL_HOVER_SECONDS = _contract_value("params.goal_hover_s", GOAL_HOVER_SECONDS)
 
 
 def validate_rc_channels(channels):
+    """RC 闸门（2026-11-08 用户令④）：判据全部读契约 runtime.rc，与 preflight 共用一份。"""
     ch = list(channels)
-    if len(ch) < 8 or any(x < 800 or x > 2200 for x in ch[:8]):
-        raise ValueError("遥控器通道数量/范围异常")
-    # 2026-11-07 用户裁定：**OFFBOARD 模式必须油门居中**。
-    # 不能放宽成「油门在底也算过」——掉出 OFFBOARD 时油门在杆底会直接掉高度。
-    if any(abs(x - 1500) > 125 for x in ch[:4]):
-        raise ValueError("四杆必须居中（OFFBOARD 要求）：%s" % [round(x) for x in ch[:4]])
+    need = int(_contract_value("runtime.rc.channels", 8))
+    tol = int(_contract_value("runtime.rc.centered_tol", 125))
+    ch5_min = int(_contract_value("runtime.rc.ch5_min", 1750))
+    if len(ch) < need or any(x < 800 or x > 2200 for x in ch[:need]):
+        raise ValueError("遥控器通道数量/范围异常（需要 %d 通道）" % need)
+    # 2026-11-07 用户裁定：OFFBOARD 模式必须油门居中（掉出 OFFBOARD 会直接掉高度）
+    if any(abs(x - 1500) > tol for x in ch[:4]):
+        raise ValueError("四杆必须居中（容差 ±%d）：%s" % (tol, [round(x) for x in ch[:4]]))
     # 2026-11-07 用户令：CH6 不再参与判定（任务由脚本区分）
-    if ch[4] <= 1750:
-        raise ValueError("起飞前需保持 CH5 悬停档（CH5=%.0f）" % ch[4])
+    if ch[4] <= ch5_min:
+        raise ValueError("起飞前需保持 CH5 悬停档（CH5=%.0f <= %d）" % (ch[4], ch5_min))
 
 
 def validate_goal(frame, stamp, now, goal_xy, current_xy, anchor_z):
@@ -413,6 +416,17 @@ class RosFlight:
             value = self.rospy.get_param(key, None)
             if not isinstance(value, (int, float)) or abs(value - expected) > 1e-6:
                 failures.append("参数 %s=%r，预期 %s" % (key, value, expected))
+        # 2026-11-08（用户令②）：电池门收到契约，与操作卡同一个数（原来只在人脑里）
+        bat_min = _contract_value("runtime.battery.min_fly_v", 14.0)
+        bat = self.cache.get("/mavros/battery")
+        if self._fresh("/mavros/battery", 5.0) and bat is not None and bat.voltage > 0.1:
+            if bat.voltage < bat_min:
+                failures.append("电池 %.2f V < 契约 min_fly_v %.2f V；换电池再飞"
+                                % (bat.voltage, bat_min))
+            else:
+                print("电池 %.2f V >= %.2f V（契约 min_fly_v）" % (bat.voltage, bat_min))
+        else:
+            print("!! 电池读数缺失/过期，跳过电压门（不阻断，但请人工确认电压）", flush=True)
         if LANDING_FILE.exists():
             failures.append("检测到本轮降落标志；请完成停栈后再开始新轮")
 

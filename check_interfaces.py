@@ -132,6 +132,17 @@ def static_checks(ck, contract, paths):
     ck.add("接缝:起飞高度单一来源(px4ctrl == 规划器 == 契约)", ok_h,
            {"px4ctrl": px_h, "planner": lz, "contract": cz})
 
+    # 2026-11-08（用户令②）：px4ctrl yaml 的掉电保护阈值 == 契约（不依赖节点在跑）
+    lv_y = _yaml_scalar(paths["px4ctrl_yaml"], "low_voltage")
+    lv_c = _get(contract, "runtime.battery.low_voltage_v")
+    try:
+        lv_ok = lv_y is not None and lv_c is not None and abs(float(lv_y) - float(lv_c)) < 1e-6
+    except (TypeError, ValueError):
+        lv_ok = False
+    ck.add("px4ctrl yaml low_voltage == 契约 runtime.battery.low_voltage_v", lv_ok,
+           {"yaml": lv_y, "contract": lv_c})
+
+
     # 4) 目标半径：契约 == 规划器 == 任务脚本
     mr = _launch_arg(lt, "manual_goal_max_distance") or _param_value(lt, "fsm/manual_goal_max_distance")
     cr = _get(params, "goal_radius_m")
@@ -171,6 +182,24 @@ def static_checks(ck, contract, paths):
     ck.add("接缝:任务脚本用 Publisher 建 goal_gate（不是只在注释里出现）",
            bool(goal) and goal in mt and pub_goal,
            {"goal_in_mission": goal in mt, "publisher_ctor": pub_goal})
+
+
+    # 2026-11-08（用户令⑤）：录包清单存在性/关键话题
+    topics_file_check(ck, contract, paths)
+
+
+def topics_file_check(ck, contract, paths):
+    """2026-11-08（用户令⑤）：录包清单必须由 sync_params 生成、且包含关键话题。"""
+    path = paths.get("gen_topics")
+    need = ["/position_cmd", "/camera/depth/image_rect_raw", "/drone_0_planning/bspline",
+            "/flight_v1/planned_path", "/debugPx4ctrl"]
+    topics = []
+    if path and os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            topics = [l.strip() for l in fh if l.strip() and not l.startswith("#")]
+    missing = [t for t in need if t not in topics]
+    ck.add("录包清单由生成器提供且含关键话题", bool(topics) and not missing,
+           {"n": len(topics), "missing": missing})
 
 
 def _param_value(launch_text, name):
@@ -295,6 +324,29 @@ def live_checks(ck, contract, mode):
            blind is not None and eff_infl is not None and blind <= eff_infl + 1e-9,
            {"blind_m": None if blind is None else round(blind, 3),
             "eff_inflation_m": None if eff_infl is None else round(eff_infl, 3)})
+    # 2026-11-08（用户令③）：深度内参 —— 规划器消费 D435 对齐深度，用契约里的这一组。
+    # （VINS 自己那一套在 left/right yaml，属另一条链，刻意不联动。）
+    di = _get(contract, "runtime.depth_intrinsics") or {}
+    for key, path in (("fx", "/grid_map/fx"), ("fy", "/grid_map/fy"),
+                      ("cx", "/grid_map/cx"), ("cy", "/grid_map/cy")):
+        val = rospy.get_param(PLANNER + path, None)
+        exp = di.get(key)
+        ck.add("深度内参 %s == 契约" % key,
+               isinstance(val, (int, float)) and exp is not None
+               and abs(float(val) - float(exp)) < 1e-6,
+               {"runtime": val, "contract": exp})
+    # 2026-11-08（用户令②）：px4ctrl 的掉电保护阈值与契约同源。
+    # 只在 px4ctrl 真起了的时候断言（密封测试只起规划器，不能因此判 FAIL）；
+    # 静态链接由 static_checks 读 yaml 保证，两条腿各管一段。
+    lv = rospy.get_param("/px4ctrl/low_voltage", None)
+    lv_exp = _get(contract, "runtime.battery.low_voltage_v")
+    if lv is None:
+        ck.add("px4ctrl low_voltage == 契约（本域未起 px4ctrl，静态腿已覆盖）", True,
+               {"skip": "px4ctrl 未启动"})
+    else:
+        ck.add("px4ctrl low_voltage == 契约 runtime.battery.low_voltage_v",
+               isinstance(lv, (int, float)) and lv_exp is not None
+               and abs(float(lv) - float(lv_exp)) < 1e-6, {"runtime": lv, "contract": lv_exp})
     ck.add("depth_mindist == 契约",
            isinstance(mind, (int, float)) and mind_exp is not None
            and abs(float(mind) - float(mind_exp)) < 1e-6,
@@ -391,7 +443,9 @@ def main():
 
     paths = {"launch": args.launch, "mission": args.mission,
              "stack": args.stack, "px4ctrl_yaml": args.px4ctrl_yaml,
-             "contract": args.contract}
+             "contract": args.contract,
+             "gen_topics": os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                        "generated", "record_topics.txt")}
     if mode in ("static", "task"):
         static_checks(ck, contract, paths)
     if mode in ("live", "task"):

@@ -42,6 +42,7 @@ def main():
     time.sleep(4)
     # px4ctrl 的参数（真机上由 roslaunch px4ctrl 从 yaml 灌进来；这里直接灌同一个值）
     subprocess.run(["rosparam", "set", "/px4ctrl/auto_takeoff_land/takeoff_height", "0.7"], env=e)
+    subprocess.run(["rosparam", "set", "/px4ctrl/low_voltage", "13.2"], env=e)
 
     planner = subprocess.Popen(["roslaunch", "--wait", LAUNCH], env=e,
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
