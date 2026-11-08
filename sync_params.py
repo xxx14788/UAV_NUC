@@ -41,12 +41,14 @@ P = {
     'goal_topic': '/flight_v1/goal_gate',
     # 规划器/地图（派生链的根）
     'resolution': 0.15,
-    'inflation': 0.15,
-    'ground_height': -0.01,
+    'inflation': 0.337,          # 等效 = ceil(0.337/0.15)*0.15 = 0.45（机体半径 0.337）
+    'ground_height': -0.10,      # 2026-11-08 用户令：图底压到 -0.10（地板点稳在图内）
     'ceiling_max': 1.5,
     'max_ray': 2.5,
     'max_vel': 0.5,
-    'max_acc': 1.0,
+    'max_acc': 6.0,
+    # 近场剔除下限：用户令 0.2（显式给定，不再按 eff 派生；几何自洽由 checker 把关）
+    'depth_mindist': 0.2,
     'local_map_margin': 10,
     'pose_type': 1,
     # D435 对齐深度内参（规划器消费的是"对齐到彩色"的深度图）
@@ -98,7 +100,10 @@ def derive():
     d = {}
     d['map_size_z'] = round(P['ceiling_max'] - P['ground_height'], 2)
     d['eff_infl'] = math.ceil(P['inflation'] / P['resolution']) * P['resolution']
-    d['mindist'] = round(min(d['eff_infl'] - P['cam_fwd'] - 1e-3, 0.15), 3)
+    if 'depth_mindist' in P:
+        d['mindist'] = round(float(P['depth_mindist']), 3)   # 用户令：显式值优先
+    else:
+        d['mindist'] = round(min(d['eff_infl'] - P['cam_fwd'] - 1e-3, 0.15), 3)
     d['ceiling'] = round(P['ground_height'] + d['map_size_z'], 2)
     # 自机盒 → 相机系 AABB（外参从 VINS yaml 读，见 read_extrinsic）
     R, T = read_extrinsic()
@@ -152,7 +157,7 @@ def join(*a):
 
 # ---------------------------------------------------------------- 1) 规划器 launch
 def launch_block(d):
-    prim = ('       原始量: takeoff_height %.2f / goal_radius %.1f / inflation %.2f / ground_height %.2f /'
+    prim = ('       原始量: takeoff_height %.2f / goal_radius %.1f / inflation %.3f / ground_height %.2f /'
             % (P['takeoff_height'], P['goal_radius'], P['inflation'], P['ground_height']))
     prim2 = ('               ceiling_max %.2f / max_ray %.1f / max_vel %.1f / resolution %.2f'
              % (P['ceiling_max'], P['max_ray'], P['max_vel'], P['resolution']))
@@ -161,7 +166,7 @@ def launch_block(d):
     return join(
         '  <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====',
         prim, prim2, deriv,
-        '  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="%.2f"/>' % P['inflation'],
+        '  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="%.3f"/>' % P['inflation'],
         '  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="%.2f"/>' % P['ground_height'],
         '  <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="%.2f"/>' % d['map_size_z'],
         '  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="%.1f"/>' % P['max_ray'],
@@ -201,6 +206,45 @@ def _is_block_param(ln):
 def _is_block_comment_frag(ln):
     s = ln.strip()
     return s.startswith('primitives:') or s.startswith('derived:')
+
+
+def note_block(d):
+    """设计说明块：也由 sync_params 生成，避免"参数改了注释还在讲旧值"。"""
+    blind = d['mindist'] + P['cam_fwd']
+    return join(
+        '  <!-- ===== 设计说明（由 sync_params.py 生成，勿手改；派生值见下方 BEGIN/END 块）=====',
+        '',
+        '       地图：resolution %.2f m；图底 ground_height %.2f；顶 = %.2f + %.2f = %.2f m'
+        % (P['resolution'], P['ground_height'], P['ground_height'], d['map_size_z'], d['ceiling']),
+        '         · 图底比真实地面低 %.2f m，地板点稳定落在图内并被记成"障碍"。' % (-P['ground_height']),
+        '         · 出图的点不会被丢弃，而是 clamp 到边界后按 miss 投票（等于"把地板擦掉"），',
+        '           所以图底不能高于地板；地面测试用它区分"地板在地图里"与"地板被擦掉"。',
+        '',
+        '       膨胀：param %.3f -> ceil(%.3f/%.2f) = %.0f 格 -> 有效 %.2f m（机体半径 %.3f）'
+        % (P['inflation'], P['inflation'], P['resolution'],
+           math.ceil(P['inflation'] / P['resolution']), d['eff_infl'], 0.337),
+        '         · bspline 的自身气泡与 A* 的自身豁免都取"有效膨胀"（grid_map::getEffectiveInflation），',
+        '           不再硬编码；改 inflation 后泡泡自动跟着走。',
+        '',
+        '       天花板：地图顶 %.2f 必须不高于箱高 1.50（"禁止从箱子上方飞越"）；检查器门是 <=。'
+        % d['ceiling'],
+        '',
+        '       感知/规划：depth_filter_maxdist 5.0 采样、max_ray_length %.1f 截断；' % P['max_ray'],
+        '         planning_horizon 4.0（= 1.6 x 感知，满足上游 "horizon >= 1.5 x sensing"）',
+        '',
+        '       近场：mindist %.3f + 相机前移 %.3f = 盲面 %.3f <= 有效膨胀 %.3f'
+        % (d['mindist'], P['cam_fwd'], blind, d['eff_infl']),
+        '         自机点（桨/保护圈/脚架）由 grid_map.cpp 的自机排除盒剔除，不靠 mindist：',
+        '         机体系 %s -> 相机系 AABB lo=%s hi=%s（外参读 VINS yaml）'
+        % (P['body_box'], d['lo'], d['hi']),
+        '',
+        '       历史（别按旧注释理解现象）：',
+        '         11-07 ground_height=-0.30 -> 地图下有走廊，实测钻到 z=-0.25',
+        '         11-08 morning  ground_height=0.05 -> 地板被 miss 擦掉，机体自己出图',
+        '         11-08 19:33    ground -0.01 + 膨胀 0.15（回上游）',
+        '         11-08 21:xx    ground %.2f + 膨胀 %.3f（用户令：机体半径 %.3f、mindist %.1f）'
+        % (P['ground_height'], P['inflation'], 0.337, P['depth_mindist']),
+        '       ================================================================== -->')
 
 
 def w_launch(d):
@@ -264,7 +308,14 @@ def w_launch(d):
         elif re.search(r'地面\(-?[0-9.]+\)', ln):
             ln = re.sub(r'地面\(-?[0-9.]+\)', '地面(%.2f)' % P['ground_height'], ln)
         res.append(ln)
-    return NL.join(res)
+    # 设计说明块整体重生成（旧块的数字会随参数漂移，所以不留手写版）
+    txt = NL.join(res)
+    st = txt.find('  <!-- ===== 设计说明')
+    en = txt.find('================================================================== -->')
+    if st >= 0 and en > st:
+        en = txt.find('-->', en) + 3
+        txt = txt[:st] + note_block(d) + txt[en:]
+    return txt
 
 
 # ---------------------------------------------------------------- 2) 契约
@@ -279,13 +330,13 @@ def params_block(d):
         '  max_acc: %.1f' % P['max_acc'],
         '  pose_type: %d' % P['pose_type'],
         '  resolution: %.2f' % P['resolution'],
-        '  obstacles_inflation: %.2f' % P['inflation'],
+        '  obstacles_inflation: %.3f' % P['inflation'],
         '  max_ray_length: %.1f' % P['max_ray'],
         '  local_map_margin: %d' % P['local_map_margin'],
         '  ground_height: %.2f' % P['ground_height'],
         '  map_size_z: %.2f             # 天花板 = %.2f' % (d['map_size_z'], d['ceiling']),
         '  ceiling_max: %.1f' % P['ceiling_max'],
-        '  depth_mindist: %.3f          # 派生: eff_inflation - 相机前移 - 1mm' % d['mindist'],
+        '  depth_mindist: %.3f          # 近场剔除下限（显式；几何门: mindist+cam_fwd <= eff_inflation）' % d['mindist'],
         '',
         'runtime:',
         '  # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。',

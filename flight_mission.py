@@ -416,17 +416,9 @@ class RosFlight:
             value = self.rospy.get_param(key, None)
             if not isinstance(value, (int, float)) or abs(value - expected) > 1e-6:
                 failures.append("参数 %s=%r，预期 %s" % (key, value, expected))
-        # 2026-11-08（用户令②）：电池门收到契约，与操作卡同一个数（原来只在人脑里）
-        bat_min = _contract_value("runtime.battery.min_fly_v", 14.0)
-        bat = self.cache.get("/mavros/battery")
-        if self._fresh("/mavros/battery", 5.0) and bat is not None and bat.voltage > 0.1:
-            if bat.voltage < bat_min:
-                failures.append("电池 %.2f V < 契约 min_fly_v %.2f V；换电池再飞"
-                                % (bat.voltage, bat_min))
-            else:
-                print("电池 %.2f V >= %.2f V（契约 min_fly_v）" % (bat.voltage, bat_min))
-        else:
-            print("!! 电池读数缺失/过期，跳过电压门（不阻断，但请人工确认电压）", flush=True)
+        # 2026-11-08 用户令：**电池门取消** —— /mavros/battery 实测读不到有效电压
+        # （0.0 V / -1%，PM 遥测未配），脚本里再加一道只会变成假绿或假红。
+        # 电压改为人工用外部电压表确认（>=14.0 V 才飞）；preflight §11 仍会 WARN 提示。
         if LANDING_FILE.exists():
             failures.append("检测到本轮降落标志；请完成停栈后再开始新轮")
 
