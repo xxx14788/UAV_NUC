@@ -37,6 +37,8 @@ P = {
     # 任务层
     'takeoff_height': 0.7,
     'goal_radius': 3.5,
+    'goal_clearance_min': 0.15,   # 收点时目标离膨胀层的最小净空（P0-1）
+    'no_replan_m': 0.3,           # 距目标多少米内仍允许重规划（P0-2；1.0 会造成末段开环）
     'hover_s': 5.0,
     'goal_topic': '/flight_v1/goal_gate',
     # 规划器/地图（派生链的根）
@@ -83,6 +85,7 @@ RECORD_TOPICS = [
     '/px4ctrl/takeoff_land', '/debugPx4ctrl', '/debugPx4ctrl/fsm_state',
     '/move_base_simple/goal', '/flight_v1/goal_gate',   # goal 项会被 record_topics() 换成 P['goal_topic']
     '/position_cmd', '/drone_0_planning/bspline',
+    '/drone_0_ego_planner_node/grid_map/occupancy_inflate',   # P1-6：离线判目标是否在膨胀层
     '/flight_v1/planned_path', '/flight_v1/executed_trail', '/flight_v1/goal_marker',
     '/tf', '/tf_static', '/rosout',
 ]
@@ -184,6 +187,7 @@ def launch_block(d):
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>',
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="%.3f"/>' % d['mindist'],
         '  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="%.3f"/>' % d['self_bubble'],
+        '  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="%.1f"/>' % P['no_replan_m'],
         '  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="%d"/>' % P['pose_type'],
         '  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="%d"/>' % P['local_map_margin'],
         '  <param name="/drone_0_ego_planner_node/grid_map/resolution" value="%.2f"/>' % P['resolution'],
@@ -336,6 +340,8 @@ def params_block(d):
         'params:',
         '  takeoff_height: %.2f          # == px4ctrl takeoff_height == 规划器 manual_goal_z' % P['takeoff_height'],
         '  goal_radius_m: %.1f            # == 规划器 manual_goal_max_distance == mission GOAL_RADIUS' % P['goal_radius'],
+        '  goal_clearance_min: %.2f       # 目标点离膨胀层最小净空（mission 收点即拒）' % P['goal_clearance_min'],
+        '  no_replan_m: %.1f              # == 规划器 fsm/thresh_no_replan_meter（末段死区）' % P['no_replan_m'],
         '  takeoff_hover_s: %.1f' % P['hover_s'],
         '  goal_hover_s: %.1f' % P['hover_s'],
         '  max_vel: %.1f' % P['max_vel'],

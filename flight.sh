@@ -16,7 +16,7 @@ state_once() { timeout 4 rostopic echo -n 1 /mavros/state 2>/dev/null; }
 connected() { state_once | grep -q 'connected: True'; }
 running() { rosnode list 2>/dev/null | grep -qx "$1"; }
 ros_processes() {
-  ps -eo comm=,args= | awk '$1 !~ /^(bash|sh|ps|awk|grep|ssh)$/ && $0 ~ /rosmaster|roscore|roslaunch|vins_node|vins_to_mavros|px4ctrl_node|mavros_node|realsense2_camera|ego_planner_node|traj_server|rviz|rosbag record/ {print}'
+  ps -eo comm=,args= | awk '$1 !~ /^(bash|sh|ps|awk|grep|ssh)$/ && $0 ~ /rosmaster|roscore|roslaunch|vins_node|vins_to_mavros|px4ctrl_node|mavros_node|realsense2_camera|ego_planner_node|traj_server|rviz|rosbag record|planned_path_pub|camera_pose_relay|map_only_node/ {print}'
 }
 
 case "$CMD" in
@@ -139,11 +139,12 @@ case "$CMD" in
       echo "检测到未由本入口管理的 rosbag record；先正常结束录制再停栈。" >&2; exit 1;
     fi
     if rostopic list >/dev/null 2>&1; then
-      NODES=$(rosnode list | grep -E '^/(mavros|camera|realsense|vins|px4ctrl|drone_0_|planner_camera_pose_relay)' || true)
+      NODES=$(rosnode list | grep -E '^/(mavros|camera|realsense|vins|px4ctrl|drone_0_|planner_camera_pose_relay|planned_path_pub|mapping_view)' || true)
       [ -z "$NODES" ] || rosnode kill $NODES >/dev/null 2>&1 || true
       sleep 2
       pkill -INT -f '[r]oslaunch' 2>/dev/null || true
       pkill -INT -f '[c]amera_pose_relay.py' 2>/dev/null || true
+      pkill -INT -f '[p]lanned_path_pub.py' 2>/dev/null || true
       pkill -INT -x vins_node 2>/dev/null || true
       pkill -INT -f '[v]ins_to_mavros_node' 2>/dev/null || true
       pkill -INT -x px4ctrl_node 2>/dev/null || true

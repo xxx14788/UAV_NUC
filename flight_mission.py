@@ -152,6 +152,8 @@ class RosFlight:
         from nav_msgs.msg import Odometry
         from quadrotor_msgs.msg import PositionCommand, TakeoffLand
         from std_msgs.msg import String
+        from sensor_msgs.msg import PointCloud2
+        import sensor_msgs.point_cloud2 as pc2
 
         self.rospy = rospy
         self.PoseStamped = PoseStamped
@@ -207,6 +209,10 @@ class RosFlight:
         sub("/debugPx4ctrl/fsm_state", String)
         sub("/position_cmd", PositionCommand)
         sub("/move_base_simple/goal", PoseStamped, self._goal_cb)
+        # P0-1：目标净空看的是"膨胀后的地图"（规划器实际用的那张）
+        sub("/drone_0_ego_planner_node/grid_map/occupancy_inflate", PointCloud2,
+            self._map_cb)
+        sub("/flight_v1/goal_status", String, self._goal_status_cb)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
 
@@ -264,6 +270,73 @@ class RosFlight:
         if channels[4] <= 1750:
             raise RuntimeError("必须保持 CH5 悬停档（CH5=%.0f）" % channels[4])
 
+    # ---------------------------------------------------------------- P0-1
+    def _map_cb(self, msg):
+        """缓存膨胀层点云（只留一份，goal 检查时按包围盒筛）。"""
+        try:
+            pts = []
+            gx = gy = None
+            for p in pc2.read_points(msg, field_names=("x", "y", "z"), skip_nans=True):
+                pts.append((p[0], p[1], p[2]))
+        except Exception:
+            return
+        self.map_pts = pts
+        self.map_stamp = time.monotonic()
+
+    def _goal_clearance(self, gx, gy, gz):
+        """返回 (最小距离, 点数) ；地图缺失/过期返回 (None, 0)。"""
+        if not getattr(self, "map_pts", None):
+            return None, 0
+        if time.monotonic() - getattr(self, "map_stamp", 0) > 2.0:
+            return None, 0
+        best, n = 1e9, 0
+        for x, y, z in self.map_pts:
+            if abs(x - gx) > 0.8 or abs(y - gy) > 0.8 or abs(z - gz) > 0.8:
+                continue
+            n += 1
+            d = math.sqrt((x - gx) ** 2 + (y - gy) ** 2 + (z - gz) ** 2)
+            if d < best:
+                best = d
+        return (best if n else 1e9), n
+
+    # ---------------------------------------------------------------- P0-3
+    def _goal_status_cb(self, msg):
+        """规划器回传：OK / ADJUSTED dx dy / UNREACHABLE。
+        2026-11-09 用户令：改点必须告知；偏差过大或不可达就悬停等新点。"""
+        txt = (msg.data or "").strip()
+        if not txt:
+            return
+        print("[goal_status] %s" % txt, flush=True)
+        if txt == "OK":
+            return
+        bad = txt == "UNREACHABLE"
+        if txt.startswith("ADJUSTED"):
+            try:
+                _, dx, dy = txt.split()
+                bad = math.hypot(float(dx), float(dy)) > 0.20
+            except Exception:
+                bad = False
+        if not bad:
+            return
+        if self.phase != "navigation":
+            return
+        # 悬停：把当前位置作为新目标发出去（规划器会生成一条零位移轨迹）
+        try:
+            p = self._odom().pose.pose.position
+            hold = self.PoseStamped()
+            hold.header.stamp = self.rospy.Time.now()
+            hold.header.frame_id = "world"
+            hold.pose.position.x = p.x
+            hold.pose.position.y = p.y
+            hold.pose.position.z = p.z
+            hold.pose.orientation.w = 1.0
+            self.goal_pub.publish(hold)
+            print("!! 目标不可用（%s）：已发当前位置悬停，等待新目标" % txt, flush=True)
+        except Exception as exc:
+            print("!! 悬停指令发送失败：%r" % (exc,), flush=True)
+        self.phase = "await_goal"
+        self.goal_used = False
+
     def _goal_cb(self, msg):
         if self.phase != "await_goal" or self.goal_used or LANDING_FILE.exists() or STOP_FILE.exists():
             print("忽略目标：当前不在可选点阶段，或降落已开始", flush=True)
@@ -283,6 +356,19 @@ class RosFlight:
             target, distance = validate_goal(
                 msg.header.frame_id, stamp, self.rospy.Time.now().to_sec(),
                 (gx, gy), (p.x, p.y), self.anchor)
+            # P0-1（2026-11-09 批准）：目标点净空校验 —— 目标落在膨胀层里时
+            # A* 会把终点静默外推或直接失败，必须在收点这一步就拦住。
+            clear_min = _contract_value("params.goal_clearance_min", 0.15)
+            dmin, npts = self._goal_clearance(target[0], target[1], target[2])
+            if dmin is None:
+                print("!! 地图膨胀层不可用（或过期），跳过目标净空检查；"
+                      "若规划器报 end-adjust 失败请先查地图", flush=True)
+            elif dmin < clear_min:
+                raise RuntimeError("目标离障碍过近：%.2f m < %.2f m（膨胀层最近点 %d 个）"
+                                   % (dmin, clear_min, npts))
+            else:
+                print("目标净空 %.2f m（>= %.2f m）" % (dmin, clear_min), flush=True)
+
             gated = self.PoseStamped()
             gated.header.stamp = self.rospy.Time.now()
             gated.header.frame_id = "world"

@@ -35,6 +35,8 @@ seams:
 params:
   takeoff_height: 0.70          # == px4ctrl takeoff_height == 规划器 manual_goal_z
   goal_radius_m: 3.5            # == 规划器 manual_goal_max_distance == mission GOAL_RADIUS
+  goal_clearance_min: 0.15       # 目标点离膨胀层最小净空（mission 收点即拒）
+  no_replan_m: 0.3              # == 规划器 fsm/thresh_no_replan_meter（末段死区）
   takeoff_hover_s: 5.0
   goal_hover_s: 5.0
   max_vel: 0.5
@@ -101,6 +103,7 @@ record_topics:   # 录包唯一清单（recorder 读 generated/record_topics.txt
   - /flight_v1/goal_gate
   - /position_cmd
   - /drone_0_planning/bspline
+  - /drone_0_ego_planner_node/grid_map/occupancy_inflate
   - /flight_v1/planned_path
   - /flight_v1/executed_trail
   - /flight_v1/goal_marker
