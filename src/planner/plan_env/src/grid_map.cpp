@@ -268,6 +268,12 @@ void GridMap::projectDepthImage()
              u += mp_.skip_pixel_)
         {
 
+          /* 2026-11-08（独立审计，已复核）：原实现**指针先前进再判 0**，判的是下一个像素。
+             后果：本像素有有效测距、而隔壁像素是 0（深度断崖/空洞，极常见）时，
+             depth 会被改写成 max_ray_length+0.1 当作**自由空间**向外 raycast
+             -> 真实障碍被从地图上侵蚀掉（比 mindist 更危险）。
+             修法：先记住本像素是否 0，用它判；指针推进顺序与语义完全不变。 */
+          const bool depth_zero = (*row_ptr == 0);
           depth = (*row_ptr) * inv_factor;
           row_ptr = row_ptr + mp_.skip_pixel_;
 
@@ -275,7 +281,7 @@ void GridMap::projectDepthImage()
           // depth += rand_noise_(eng_);
           // if (depth > 0.01) depth += rand_noise2_(eng_);
 
-          if (*row_ptr == 0)
+          if (depth_zero)
           {
             depth = mp_.max_ray_length_ + 0.1;
           }
@@ -419,6 +425,9 @@ void GridMap::raycastProcess()
       Eigen::Vector3d tmp = (ray_pt + half) * mp_.resolution_;
       length = (tmp - md_.camera_pos_).norm();
 
+      /* 2026-11-08（审计核对）：这行上游就被注掉 = 死代码，"0.3 m 内不清空"的假设不成立。
+         **故意保持注释**：恢复它会让 0.2~0.3 m 的格子不再被清空 -> 近场更容易残留伪占据
+         -> 正是 "drone is in obstacle" 那个死锁。近场唯一的闸是 depth_filter_mindist。 */
       // if (length < mp_.min_ray_length_) break;
 
       vox_idx = setCacheOccupancy(tmp, 0);

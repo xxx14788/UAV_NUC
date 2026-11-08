@@ -1229,13 +1229,20 @@ namespace ego_planner
         flag_new_obs_valid = true;
 
         int j;
-        /* 2026-11-08（今早四袋）：起点可行性的判据改**真实占据**。
-           原来用膨胀层：无人机在箱子区起飞时起点就在某个箱子的 0.45 m 膨胀里，
-           两个搜索都失败 -> "the drone is in obstacle" + "terminal point in obstacle"
-           -> 拒绝规划 -> /position_cmd 一条都不发（实测 8060+8060 次）。 */
+        /* 2026-11-08（今早四袋 + 独立审计）：起点可行的判据 = 真实占据，且**自身气泡视为自由**。
+           ① 用膨胀层判起点 -> 箱子区起飞时必然失败（实测 8060+8060 次拒绝）；
+           ② 只用真实占据还不够：机体原点离地约 3 cm，而地板点落进同一个 0.15 m 体素
+              （地面测试实测 22203 次 "drone is in obstacle"）。无人机物理上就在那儿，
+              所以**以起点为心、半径 = 膨胀半径**的球内一律当自由，再往后的点才看真实占据。 */
+        const Eigen::Vector3d self_p = cps_.points.col(0);
+        const double self_bubble = grid_map_->getResolution() *
+                                   std::ceil(0.337 / grid_map_->getResolution());
         for (j = i - 1; j >= 0; --j)
         {
-          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));
+          const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));
+          occ = (pj - self_p).norm() <= self_bubble
+                    ? 0
+                    : grid_map_->getOccupancy(pj);
           if (!occ)
           {
             in_id = j;
