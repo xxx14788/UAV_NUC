@@ -2,6 +2,7 @@
 """Guarded takeoff, one RViz goal, endpoint hover, and explicit landing."""
 import argparse
 import fcntl
+import json
 import math
 import os
 import re
@@ -21,9 +22,64 @@ STOP_FILE = STATE_DIR / "stopping"
 TARGET_Z = None
 DRY = False  # --dry：只跑飞前检查，不发布 TAKEOFF/LAND（彩排用）
 SIM = False  # --sim：SITL 模式，跳过 RC 通道检查（仿真无遥控器）
-GOAL_RADIUS = 3.5   # 2026-11-07 用户令：2.0 -> 3.5 m
-TAKEOFF_HOVER_SECONDS = 5.0
+GOAL_RADIUS = 3.5   # 2026-11-07 用户令：2.0 -> 3.5 m（契约缺失时的回退，见下方）
+
+
+# 2026-11-08（方案 v2 C3）：接缝值从契约读（唯一事实源）。
+# 这里保留字面量只作**契约缺失时的回退**；check_interfaces.py --static 会断言
+# 两者一致，所以不存在"两个真源各说各话"。
+def _contract_value(dotted, default):
+    try:
+        import yaml
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "contract", "flight_contract.yaml")
+        with open(path, encoding="utf-8") as fh:
+            cur = yaml.safe_load(fh)
+        for key in dotted.split("."):
+            cur = cur[key]
+        return float(cur)
+    except Exception:
+        return default
+
+
+GOAL_RADIUS = _contract_value("params.goal_radius_m", GOAL_RADIUS)
+
+
+def _contract_str(dotted, default):
+    """契约里的字符串值（同样只在契约缺失时回退）。"""
+    try:
+        import yaml
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "contract", "flight_contract.yaml")
+        with open(path, encoding="utf-8") as fh:
+            cur = yaml.safe_load(fh)
+        for key in dotted.split("."):
+            cur = cur[key]
+        return str(cur)
+    except Exception:
+        return default
+
+
+GOAL_TOPIC = _contract_str("seams.goal.topic", "/flight_v1/goal_gate")
+
+
+def goal_stall_verdict(elapsed_s, dist_to_goal_m, vcmd_mps,
+                       settle_s=5.0, min_gap_m=0.50, min_v_mps=0.05):
+    """目标金丝雀判据（纯函数；tests/test_contract.py 覆盖）。
+
+    2026-11-08 二审修正（原判据有两个真问题）：
+      * 原来用"相对起点位移 <0.2 m"：对 <0.2 m 的近目标会**误中止**；
+      * 原来起点取 /position_cmd 当前位置、不新鲜时回退 (0,0)：首个目标前该话题从无流
+        （traj_server 只在收到 bspline 后才发），于是回退必发生；若悬停点离 VINS 原点
+        >0.2 m，"原地保持"指令本身位移就 >0.2 m -> 金丝雀**永远不触发**（事故形态复发）。
+    现在按方案原文：**离目标还差 >0.5 m 且没有指令速度** -> 中止。
+    """
+    return bool(elapsed_s >= settle_s and dist_to_goal_m > min_gap_m
+                and vcmd_mps < min_v_mps)
+TAKEOFF_HOVER_SECONDS = 5.0   # 契约缺失时回退
 GOAL_HOVER_SECONDS = 5.0
+TAKEOFF_HOVER_SECONDS = _contract_value("params.takeoff_hover_s", TAKEOFF_HOVER_SECONDS)
+GOAL_HOVER_SECONDS = _contract_value("params.goal_hover_s", GOAL_HOVER_SECONDS)
 
 
 def validate_rc_channels(channels):
@@ -50,7 +106,7 @@ def validate_goal(frame, stamp, now, goal_xy, current_xy, anchor_z):
     gx, gy = goal_xy
     distance = math.hypot(gx - current_xy[0], gy - current_xy[1])
     if not math.isfinite(distance) or distance > GOAL_RADIUS:
-        raise ValueError("目标超出当前位置水平 3.5 m 限制")
+        raise ValueError("目标超出当前位置水平 %.1f m 限制" % GOAL_RADIUS)
     return (gx, gy, anchor_z + TARGET_Z), distance
 
 
@@ -108,6 +164,9 @@ class RosFlight:
         self.anchor = None
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
+        # 2026-11-08（方案 v2 C3）：目标金丝雀状态（发目标后 5 s 内指令不动 -> 中止）
+        self.goal_cmd_t0 = None
+        self.goal_target_xy = None
         self.goal_count = 0
         self.target = None
         self.nav_done = False
@@ -146,7 +205,7 @@ class RosFlight:
         sub("/position_cmd", PositionCommand)
         sub("/move_base_simple/goal", PoseStamped, self._goal_cb)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
-        self.goal_pub = rospy.Publisher("/flight_v1/goal_gate", PoseStamped, queue_size=2)
+        self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
 
     def _rc_cb(self, msg):
         self.rc = msg
@@ -231,6 +290,10 @@ class RosFlight:
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
+            # 金丝雀起点（方案 v2 C3 + 二审 F2）：只记"目标 xy + 时刻"，
+            # 判据用"指令离目标还差多少"，不再依赖 /position_cmd 是否已有流。
+            self.goal_target_xy = (target[0], target[1])
+            self.goal_cmd_t0 = time.monotonic()
             print("已接收目标：距离 %.2f m，目标相对起飞高度 %.2f m" % (distance, TARGET_Z), flush=True)
         except Exception as exc:
             print("拒绝 RViz 目标：%s" % exc, flush=True)
@@ -368,6 +431,31 @@ class RosFlight:
         pose = self.cache["/vins_estimator/odometry"].pose.pose.position
         self.anchor = pose.z
         self.anchor_xy = (pose.x, pose.y)
+        # 2026-11-08（方案 v2 C3）：接缝硬门。深度/位姿边必须活着且时间戳对齐，
+        # 否则规划器一收到目标就 EMERGENCY_STOP（22:36 那轮就是这么报废的），
+        # 而地面检查全绿。SKIP_INTERFACES=1 只在彩排调试时用，正式起飞不要设。
+        skip_gate = os.environ.get("SKIP_INTERFACES") == "1"
+        if skip_gate:
+            print("!!!!!!!! 接缝硬门被 SKIP_INTERFACES=1 跳过 —— 正式起飞禁止 !!!!!!!!",
+                  flush=True)
+        if not skip_gate:
+            checker = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   "check_interfaces.py")
+            # 2026-11-08：**必须带 timeout**。检查器若因 master/话题异常挂住，
+            # 没有 timeout 就等于把起飞命令挂死（实测 --task 在无 master 时 40 s 退不出）。
+            try:
+                proc = subprocess.run([sys.executable, checker, "--task"],
+                                      capture_output=True, text=True, timeout=60)
+            except subprocess.TimeoutExpired:
+                raise RuntimeError("接缝检查超时 60 s（ROS master/话题异常？）；拒绝起飞")
+            if proc.returncode != 0:
+                try:
+                    bad = [c for c in json.loads(proc.stdout)["checks"] if not c["ok"]]
+                    detail = "; ".join("%s=%s" % (c["name"], c.get("actual")) for c in bad[:6])
+                except Exception:
+                    detail = (proc.stdout[-300:] + " " + proc.stderr[-300:]).strip()
+                raise RuntimeError("接缝检查未过（深度/位姿/目标/指令边）；拒绝起飞：%s" % detail)
+            print("接缝检查通过（深度/位姿/目标/指令边 + 参数一致性）。", flush=True)
         print("起飞前检查通过：RC 四杆居中、CH5 悬停（CH6 不参与）；目标高度相对锚点 %.3f m" % self.anchor)
 
     def _rc_summary(self):
@@ -467,6 +555,32 @@ class RosFlight:
                 continue
             if deadline is None:
                 deadline = time.monotonic() + 180.0
+            # 2026-11-08（方案 v2 C3）目标金丝雀：发目标后 5 s，若 /position_cmd 原地不动
+            # 就报根因并中止。22:36 那轮的形态：规划器 EMERGENCY_STOP -> traj_server 以
+            # 100 Hz 发"原地保持" -> px4ctrl 因"有 cmd 流"进 CMD_CTRL -> 人只看到"点了不走"。
+            if self.goal_cmd_t0 is not None and self.goal_target_xy is not None \
+                    and time.monotonic() - self.goal_cmd_t0 >= 5.0:
+                if self._fresh("/position_cmd", 0.5):
+                    cmd = self.cache["/position_cmd"]
+                    gap = math.hypot(cmd.position.x - self.goal_target_xy[0],
+                                     cmd.position.y - self.goal_target_xy[1])
+                    vcmd = math.hypot(cmd.velocity.x, cmd.velocity.y)
+                    if goal_stall_verdict(time.monotonic() - self.goal_cmd_t0, gap, vcmd):
+                        msg = ("目标已发出 %.1f s，但 /position_cmd 离目标还差 %.2f m 且"
+                               " |v|=%.3f m/s —— 规划器没有产生运动。最常见根因：规划器"
+                               " EMERGENCY_STOP（odom/depth 超时，见规划器日志 "
+                               "'odom or depth lost'/'Depth Lost'）。检查 /planner/camera_pose "
+                               "与 /camera/depth 是否断过流。"
+                               % (time.monotonic() - self.goal_cmd_t0, gap, vcmd))
+                        print("!! 目标金丝雀触发：" + msg, flush=True)
+                        # 方案 v2 C3 承诺走既有自动降落路径（二审 F7）：先自动降落再抛错，
+                        # 避免"规划器脑死 + 原地悬停到电量耗尽"。降落失败则退回人工接管。
+                        try:
+                            self.land()
+                        except Exception as lexc:
+                            print("!! 自动降落失败（%s）；遥控器接管（CH5 拨低）" % lexc, flush=True)
+                        raise RuntimeError(msg)
+                    self.goal_cmd_t0 = None  # 已在动/已接近，金丝雀完成使命
             if time.monotonic() >= deadline:
                 break
             state = self._state()
@@ -491,6 +605,8 @@ class RosFlight:
                     self.goal_used = False
                     self.stable_since = None
                     self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+                    self.goal_cmd_t0 = None
+                    self.goal_target_xy = None
                     self.phase = "await_goal"
                     deadline = None
                     print("第 %d 个目标到达并稳定悬停 %.0f 秒。%.0f 秒内可点下一个目标，否则自动降落。"

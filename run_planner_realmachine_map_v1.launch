@@ -64,6 +64,9 @@
          RViz 2D Nav Goal 在地面平面打点，发出的 z=0 -> 飞机会被命令降到地面。
          守卫只有 z<-0.1 才拒，z=0 放行。改为 false -> 恒用 manual_goal_z=0.7。 -->
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_use_msg_z" value="false"/>
+  <!-- 2026-11-08（方案 v2 P2）：急停自愈开关与健康确认窗。false / 大值 = 回到旧行为。 -->
+  <param name="/drone_0_ego_planner_node/fsm/fail_safe_recover" value="true"/>
+  <param name="/drone_0_ego_planner_node/fsm/fail_safe_recover_hold_s" value="2.5"/>
   <param name="/drone_0_traj_server/traj_server/odom_topic" value="/vins_estimator/imu_propagate"/>
   <param name="/drone_0_traj_server/traj_server/time_forward" value="1.0"/>
   <!-- 2026-11-07 审查修正（D7）：原来的顶层 remap 写在这里是**无效的**——
