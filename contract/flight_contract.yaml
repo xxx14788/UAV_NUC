@@ -44,6 +44,10 @@ params:
   max_acc: 1.0            # == manager/max_acc
   pose_type: 1            # == grid_map/pose_type（1=吃 /planner/camera_pose）
   ground_height: 0.05     # == grid_map/ground_height（地图底，略高于真实地面 -> 剔除地板点）
+  # 2026-11-08 独立审计：近场盲面 = depth_mindist + 相机前移(0.034) + 1 格体素
+  # 必须 <= 膨胀实际半径 ceil(inflation/resolution)*resolution，否则会出现
+  # "障碍看不见又被当可通行"、然后机体已在膨胀层里的死锁。0.35 违约，0.2 合规。
+  depth_mindist: 0.2      # == grid_map/depth_filter_mindist
   map_size_z: 1.25        # 顶 = ground_height + map_size_z = 1.30
   ceiling_max: 1.5        # 天花板必须低于箱高，否则规划器会从箱顶过
 

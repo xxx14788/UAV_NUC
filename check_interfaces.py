@@ -282,6 +282,23 @@ def live_checks(ck, contract, mode):
     # 2026-11-08（今早四袋）：地图底必须略高于真实地面，否则地板被当障碍
     gh = rospy.get_param(PLANNER + "/grid_map/ground_height", None)
     gh_exp = _get(contract, "params.ground_height")
+    # 2026-11-08（独立审计）：近场盲面 vs 膨胀半径 的几何自洽
+    mind = rospy.get_param(PLANNER + "/grid_map/depth_filter_mindist", None)
+    mind_exp = _get(contract, "params.depth_mindist")
+    res = rospy.get_param(PLANNER + "/grid_map/resolution", 0.15)
+    infl = rospy.get_param(PLANNER + "/grid_map/obstacles_inflation", None)
+    blind = eff_infl = None
+    if isinstance(mind, (int, float)) and isinstance(res, (int, float)) and isinstance(infl, (int, float)):
+        eff_infl = math.ceil(float(infl) / float(res)) * float(res)   # 实际膨胀（整格施加）
+        blind = float(mind) + 0.034 + float(res)                      # 盲面 + 相机前移 + 1 格
+    ck.add("近场盲面 <= 膨胀半径(mindist+0.034+res <= ceil(infl/res)*res)",
+           blind is not None and eff_infl is not None and blind <= eff_infl + 1e-9,
+           {"blind_m": None if blind is None else round(blind, 3),
+            "eff_inflation_m": None if eff_infl is None else round(eff_infl, 3)})
+    ck.add("depth_mindist == 契约",
+           isinstance(mind, (int, float)) and mind_exp is not None
+           and abs(float(mind) - float(mind_exp)) < 1e-6,
+           {"runtime": mind, "contract": mind_exp})
     ck.add("地图底略高于真实地面(ground_height > 0)",
            isinstance(gh, (int, float)) and gh > 0.0 and gh_exp is not None
            and abs(float(gh) - float(gh_exp)) < 1e-6,

@@ -63,7 +63,11 @@
        地板近场点(7~22cm)直接落到图外。map_size_z 1.25 -> 天花板仍 1.30 < 箱高 1.5。 -->
   <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="0.05"/>
   <!-- 近场剔除：机体/桨/地板在相机 0.1~0.3 m 内的点不要进图 -->
-  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.35"/>
+  <!-- 2026-11-08（独立审计）：0.35 -> 0.2。
+       盲面 = mindist + 相机前移 0.034；0.35 时 0.384 m，而膨胀实际 0.45 m（ceil(0.337/0.15)=3 格），
+       余量再被 0.15 m 体素吃掉 = 零 -> "0.25~0.38 m 的真障碍看不见又被当可通行"。
+       0.2 时盲面 0.234 m、余量 0.216 m；近场自机点实测 7~22 cm 仍被剔除（0.2 足够）。 -->
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.2"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.7"/>  <!-- 2026-11-07: 与 px4ctrl takeoff_height 对齐(0.5->0.7) -->
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>  <!-- 2026-11-07 用户令：2.0 -> 3.5 -->
   <!-- 2026-11-07 审查修正：原为 true -> 目标高度取自 RViz 消息 z。
