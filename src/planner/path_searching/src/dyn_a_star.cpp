@@ -146,7 +146,7 @@ bool AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d end_
     inv_step_size_ = 1 / step_size;
     // 2026-11-08（用户令 5）：自身气泡圆心=本次搜索起点，半径=等效膨胀（参数派生）
     self_pos_ = start_pt;
-    self_bubble_ = grid_map_->getEffectiveInflation();
+    self_bubble_ = grid_map_->getSelfBubble();   // 同一参数口径（缺省=等效膨胀）
     center_ = (start_pt + end_pt) / 2;
 
     Vector3i start_idx, end_idx;

@@ -52,6 +52,7 @@ struct MappingParameters {
   Eigen::Vector3d local_update_range_;
   double resolution_, resolution_inv_;
   double obstacles_inflation_;
+  double self_bubble_;   // <=0 -> 回落到等效膨胀（2026-11-08 用户令：单独成参数）
   string frame_id_;
   int pose_type_;
 
@@ -181,6 +182,7 @@ public:
   void getRegion(Eigen::Vector3d& ori, Eigen::Vector3d& size);
   inline double getResolution();
   inline double getEffectiveInflation();   // 2026-11-08：等效膨胀 = ceil(infl/res)*res
+  inline double getSelfBubble();           // 2026-11-08：自机气泡半径（参数，缺省=等效膨胀）
   Eigen::Vector3d getOrigin();
   int getVoxelNum();
   bool getOdomDepthTimeout() { return md_.flag_depth_odom_timeout_; }
@@ -410,6 +412,12 @@ inline double GridMap::getResolution() { return mp_.resolution_; }
 // 2026-11-08（用户令 4/5）：等效膨胀半径。地图按整格施加膨胀，所以实际生效的
 // 半径是 ceil(obstacles_inflation/res)*res（0.337 -> 0.45）。所有"自身气泡"
 // 都从这里取，不要再抄数字。
+inline double GridMap::getSelfBubble() {
+  // 2026-11-08（用户令）：气泡优先取 grid_map/self_bubble 参数；
+  // 参数缺失或 <=0 时回落到等效膨胀，保证"只改 inflation 也不会漏改泡泡"。
+  return mp_.self_bubble_ > 1e-9 ? mp_.self_bubble_ : getEffectiveInflation();
+}
+
 inline double GridMap::getEffectiveInflation() {
   const double r = mp_.resolution_;
   if (r <= 1e-9) return 0.0;

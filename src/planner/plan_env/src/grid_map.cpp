@@ -17,11 +17,13 @@ void GridMap::initMap(ros::NodeHandle &nh)
   node_.param("grid_map/local_update_range_y", mp_.local_update_range_(1), -1.0);
   node_.param("grid_map/local_update_range_z", mp_.local_update_range_(2), -1.0);
   node_.param("grid_map/obstacles_inflation", mp_.obstacles_inflation_, -1.0);
+  node_.param("grid_map/self_bubble", mp_.self_bubble_, -1.0);
   // 2026-11-08：把等效膨胀打出来（自机气泡 / A* 豁免都取这个值，改参数时一眼可核）
-  ROS_INFO("[grid_map] res %.2f  infl_param %.3f -> eff_infl %.2f m  (ceil(infl/res)=%d)",
+  ROS_INFO("[grid_map] res %.2f  infl_param %.3f -> eff_infl %.2f m  (ceil(infl/res)=%d)  self_bubble %.2f m (%s)",
            mp_.resolution_, mp_.obstacles_inflation_,
            mp_.resolution_ * std::ceil(mp_.obstacles_inflation_ / mp_.resolution_),
-           (int)std::ceil(mp_.obstacles_inflation_ / mp_.resolution_));
+           (int)std::ceil(mp_.obstacles_inflation_ / mp_.resolution_),
+           getSelfBubble(), mp_.self_bubble_ > 1e-9 ? "explicit param" : "fallback = eff_infl");
 
   node_.param("grid_map/fx", mp_.fx_, -1.0);
   node_.param("grid_map/fy", mp_.fy_, -1.0);
@@ -664,6 +666,11 @@ void GridMap::clearAndInflateLocalMap()
           for (int k = 0; k < (int)inf_pts.size(); ++k)
           {
             inf_pt = inf_pts[k];
+            // 2026-11-08：竖向只膨胀 1 格（点云回调 inf_step_z=1 本来就这样，深度回调漏了）。
+            // 机体竖向半高约 0.13 m；全向 0.45 会把地板壳顶抬到 ground+res+0.45 = 0.50，
+            // 掉高 0.2 m 机体就落进壳里 -> refineTrajAlgo 第一个采样点判撞 -> 永久锁死。
+            // 改成 1 格后壳顶 = ground+res+0.15 = 0.20，横向 0.45 完全不变。
+            if (inf_pt(2) - z > 1 || inf_pt(2) - z < -1) continue;
             int idx_inf = toAddress(inf_pt);
             if (idx_inf < 0 ||
                 idx_inf >= mp_.map_voxel_num_(0) * mp_.map_voxel_num_(1) * mp_.map_voxel_num_(2))

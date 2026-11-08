@@ -1237,7 +1237,7 @@ namespace ego_planner
         const Eigen::Vector3d self_p = cps_.points.col(0);
         // 2026-11-08（用户令 4）：气泡从参数派生，改 inflation 就自动跟着变，
         // 不再硬编码（原来写 0.337，调膨胀后泡泡会悄悄错位）。
-        const double self_bubble = grid_map_->getEffectiveInflation();
+        const double self_bubble = grid_map_->getSelfBubble();   // 参数（缺省=等效膨胀）
         for (j = i - 1; j >= 0; --j)
         {
           const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));
