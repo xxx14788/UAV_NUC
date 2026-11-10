@@ -37,7 +37,7 @@ P = {
     # 任务层
     'takeoff_height': 0.7,
     'goal_radius': 3.5,
-    'goal_clearance_min': 0.15,   # 收点时目标离膨胀层的最小净空（P0-1）
+    'goal_clearance_min': 0.30,   # 收点时目标离膨胀层的最小净空（用户令 0.15->0.30）
     'no_replan_m': 0.3,           # 距目标多少米内仍允许重规划（P0-2；1.0 会造成末段开环）
     'replan_time': 0.5,           # 两次重规划最小间隔（用户令 1.0 -> 0.5）
     'hover_s': 5.0,
