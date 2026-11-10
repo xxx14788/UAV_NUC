@@ -43,6 +43,12 @@ public:
   static constexpr double API_MODE_THRESHOLD_VALUE = 0.75;
   static constexpr double REBOOT_THRESHOLD_VALUE = 0.5;
   static constexpr double DEAD_ZONE = 0.25;
+  // 2026-11-10（整改 F-01）：居中判据的通道数与被判阈值。
+  // ch[] 已在 feed() 里做过归一化 + 死区折算：|ch[i]| < RC_CENTER_EPS 等价于
+  // 原始通道在 1500±125 内（DEAD_ZONE*500），与 flight_mission.py 的
+  // runtime.rc.centered_tol=125 是同一判据，改动必须两边同步。
+  static constexpr int RC_STICK_COUNT = 4;      // CH1..CH4 = roll / pitch / throttle / yaw
+  static constexpr double RC_CENTER_EPS = 1e-5; // 归一化杆量阈值（死区外侧已折算，见上）
 
   RC_Data_t();
   void check_validity();

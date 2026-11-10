@@ -88,4 +88,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_reinit_reset
     test/test_reinit_reset.cpp src/input.cpp)
   target_link_libraries(test_reinit_reset ${catkin_LIBRARIES})
+
+  # 2026-11-10（整改 F-01）: RC "四杆居中"判据回归锚。
+  # 旧实现四次都判 ch[0]，pitch/throttle/yaw 漏检；本测三个用例在旧码上必红。
+  catkin_add_gtest(test_rc_centered
+    test/test_rc_centered.cpp src/input.cpp)
+  target_link_libraries(test_rc_centered ${catkin_LIBRARIES})
 endif()

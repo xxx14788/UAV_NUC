@@ -1,5 +1,7 @@
 #include "input.h"
 
+#include <cmath>   // std::fabs（原实现用全局 abs()，在无 <cmath> 重载的编译单元里会退化为 int abs）
+
 RC_Data_t::RC_Data_t()
 {
     rcv_stamp = ros::Time(0);
@@ -112,8 +114,16 @@ void RC_Data_t::check_validity()
 
 bool RC_Data_t::check_centered()
 {
-    bool centered = abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5;
-    return centered;
+    // 2026-11-10（整改 F-01）：原实现是 `abs(ch[0]) < 1e-5` 连写四遍 —— 四个判据全是
+    // ch[0](roll)，pitch/throttle/yaw 从未被检查。该函数是 AUTO_TAKEOFF 唯一的 RC 门
+    // （fsm_decision::decide_manual 的 RJ_RC_GUARD），等于带着偏杆起飞被放行。
+    // 回归锚: test/test_rc_centered.cpp 的 OffCenterPitch 用例在旧实现上必红。
+    for (int i = 0; i < RC_STICK_COUNT; ++i)
+    {
+        if (std::fabs(ch[i]) >= RC_CENTER_EPS)
+            return false;
+    }
+    return true;
 }
 
 Odom_Data_t::Odom_Data_t()
