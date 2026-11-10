@@ -47,8 +47,8 @@ def main():
         time.sleep(8)
         print("== 起相机", flush=True)
         procs.append(sh("roslaunch realsense2_camera rs_camera.launch "
-                        "infra_width:=640 infra_height:=480 infra_fps:=30 "
-                        "depth_width:=640 depth_height:=480 depth_fps:=30 "
+                        "infra_width:=1280 infra_height:=720 infra_fps:=30 "
+                        "depth_width:=1280 depth_height:=720 depth_fps:=30 "
                         "enable_infra1:=true enable_infra2:=true enable_depth:=true "
                         "align_depth:=true", log=logf))
         sh("timeout 40 bash -c 'until rostopic list 2>/dev/null | grep -q %s; do sleep 1; done'" % DEPTH)

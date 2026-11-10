@@ -55,10 +55,10 @@ params:
 runtime:
   # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。
   depth_intrinsics:            # 规划器消费的 D435 对齐深度内参（VINS 用它自己的一套，见 left/right yaml）
-    fx: 387.507751
-    fy: 387.507751
-    cx: 323.501404
-    cy: 232.691727
+    fx: 645.846252
+    fy: 645.846252
+    cx: 645.835693
+    cy: 347.819550
   rc:
     channels: 8
     centered_tol: 125

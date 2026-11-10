@@ -125,7 +125,16 @@ case "$CMD" in
     touch "$STATE/stopping"
     trap 'rm -f "$STATE/stopping"' EXIT
     if rostopic list >/dev/null 2>&1; then
-      python3 "$FLOW/flight_mission.py" assert-ground
+      # 2026-11-10：飞控链路断掉时 assert-ground 会抛 "MAVROS state 未知或过期"，
+      # 原来因此拒绝停栈 -> 半死栈留在机器上（实测发生过）。
+      # 判据分层：状态可读且不在接地态 -> 拒绝；状态读不到 -> 按地面处理并警告。
+      if ! python3 "$FLOW/flight_mission.py" assert-ground; then
+        if timeout 5 rostopic echo -n1 /mavros/state >/dev/null 2>&1; then
+          echo "✗ 地面断言未过且飞控状态可读——拒绝停栈（先确认飞机在地面/上锁）" >&2
+          exit 1
+        fi
+        echo "!! 地面断言未过，但 /mavros/state 读不到（链路已断）——按地面处理，继续停栈" >&2
+      fi
     elif pgrep -x rosmaster >/dev/null || pgrep -x roscore >/dev/null; then
       echo "ROS 状态未知，拒绝停栈；检查 ROS master 与飞控状态。" >&2; exit 1
     else

@@ -1,9 +1,9 @@
 <launch>
   <arg name="drone_id" default="0"/>
-    <arg name="depth_fx" default="387.507751"/>
-    <arg name="depth_fy" default="387.507751"/>
-    <arg name="depth_cx" default="323.501404"/>
-    <arg name="depth_cy" default="232.691727"/>
+    <arg name="depth_fx" default="645.846252"/>
+    <arg name="depth_fy" default="645.846252"/>
+    <arg name="depth_cx" default="645.835693"/>
+    <arg name="depth_cy" default="347.819550"/>
 
   <!-- ===== 设计说明（由 sync_params.py 生成，勿手改；派生值见下方 BEGIN/END 块）=====
 
@@ -77,10 +77,10 @@
   <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/grid_map/resolution" value="0.15"/>
-  <param name="/drone_0_ego_planner_node/grid_map/fx" value="387.507751"/>
-  <param name="/drone_0_ego_planner_node/grid_map/fy" value="387.507751"/>
-  <param name="/drone_0_ego_planner_node/grid_map/cx" value="323.501404"/>
-  <param name="/drone_0_ego_planner_node/grid_map/cy" value="232.691727"/>
+  <param name="/drone_0_ego_planner_node/grid_map/fx" value="645.846252"/>
+  <param name="/drone_0_ego_planner_node/grid_map/fy" value="645.846252"/>
+  <param name="/drone_0_ego_planner_node/grid_map/cx" value="645.835693"/>
+  <param name="/drone_0_ego_planner_node/grid_map/cy" value="347.819550"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.70"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>
   <!-- ===== END 派生参数块 ===== -->

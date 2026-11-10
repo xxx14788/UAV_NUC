@@ -29,7 +29,7 @@ import time
 MASTER_PORT = 11312
 URI = "http://localhost:%d" % MASTER_PORT
 LAUNCH = os.path.expanduser("~/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch")
-W, H = 640, 480
+W, H = 1280, 720
 DEPTH_MM = 3000  # 3 m 处一面"墙"，够远不挡 0.8 m 的目标
 
 results = []
