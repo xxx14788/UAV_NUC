@@ -96,7 +96,9 @@ void GridMap::initMap(ros::NodeHandle &nh)
 
   md_.raycast_num_ = 0;
 
-  md_.proj_points_.resize(640 * 480 / mp_.skip_pixel_ / mp_.skip_pixel_);
+  // 2026-11-10 相机升 1280x720：原 640*480/skip^2 是编译期常量，分辨率一变即越界写。
+  // 容量改由 projectDepthImage() 按实际图像尺寸动态扩容；此处只做预分配。
+  md_.proj_points_.reserve(1280 * 720 / mp_.skip_pixel_ / mp_.skip_pixel_);
   md_.proj_points_cnt = 0;
 
   md_.cam2body_ << 0.0, 0.0, 1.0, 0.0,
@@ -234,6 +236,14 @@ void GridMap::projectDepthImage()
   int rows = md_.depth_image_.rows;
   int skip_pix = mp_.skip_pixel_;
 
+  // 2026-11-10：按当前图像尺寸保证容量（与分辨率解耦）。写入用 operator[] 无边界检查，
+  // 容量不足即堆越界；(rows/skip+2)*(cols/skip+2) 是过滤/非过滤两分支的统一上界。
+  {
+    const size_t need = (size_t)(rows / skip_pix + 2) * (size_t)(cols / skip_pix + 2);
+    if (md_.proj_points_.size() < need)
+      md_.proj_points_.resize(need);
+  }
+
   double depth;
 
   Eigen::Matrix3d camera_r = md_.camera_r_m_;
@@ -255,7 +265,7 @@ void GridMap::projectDepthImage()
 
         proj_pt = camera_r * proj_pt + md_.camera_pos_;
 
-        if (u == 320 && v == 240)
+        if (u == cols / 2 && v == rows / 2)  // 2026-11-10：中心像素随分辨率（原写死 640x480 中心）
           std::cout << "depth: " << depth << std::endl;
         md_.proj_points_[md_.proj_points_cnt++] = proj_pt;
       }

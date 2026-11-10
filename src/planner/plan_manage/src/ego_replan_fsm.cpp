@@ -930,6 +930,15 @@ namespace ego_planner
       /* 3. publish traj for visualization */
       visualization_->displayOptimalList(info->position_traj_.get_control_points(), 0);
 
+      /* 2026-11-10（到点刹车 L3 替代方案）：确认轨迹末端速度≈0。
+         EGO 正常会把最后控制点压重（零末速）；若这里报警，说明该条轨迹是按"非零末速"
+         收尾的，到点必然要靠控制器硬刹 —— 这是过冲的直接原因，必须看见。 */
+      {
+        const double vend = info->velocity_traj_.evaluateDeBoorT(info->duration_).norm();
+        if (vend > 0.05)
+          ROS_WARN("[replan] trajectory end velocity %.2f m/s != 0 -> overshoot risk", vend);
+      }
+
       /* 4. 2026-11-09（P0-3）：把实际轨迹终点回传任务层。
             只有当局部目标已是全局目标时才判"是否被改写"，避免中途点误报。 */
       if ((local_target_pt_ - end_pt_).norm() < 1e-3)
