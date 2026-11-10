@@ -209,10 +209,14 @@ TEST(FsmLand, ExitsToManualOnRcOrOdomLoss)
     i = base(); i.odom_ok = false;
     EXPECT_EQ(MANUAL_CTRL, decide_land(i).next);
 }
-TEST(FsmLand, CmdSwitchOffAbortsToHover)
+// 2026-11-10（整改：红测试已在册 3 天）: 本用例原断言"CH6 拨低 -> 中止返 AUTO_HOVER"，
+// 但 51af00a（2026-11-07 用户令）已把 CH6 从 RC 闸门移除——任务由脚本区分，只有 CH5 能中止/接管。
+// 实现改了、测试没跟上，于是 decide_land 的这条断言自 11-07 起长期为红，掩盖了真正的回归信号。
+// 现按用户裁定同步：CH6 拨低不再影响 AUTO_LAND（仍由 CH5/odom 门控制）。
+TEST(FsmLand, CmdSwitchOffIsIgnored)
 {
     Inputs i = base(); i.rc_cmd = false;
-    EXPECT_EQ(AUTO_HOVER, decide_land(i).next);
+    EXPECT_EQ(AUTO_LAND, decide_land(i).next);
 }
 TEST(FsmLand, DescendingStays)
 {
