@@ -57,3 +57,4 @@ sitl_sim/t1_evidence/**/*.log
 *.bak_*
 *.orig
 .catkin_tools/
+*.bak_*
