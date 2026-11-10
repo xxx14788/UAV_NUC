@@ -73,6 +73,7 @@
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.200"/>
   <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="0.450"/>
+  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="0.3"/>
   <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/grid_map/resolution" value="0.15"/>
@@ -83,7 +84,7 @@
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.70"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>
   <!-- ===== END 派生参数块 ===== -->
-  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="0.450"/>
+  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="0.3"/>
 
   <!-- pose_type=1：规划器直接消费 VINS 的 T_world_cam（/planner/camera_pose），
        不走 odom + 写死外参那条路（vins_to_mavros 负责转发）。 -->

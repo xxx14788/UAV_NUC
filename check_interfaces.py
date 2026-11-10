@@ -179,6 +179,16 @@ def static_checks(ck, contract, paths):
     ck.add("自机气泡 launch == 契约 params.self_bubble", sb_ok,
            {"launch": sb_l, "contract": sb_c})
 
+    # 2026-11-10：末段重规划死区也进单源（bag3 事故参数）
+    nr_l = _param_value(lt, "fsm/thresh_no_replan_meter")
+    nr_c = _get(params, "no_replan_m")
+    try:
+        nr_ok = nr_l is not None and nr_c is not None and abs(float(nr_l) - float(nr_c)) < 1e-9
+    except (TypeError, ValueError):
+        nr_ok = False
+    ck.add("末段重规划门限 launch == 契约 params.no_replan_m", nr_ok,
+           {"launch": nr_l, "contract": nr_c})
+
     # 2026-11-08（用户令②）：px4ctrl yaml 的掉电保护阈值 == 契约（不依赖节点在跑）
     lv_y = _yaml_scalar(paths["px4ctrl_yaml"], "low_voltage")
     lv_c = _get(contract, "runtime.battery.low_voltage_v")

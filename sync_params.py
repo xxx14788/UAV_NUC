@@ -331,7 +331,35 @@ def w_launch(d):
     if st >= 0 and en > st:
         en = txt.find('-->', en) + 3
         txt = txt[:st] + note_block(d) + txt[en:]
-    return txt
+    # 2026-11-10：块外"同名参数"一律丢弃 —— 通用的去重，不是只盯某一个。
+    # 背景：self_bubble 曾被历史补丁追加 3 份、no_replan 被反复追加，
+    # 同一参数在 launch 里出现多次（后写的生效，另一处装死）。
+    lines_all = txt.split(NL)
+    inside, names, in_block = [], set(), False
+    for ln in lines_all:
+        if 'BEGIN 派生参数块' in ln:
+            in_block = True
+        if in_block:
+            inside.append(ln)
+            m = re.search(r'<param name="([^"]+)"', ln)
+            if m:
+                names.add(m.group(1))
+            if 'END 派生参数块' in ln:
+                in_block = False
+    keep, in_block = [], False
+    for ln in lines_all:
+        if 'BEGIN 派生参数块' in ln:
+            in_block = True
+        if in_block:
+            keep.append(ln)
+            if 'END 派生参数块' in ln:
+                in_block = False
+            continue
+        m = re.search(r'<param name="([^"]+)"', ln)
+        if m and m.group(1) in names:
+            continue          # 块外同名 -> 丢弃（块内是唯一权威）
+        keep.append(ln)
+    return NL.join(keep)
 
 
 # ---------------------------------------------------------------- 2) 契约
