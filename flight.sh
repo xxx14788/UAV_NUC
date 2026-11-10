@@ -135,7 +135,7 @@ case "$CMD" in
     if [ -s "$STATE/record.pid" ] && kill -0 "$(cat "$STATE/record.pid")" 2>/dev/null; then
       "$FLOW/flight.sh" record stop
     fi
-    if pgrep -f '[r]osbag record' >/dev/null; then
+    if ps -eo args= 2>/dev/null | grep -qE '^[^ ]*python[0-9.]* [^ ]*rosbag record'; then
       echo "检测到未由本入口管理的 rosbag record；先正常结束录制再停栈。" >&2; exit 1;
     fi
     if rostopic list >/dev/null 2>&1; then
