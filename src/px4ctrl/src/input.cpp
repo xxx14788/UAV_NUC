@@ -145,6 +145,20 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
         OdomSanityVerdict verdict = odom_sanity_check(sanity_cfg, sanity_st, t_in, p_in, v_in);
         if (verdict != OdomSanityVerdict::ACCEPT)
         {
+            /* 2026-11-10（P1-11 观测版）：按拒绝原因分类计数 + 5 s 汇总。
+               不改门限（实测逐帧位移 p99.9 ≈ 0.11 m，现有 max_jump 0.60 远高于噪声，
+               盲调会放进真异常）。先用数据看是哪一类在拒。 */
+            static long rej_by_reason[8] = {0};
+            static ros::Time last_sum;
+            const int _code = (int)verdict;
+            if (_code >= 0 && _code < 8) rej_by_reason[_code]++;
+            if (last_sum.isZero() || (now - last_sum).toSec() > 5.0)
+            {
+                last_sum = now;
+                ROS_WARN("[px4ctrl] sanity rejects by reason: v0=%ld v1=%ld v2=%ld v3=%ld v4=%ld v5=%ld (cumulative)",
+                         rej_by_reason[0], rej_by_reason[1], rej_by_reason[2],
+                         rej_by_reason[3], rej_by_reason[4], rej_by_reason[5]);
+            }
             if (sanity_st.rejected % sanity_cfg.warn_every == 1)
                 ROS_ERROR("[px4ctrl] odom sanity gate REJECTED frame (v=%d): |v|=%.2f |p|=%.2f |dv|ref, total_rejected=%ld",
                           (int)verdict, v_in.norm(), p_in.norm(), sanity_st.rejected);

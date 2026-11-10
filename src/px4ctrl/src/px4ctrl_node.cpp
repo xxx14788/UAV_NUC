@@ -40,6 +40,10 @@ int main(int argc, char *argv[])
         nh.subscribe<std_msgs::UInt32>("/vins_estimator/reboot_notify",
                                       10,
                                       boost::bind(&PX4CtrlFSM::p3NotifyFeed, &fsm, _1));
+    // 2026-11-10：0=关 1=影子(只记日志) 2=生效（刹车->开环悬停）
+    nh.param<int>("vins_guard_mode", fsm.vins_guard_mode_, 1);
+    nh.subscribe<nav_msgs::Odometry>("/vins_estimator/camera_pose", 10,
+                                     boost::bind(&PX4CtrlFSM::vinsPoseFeed, &fsm, _1));
     ros::Subscriber odom_sub =
         nh.subscribe<nav_msgs::Odometry>("odom",
                                          100,

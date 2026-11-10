@@ -74,6 +74,28 @@ public:
 
 	quadrotor_msgs::Px4ctrlDebug debug_msg; //debug
 
+	// 2026-11-09（P0-5）：VINS 位姿健康守门。只看 VINS 健康，不看速度/倾角。
+	// camera_pose 断流 >0.4 s 或位置跳变 >3 m/s -> 判"不健康"，切 AUTO_HOVER。
+	ros::Time vins_pose_stamp_;
+	ros::Time vins_bad_until_;
+	Eigen::Vector3d vins_last_p_{Eigen::Vector3d::Zero()};
+	bool vins_guard_enable_{true};
+	// 2026-11-10（用户令）：0=关 1=影子(只记日志) 2=生效（刹车 0.8 s -> 开环悬停）
+	int vins_guard_mode_{1};
+	bool vins_guard_active_{false};
+	ros::Time vins_guard_t0_;
+	Eigen::Vector3d vins_stop_pt_{Eigen::Vector3d::Zero()};
+	Eigen::Quaterniond vins_hold_q_{Eigen::Quaterniond::Identity()};
+	double vins_hold_thrust_{-1.0};
+	// P1-7：撞击检测计数（只报不做）
+	long impact_cnt_{0};
+	void vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg);
+	bool vinsBad() const
+	{
+		if (vins_pose_stamp_.isZero()) return false;   // 从未收到 -> fail-open，不误判
+		return ros::Time::now() < vins_bad_until_;
+	}
+
 	Eigen::Vector4d hover_pose;
 	ros::Time last_set_hover_pose_time;
 

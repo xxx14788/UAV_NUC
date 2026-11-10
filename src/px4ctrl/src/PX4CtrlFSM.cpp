@@ -438,6 +438,46 @@ void PX4CtrlFSM::process()
 
 	case CMD_CTRL:
 	{
+		// 2026-11-10（P0-5 最终版）：判据只看 VINS 健康；三档：
+		//   mode=1 影子：只记 [VINS_GUARD] would_trigger，不动作（默认，用于验证误报率）
+		//   mode=2 生效：0~0.8 s 用最后可信状态算停止点刹车；之后**开环悬停**
+		//              （水平姿态 + 冻结推力），不再用漂移 odom 做位置闭环。
+		if (vins_guard_enable_ && vins_guard_mode_ > 0 && vinsBad())
+		{
+			if (!vins_guard_active_)
+			{
+				vins_guard_active_ = true;
+				vins_guard_t0_ = ros::Time::now();
+				vins_hold_thrust_ = -1.0;
+				const double vmag = odom_data.v.norm();
+				const double a_dec = 1.5;                     // 计划减速度 m/s^2
+				vins_stop_pt_ = odom_data.p + odom_data.v * std::min(0.8, vmag / a_dec);
+				const Eigen::Vector3d xb = imu_data.q * Eigen::Vector3d::UnitX();
+				const double yaw = std::atan2(xb.y(), xb.x());
+				vins_hold_q_ = Eigen::Quaterniond(Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()));
+				ROS_ERROR("[VINS_GUARD] trigger(mode=%d): v=%.2f stop=(%.2f,%.2f,%.2f) %s",
+				          vins_guard_mode_, vmag, vins_stop_pt_.x(), vins_stop_pt_.y(),
+				          vins_stop_pt_.z(), vins_guard_mode_ == 1 ? "SHADOW only" : "ACTIVE");
+			}
+			if (vins_guard_mode_ == 2)
+			{
+				const double el = (ros::Time::now() - vins_guard_t0_).toSec();
+				if (el < 0.8)
+				{
+					des.p = vins_stop_pt_;
+					des.v.setZero();
+					des.a.setZero();
+				}
+				// el >= 0.8 的输出在 calculateControl 之后被开环覆盖（见下）
+			}
+		}
+		else if (vins_guard_active_)
+		{
+			vins_guard_active_ = false;
+			vins_hold_thrust_ = -1.0;
+			ROS_WARN("[VINS_GUARD] released (VINS healthy again)");
+		}
+
 		// T1-F3: 判定权威=decide_cmd;副作用映射(行为等价,审计表)
 		fsm_decision::Outcome fd_o = fsm_decision::decide_cmd(fd_in);
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)
@@ -659,6 +699,41 @@ void PX4CtrlFSM::process()
 		        : param.max_angle * (180.0 / M_PI);
 		debug_msg = controller.calculateControl(des, odom_data, imu_data, u,
 		    tilt_deg_fix);
+
+		// 2026-11-10（P0-5 生效档）：刹车段结束 -> 开环悬停。
+		// 水平姿态 + 冻结推力，**不再使用漂移 odom**（位置闭环会被漂移带偏）。
+		if (vins_guard_active_ && vins_guard_mode_ == 2 &&
+		    (ros::Time::now() - vins_guard_t0_).toSec() >= 0.8)
+		{
+			if (vins_hold_thrust_ < 0.0) vins_hold_thrust_ = u.thrust;  // 冻结进入悬停瞬间的推力
+			u.q = vins_hold_q_;
+			u.bodyrates.setZero();
+			u.thrust = vins_hold_thrust_;
+		}
+
+		// 2026-11-10（P1-7）：撞击检测（只报不做）。判据：垂直速度 < -0.8 m/s
+		// 且 0.2 s 内速度变化 > 1.0 m/s（自由落体/撞地特征）。
+		{
+			static Eigen::Vector3d last_v{Eigen::Vector3d::Zero()};
+			static ros::Time last_t;
+			const ros::Time tnow = ros::Time::now();
+			if (!last_t.isZero())
+			{
+				const double dt = (tnow - last_t).toSec();
+				if (dt > 1e-3 && dt < 0.3)
+				{
+					const double dv = (odom_data.v - last_v).norm();
+					if (odom_data.v.z() < -0.8 && dv > 1.0)
+					{
+						++impact_cnt_;
+						ROS_ERROR("[IMPACT] suspected impact: vz=%.2f dv=%.2f dt=%.3f (count=%ld)",
+						          odom_data.v.z(), dv, dt, impact_cnt_);
+					}
+				}
+			}
+			last_v = odom_data.v;
+			last_t = tnow;
+		}
 		debug_msg.gl_locked = gl_locked_this_tick_ ? 1.0 : 0.0;
 		debug_msg.gl_kick_deg = gl_kick_max_deg_;
 		if (takeoff_env && param.takeoff_land.thrust_cap > 0.0 &&
@@ -817,6 +892,39 @@ void PX4CtrlFSM::land_detector(const State_t state, const Desired_State_t &des, 
 
 		is_last_C12_satisfy = C12_satisfy;
 	}
+}
+
+// 2026-11-09（P0-5）：VINS 位姿健康监视。camera_pose 是 VINS 的"是否还在跟"的直接证据；
+// imu_propagate 在断流期间仍在递推（本次实测 200 Hz 无缺口），所以**不能**用 odom 判活。
+void PX4CtrlFSM::vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg)
+{
+	const ros::Time now = ros::Time::now();
+	const Eigen::Vector3d p(msg->pose.pose.position.x,
+	                        msg->pose.pose.position.y,
+	                        msg->pose.pose.position.z);
+
+	if (!vins_pose_stamp_.isZero())
+	{
+		const double gap = (now - vins_pose_stamp_).toSec();
+		if (gap > 0.4)
+		{
+			vins_bad_until_ = now + ros::Duration(1.0);
+			ROS_ERROR("[px4ctrl] VINS pose gap %.2f s -> guard ON", gap);
+		}
+		const double dt = (msg->header.stamp - vins_pose_stamp_).toSec();
+		if (dt > 1e-3)
+		{
+			const double v_implied = (p - vins_last_p_).norm() / dt;
+			if (v_implied > 3.0)   // 物理不可能的位置跳变（重定位/漂移）
+			{
+				vins_bad_until_ = now + ros::Duration(1.5);
+				ROS_ERROR("[px4ctrl] VINS pose jump %.2f m in %.3f s (%.1f m/s) -> guard ON",
+				          (p - vins_last_p_).norm(), dt, v_implied);
+			}
+		}
+	}
+	vins_pose_stamp_ = now;
+	vins_last_p_ = p;
 }
 
 Desired_State_t PX4CtrlFSM::get_hover_des()

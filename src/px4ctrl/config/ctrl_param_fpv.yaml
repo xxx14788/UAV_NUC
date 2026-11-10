@@ -15,6 +15,8 @@ use_px4_position_ctrl: false  # true: send PositionTarget, PX4 runs pos/vel PID.
 max_manual_vel: 1.0
 max_angle: 25  # Attitude angle limit in degree. A negative value means no limit.
 low_voltage: 13.2 # 4S battery
+# 2026-11-10：VINS 位姿不健康时 0=关 1=影子(默认,只记日志) 2=生效(刹车->开环悬停)
+vins_guard_mode: 1
 
 rc_reverse: # *
     roll: false
