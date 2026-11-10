@@ -94,4 +94,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_rc_centered
     test/test_rc_centered.cpp src/input.cpp)
   target_link_libraries(test_rc_centered ${catkin_LIBRARIES})
+
+  # 2026-11-10（整改 N-02）: camera_pose 跳变判据（纯函数，无 ROS）。
+  # 旧实现 dt 用"消息戳 - 到达墙钟"，恒 ≤0，跳变面从未生效。
+  catkin_add_gtest(test_pose_jump
+    test/test_pose_jump.cpp)
+  target_link_libraries(test_pose_jump ${catkin_LIBRARIES})
 endif()

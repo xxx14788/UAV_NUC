@@ -14,6 +14,10 @@ namespace
 constexpr double kRcGuardWaitMaxS = 30.0;  // RC 门提示多久后放弃（不再阻塞等待）
 constexpr double kOffboardSettleS = 0.10;  // OFFBOARD 切模式到 arm 的延迟（原为 100 ms 阻塞等待）
 constexpr double kCycleWarnMs = 20.0;      // process() 单拍耗时告警阈（100 Hz 周期 = 10 ms）
+// 2026-11-10（整改 N-02）：VINS camera_pose 健康判据的门限（原散落字面量 0.4/1.0/1.5/3.0）
+constexpr double kPoseGapBadS = 0.4;       // 到达间隔超此值 -> 断流 guard
+constexpr double kPoseBadHoldGapS = 1.0;   // 断流触发后 guard 保持 [s]
+constexpr double kPoseBadHoldJumpS = 1.5;  // 跳变触发后 guard 保持 [s]
 
 // 单拍耗时探针：析构时报告。把"控制环被卡住"从不可观测变成 ERROR 日志。
 struct CycleTimer
@@ -936,6 +940,12 @@ void PX4CtrlFSM::land_detector(const State_t state, const Desired_State_t &des, 
 
 // 2026-11-09（P0-5）：VINS 位姿健康监视。camera_pose 是 VINS 的"是否还在跟"的直接证据；
 // imu_propagate 在断流期间仍在递推（本次实测 200 Hz 无缺口），所以**不能**用 odom 判活。
+//
+// 2026-11-10（整改 N-02）：两个时间量必须分开存，**不许互相减**：
+//   vins_pose_recv_t_  = 到达墙钟（只用于"断流"判据 gap）
+//   vins_pose_msg_t_   = 上一帧 header.stamp（只用于"跳变"判据 dt，与当前 header.stamp 同域）
+// 原实现把消息戳减"到达墙钟"，dt 在本工程所有链路里都 ≤0 -> `dt > 1e-3` 恒假 ->
+// "位置跳变 >3 m/s" 这一面从上线起就没生效过。
 void PX4CtrlFSM::vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg)
 {
 	const ros::Time now = ros::Time::now();
@@ -943,27 +953,40 @@ void PX4CtrlFSM::vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg)
 	                        msg->pose.pose.position.y,
 	                        msg->pose.pose.position.z);
 
-	if (!vins_pose_stamp_.isZero())
+	if (!vins_pose_recv_t_.isZero())
 	{
-		const double gap = (now - vins_pose_stamp_).toSec();
-		if (gap > 0.4)
+		// (1) 断流判据：到达墙钟差（与消息时间戳域无关，永远可比）
+		const double gap = (now - vins_pose_recv_t_).toSec();
+		if (gap > kPoseGapBadS)
 		{
-			vins_bad_until_ = now + ros::Duration(1.0);
-			ROS_ERROR("[px4ctrl] VINS pose gap %.2f s -> guard ON", gap);
+			vins_bad_until_ = now + ros::Duration(kPoseBadHoldGapS);
+			ROS_ERROR("[px4ctrl] VINS pose gap %.2f s (> %.2f) -> guard ON", gap, kPoseGapBadS);
 		}
-		const double dt = (msg->header.stamp - vins_pose_stamp_).toSec();
-		if (dt > 1e-3)
+		// (2) 跳变判据：消息戳差（同一域），交给纯函数判定
+		if (!vins_pose_msg_t_.isZero())
 		{
-			const double v_implied = (p - vins_last_p_).norm() / dt;
-			if (v_implied > 3.0)   // 物理不可能的位置跳变（重定位/漂移）
+			const double dt = (msg->header.stamp - vins_pose_msg_t_).toSec();
+			const px4ctrl_gate::PoseJumpOut jump =
+			    px4ctrl_gate::poseJumpCheck(vins_last_p_, p, dt, pose_jump_cfg_);
+			if (jump.bad)
 			{
-				vins_bad_until_ = now + ros::Duration(1.5);
-				ROS_ERROR("[px4ctrl] VINS pose jump %.2f m in %.3f s (%.1f m/s) -> guard ON",
-				          (p - vins_last_p_).norm(), dt, v_implied);
+				vins_bad_until_ = now + ros::Duration(kPoseBadHoldJumpS);
+				ROS_ERROR("[px4ctrl] VINS pose jump %.2f m in %.3f s (%.1f m/s > %.1f) -> guard ON",
+				          (p - vins_last_p_).norm(), jump.dt, jump.v_implied,
+				          pose_jump_cfg_.max_implied_mps);
+			}
+			else if (jump.stamp_anomaly)
+			{
+				// 显式上报：原实现在这里静默跳过，于是"换时钟域"能再次悄悄废掉这一面
+				++pose_stamp_anomaly_n_;
+				ROS_ERROR_THROTTLE(1.0,
+				    "[px4ctrl] VINS pose stamp anomaly: dt=%.6f s (msg domain) -- jump face disabled "
+				    "this frame, count=%ld", jump.dt, pose_stamp_anomaly_n_);
 			}
 		}
 	}
-	vins_pose_stamp_ = now;
+	vins_pose_recv_t_ = now;
+	vins_pose_msg_t_ = msg->header.stamp;
 	vins_last_p_ = p;
 }
 

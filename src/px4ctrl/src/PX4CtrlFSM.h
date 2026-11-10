@@ -16,6 +16,7 @@
 // #include "ThrustCurve.h"
 #include "controller.h"
 #include "cmdresp_gate.h" // T1-P2: cmd-response divergence gate (v11.4 unit 3)
+#include "pose_jump_gate.h" // 2026-11-10 (N-02): camera_pose 跳变判据（纯函数）
 
 struct AutoTakeoffLand_t
 {
@@ -76,7 +77,12 @@ public:
 
 	// 2026-11-09（P0-5）：VINS 位姿健康守门。只看 VINS 健康，不看速度/倾角。
 	// camera_pose 断流 >0.4 s 或位置跳变 >3 m/s -> 判"不健康"，切 AUTO_HOVER。
-	ros::Time vins_pose_stamp_;
+	// 2026-11-10（整改 N-02）：两个时间量分开存，禁止互减（原 vins_pose_stamp_ 一个变量
+	// 身兼两职，导致"消息戳 - 到达墙钟"恒为负，跳变判据从未生效）。
+	ros::Time vins_pose_recv_t_;    // 上一帧到达墙钟（只用于断流 gap）
+	ros::Time vins_pose_msg_t_;     // 上一帧 header.stamp（只用于跳变 dt，同消息域）
+	px4ctrl_gate::PoseJumpCfg pose_jump_cfg_;
+	long pose_stamp_anomaly_n_{0};  // 时间戳异常帧计数（F: 静默失效的显式化）
 	ros::Time vins_bad_until_;
 	Eigen::Vector3d vins_last_p_{Eigen::Vector3d::Zero()};
 	bool vins_guard_enable_{true};
@@ -92,7 +98,7 @@ public:
 	void vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg);
 	bool vinsBad() const
 	{
-		if (vins_pose_stamp_.isZero()) return false;   // 从未收到 -> fail-open，不误判
+		if (vins_pose_recv_t_.isZero()) return false;   // 从未收到 -> fail-open，不误判
 		return ros::Time::now() < vins_bad_until_;
 	}
 
