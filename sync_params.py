@@ -37,7 +37,7 @@ P = {
     # 任务层
     'takeoff_height': 0.7,
     'goal_radius': 3.5,
-    'goal_clearance_min': 0.30,   # 收点时目标离膨胀层的最小净空（用户令 0.15->0.30）
+    'goal_clearance_min': 0.15,   # 收点时目标离膨胀层的最小净空（P0-1）
     'no_replan_m': 0.3,           # 距目标多少米内仍允许重规划（P0-2；1.0 会造成末段开环）
     'replan_time': 0.5,           # 两次重规划最小间隔（用户令 1.0 -> 0.5）
     'hover_s': 5.0,
@@ -77,9 +77,9 @@ RECORD_TOPICS = [
     '/mavros/imu/temperature_imu', '/mavros/local_position/odom',
     '/mavros/vision_pose/pose', '/mavros/rc/in', '/mavros/rc/out',
     '/mavros/setpoint_raw/attitude', '/mavros/time_reference', '/mavros/estimator_status',
-    '/camera/infra1/image_rect_raw', '/camera/infra1/camera_info',
-    '/camera/infra2/image_rect_raw', '/camera/infra2/camera_info',
-    '/camera/depth/image_rect_raw', '/camera/depth/camera_info',
+    '/record/infra1',      # 15 Hz 副本（throttle 生成；VINS 仍吃原始 30 Hz） '/camera/infra1/camera_info',
+    '/record/infra2',      # 15 Hz 副本 '/camera/infra2/camera_info',
+    '/record/depth',       # 10 Hz 副本（深度体积最大） '/camera/depth/camera_info',
     '/vins_estimator/odometry', '/vins_estimator/imu_propagate',
     '/vins_estimator/camera_pose', '/vins_estimator/extrinsic',
     '/vins_estimator/keyframe_pose',

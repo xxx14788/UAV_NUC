@@ -10,7 +10,8 @@ import sys
 
 # 话题 -> 至少几条才算"录到了"
 CRITICAL = {
-    "/camera/depth/image_rect_raw": 10,
+    "/record/depth": 10,            # 2026-11-11：bag 里录的是 10 Hz 降频副本
+    "/record/infra1": 10,           # 15 Hz 副本
     "/vins_estimator/imu_propagate": 10,
     "/debugPx4ctrl": 10,
     "/position_cmd": 10,          # 只有规划器真发轨迹才有；没有=这轮没飞成
