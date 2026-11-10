@@ -25,6 +25,9 @@ NL = chr(10)
 FV = os.path.expanduser('~/sitl_realmachine/flight_v1')
 LAUNCH = os.path.join(FV, 'run_planner_realmachine_map_v1.launch')
 CONTRACT = os.path.join(FV, 'contract/flight_contract.yaml')
+# 2026-11-10：备份不再落在 git 工作树里（否则每次 apply 都多一个 .bak_sync_*
+# 未跟踪文件，还会被 git add -A 带进仓库）。
+SYNC_BAK = os.path.expanduser("~/patches_archive/sync_bak")
 GEN_TOPICS = os.path.join(FV, 'generated/record_topics.txt')
 GM = os.path.expanduser('~/catkin_ws/src/planner/plan_env/src/grid_map.cpp')
 FSM = os.path.expanduser('~/catkin_ws/src/planner/plan_manage/src/ego_replan_fsm.cpp')
@@ -498,7 +501,8 @@ def main():
                  (FSM, f), (FSMH, fh)):
         if read(p) == t:
             continue                      # 内容没变就不碰（mtime 保持，便于判"要不要重建"）
-        shutil.copy2(p, p + '.bak_sync_' + ts)
+        os.makedirs(SYNC_BAK, exist_ok=True)
+        shutil.copy2(p, os.path.join(SYNC_BAK, os.path.basename(p) + '.bak_sync_' + ts))
         write(p, t)
         changed.append(os.path.basename(p))
         if p in (GM, FSM, FSMH):
