@@ -51,12 +51,9 @@ fi
 L="$HOME/sitl_sim"
 EV="$L/vins_smoke_runs/run_${TAG}_$(date +%H%M%S)"
 mkdir -p "$EV"
-# ---------- hwmon 随轮遥测(任务书 v11.17 §1.3;采样面预注册冻结,纯取证;历史轮缺口不回填) ----------
-HWPID=""
-if [ -x "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" ]; then
-  setsid nohup bash "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" "$EV" </dev/null >/dev/null 2>&1 &
-  HWPID=$!
-fi
+# 2026-11-10（盲评修复）：hwmon 探针（自带 `while :` 无限循环）**必须晚于所有早退路径启动**。
+# 原顺序下它先起、trap 后装，于是"配置路径错"或"跑 --simulate-gate"都会留下永久孤儿
+# （实测 2 个：run_F04_neg_203850 / run_F02_214603）。现挪到 SIMULATE-GATE 之后。
 # VINS config 全键 md5 随轮落盘(任务书 v11.17 1.2:不只四键,跨轮漂移永久可对账)
 # 2026-11-10（整改 F-04）：路径单一来源 + 存在性 fail-fast。
 # 原实现把同一路径硬编码两处（此处 md5 与两处 roslaunch），且路径错时要等 300 s
@@ -107,6 +104,14 @@ if [ "$SIMGATE" = "1" ]; then
   fi
   LOG "SIMULATE-GATE FAIL：路径选择错误（V1=$V1 V2=$V2）"
   echo "RESULT=SIMULATE-GATE-FAIL" > "$EV/RESULT.txt"; exit 1
+fi
+
+# ---------- hwmon 随轮遥测(任务书 v11.17 §1.3;采样面预注册冻结,纯取证;历史轮缺口不回填) ----------
+# 位置：必须在上面所有早退路径之后（该探针自带无限循环，早退时无人 kill 会变孤儿）
+HWPID=""
+if [ -x "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" ]; then
+  setsid nohup bash "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" "$EV" </dev/null >/dev/null 2>&1 &
+  HWPID=$!
 fi
 
 exec > >(tee "$EV/round.log") 2>&1

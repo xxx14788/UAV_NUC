@@ -346,13 +346,16 @@ void PX4CtrlFSM::process()
 					if (rc_guard_wait_since_.isZero())
 						rc_guard_wait_since_ = now_time;
 					const double waited = (now_time - rc_guard_wait_since_).toSec();
-					if (waited > kRcGuardWaitMaxS)
+					if (waited > kRcGuardWaitMaxS && !rc_guard_gave_up_)
 					{
-						rc_guard_wait_since_ = ros::Time(0);
-						ROS_WARN("[px4ctrl] RC guard wait timeout (%.0fs). Re-send TAKEOFF after "
-						         "centering the sticks.", kRcGuardWaitMaxS);
+						// 2026-11-10（盲评修复）：原来超时后把 since 清零，下一拍立刻重新计时
+						// -> 30 s 窗口无限循环、WARN 说"不再提示"却仍每 2 s 打一条。
+						// 现在用 gave_up_ 闩住，直到下一次 TAKEOFF 请求才复位。
+						rc_guard_gave_up_ = true;
+						ROS_WARN("[px4ctrl] RC guard wait timeout (%.0fs): stop prompting. "
+						         "Re-send TAKEOFF after centering all four sticks.", kRcGuardWaitMaxS);
 					}
-					else
+					else if (!rc_guard_gave_up_)
 					{
 						ROS_ERROR_THROTTLE(2.0,
 						    "[px4ctrl] Reject AUTO_TAKEOFF (RC guard): keep CH5 high and ALL FOUR "
@@ -365,6 +368,7 @@ void PX4CtrlFSM::process()
 
 			state = AUTO_TAKEOFF;
 			rc_guard_wait_since_ = ros::Time(0);   // F-07: 进入起飞后清掉 RC 门等待状态
+			rc_guard_gave_up_ = false;             // 盲评修复: 新一次请求复位"已放弃提示"闩
 			// 2026-11-07 地面锁定：新一次起飞，重置离地判定与峰值统计
 			gl_state_ = px4ctrl_core::GroundLockState();
 			gl_kick_max_deg_ = 0.0;
@@ -963,7 +967,19 @@ void PX4CtrlFSM::vinsPoseFeed(const nav_msgs::Odometry::ConstPtr &msg)
 			ROS_ERROR("[px4ctrl] VINS pose gap %.2f s (> %.2f) -> guard ON", gap, kPoseGapBadS);
 		}
 		// (2) 跳变判据：消息戳差（同一域），交给纯函数判定
-		if (!vins_pose_msg_t_.isZero())
+		// 2026-11-10（盲评修复）：header.stamp 为 0 时**也要计入 anomaly**。
+		// 原写法只在"上一帧非零"时进入判据，若上游戳恒为 0 则永远静默跳过——
+		// 正是本次要根除的那类静默失效。
+		if (msg->header.stamp.isZero())
+		{
+			if (!vins_pose_msg_t_.isZero())
+			{
+				++pose_stamp_anomaly_n_;
+				ROS_ERROR_THROTTLE(1.0, "[px4ctrl] VINS pose header.stamp is ZERO -- jump face "
+				                        "unusable, count=%ld", pose_stamp_anomaly_n_);
+			}
+		}
+		else if (!vins_pose_msg_t_.isZero())
 		{
 			const double dt = (msg->header.stamp - vins_pose_msg_t_).toSec();
 			const px4ctrl_gate::PoseJumpOut jump =

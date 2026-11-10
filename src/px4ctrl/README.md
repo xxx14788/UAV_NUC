@@ -66,8 +66,10 @@ python3 tools/ci/param_consumption_audit.py  # 每个键必须有消费点，输
 - **`ctrl_core.h` 里 8 个函数未接线**：`shapeRef / refSettled / takeoffRef / takeoffArrived /
   landStep / slewTilt / eqHeight / maxHoverableThrust`（W6 起飞/降落参考整形与解析式）。
   有 gtest 覆盖，但**不参与控制**；改它们不影响飞行。
-- **实机 `odom_gate/enabled_v2` 缺省关闭**：SITL yaml 显式开，实机 yaml 未写键（= false）。
-  即实机的里程计 v2 门比 SITL 弱，这是已知的不对称（整改 F-03 已显式化，未改行为）。
+- **实机 `odom_gate/enabled_v2` 显式为 `false`，SITL 为 `true`**：即实机的里程计 v2 门比 SITL **弱**。
+  这是已知且已登记的不对称（整改 F-03 只是把它显式化，没有改行为）；要对齐需单独一轮验证。
+- **`ctrl_v2.enabled` / `ground_lock.enable`**：实机 `true`、SITL `false`。故 SITL 跑的不是
+  实机那条控制路径——"SITL 全绿"不覆盖实机主路径，这是当前最大的验证盲区。
 
 ## 测试
 

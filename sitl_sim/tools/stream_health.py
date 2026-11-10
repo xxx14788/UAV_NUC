@@ -52,9 +52,11 @@ def verdict(ev_dir, prefix):
     if not os.path.isdir(ev_dir):
         raise ValueError("证据目录不存在: %s" % ev_dir)
     gaps, files = read_gaps(ev_dir, prefix)
-    # 没有任何证据 -> 不敢断言"流可信"，按流断处置（安全方向：kill 比盲降保守）
+    # 没有任何证据 -> 保持**旧语义**返回 1（尝试 LAND）。
+    # 2026-11-10（盲评修复）：我一度改成 0(KILL)，但"证据缺失"不等于"流已断"；
+    # 空中优先尝试受控降落（HAFIX 梯①的设计意图），杀电机是最后手段，不该由缺证据触发。
     if not files:
-        return 0, {"gaps": [], "files": [], "reason": "no evidence files -> assume stream broken"}
+        return 1, {"gaps": [], "files": [], "reason": "no evidence files -> attempt LAND (legacy)"}
     bad = [g for g in gaps if g > GAP_LIMIT_S]
     if bad:
         return 0, {"gaps": gaps, "files": files, "reason": "gap %.1fs > %.1fs" % (max(bad), GAP_LIMIT_S)}
@@ -96,11 +98,11 @@ def selftest():
     p = run(["--ev", d2, "--prefix", "gatehit"])
     check("broken/out", p.stdout.strip() == "0", "stdout=%r" % p.stdout.strip())
 
-    # 用例 3: 无证据文件 -> 0（安全方向）
+    # 用例 3: 无证据文件 -> 1（保持旧语义：尝试 LAND，不因缺证据就杀电机）
     d3 = os.path.join(tmp, "empty")
     os.makedirs(d3)
     p = run(["--ev", d3, "--prefix", "gatehit"])
-    check("empty/out", p.stdout.strip() == "0", "stdout=%r" % p.stdout.strip())
+    check("empty/out", p.stdout.strip() == "1", "stdout=%r" % p.stdout.strip())
 
     # 用例 4: 目录不存在 -> exit 2（不许静默）
     p = run(["--ev", os.path.join(tmp, "nope"), "--prefix", "gatehit"])

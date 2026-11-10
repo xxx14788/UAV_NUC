@@ -35,7 +35,9 @@ auto_takeoff_land:
     takeoff_att_gate_deg: 45.0  # actual tilt above this during takeoff -> leveling regime; -1 = off
     takeoff_gated_thrust: 0.40  # leveling-regime thrust ceiling; 0 = off
 
-thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(Unit:N): F=K1*Voltage^K2*(K3*u^2+(1-K3)*u).
+thrust_model:  # 2026-11-10（整改 F-06）：原注释里的 F=K1*Voltage^K2*(K3*u^2+(1-K3)*u)
+# 已不成立——K1/K2/K3 三项已删除。当前模型：u -> 加速度 k（thr2acc），由 hover_percentage
+# 冷启动 + estimateThrustModel(RLS) 在线修正。
     print_value: true # display the value of “thr_scale_compensate” or “hover_percentage” during thrust model estimating.
     # accurate thrust mapping parameters
     # approximate thrust mapping parameters
