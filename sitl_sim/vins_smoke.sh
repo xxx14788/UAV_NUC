@@ -12,7 +12,7 @@ source "$HOME/catkin_ws/devel/setup.bash"  # 必须 LAST:重复 source 基座会
 set -u
 WORLD=sitl_world_obstacles; GX=7.0; GY=-4.0; GZ=1.0; TAG=smoke; BUDGET=100; HASL2=0; L2X=0; L2Y=0; L2Z=0; PROBECHECK=0
 GATE=0
-WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""; IMGREC=0
+WARMUP=0; STOPLOSS=0; GATE_PARAMS="$HOME/sitl_sim/t1_gate_params.json"; GATEPID=""; RTFPID=""; IMGREC=0; SIMGATE=0
 while [ $# -gt 0 ]; do case "$1" in
   --world) WORLD="$2"; shift 2;;
   --goal)  GX="$2"; GY="$3"; GZ="$4"; shift 4;;
@@ -25,6 +25,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --warmup) WARMUP=1; shift;;
   --gate-params) GATE_PARAMS="$2"; shift 2;;
   --img-record) IMGREC=1; shift;;  # δ 政策 A(2026-10-11 裁定 A): 独立图像袋,绿轮抽样由 drill 层裁决
+  --simulate-gate) SIMGATE=1; shift;;  # 整改 F-02: 只彩排"门触发->降级路径选择",不起 SITL
   *) echo "unknown arg $1"; exit 2;;
 esac; done
 LOG() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -72,6 +73,42 @@ vins_cfg_ok() {
 md5sum "$VINS_CFG" > "$EV/vins_config.md5" 2>/dev/null || true
 vins_cfg_ok || exit 1
 LOG "VINS config = $VINS_CFG"
+
+# ---------- 门降级链的流可信度判定（整改 F-02）----------
+# 判定逻辑在 tools/stream_health.py（argparse + selftest）；此函数只做"结果必须是 0/1"的校验，
+# 任何异常/非法输出 -> 返回 2 -> 调用方 FATAL 退出。原实现把这段塞在 $( ) 里的 heredoc，
+# 参数错(只传 1 参却读 argv[3])被静默吞掉，导致降级① 从未执行。
+stream_gate_ok() {  # $1=证据目录 $2=gatehit|stoploss -> stdout 1(流可信)/0(流断)
+  local out
+  out=$(python3 "$L/tools/stream_health.py" --ev "$1" --prefix "$2") \
+    || { LOG "FATAL stream_health.py 执行失败（见上）"; return 2; }
+  case "$out" in
+    0|1) printf '%s\n' "$out"; return 0 ;;
+    *)   LOG "FATAL stream_health.py 非法输出: '$out'"; return 2 ;;
+  esac
+}
+
+# --simulate-gate：不起 SITL，只彩排"门触发 -> 选降级路径"这一段。
+# 目的：证明两条降级路径都可达（修复前降级①结构性不可达）。
+if [ "$SIMGATE" = "1" ]; then
+  D="$EV/simgate"; mkdir -p "$D"
+  printf '{"vins_stream":{"gap_s":1.0}}'  > "$D/gatehit_ok.json"
+  printf '{"vins_stream":{"gap_s":30.0}}' > "$D/gatehit_bad.json"
+  V1=$(stream_gate_ok "$D" gatehit) || exit 1          # 有 30s 证据 -> 0
+  rm -f "$D/gatehit_bad.json"
+  V2=$(stream_gate_ok "$D" gatehit) || exit 1          # 只剩 1s 证据 -> 1
+  {
+    echo "simgate: gap30s -> $V1 (期望 0 -> 降级② KILL)"
+    echo "simgate: gap1s  -> $V2 (期望 1 -> 降级① LAND)"
+  } | tee "$EV/simgate_paths.txt"
+  if [ "$V1" = "0" ] && [ "$V2" = "1" ]; then
+    LOG "SIMULATE-GATE PASS：降级①（LAND）与降级②（KILL）两条路径均可选"
+    echo "RESULT=SIMULATE-GATE-PASS" > "$EV/RESULT.txt"; exit 0
+  fi
+  LOG "SIMULATE-GATE FAIL：路径选择错误（V1=$V1 V2=$V2）"
+  echo "RESULT=SIMULATE-GATE-FAIL" > "$EV/RESULT.txt"; exit 1
+fi
+
 exec > >(tee "$EV/round.log") 2>&1
 
 # ---------- 锁(T4-E1 v2 统一仲裁:死主自动接管/心跳/磁盘水位线门;流名载体=权序标签) ----------
@@ -326,25 +363,21 @@ early_landing_line() {
     || echo "LANDING: z_end=NA m (补算器不可用)->NA" >> "$EV/RESULT.txt"
 }
 
+# 门触发时的"流可信度"判定（整改 F-02）。
+# 原实现是内联 heredoc：`python3 - "$EV"` 只传 1 个实参却读 sys.argv[3] -> IndexError
+# 被 $(...) 吞掉 -> 输出空 -> 条件恒假 -> 降级① (odom 可信段 LAND) **从未执行过**，
+# 每轮门触发都直接杀电机。现在判定逻辑独立成 tools/stream_health.py（argparse +
+# selftest），失败/非法输出一律 FATAL 退出，不允许静默降级。
+# 用法: stream_gate_ok <证据目录> <gatehit|stoploss>  -> stdout 1/0
+# 定义位置在文件前段（见 VINS_CFG 之后），此处仅注释说明。
+
 gate_abort() {  # $1=相位标签;$2=模式(gate|stoploss,默认gate);完整恢复=受控中止+完整降落+disarm=1+无T2fail(预注册)
   local PH="${1:-?}" MODE="${2:-gate}" DISARMED=0 STREAM_OK=1 K J
   local PFX=gatehit; [ "$MODE" = stoploss ] && PFX=stoploss
   LOG "GATE-HIT@$PH 前兆门触发→goal 停发+受控中止链(预注册降级序①odom可信段LAND②流断→悬停+kill)"
   echo "$(date '+%F %T') GATE-ABORT@$PH" >> "$EV/${PFX}_actions.txt"
   bash "$HOME/sitl_sim/kill_planner_all.sh" > "$EV/planner_kill.log" 2>&1; sleep 2
-  STREAM_OK=$(python3 - "$EV" <<'PYEOF'
-import json, glob, sys, os
-ok = 1
-for f in glob.glob(os.path.join(sys.argv[1], sys.argv[3] + "_*.json")):
-    try:
-        j = json.load(open(f)); gap = (j.get("vins_stream") or {}).get("gap_s")
-    except Exception:
-        continue
-    if gap is not None and gap > 10:
-        ok = 0
-print(ok)
-PYEOF
-)
+  STREAM_OK=$(stream_gate_ok "$EV" "$PFX") || exit 1
   if [ "$STREAM_OK" = "1" ]; then
     LOG "降级①: odom 可信段完成 LAND(5 轮重掷,60s 上限)"
     for K in 1 2 3 4 5; do
