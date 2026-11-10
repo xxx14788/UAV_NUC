@@ -44,7 +44,10 @@ struct Controller_Output_t
 	Eigen::Quaterniond q;
 
 	// Body rates in body frame
-	Eigen::Vector3d bodyrates; // [rad/s]
+	// 2026-11-10（整改 F-08）：必须显式零初始化。Eigen 默认构造不清零，而
+	// calculateControl() 从不写这个字段；一旦走到 publish_bodyrate_ctrl()，
+	// 未初始化的栈内存就会被当作角速度发给 PX4。
+	Eigen::Vector3d bodyrates{Eigen::Vector3d::Zero()}; // [rad/s]
 
 	// Collective mass normalized thrust
 	double thrust;

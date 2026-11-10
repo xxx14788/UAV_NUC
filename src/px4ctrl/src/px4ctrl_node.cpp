@@ -21,6 +21,18 @@ int main(int argc, char *argv[])
     Parameter_t param;
     param.config_from_ros_handle(nh);
 
+    // 2026-11-10（整改 F-08）：bodyrate 控制器**从未实现**——LinearControl 只产生
+    // 姿态四元数 + 推力，从不产生角速度。原代码在 use_bodyrate_ctrl=true 时会把
+    // Controller_Output_t::bodyrates（未初始化的 Eigen::Vector3d）当角速度发给 PX4，
+    // 且 type_mask=IGNORE_ATTITUDE，等于让 PX4 按野内存飞。这里直接拒绝启动。
+    // 要做真 bodyrate 控制属新增功能，另立任务。
+    if (param.use_bodyrate_ctrl)
+    {
+        ROS_ERROR("[px4ctrl] use_bodyrate_ctrl=true but the bodyrate controller is NOT implemented "
+                  "(LinearControl never produces body rates). Refusing to start; set it to false.");
+        return 1;
+    }
+
     // Controller controller(param);
     LinearControl controller(param);
     PX4CtrlFSM fsm(param, controller);
@@ -101,12 +113,11 @@ int main(int argc, char *argv[])
                                                   ros::VoidConstPtr(),
                                                   ros::TransportHints().tcpNoDelay());
 
-    fsm.ctrl_FCU_pub = nh.advertise<mavros_msgs::AttitudeTarget>("/mavros/setpoint_raw/attitude", 10);
-    fsm.ctrl_FCU_pos_pub = nh.advertise<mavros_msgs::PositionTarget>("/mavros/setpoint_raw/local", 10);
-    fsm.traj_start_trigger_pub = nh.advertise<geometry_msgs::PoseStamped>("/traj_start_trigger", 10);
-
-    fsm.debug_pub = nh.advertise<quadrotor_msgs::Px4ctrlDebug>("/debugPx4ctrl", 10); // debug
-    fsm.fsm_state_pub = nh.advertise<std_msgs::String>("/debugPx4ctrl/fsm_state", 10); // T1-W1: FSM 状态自监视
+    // 2026-11-10（整改 F-05）：advertise 原在 FCU 连接等待**之前**，于是"节点进程活着
+    // 但还没连上飞控"时 publisher 已注册 -> 所有 `rostopic info | grep Publishers`
+    // 形式的健康检查全部假绿（realflight_ctrl/resume/vins_smoke 都是这么判的）。
+    // 现在移到连接等待之后：没有 publisher = 真正的未就绪。
+    // 同时 use_bodyrate_ctrl 的硬校验也在这里（整改 F-08）：该控制器从未实现。
 
     // Read control mode: true = send PositionTarget (PX4 runs pos/vel PID), false = send AttitudeTarget (px4ctrl runs pos/vel PID)
     nh.param("use_px4_position_ctrl", fsm.use_px4_position_ctrl, true);
@@ -119,11 +130,11 @@ int main(int argc, char *argv[])
 
     if (param.takeoff_land.no_RC)
     {
-        ROS_WARN("PX4CTRL] Remote controller disabled, be careful!");
+        ROS_WARN("[PX4CTRL] Remote controller disabled, be careful!");
     }
     else
     {
-        ROS_INFO("PX4CTRL] Waiting for RC");
+        ROS_INFO("[PX4CTRL] Waiting for RC");
         while (ros::ok())
         {
             ros::spinOnce();
@@ -136,14 +147,35 @@ int main(int argc, char *argv[])
         }
     }
 
-    int trials = 0;
+    // 2026-11-10（整改 F-05）：等 FCU 期间保留无限等待（操作者可能后起 mavros），
+    // 但日志限频，且前 60 s 打一条明确的"未就绪"——原来只重复同一句 ERROR，
+    // 既稀释真告警，又让"有 publisher"看起来像已就绪。
+    int connect_wait_n = 0;
     while (ros::ok() && !fsm.state_data.current_state.connected)
     {
         ros::spinOnce();
         ros::Duration(1.0).sleep();
-        if (trials++ > 5)
-            ROS_ERROR("Unable to connnect to PX4!!!");
+        ++connect_wait_n;
+        if (connect_wait_n <= 5)
+            ROS_ERROR("Unable to connect to PX4 (attempt %d)", connect_wait_n);
+        else if (connect_wait_n == 60)
+            ROS_ERROR("[px4ctrl] waiting for FCU for %ds: node is NOT READY "
+                      "(setpoint topics are NOT advertised yet, so health checks see 0 publishers -- "
+                      "this is correct). Check mavros / fcu_url.", connect_wait_n);
+        else if (connect_wait_n % 60 == 0)
+            ROS_WARN("[px4ctrl] still waiting for FCU (%ds), NOT READY", connect_wait_n);
     }
+
+    // FCU 已连接（或节点即将退出）才注册发布者：见本段开头的 F-05 说明
+    fsm.ctrl_FCU_pub = nh.advertise<mavros_msgs::AttitudeTarget>("/mavros/setpoint_raw/attitude", 10);
+    fsm.ctrl_FCU_pos_pub = nh.advertise<mavros_msgs::PositionTarget>("/mavros/setpoint_raw/local", 10);
+    fsm.traj_start_trigger_pub = nh.advertise<geometry_msgs::PoseStamped>("/traj_start_trigger", 10);
+
+    fsm.debug_pub = nh.advertise<quadrotor_msgs::Px4ctrlDebug>("/debugPx4ctrl", 10); // debug
+    fsm.fsm_state_pub = nh.advertise<std_msgs::String>("/debugPx4ctrl/fsm_state", 10); // T1-W1: FSM 状态自监视
+
+    if (!ros::ok())
+        return 1;
 
     // T1-W1 F5: WallRate 而非 Rate —— 免疫 SITL 重启的 /clock 归零倒跳
     // (sim-time Rate 会把周期终点锚定在旧会话高值,主循环冻结 = 旧会话 sim 时长)
