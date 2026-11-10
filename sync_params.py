@@ -25,9 +25,6 @@ NL = chr(10)
 FV = os.path.expanduser('~/sitl_realmachine/flight_v1')
 LAUNCH = os.path.join(FV, 'run_planner_realmachine_map_v1.launch')
 CONTRACT = os.path.join(FV, 'contract/flight_contract.yaml')
-# 2026-11-10：备份不再落在 git 工作树里（否则每次 apply 都多一个 .bak_sync_*
-# 未跟踪文件，还会被 git add -A 带进仓库）。
-SYNC_BAK = os.path.expanduser("~/patches_archive/sync_bak")
 GEN_TOPICS = os.path.join(FV, 'generated/record_topics.txt')
 GM = os.path.expanduser('~/catkin_ws/src/planner/plan_env/src/grid_map.cpp')
 FSM = os.path.expanduser('~/catkin_ws/src/planner/plan_manage/src/ego_replan_fsm.cpp')
@@ -42,6 +39,7 @@ P = {
     'goal_radius': 3.5,
     'goal_clearance_min': 0.15,   # 收点时目标离膨胀层的最小净空（P0-1）
     'no_replan_m': 0.3,           # 距目标多少米内仍允许重规划（P0-2；1.0 会造成末段开环）
+    'replan_time': 0.5,           # 两次重规划最小间隔（用户令 1.0 -> 0.5）
     'hover_s': 5.0,
     'goal_topic': '/flight_v1/goal_gate',
     # 规划器/地图（派生链的根）
@@ -50,7 +48,7 @@ P = {
     'ground_height': -0.10,      # 2026-11-08 用户令：图底压到 -0.10（地板点稳在图内）
     'ceiling_max': 1.5,
     'max_ray': 2.5,
-    'max_vel': 0.5,
+    'max_vel': 0.4,
     'max_acc': 3.0,                 # 2026-11-08 用户令：6.0 -> 3.0（太快）
     # 近场剔除下限：用户令 0.2（显式给定，不再按 eff 派生；几何自洽由 checker 把关）
     'depth_mindist': 0.2,
@@ -191,6 +189,9 @@ def launch_block(d):
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="%.3f"/>' % d['mindist'],
         '  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="%.3f"/>' % d['self_bubble'],
         '  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="%.1f"/>' % P['no_replan_m'],
+        '  <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="%.1f"/>' % P['replan_time'],
+        '  <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="0.6"/>',
+        '  <param name="/drone_0_ego_planner_node/fsm/near_goal_vel" value="0.15"/>',
         '  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="%d"/>' % P['pose_type'],
         '  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="%d"/>' % P['local_map_margin'],
         '  <param name="/drone_0_ego_planner_node/grid_map/resolution" value="%.2f"/>' % P['resolution'],
@@ -373,6 +374,7 @@ def params_block(d):
         '  goal_radius_m: %.1f            # == 规划器 manual_goal_max_distance == mission GOAL_RADIUS' % P['goal_radius'],
         '  goal_clearance_min: %.2f       # 目标点离膨胀层最小净空（mission 收点即拒）' % P['goal_clearance_min'],
         '  no_replan_m: %.1f              # == 规划器 fsm/thresh_no_replan_meter（末段死区）' % P['no_replan_m'],
+        '  replan_time: %.1f             # == 规划器 fsm/thresh_replan_time' % P['replan_time'],
         '  takeoff_hover_s: %.1f' % P['hover_s'],
         '  goal_hover_s: %.1f' % P['hover_s'],
         '  max_vel: %.1f' % P['max_vel'],
@@ -501,8 +503,7 @@ def main():
                  (FSM, f), (FSMH, fh)):
         if read(p) == t:
             continue                      # 内容没变就不碰（mtime 保持，便于判"要不要重建"）
-        os.makedirs(SYNC_BAK, exist_ok=True)
-        shutil.copy2(p, os.path.join(SYNC_BAK, os.path.basename(p) + '.bak_sync_' + ts))
+        shutil.copy2(p, p + '.bak_sync_' + ts)
         write(p, t)
         changed.append(os.path.basename(p))
         if p in (GM, FSM, FSMH):

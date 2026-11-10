@@ -309,13 +309,19 @@ class RosFlight:
         print("[goal_status] %s" % txt, flush=True)
         if txt == "OK":
             return
-        bad = txt == "UNREACHABLE"
+        # 2026-11-10 实测修正：规划器对"未知/未观测"栅格的终点也会做外推，
+        # 开阔场地里 ADJUSTED 是常态（实测 33 次 ADJUSTED / 9 次 OK，最大 0.44 m）。
+        # 若 mission 按 0.2 m 阈值就悬停，会**每次导航都被自己打断**。
+        # 因此 ADJUSTED 只告警（并记录），只有 UNREACHABLE 才真正悬停等新点。
         if txt.startswith("ADJUSTED"):
             try:
                 _, dx, dy = txt.split()
-                bad = math.hypot(float(dx), float(dy)) > 0.20
+                mag = math.hypot(float(dx), float(dy))
             except Exception:
-                bad = False
+                mag = -1.0
+            print("[goal_status] 终点被外推 %.2f m（开阔/未观测区常见，仅记录）" % mag, flush=True)
+            return
+        bad = (txt == "UNREACHABLE")
         if not bad:
             return
         if self.phase != "navigation":
