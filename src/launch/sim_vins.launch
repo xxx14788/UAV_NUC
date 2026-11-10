@@ -14,8 +14,16 @@
                /vins_estimator/odometry（供 vins_to_mavros）
                /mavros/vision_pose/pose（喂 PX4 EKF2，照实机链路）
          消费：run_planner_sitl_vins.launch / run_ctrl_sitl_vins.launch -->
+    <!-- 2026-11-10（整改 F-04）：配置路径原来硬编码 /home/ghj/...（他人机器），
+         换机器/env 未设即 VINS 起不来，而外层 300 s init 门会把"路径错"误报成"初始化失败"。
+         现在默认值由 $(find vins) 解析（vins 包目录 = VINS-Fusion/vins_estimator，
+         配置在其上一级 config/），随仓库走；T2_VINS_CONFIG 仍可覆盖（全仓唯一调用方=本文件）。
+         两个 roslaunch 坑：①不允许嵌套替换 → 用 $(eval)；②eval 里 env() 未设会抛异常，
+         必须用 optenv()（返回空串）。已用 substitution_args 单测验证两条分支。 -->
+    <arg name="vins_config"
+         default="$(eval optenv('T2_VINS_CONFIG') or find('vins') + '/../config/sim_stereo/sim_stereo_imu_config.yaml')"/>
     <node pkg="vins" type="vins_node" name="vins_estimator" output="screen"
-          args="$(optenv T2_VINS_CONFIG /home/ghj/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml)"/><!-- T2 v10.4: T2_VINS_CONFIG env override, literal default (roslaunch forbids nested substitution) -->
+          args="$(arg vins_config)"/>
     <node name="vins_to_mavros" pkg="vins_to_mavros" type="vins_to_mavros_node" output="screen">
         <!-- T1 E-5a: publish arm via env (default pose = legacy bit-path; T1_E5A_PUB_MODE=odom for L-odom arm) -->
         <param name="pub_mode" value="$(optenv T1_E5A_PUB_MODE pose)"/>

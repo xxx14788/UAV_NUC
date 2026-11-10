@@ -57,7 +57,21 @@ if [ -x "$HOME/catkin_ws/sitl_sim/t1_hwmon_probe.sh" ]; then
   HWPID=$!
 fi
 # VINS config 全键 md5 随轮落盘(任务书 v11.17 1.2:不只四键,跨轮漂移永久可对账)
-md5sum "$HOME/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml" > "$EV/vins_config.md5" 2>/dev/null || true
+# 2026-11-10（整改 F-04）：路径单一来源 + 存在性 fail-fast。
+# 原实现把同一路径硬编码两处（此处 md5 与两处 roslaunch），且路径错时要等 300 s
+# 才报"未 init"（把路径错误报成初始化失败）。
+VINS_CFG="${T2_VINS_CONFIG:-$HOME/catkin_ws/src/VINS-Fusion/config/sim_stereo/sim_stereo_imu_config.yaml}"
+vins_cfg_ok() {
+  if [ ! -f "$VINS_CFG" ]; then
+    LOG "FATAL VINS 配置不存在: $VINS_CFG"
+    LOG "      修法: 设 T2_VINS_CONFIG, 或修 src/launch/sim_vins.launch 的 vins_config arg 默认值"
+    return 1
+  fi
+  return 0
+}
+md5sum "$VINS_CFG" > "$EV/vins_config.md5" 2>/dev/null || true
+vins_cfg_ok || exit 1
+LOG "VINS config = $VINS_CFG"
 exec > >(tee "$EV/round.log") 2>&1
 
 # ---------- 锁(T4-E1 v2 统一仲裁:死主自动接管/心跳/磁盘水位线门;流名载体=权序标签) ----------
@@ -197,6 +211,7 @@ PYEOF
         mv "$EV/simvins.log" "$EV/simvins_pregate_fail_${pg_try}.log" 2>/dev/null
         kill_vins_my_domain
         pkill -f 'src/launch/sim_vins.launc[h]' 2>/dev/null; sleep 3
+        vins_cfg_ok || { echo "RESULT=ENV-ABORT (VINS config missing: $VINS_CFG)" > "$EV/RESULT.txt"; exit 6; }
         nohup roslaunch "$HOME/catkin_ws/src/launch/sim_vins.launch" > "$EV/simvins.log" 2>&1 &
         ok=0; T0G=$(date +%s)
         while [ $(( $(date +%s) - T0G )) -lt 300 ]; do
