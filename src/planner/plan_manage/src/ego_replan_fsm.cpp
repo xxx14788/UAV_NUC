@@ -21,6 +21,9 @@ namespace ego_planner
     nh.param("fsm/manual_goal_max_distance", manual_goal_max_distance_, 2.0);
     nh.param("fsm/thresh_replan_time", replan_thresh_, -1.0);
     nh.param("fsm/thresh_no_replan_meter", no_replan_thresh_, -1.0);
+  // 2026-11-10（到点刹车）：距目标 <near_goal_dist 时把规划 max_vel 压到 near_goal_vel
+  nh.param("fsm/near_goal_dist", near_goal_dist_, 0.6);
+  nh.param("fsm/near_goal_vel", near_goal_vel_, 0.15);
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -869,8 +872,23 @@ namespace ego_planner
 
     getLocalTarget();
 
+    /* 2026-11-10（到点刹车，用户令）：距全局目标 <near_goal_dist 时临时压低规划 max_vel。
+       bag3 事故链：末段 0.5 m/s 冲过终点 -> 越障撞上。限速是"提前留停车余量"，
+       不改全局 max_vel（巡航仍按 0.4），只在最后一次进近生效。 */
+    const double d2goal = (end_pt_ - start_pt_).norm();
+    const double saved_max_vel = planner_manager_->pp_.max_vel_;
+    const bool near_goal = (d2goal < near_goal_dist_ && near_goal_vel_ > 0.0);
+    if (near_goal)
+    {
+      planner_manager_->pp_.max_vel_ = std::min(saved_max_vel, near_goal_vel_);
+      ROS_WARN_THROTTLE(1.0, "[replan] near goal %.2f m -> max_vel capped %.2f m/s",
+                        d2goal, planner_manager_->pp_.max_vel_);
+    }
+
     bool plan_and_refine_success =
         planner_manager_->reboundReplan(start_pt_, start_vel_, start_acc_, local_target_pt_, local_target_vel_, (have_new_target_ || flag_use_poly_init), flag_randomPolyTraj);
+
+    if (near_goal) planner_manager_->pp_.max_vel_ = saved_max_vel;
     have_new_target_ = false;
 
     cout << "refine_success=" << plan_and_refine_success << endl;

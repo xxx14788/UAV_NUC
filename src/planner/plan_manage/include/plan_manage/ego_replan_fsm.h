@@ -100,6 +100,9 @@ namespace ego_planner
     ros::Publisher replan_pub_, new_pub_, bspline_pub_, data_disp_pub_, swarm_trajs_pub_, broadcast_bspline_pub_;
     ros::Publisher goal_status_pub_;          // 2026-11-09 P0-3：OK/ADJUSTED/UNREACHABLE
     ros::Time unreach_since_;                 // 连续规划失败的起点
+  // 2026-11-10（到点刹车）：距目标多近开始限速 / 限到多少
+  double near_goal_dist_{0.6};
+  double near_goal_vel_{0.15};
 
     /* helper functions */
     bool callReboundReplan(bool flag_use_poly_init, bool flag_randomPolyTraj); // front-end and back-end method
