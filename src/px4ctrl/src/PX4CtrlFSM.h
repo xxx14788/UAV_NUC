@@ -121,8 +121,6 @@ public:
 	bool cmd_is_received(const ros::Time &now_time);
 	bool odom_is_received(const ros::Time &now_time);
 	bool imu_is_received(const ros::Time &now_time);
-	bool bat_is_received(const ros::Time &now_time);
-	bool recv_new_odom();
 	State_t get_state() { return state; }
 	bool get_landed() { return takeoff_land.landed; }
 	static std::string state2str(State_t s); // T1-W1: 状态名输出,自监视用

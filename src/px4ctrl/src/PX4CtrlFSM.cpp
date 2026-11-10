@@ -1111,22 +1111,6 @@ bool PX4CtrlFSM::imu_is_received(const ros::Time &now_time)
 	return (now_time - imu_data.rcv_stamp).toSec() < param.msg_timeout.imu;
 }
 
-bool PX4CtrlFSM::bat_is_received(const ros::Time &now_time)
-{
-	return (now_time - bat_data.rcv_stamp).toSec() < param.msg_timeout.bat;
-}
-
-bool PX4CtrlFSM::recv_new_odom()
-{
-	if (odom_data.recv_new_msg)
-	{
-		odom_data.recv_new_msg = false;
-		return true;
-	}
-
-	return false;
-}
-
 std::string PX4CtrlFSM::state2str(State_t s)
 {
 	switch (s)
