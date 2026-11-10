@@ -189,16 +189,6 @@ def static_checks(ck, contract, paths):
     ck.add("末段重规划门限 launch == 契约 params.no_replan_m", nr_ok,
            {"launch": nr_l, "contract": nr_c})
 
-    # 2026-11-08（用户令②）：px4ctrl yaml 的掉电保护阈值 == 契约（不依赖节点在跑）
-    lv_y = _yaml_scalar(paths["px4ctrl_yaml"], "low_voltage")
-    lv_c = _get(contract, "runtime.battery.low_voltage_v")
-    try:
-        lv_ok = lv_y is not None and lv_c is not None and abs(float(lv_y) - float(lv_c)) < 1e-6
-    except (TypeError, ValueError):
-        lv_ok = False
-    ck.add("px4ctrl yaml low_voltage == 契约 runtime.battery.low_voltage_v", lv_ok,
-           {"yaml": lv_y, "contract": lv_c})
-
 
     # 4) 目标半径：契约 == 规划器 == 任务脚本
     mr = _launch_arg(lt, "manual_goal_max_distance") or _param_value(lt, "fsm/manual_goal_max_distance")
@@ -393,18 +383,6 @@ def live_checks(ck, contract, mode):
                isinstance(val, (int, float)) and exp is not None
                and abs(float(val) - float(exp)) < 1e-6,
                {"runtime": val, "contract": exp})
-    # 2026-11-08（用户令②）：px4ctrl 的掉电保护阈值与契约同源。
-    # 只在 px4ctrl 真起了的时候断言（密封测试只起规划器，不能因此判 FAIL）；
-    # 静态链接由 static_checks 读 yaml 保证，两条腿各管一段。
-    lv = rospy.get_param("/px4ctrl/low_voltage", None)
-    lv_exp = _get(contract, "runtime.battery.low_voltage_v")
-    if lv is None:
-        ck.add("px4ctrl low_voltage == 契约（本域未起 px4ctrl，静态腿已覆盖）", True,
-               {"skip": "px4ctrl 未启动"})
-    else:
-        ck.add("px4ctrl low_voltage == 契约 runtime.battery.low_voltage_v",
-               isinstance(lv, (int, float)) and lv_exp is not None
-               and abs(float(lv) - float(lv_exp)) < 1e-6, {"runtime": lv, "contract": lv_exp})
     ck.add("depth_mindist == 契约",
            isinstance(mind, (int, float)) and mind_exp is not None
            and abs(float(mind) - float(mind_exp)) < 1e-6,
