@@ -163,6 +163,23 @@ case "$CMD" in
       sleep 1
     done
     ROS_LEFT="$(ros_processes)"
+      # 2026-11-10：刚停录包、回写未落时进程会被 IO 拖住，实测 10 s 不够（要停两次）。
+      # 这里自动升一级 TERM 再等 5 s，而不是让人手动重跑。
+      echo "!! 第一轮 10 s 后仍有残留，升级 TERM 并再等 5 s" >&2
+      pkill -TERM -f '[r]oslaunch' 2>/dev/null || true
+      pkill -TERM -x vins_node 2>/dev/null || true
+      pkill -TERM -f '[m]avros_node' 2>/dev/null || true
+      pkill -TERM -f '[p]x4ctrl_node' 2>/dev/null || true
+      pkill -TERM -f '[e]go_planner_node' 2>/dev/null || true
+      pkill -TERM -x traj_server 2>/dev/null || true
+      pkill -TERM -f '[r]ealsense2_camera' 2>/dev/null || true
+      pkill -TERM -f '[p]lanned_path_pub.py' 2>/dev/null || true
+      pkill -TERM -f '[c]amera_pose_relay.py' 2>/dev/null || true
+      for _ in $(seq 1 5); do
+        [ -z "$(ros_processes)" ] && break
+        sleep 1
+      done
+      ROS_LEFT="$(ros_processes)"
     if [ -n "$ROS_LEFT" ]; then
       printf '%s\n' "$ROS_LEFT" >&2
       echo "仍有 ROS master/launch 残留，请检查 ps -ef | grep -E 'ros|vins|mavros'。" >&2; exit 1;
