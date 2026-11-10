@@ -8,6 +8,27 @@
 using namespace std;
 using namespace uav_utils;
 
+namespace
+{
+// 2026-11-10（整改 F-07）：本文件的时间常量集中在此，禁止散落字面量。
+constexpr double kRcGuardWaitMaxS = 30.0;  // RC 门提示多久后放弃（不再阻塞等待）
+constexpr double kOffboardSettleS = 0.10;  // OFFBOARD 切模式到 arm 的延迟（原为 100 ms 阻塞等待）
+constexpr double kCycleWarnMs = 20.0;      // process() 单拍耗时告警阈（100 Hz 周期 = 10 ms）
+
+// 单拍耗时探针：析构时报告。把"控制环被卡住"从不可观测变成 ERROR 日志。
+struct CycleTimer
+{
+	ros::WallTime t0 = ros::WallTime::now();
+	~CycleTimer()
+	{
+		const double ms = (ros::WallTime::now() - t0).toSec() * 1000.0;
+		if (ms > kCycleWarnMs)
+			ROS_ERROR_THROTTLE(1.0, "[px4ctrl] process() took %.1f ms (> %.0f ms) -- control loop stalled",
+			                   ms, kCycleWarnMs);
+	}
+};
+}  // namespace
+
 PX4CtrlFSM::PX4CtrlFSM(Parameter_t &param_, LinearControl &controller_) : param(param_), controller(controller_) /*, thrust_curve(thrust_curve_)*/
 {
 	state = MANUAL_CTRL;
@@ -95,6 +116,7 @@ bool PX4CtrlFSM::updateGroundLock(const ros::Time &now)
 }
 void PX4CtrlFSM::process()
 {
+	const CycleTimer cycle_timer;  // F-07: 单拍耗时探针（析构时判超时）
 
 	ros::Time now_time = ros::Time::now();
 	// 2026-11-07 地面锁定（判读 v1 §3）：在状态机之前判一次（滞后 <=1 拍 = 10 ms；
@@ -312,22 +334,33 @@ void PX4CtrlFSM::process()
 					ROS_ERROR("[px4ctrl] Reject AUTO_TAKEOFF. land detector says that the drone is not landed now!");
 				else // RJ_RC_GUARD
 				{
-					ROS_ERROR("[px4ctrl] Reject AUTO_TAKEOFF. If you have your RC connected, keep its switches at \"auto hover\" and \"command control\" states, and all sticks at the center, then takeoff again.");
-					while (ros::ok())
+					// 2026-11-10（整改 F-07）：原实现在这里 `while (ros::ok()) { sleep; spinOnce; }`
+					// 忙等操作者摆杆 —— 该循环位于 process() 内、由 100 Hz 主循环驱动，
+					// 等待期间**没有任何 setpoint 下发**（PX4 OFFBOARD 会进 failsafe），
+					// 且整个节点（含 HAFIX 看门狗/自监视）僵死。改为每拍提示 + 超时放弃，
+					// 操作者摆好杆后重发 TAKEOFF 即可（triggered 每拍清零，本就支持重发）。
+					if (rc_guard_wait_since_.isZero())
+						rc_guard_wait_since_ = now_time;
+					const double waited = (now_time - rc_guard_wait_since_).toSec();
+					if (waited > kRcGuardWaitMaxS)
 					{
-						ros::Duration(0.01).sleep();
-						ros::spinOnce();
-						if (rc_data.is_hover_mode && rc_data.is_command_mode && rc_data.check_centered())
-						{
-							ROS_INFO("\033[32m[px4ctrl] OK, you can takeoff again.\033[32m");
-							break;
-						}
+						rc_guard_wait_since_ = ros::Time(0);
+						ROS_WARN("[px4ctrl] RC guard wait timeout (%.0fs). Re-send TAKEOFF after "
+						         "centering the sticks.", kRcGuardWaitMaxS);
+					}
+					else
+					{
+						ROS_ERROR_THROTTLE(2.0,
+						    "[px4ctrl] Reject AUTO_TAKEOFF (RC guard): keep CH5 high and ALL FOUR "
+						    "sticks centered, then re-send TAKEOFF. normalized ch1..4=%.2f/%.2f/%.2f/%.2f",
+						    rc_data.ch[0], rc_data.ch[1], rc_data.ch[2], rc_data.ch[3]);
 					}
 				}
 				break;
 			}
 
 			state = AUTO_TAKEOFF;
+			rc_guard_wait_since_ = ros::Time(0);   // F-07: 进入起飞后清掉 RC 门等待状态
 			// 2026-11-07 地面锁定：新一次起飞，重置离地判定与峰值统计
 			gl_state_ = px4ctrl_core::GroundLockState();
 			gl_kick_max_deg_ = 0.0;
@@ -340,14 +373,13 @@ void PX4CtrlFSM::process()
 					ROS_ERROR("[px4ctrl] AUTO_TAKEOFF aborted: OFFBOARD rejected (FCU link busy/rebooting), back to MANUAL_CTRL. Retry takeoff.");
 				break;
 			}
-			for (int i = 0; i < 10 && ros::ok(); ++i) // wait for 0.1 seconds to allow mode change by FMU // mark
+			// 2026-11-10（整改 F-07）：原实现在这里 `for (i<10) { sleep(0.01); spinOnce(); }`
+			// 盲等 100 ms 让 PX4 消化模式切换 —— 同样卡住 100 Hz 环。改为"下一拍 arm"：
+			// 延迟量仍是 0.10 s（语义等价），但主循环不再停摆。
+			takeoff_arm_at_ = now_time + ros::Duration(kOffboardSettleS);
+			if (param.takeoff_land.enable_auto_arm && kOffboardSettleS <= 0.0)
 			{
-				ros::Duration(0.01).sleep();
-				ros::spinOnce();
-			}
-			if (param.takeoff_land.enable_auto_arm)
-			{
-				toggle_arm_disarm(true);
+				toggle_arm_disarm(true);   // 配置成 0 延迟时保持旧语义（默认 0.10 → 下一拍 arm）
 			}
 			takeoff_land.toggle_takeoff_land_time = now_time;
 
@@ -511,6 +543,13 @@ void PX4CtrlFSM::process()
 
 	case AUTO_TAKEOFF:
 	{
+		// 2026-11-10（整改 F-07）：OFFBOARD 切模式后的延迟 arm（替代原来的 100 ms 阻塞等待）。
+		if (!takeoff_arm_at_.isZero() && now_time >= takeoff_arm_at_)
+		{
+			if (param.takeoff_land.enable_auto_arm)
+				toggle_arm_disarm(true);
+			takeoff_arm_at_ = ros::Time(0);
+		}
 		// T1-F3: 判定权威=decide_takeoff(含 T1-W1 F2 看门狗);副作用映射(行为等价,审计表)
 		fsm_decision::Outcome fd_o = fsm_decision::decide_takeoff(
 		    fd_in, AutoTakeoffLand_t::MOTORS_SPEEDUP_TIME, AutoTakeoffLand_t::TAKEOFF_ABORT_TIMEOUT,
@@ -520,6 +559,7 @@ void PX4CtrlFSM::process()
 		if (fd_o.next == fsm_decision::MANUAL_CTRL)
 		{
 			state = MANUAL_CTRL;
+			takeoff_arm_at_ = ros::Time(0);   // F-07: 中止时清掉待执行的 arm
 			toggle_offboard_mode(false);
 			ROS_ERROR("[px4ctrl] AUTO_TAKEOFF timeout (disarmed & not airborne), back to MANUAL_CTRL. Retry takeoff.");
 			break;

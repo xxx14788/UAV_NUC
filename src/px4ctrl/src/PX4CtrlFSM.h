@@ -132,6 +132,9 @@ private:
 	px4ctrl_core::GroundLockState gl_state_;
 	double gl_kick_max_deg_ = 0.0;     // 锁定期间实测倾角峰值（guard + 判读量）
 	bool gl_locked_this_tick_ = false;
+	// 2026-11-10（整改 F-07）：去阻塞后的两个时序状态（原为函数内 static / 阻塞循环）
+	ros::Time rc_guard_wait_since_;  // RC 门提示起点（0=未在提示）
+	ros::Time takeoff_arm_at_;       // OFFBOARD 切模式后延迟 arm 的到期时刻（0=无待执行）
 	bool updateGroundLock(const ros::Time &now); // 返回本拍是否锁定
 
 	// ---- control related ----
