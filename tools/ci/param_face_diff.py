@@ -19,6 +19,8 @@ import tempfile
 
 import yaml
 
+from yaml_unique import DuplicateKeyError, safe_load_unique
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 if hasattr(sys.stderr, "reconfigure"):
@@ -78,7 +80,10 @@ def load_yaml_leaves(path):
     except OSError as exc:
         raise InputError("%s: 读取失败: %s" % (path, exc))
     try:
-        doc = yaml.safe_load(raw)
+        doc = safe_load_unique(raw, name=path)
+    except DuplicateKeyError as exc:
+        # 重复键 = 静默改配置（后者覆盖前者），比语法错更危险，按输入错误处理
+        raise InputError("%s" % exc)
     except yaml.YAMLError as exc:
         mark = getattr(exc, "problem_mark", None)
         where = "%s:%d" % (path, mark.line + 1) if mark is not None else "%s:?" % path
@@ -336,6 +341,15 @@ def selftest():
           % (proc.returncode, proc.stdout.strip(), proc.stderr.strip()))
     check("case3/allowlisted", "only_in_A:vins_guard_mode" in proc.stdout,
           "allowlisted 未包含 vins_guard_mode: %s" % proc.stdout.strip())
+
+    # 用例 4：同一 mapping 内重复键 -> 必须 exit 2 并指出行号（后者静默覆盖前者=悄悄改配置）
+    p_dup = os.path.join(tmp, "dup.yaml")
+    _write(p_dup, "mass: 1.91\nmass: 9.99\ngain:\n  Kp0: 1.5\n")
+    proc = _run_cli([p_dup, p_same_b, "--allowlist", p_allow_empty, "--json"])
+    check("case4/rc", proc.returncode == 2,
+          "期望 2（输入错误），实际 %d；stderr=%s" % (proc.returncode, proc.stderr.strip()))
+    check("case4/msg", "重复键" in proc.stderr and "dup.yaml" in proc.stderr,
+          "错误信息未指出重复键/文件: %s" % proc.stderr.strip())
 
     if failures:
         print("SELFTEST FAIL %d/%d" % (total - passed, total))

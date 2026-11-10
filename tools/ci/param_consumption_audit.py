@@ -21,6 +21,8 @@ import tempfile
 
 import yaml
 
+from yaml_unique import DuplicateKeyError, safe_load_unique
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 if hasattr(sys.stderr, "reconfigure"):
@@ -258,7 +260,9 @@ def load_yaml_leaves(path):
     except OSError as exc:
         raise InputError("%s: 读取失败: %s" % (path, exc))
     try:
-        doc = yaml.safe_load(raw)
+        doc = safe_load_unique(raw, name=path)
+    except DuplicateKeyError as exc:
+        raise InputError("%s" % exc)
     except yaml.YAMLError as exc:
         mark = getattr(exc, "problem_mark", None)
         where = "%s:%d" % (path, mark.line + 1) if mark is not None else "%s:?" % path

@@ -34,6 +34,12 @@ auto_takeoff_land:
     # 2026-11-07（判读 v1 §5 批2）：起飞参考整形，0=关=旧行为（速度阶跃）。
     # 打开建议 0.6~1.0；本批**不启用**（与 ground_lock 一起开会分不清是谁的效果）。
     takeoff_ref_accel: 0.0
+    # 2026-11-10（整改 F-03）：以下 5 个起飞包络键原只存在于 SITL yaml，
+    # 实机静默走代码默认。这里按**代码默认**显式写出（= 全部关闭），实机行为零变化。
+    takeoff_thrust_cap: 0.0     # 0=off
+    takeoff_cap_release_z: 0.30
+    takeoff_att_gate_deg: -1.0  # -1=off
+    takeoff_gated_thrust: 0.0   # 0=off
 
 thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(Unit:N): F=K1*Voltage^K2*(K3*u^2+(1-K3)*u). 
     print_value: true # display the value of “thr_scale_compensate” or “hover_percentage” during thrust model estimating.
@@ -53,6 +59,7 @@ thrust_model: # The model that maps thrust signal u(0~1) to real thrust force F(
     #   hp 硬下界 0.46（0.44 时需求 3.10 > i_lim -> 积分饱和，起飞拖到 7.7 s；0.42 直接飞不起来）。
     # legacy（v2 关闭）时必须回到 0.48，否则 P-only 会冲到 ~0.75 m（"飞太高"复发）。
     hover_percentage: 0.54
+    enable_rls: true    # 2026-11-10（F-03）：显式化；= 代码默认，实机行为不变
 
 gain:
     # ========================================================================
@@ -84,6 +91,9 @@ msg_timeout:
 # ===== 2026-10-22 两轮翻机修复配套（判读 v3/v4；补丁脚本=Win scripts/实飞/px4ctrl_fix_20261022.py） =====
 odom_gate:
     enabled: true      # T1-D2 值域门启用：拒收 |v|>5 / |a|>10 / 跳变>0.6（轮1毒速度24m/s防线；拒收=保持末好帧→走既有超时降级）
+    # 2026-11-10（整改 F-03，用户裁定 D6）：SITL 开了 v2 门而实机没开，实机反而更弱。
+    # 本键显式写 false = 承认现状、行为零变化；要对齐成 true 属行为变更，另轮验证。
+    enabled_v2: false
     max_vel: 5.0
     max_acc: 10.0
     max_jump: 0.6
@@ -96,6 +106,13 @@ frame_offset:
 # false=零行为变化。启用=飞行安全逻辑红线呈裁项。
 reinit_reset:
     enabled: false
+
+# 2026-11-10（整改 F-03）：以下键原只存在于 SITL yaml，实机静默走代码默认。
+# 按代码默认显式写出 = 行为零变化；实机要开启属行为变更，另轮验证。
+p1_rebirth:
+    enabled: false
+    gap_sec: 2.0
+    birth_thresh: 0.75
 
 # ============================================================================
 # ctrl_v2：串级 + 积分（2026-11-06）

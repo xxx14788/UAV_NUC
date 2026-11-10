@@ -1,0 +1,15 @@
+# px4ctrl 参数面差异白名单（tools/ci/param_face_diff.py 消费）
+#
+# 规则：`only_in_A` = 只在实机 yaml 出现的键；`only_in_B` = 只在 SITL yaml 出现的键。
+# 任何**未登记**的键级差异都判 FAIL —— 因为缺键的一侧会静默走代码默认值，
+# 参数面就这样悄悄分叉（历史缺陷 F-03：SITL 缺 18 个实机键，SITL 全绿不覆盖实机）。
+#
+# 每一项必须写 reason，且写明"哪一侧靠代码默认"。
+#
+# 2026-11-10（整改 F-03）：两份 yaml 的键集已对齐（各 56 个叶子键），故本白名单为空。
+# 已知的**取值**级不对称（不是键级差异，本工具不比较）：
+#   ctrl_v2.enabled        : 实机 true / SITL false（SITL 启用=行为变更，待单独验证）
+#   ground_lock.enable     : 实机 true / SITL false（同上）
+#   odom_gate.enabled_v2   : SITL true / 实机 false（实机门更弱，已登记，未改行为）
+only_in_A: []
+only_in_B: []

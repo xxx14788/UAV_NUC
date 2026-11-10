@@ -22,6 +22,11 @@ auto_takeoff_land:
     no_RC: true
     takeoff_height: 0.75 # m
     takeoff_land_speed: 0.5 # m/s   //<1.5
+    # 2026-11-10（整改 F-03）：以下三键原只存在于实机 yaml，SITL 静默走代码默认。
+    # 这里显式写出的值**等于代码默认**，故 SITL 行为零变化；目的是让参数面可比。
+    land_speed: 0.0            # 0=沿用 takeoff_land_speed
+    hover_at_takeoff_xy: true
+    takeoff_ref_accel: 0.0     # 0=速度阶跃（旧行为）
     # C3-B2 H4-FIX (B1 preregistered): takeoff control envelope
     takeoff_thrust_cap: 0.80    # AUTO_TAKEOFF thrust ceiling; 0 = off (legacy)
     takeoff_tilt_max_deg: 20.0  # AUTO_TAKEOFF attitude tilt clamp; -1 = off (legacy)
@@ -58,6 +63,8 @@ msg_timeout:
 #odom sanity gate（T1-D2 2026-09-29 flyaway 防线；实机 yaml 不含此 key=默认关闭旧行为, README §3 登记）
 odom_gate:
   enabled_v2: true  # Z1.2 (v11.17 2.2) v2 总开关翻入运行时;缺省面已保 v1 逐位不变
+  # 注：实机 yaml 现也显式写了 enabled_v2: false（整改 F-03 承认现状），
+  # 即"实机 v2 门比 SITL 弱"是已知且被登记的不对称，不是遗漏。
   enabled: true
   max_vel: 5.0
   max_acc: 10.0
@@ -69,3 +76,24 @@ p1_rebirth:
   enabled: true
   gap_sec: 2.0
   birth_thresh: 0.75
+
+# ============================================================================
+# 2026-11-10（整改 F-03）：以下四段原只存在于实机 yaml，SITL 静默走代码默认。
+# 全部按**代码默认值**显式写出 => SITL 行为零变化，只是参数面变得可比。
+# 要在 SITL 真正启用 ctrl_v2 / ground_lock，属于行为变更，另立一轮验证（方案 P1-B）。
+# ============================================================================
+ctrl_v2:
+  enabled: false          # 实机 true；SITL 暂不启用（会改推力/高度剖面）
+ground_lock:
+  enable: false           # 实机 true；SITL 暂不启用
+  z_release: 0.06
+  vz_release: 0.05
+  confirm_s: 0.15
+  blend_s: 0.25
+  guard_tilt_deg: 5.0
+frame_offset:
+  hold: true
+  dev_max_deg: 8.0
+reinit_reset:
+  enabled: false
+vins_guard_mode: 1        # 1=影子（只记日志）；代码默认也是 1
