@@ -15,7 +15,9 @@ constexpr double kRcGuardWaitMaxS = 30.0;  // RC 门提示多久后放弃（不�
 constexpr double kOffboardSettleS = 0.10;  // OFFBOARD 切模式到 arm 的延迟（原为 100 ms 阻塞等待）
 constexpr double kCycleWarnMs = 20.0;      // process() 单拍耗时告警阈（100 Hz 周期 = 10 ms）
 // 2026-11-10（整改 N-02）：VINS camera_pose 健康判据的门限（原散落字面量 0.4/1.0/1.5/3.0）
-constexpr double kPoseGapBadS = 0.4;       // 到达间隔超此值 -> 断流 guard
+// 2026-11-10 实测：lz4 录包下正常飞行已有 0.326 s 的 camera_pose gap，
+// 0.4 s 会在正常场景误触发；0.8 s（≈丢 12 帧）才是真丢流。
+constexpr double kPoseGapBadS = 0.8;       // 到达间隔超此值 -> 断流 guard
 constexpr double kPoseBadHoldGapS = 1.0;   // 断流触发后 guard 保持 [s]
 constexpr double kPoseBadHoldJumpS = 1.5;  // 跳变触发后 guard 保持 [s]
 
