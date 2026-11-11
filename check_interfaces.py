@@ -239,7 +239,8 @@ def static_checks(ck, contract, paths):
 def topics_file_check(ck, contract, paths):
     """2026-11-08（用户令⑤）：录包清单必须由 sync_params 生成、且包含关键话题。"""
     path = paths.get("gen_topics")
-    need = ["/position_cmd", "/camera/depth/image_rect_raw", "/drone_0_planning/bspline",
+    # 2026-11-11：bag 里录的是 /record/* 降频副本（VINS 仍吃原始 30 fps）
+    need = ["/position_cmd", "/record/depth", "/drone_0_planning/bspline",
             "/flight_v1/planned_path", "/debugPx4ctrl"]
     topics = []
     if path and os.path.exists(path):
