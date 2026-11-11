@@ -1,4 +1,6 @@
 <launch>
+<!-- 2026-11-11：本文件不参与实机任务链（实机走 run_planner_realmachine_map_v1.launch，
+     参数由 flight_v1/sync_params.py 的 P{} 单源生成）。此处的 obstacles_inflation 只是同步副本。 -->
   <arg name="map_size_x_"/>
   <arg name="map_size_y_"/>
   <arg name="map_size_z_"/>
