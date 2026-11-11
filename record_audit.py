@@ -43,6 +43,25 @@ def main():
         rows.append("%-42s %8d %s" % (t, n, "OK" if ok else "缺"))
         if not ok:
             missing.append(t)
+    # 2026-11-11：补"帧率"判据 —— 只判"≥N 条"会漏掉节流不达标
+    # （实测 topic_tools 目标 15 Hz 只给 11.4 Hz，袋子比设计轻 24%，审计却全绿）。
+    RATE_MIN = {"/record/depth": 8.0, "/record/infra1": 12.0, "/record/infra2": 12.0}
+    try:
+        import rosbag as _rb
+        with _rb.Bag(bag) as _b:
+            _dur = _b.get_end_time() - _b.get_start_time()
+    except Exception:
+        _dur = 0.0
+    if _dur > 5.0:
+        for _t, _min in sorted(RATE_MIN.items()):
+            _n = counts.get(_t, 0)
+            if _n == 0:
+                continue                     # 缺失由上面那条判据报
+            _hz = _n / _dur
+            ok = _hz >= _min
+            rows.append("%-42s %8d %5.1f Hz %s" % (_t, _n, _hz, "OK" if ok else "偏低"))
+            if not ok:
+                missing.append("%s(%.1f<%.0f Hz)" % (_t, _hz, _min))
     print("== 录包审计 %s（共 %d 个话题）" % (os.path.basename(bag), len(counts)))
     for r in rows:
         print("   " + r)
