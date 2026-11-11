@@ -73,7 +73,7 @@ def main():
             # 两个 publisher 是 latch=True + 1 Hz 重发，不清的话 RViz 永远显示旧轨迹；
             # 而 VINS 重启后世界原点已重锚，旧轨迹连坐标都不对了。
             tid = int(msg.traj_id)
-            if state["last_traj_id"] is not None and tid <= state["last_traj_id"]:
+            if state["last_traj_id"] is not None and tid < state["last_traj_id"]:
                 state["plan"] = None
                 state["trail"] = []
                 empty = Path()
