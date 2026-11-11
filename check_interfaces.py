@@ -169,16 +169,6 @@ def static_checks(ck, contract, paths):
     ck.add("接缝:起飞高度单一来源(px4ctrl == 规划器 == 契约)", ok_h,
            {"px4ctrl": px_h, "planner": lz, "contract": cz})
 
-    # 2026-11-08（用户令）：自机气泡是独立参数，launch 与契约必须同值
-    sb_l = _param_value(lt, "grid_map/self_bubble")
-    sb_c = _get(params, "self_bubble")
-    try:
-        sb_ok = sb_l is not None and sb_c is not None and abs(float(sb_l) - float(sb_c)) < 1e-6
-    except (TypeError, ValueError):
-        sb_ok = False
-    ck.add("自机气泡 launch == 契约 params.self_bubble", sb_ok,
-           {"launch": sb_l, "contract": sb_c})
-
     # 2026-11-10：末段重规划死区也进单源（bag3 事故参数）
     nr_l = _param_value(lt, "fsm/thresh_no_replan_meter")
     nr_c = _get(params, "no_replan_m")

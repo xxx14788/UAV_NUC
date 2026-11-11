@@ -46,7 +46,8 @@ P = {
     'goal_topic': '/flight_v1/goal_gate',
     # 规划器/地图（派生链的根）
     'resolution': 0.15,
-    'inflation': 0.337,          # 等效 = ceil(0.337/0.15)*0.15 = 0.45（机体半径 0.337）
+    'inflation': 0.299,          # 2026-11-11 用户令：上游实机值 -> 等效 ceil(0.299/0.15)*0.15 = 0.30
+                                  #   （现场实测净空 0.25-0.30 m；机体直径 0.337，留 0.13 m 裕度）
     'ground_height': -0.10,      # 2026-11-08 用户令：图底压到 -0.10（地板点稳在图内）
     'ceiling_max': 1.5,
     'max_ray': 2.5,
@@ -88,6 +89,7 @@ RECORD_TOPICS = [
     '/px4ctrl/takeoff_land', '/debugPx4ctrl', '/debugPx4ctrl/fsm_state',
     '/move_base_simple/goal', '/flight_v1/goal_gate',   # goal 项会被 record_topics() 换成 P['goal_topic']
     '/position_cmd', '/drone_0_planning/bspline',
+    '/drone_0_ego_planner_node/grid_map/occupancy',           # 2026-11-11：原始占据图（真实净空的唯一判据）
     '/drone_0_ego_planner_node/grid_map/occupancy_inflate',   # P1-6：离线判目标是否在膨胀层
     '/flight_v1/planned_path',
     '/flight_v1/goal_status',   # 2026-11-11：规划器 OK/ADJUSTED/UNREACHABLE（判读必需） '/flight_v1/executed_trail', '/flight_v1/goal_marker',
@@ -107,7 +109,6 @@ def derive():
     d = {}
     d['map_size_z'] = round(P['ceiling_max'] - P['ground_height'], 2)
     d['eff_infl'] = math.ceil(P['inflation'] / P['resolution']) * P['resolution']
-    d['self_bubble'] = round(float(P.get('self_bubble') or d['eff_infl']), 3)   # 缺省=等效膨胀
     if 'depth_mindist' in P:
         d['mindist'] = round(float(P['depth_mindist']), 3)   # 用户令：显式值优先
     else:
@@ -179,8 +180,8 @@ def launch_block(d):
             % (P['takeoff_height'], P['goal_radius'], P['inflation'], P['ground_height']))
     prim2 = ('               ceiling_max %.2f / max_ray %.1f / max_vel %.1f / resolution %.2f'
              % (P['ceiling_max'], P['max_ray'], P['max_vel'], P['resolution']))
-    deriv = ('       派生: map_size_z=%.2f (天花板 %.2f) / eff_inflation=%.2f / mindist=%.3f / self_bubble=%.2f -->'
-             % (d['map_size_z'], d['ceiling'], d['eff_infl'], d['mindist'], d['self_bubble']))
+    deriv = ('       派生: map_size_z=%.2f (天花板 %.2f) / eff_inflation=%.2f / mindist=%.3f -->'
+             % (d['map_size_z'], d['ceiling'], d['eff_infl'], d['mindist']))
     return join(
         '  <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====',
         prim, prim2, deriv,
@@ -190,7 +191,6 @@ def launch_block(d):
         '  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="%.1f"/>' % P['max_ray'],
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>',
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="%.3f"/>' % d['mindist'],
-        '  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="%.3f"/>' % d['self_bubble'],
         '  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="%.1f"/>' % P['no_replan_m'],
         '  <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="%.1f"/>' % P['replan_time'],
         '  <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="0.6"/>',
@@ -243,11 +243,12 @@ def note_block(d):
         '         · 出图的点不会被丢弃，而是 clamp 到边界后按 miss 投票（等于"把地板擦掉"），',
         '           所以图底不能高于地板；地面测试用它区分"地板在地图里"与"地板被擦掉"。',
         '',
-        '       膨胀：param %.3f -> ceil(%.3f/%.2f) = %.0f 格 -> 有效 %.2f m（机体半径 %.3f）'
+        '       膨胀：param %.3f -> ceil(%.3f/%.2f) = %.0f 格 -> 有效 %.2f m（机体直径 0.337，净裕度 %.2f m）'
         % (P['inflation'], P['inflation'], P['resolution'],
-           math.ceil(P['inflation'] / P['resolution']), d['eff_infl'], 0.337),
-        '         · bspline 的自身气泡与 A* 的自身豁免都取"有效膨胀"（grid_map::getEffectiveInflation），',
-        '           不再硬编码；改 inflation 后泡泡自动跟着走。',
+           math.ceil(P['inflation'] / P['resolution']), d['eff_infl'], d['eff_infl'] - 0.1685),
+        '         · 2026-11-11（用户问 5/7 根因）：A*/优化器的"自机自由球"已撤销 —— 它把球内真障碍',
+        '           一起当自由（实测起点离箱心 0.34 m 时整箱被抹掉，贴箱切角）。起点在膨胀层里由',
+        '           A* 的 start/end 反向外推解决；FSM 碰撞判据改用原始占据格。本参数只决定规划裕度。',
         '',
         '       天花板：地图顶 %.2f 必须不高于箱高 1.50（"禁止从箱子上方飞越"）；检查器门是 <=。'
         % d['ceiling'],
@@ -265,10 +266,12 @@ def note_block(d):
         '         11-07 ground_height=-0.30 -> 地图下有走廊，实测钻到 z=-0.25',
         '         11-08 morning  ground_height=0.05 -> 地板被 miss 擦掉，机体自己出图',
         '         11-08 19:33    ground -0.01 + 膨胀 0.15（回上游）',
-        '         11-08 21:xx    ground %.2f + 膨胀 %.3f（用户令：机体半径 %.3f、mindist %.1f）'
-        % (P['ground_height'], P['inflation'], 0.337, P['depth_mindist']),
+        '         11-08 21:xx    ground -0.10 + 膨胀 0.337（用户令，已废止）',
+        '         11-11          膨胀 0.299 -> 有效 0.30（上游实机值；对齐现场 0.25-0.30 m 净空）',
         '       ================================================================== -->')
 
+
+RETIRED_PARAMS = {"grid_map/self_bubble"}   # 2026-11-11：自机自由球撤销，参数废止
 
 def w_launch(d):
     """重写 launch：先删掉**所有**派生块痕迹，再插一次。
@@ -363,7 +366,8 @@ def w_launch(d):
                 in_block = False
             continue
         m = re.search(r'<param name="([^"]+)"', ln)
-        if m and m.group(1) in names:
+        # 2026-11-11：已废止参数（如 self_bubble）即使不在派生块里也要清掉残留
+        if m and (m.group(1) in names or any(m.group(1).endswith(r) for r in RETIRED_PARAMS)):
             continue          # 块外同名 -> 丢弃（块内是唯一权威）
         keep.append(ln)
     return NL.join(keep)
@@ -391,7 +395,6 @@ def params_block(d):
         '  map_size_z: %.2f             # 天花板 = %.2f' % (d['map_size_z'], d['ceiling']),
         '  ceiling_max: %.1f' % P['ceiling_max'],
         '  depth_mindist: %.3f          # 近场剔除下限（显式；几何门: mindist+cam_fwd <= eff_inflation）' % d['mindist'],
-        '  self_bubble: %.3f            # 自机气泡半径（bspline 与 A* 共用；缺省=等效膨胀）' % d['self_bubble'],
         '',
         'runtime:',
         '  # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。',

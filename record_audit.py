@@ -18,6 +18,7 @@ CRITICAL = {
     "/drone_0_planning/bspline": 1,
     "/flight_v1/planned_path": 1,
     "/flight_v1/goal_gate": 1,
+    "/drone_0_ego_planner_node/grid_map/occupancy": 1,           # 2026-11-11：原始占据（算真实净空）
     "/drone_0_ego_planner_node/grid_map/occupancy_inflate": 1,   # P1-6：离线判目标是否在膨胀层
 }
 

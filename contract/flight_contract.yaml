@@ -44,14 +44,13 @@ params:
   max_acc: 3.0
   pose_type: 1
   resolution: 0.15
-  obstacles_inflation: 0.337
+  obstacles_inflation: 0.299
   max_ray_length: 2.5
   local_map_margin: 10
   ground_height: -0.10
   map_size_z: 1.60             # 天花板 = 1.50
   ceiling_max: 1.5
   depth_mindist: 0.200          # 近场剔除下限（显式；几何门: mindist+cam_fwd <= eff_inflation）
-  self_bubble: 0.450            # 自机气泡半径（bspline 与 A* 共用；缺省=等效膨胀）
 
 runtime:
   # 2026-11-08：以下三组原来散落在 launch / bash / 人的操作卡里，现已收到契约。
@@ -101,6 +100,7 @@ record_topics:   # 录包唯一清单（recorder 读 generated/record_topics.txt
   - /flight_v1/goal_gate
   - /position_cmd
   - /drone_0_planning/bspline
+  - /drone_0_ego_planner_node/grid_map/occupancy
   - /drone_0_ego_planner_node/grid_map/occupancy_inflate
   - /flight_v1/planned_path
   - /flight_v1/goal_status

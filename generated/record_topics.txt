@@ -29,6 +29,7 @@
 /flight_v1/goal_gate
 /position_cmd
 /drone_0_planning/bspline
+/drone_0_ego_planner_node/grid_map/occupancy
 /drone_0_ego_planner_node/grid_map/occupancy_inflate
 /flight_v1/planned_path
 /flight_v1/goal_status

@@ -12,16 +12,17 @@
          · 出图的点不会被丢弃，而是 clamp 到边界后按 miss 投票（等于"把地板擦掉"），
            所以图底不能高于地板；地面测试用它区分"地板在地图里"与"地板被擦掉"。
 
-       膨胀：param 0.337 -> ceil(0.337/0.15) = 3 格 -> 有效 0.45 m（机体半径 0.337）
-         · bspline 的自身气泡与 A* 的自身豁免都取"有效膨胀"（grid_map::getEffectiveInflation），
-           不再硬编码；改 inflation 后泡泡自动跟着走。
+       膨胀：param 0.299 -> ceil(0.299/0.15) = 2 格 -> 有效 0.30 m（机体直径 0.337，净裕度 0.13 m）
+         · 2026-11-11（用户问 5/7 根因）：A*/优化器的"自机自由球"已撤销 —— 它把球内真障碍
+           一起当自由（实测起点离箱心 0.34 m 时整箱被抹掉，贴箱切角）。起点在膨胀层里由
+           A* 的 start/end 反向外推解决；FSM 碰撞判据改用原始占据格。本参数只决定规划裕度。
 
        天花板：地图顶 1.50 必须不高于箱高 1.50（"禁止从箱子上方飞越"）；检查器门是 <=。
 
        感知/规划：depth_filter_maxdist 5.0 采样、max_ray_length 2.5 截断；
          planning_horizon 4.0（= 1.6 x 感知，满足上游 "horizon >= 1.5 x sensing"）
 
-       近场：mindist 0.200 + 相机前移 0.034 = 盲面 0.234 <= 有效膨胀 0.450
+       近场：mindist 0.200 + 相机前移 0.034 = 盲面 0.234 <= 有效膨胀 0.300
          自机点（桨/保护圈/脚架）由 grid_map.cpp 的自机排除盒剔除，不靠 mindist：
          机体系 ((-0.32, 0.32), (-0.32, 0.32), (-0.16, 0.1)) -> 相机系 AABB lo=[-0.313, -0.018, -0.363] hi=[0.347, 0.246, 0.298]（外参读 VINS yaml）
 
@@ -29,7 +30,8 @@
          11-07 ground_height=-0.30 -> 地图下有走廊，实测钻到 z=-0.25
          11-08 morning  ground_height=0.05 -> 地板被 miss 擦掉，机体自己出图
          11-08 19:33    ground -0.01 + 膨胀 0.15（回上游）
-         11-08 21:xx    ground -0.10 + 膨胀 0.337（用户令：机体半径 0.337、mindist 0.2）
+         11-08 21:xx    ground -0.10 + 膨胀 0.337（用户令，已废止）
+         11-11          膨胀 0.299 -> 有效 0.30（上游实机值；对齐现场 0.25-0.30 m 净空）
        ================================================================== -->
   <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
     <arg name="drone_id" value="$(arg drone_id)"/>
@@ -63,16 +65,15 @@
   </include>
 
   <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====
-       原始量: takeoff_height 0.70 / goal_radius 3.5 / inflation 0.337 / ground_height -0.10 /
+       原始量: takeoff_height 0.70 / goal_radius 3.5 / inflation 0.299 / ground_height -0.10 /
                ceiling_max 1.50 / max_ray 2.5 / max_vel 0.4 / resolution 0.15
-       派生: map_size_z=1.60 (天花板 1.50) / eff_inflation=0.45 / mindist=0.200 / self_bubble=0.45 -->
-  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.337"/>
+       派生: map_size_z=1.60 (天花板 1.50) / eff_inflation=0.30 / mindist=0.200 -->
+  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.299"/>
   <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.10"/>
   <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.60"/>
   <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
   <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.200"/>
-  <param name="/drone_0_ego_planner_node/grid_map/self_bubble" value="0.450"/>
   <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="0.3"/>
   <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="0.5"/>
   <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="0.6"/>

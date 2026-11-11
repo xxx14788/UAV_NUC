@@ -59,10 +59,31 @@ def main():
     pub_plan = rospy.Publisher(PATH_PLAN, Path, queue_size=2, latch=True)
     pub_trail = rospy.Publisher(PATH_TRAIL, Path, queue_size=2, latch=True)
     pub_goal = rospy.Publisher(GOAL_MARK, Marker, queue_size=2, latch=True)
-    state = {"plan": None, "trail": [], "goal": None}
+    state = {"plan": None, "trail": [], "goal": None, "last_traj_id": None}
+    # 2026-11-11（用户问 1）：节点启动先清一次，避免 RViz 挂着上一个实例的 latch 轨迹
+    empty0 = Path()
+    empty0.header.frame_id = "world"
+    empty0.header.stamp = rospy.Time.now()
+    pub_plan.publish(empty0)
+    pub_trail.publish(empty0)
 
     def on_bspline(msg):
         try:
+            # 2026-11-11（用户问 1）：规划器重启 -> traj_id 归零，必须清空上一轮轨迹。
+            # 两个 publisher 是 latch=True + 1 Hz 重发，不清的话 RViz 永远显示旧轨迹；
+            # 而 VINS 重启后世界原点已重锚，旧轨迹连坐标都不对了。
+            tid = int(msg.traj_id)
+            if state["last_traj_id"] is not None and tid <= state["last_traj_id"]:
+                state["plan"] = None
+                state["trail"] = []
+                empty = Path()
+                empty.header.frame_id = "world"
+                empty.header.stamp = rospy.Time.now()
+                pub_plan.publish(empty)
+                pub_trail.publish(empty)
+                rospy.loginfo("[path] traj_id %d -> %d：规划器重启，清空上一轮轨迹"
+                              % (state["last_traj_id"], tid))
+            state["last_traj_id"] = tid
             u = list(msg.knots)
             pts = list(msg.pos_pts)   # 真字段名是 pos_pts（rosmsg show traj_utils/Bspline）
             p = int(msg.order)   # traj_server 就是把 msg.order 当次数传给 UniformBspline
