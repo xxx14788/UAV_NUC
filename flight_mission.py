@@ -169,6 +169,7 @@ class RosFlight:
         self.anchor = None
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
+        self.nav_deadline = None          # 当前目标的 180 s 导航超时（按目标重置）
         # 2026-11-08（方案 v2 C3）：目标停滞自降状态（发目标后 5 s 内指令不动 -> 中止）
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
@@ -382,6 +383,7 @@ class RosFlight:
             gated.pose.position.z = target[2]
             self.goal_used = True
             self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
+            self.nav_deadline = time.monotonic() + 180.0   # 每个目标各自 180 s 导航预算
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
@@ -639,7 +641,7 @@ class RosFlight:
         为什么要多航点：ego_planner 是**局部**规划器（视界 4 m，无全局路径），
         两组箱子时它不保证自己找到 S 形。用人工拐点把 S 形变成几何约束，最确定。
         """
-        NEXT_GOAL_WAIT = 20.0
+        NEXT_GOAL_WAIT = 15.0   # 2026-11-11 用户令：20 -> 15 s
         print("目标已发送；到点稳定 %.0fs 后，%.0f 秒内可在 RViz 点下一个目标"
               "（依次点几个拐点 = S 形绕行），否则自动降落。" % (GOAL_HOVER_SECONDS, NEXT_GOAL_WAIT), flush=True)
         deadline = None
@@ -655,8 +657,11 @@ class RosFlight:
                     return
                 self.rospy.sleep(0.1)
                 continue
-            if deadline is None:
-                deadline = time.monotonic() + 180.0
+            # 2026-11-11 修 bug：原 deadline 只在首次赋值，第二个目标起沿用同一个
+            # 180 s 计时器 -> 多航点（S 形）飞到第 3-4 个点会被误判超时并抛错。
+            if self.nav_deadline is None:
+                self.nav_deadline = time.monotonic() + 180.0
+            deadline = self.nav_deadline
             # 2026-11-08（方案 v2 C3）目标停滞自降：发目标后 5 s，若 /position_cmd 原地不动
             # 就报根因并中止。22:36 那轮的形态：规划器 EMERGENCY_STOP -> traj_server 以
             # 100 Hz 发"原地保持" -> px4ctrl 因"有 cmd 流"进 CMD_CTRL -> 人只看到"点了不走"。
@@ -698,7 +703,9 @@ class RosFlight:
             p, v = odom.pose.pose.position, odom.twist.twist.linear
             d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
             speed = math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
-            if fsm == "CMD_CTRL" and d <= 0.2 and speed <= 0.15:
+            # 2026-11-11：A* 端点外推会把终点拉回 ~0.19 m（实测 2.00 -> 1.82），
+            # 原 0.2 m 门只剩 1 cm 余量；放宽到 0.30 m。
+            if fsm == "CMD_CTRL" and d <= 0.30 and speed <= 0.15:
                 self.stable_since = self.stable_since or time.monotonic()
                 if time.monotonic() - self.stable_since >= GOAL_HOVER_SECONDS:
                     # 到点：进入"等下一个目标"窗口，不立刻降落
