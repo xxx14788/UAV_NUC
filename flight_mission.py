@@ -152,6 +152,7 @@ class RosFlight:
         from nav_msgs.msg import Odometry
         from quadrotor_msgs.msg import PositionCommand, TakeoffLand
         from std_msgs.msg import String
+        from nav_msgs.msg import Path
         from sensor_msgs.msg import PointCloud2
         import sensor_msgs.point_cloud2 as pc2
 
@@ -214,6 +215,8 @@ class RosFlight:
         sub("/drone_0_ego_planner_node/grid_map/occupancy_inflate", PointCloud2,
             self._map_cb)
         sub("/flight_v1/goal_status", String, self._goal_status_cb)
+        # 2026-11-11：到位判定要对着"规划器实际终点"算（A* 端点外推会让终点比目标短 0.2-0.4 m）
+        sub("/flight_v1/planned_path", Path)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
 
@@ -701,7 +704,15 @@ class RosFlight:
                 continue
             odom = self._odom()
             p, v = odom.pose.pose.position, odom.twist.twist.linear
-            d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
+            # 2026-11-11：参考点优先用"规划器实际终点"（planned_path 末点），
+            # 因为它可能比目标短 0.2-0.4 m（A* 把未观测格子当障碍做端点外推）。
+            ref = self.target
+            _lp = self.cache.get("/flight_v1/planned_path")
+            if _lp is not None and self._fresh("/flight_v1/planned_path", 2.0) and len(_lp.poses) > 0:
+                _e = _lp.poses[-1].pose.position
+                ref = (_e.x, _e.y, _e.z)
+            d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), ref)))
+            d_goal = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
             speed = math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
             # 2026-11-11：A* 端点外推会把终点拉回 ~0.19 m（实测 2.00 -> 1.82），
             # 原 0.2 m 门只剩 1 cm 余量；放宽到 0.30 m。
@@ -718,8 +729,8 @@ class RosFlight:
                     self.goal_target_xy = None
                     self.phase = "await_goal"
                     deadline = None
-                    print("第 %d 个目标到达并稳定悬停 %.0f 秒。%.0f 秒内可点下一个目标，否则自动降落。"
-                          % (self.goal_count, GOAL_HOVER_SECONDS, NEXT_GOAL_WAIT), flush=True)
+                    print("第 %d 个目标到达并稳定悬停 %.0f 秒（距目标 %.2f m）。%.0f 秒内可点下一个目标，否则自动降落。"
+                          % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT), flush=True)
                     continue
             else:
                 self.stable_since = None
