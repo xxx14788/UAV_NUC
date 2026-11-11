@@ -23,7 +23,7 @@ PORT = 11316
 URI = "http://localhost:%d" % PORT
 FV = os.path.expanduser("~/sitl_realmachine/flight_v1")
 LAUNCH = os.path.join(FV, "run_planner_realmachine_map_v1.launch")
-W, H = 1280, 720
+W, H = 848, 480
 STRIPE_MM = 2000
 
 
@@ -63,7 +63,7 @@ def main():
         pose = PoseStamped()
         pose.header.frame_id = "world"
         pose.pose.position.z = 0.7
-        # 2026-11-10（1280 升档复核发现）：原 w=1 使光轴指向世界 +z，2m 深度点落到
+        # 2026-11-10（分辨率复核发现）：原 w=1 使光轴指向世界 +z，2m 深度点落到
         # 地图顶(1.5m)之外 → 地图恒空、测试恒 FAIL。绕 y 转 90° 把光轴转到 +x。
         pose.pose.orientation.w = 0.7071067811865476
         pose.pose.orientation.y = 0.7071067811865476

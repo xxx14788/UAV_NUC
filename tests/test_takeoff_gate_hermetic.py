@@ -25,7 +25,7 @@ PORT = 11314
 URI = "http://localhost:%d" % PORT
 FV = os.path.expanduser("~/sitl_realmachine/flight_v1")
 LAUNCH = os.path.join(FV, "run_planner_realmachine_map_v1.launch")
-W, H = 1280, 720
+W, H = 848, 480
 
 
 def main():
