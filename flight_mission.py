@@ -76,6 +76,22 @@ def goal_stall_verdict(elapsed_s, dist_to_goal_m, vcmd_mps,
     """
     return bool(elapsed_s >= settle_s and dist_to_goal_m > min_gap_m
                 and vcmd_mps < min_v_mps)
+def pick_endpoint_ref(prev_ref, path_msg, path_time, goal_sent_t, now,
+                      fresh_age=2.0, target=None):
+    """到位判定用的参考点（纯函数，可单测）。
+
+    规则：
+      1) 路径必须是**本次目标发出之后**收到的（否则是上一条轨迹的残留 -> 多航点误判到点）；
+      2) 且仍在 fresh_age 内 -> 取它的末点（随重规划持续更新）；
+      3) 否则沿用上一次的有效值；从未有过 -> 退回命令目标。
+    """
+    if (path_msg is not None and len(path_msg.poses) > 0
+            and path_time > goal_sent_t and (now - path_time) <= fresh_age):
+        q = path_msg.poses[-1].pose.position
+        return (q.x, q.y, q.z)
+    return prev_ref if prev_ref is not None else target
+
+
 TAKEOFF_HOVER_SECONDS = 5.0   # 契约缺失时回退
 GOAL_HOVER_SECONDS = 5.0
 TAKEOFF_HOVER_SECONDS = _contract_value("params.takeoff_hover_s", TAKEOFF_HOVER_SECONDS)
@@ -172,6 +188,7 @@ class RosFlight:
         self.next_goal_deadline = None
         self.nav_deadline = None          # 当前目标的 60 s 导航超时（按目标重置）
         self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
+        self.goal_sent_t = 0.0            # 本次目标发出的时刻（只接受其后的 planned_path）
         # 2026-11-08（方案 v2 C3）：目标停滞自降状态（发目标后 5 s 内指令不动 -> 中止）
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
@@ -400,6 +417,7 @@ class RosFlight:
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
+            self.goal_sent_t = time.monotonic()   # 之后的 planned_path 才算本次目标的
             # 目标停滞起点（方案 v2 C3 + 二审 F2）：只记"目标 xy + 时刻"，
             # 判据用"指令离目标还差多少"，不再依赖 /position_cmd 是否已有流。
             self.goal_target_xy = (target[0], target[1])
@@ -719,12 +737,20 @@ class RosFlight:
             # 2026-11-11：端点参考**锁存**——拿到一次就记住，直到下一个目标。
             # 原来要求 planned_path 必须 2 s 内新鲜；到点后规划器不再发轨迹 ->
             # 参考点退回目标（差 0.2-0.4 m）-> 到位判定永远不成立 -> 60 s 超时。
-            if self.endpoint_ref is None:
-                _lp = self.cache.get("/flight_v1/planned_path")
-                if (_lp is not None and self._fresh("/flight_v1/planned_path", 2.0)
-                        and len(_lp.poses) > 0):
-                    _e = _lp.poses[-1].pose.position
-                    self.endpoint_ref = (_e.x, _e.y, _e.z)
+            # 2026-11-11 修时序洞：新目标刚发出时缓存里还是"上一条轨迹"的 planned_path，
+            # 直接锁存会把**旧终点**当成本次终点 -> 多航点时"刚飞到的地方"被误判为到点。
+            # 现在只接受 `goal_sent_t` 之后收到的 planned_path，并随重规划持续更新。
+            _prev_ref = self.endpoint_ref
+            self.endpoint_ref = pick_endpoint_ref(
+                self.endpoint_ref,
+                self.cache.get("/flight_v1/planned_path"),
+                self.times.get("/flight_v1/planned_path", 0.0),
+                self.goal_sent_t, time.monotonic(), 2.0, self.target)
+            if _prev_ref is None and self.endpoint_ref is not None                     and self.endpoint_ref != self.target:
+                print("[arrival_ref] 规划终点=(%.2f,%.2f,%.2f) 距目标 %.2f m"
+                      % (self.endpoint_ref[0], self.endpoint_ref[1], self.endpoint_ref[2],
+                         math.hypot(self.endpoint_ref[0] - self.target[0],
+                                    self.endpoint_ref[1] - self.target[1])), flush=True)
             ref = self.endpoint_ref if self.endpoint_ref is not None else self.target
             d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), ref)))
             d_goal = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
@@ -865,7 +891,25 @@ def main():
             pass
         else:
             raise AssertionError("goal beyond 2 m accepted")
-        print("SELF-TEST PASS: RC guard, 3.5 m goal bound, and relative 0.5 m target")
+        # 2026-11-11：到位参考点的时序场景（这三条对应实飞里最容易错的点）
+        class _P(object):
+            def __init__(self, x, y, z):
+                self.x, self.y, self.z = x, y, z
+        class _Pose(object):
+            def __init__(self, p):
+                self.pose = type("S", (), {"position": p})()
+        class _Path(object):
+            def __init__(self, pts):
+                self.poses = [_Pose(q) for q in pts]
+        _old = _Path([_P(9.0, 9.0, 0.7)])     # 上一个目标的终点
+        _new = _Path([_P(2.0, 0.0, 0.7)])
+        # A) 目标发出前收到的旧路径 -> 必须忽略，退回命令目标
+        assert pick_endpoint_ref(None, _old, 10.0, 20.0, 21.0, 2.0, (2.0, 0.0, 0.7)) == (2.0, 0.0, 0.7)
+        # B) 目标发出后收到的路径 -> 用它（即使与目标不同）
+        assert pick_endpoint_ref(None, _old, 25.0, 20.0, 26.0, 2.0, (2.0, 0.0, 0.7)) == (9.0, 9.0, 0.7)
+        # C) 路径过期 -> 沿用上一次的锁存值，不退回目标
+        assert pick_endpoint_ref((9.0, 9.0, 0.7), _new, 25.0, 20.0, 40.0, 2.0, (2.0, 0.0, 0.7)) == (9.0, 9.0, 0.7)
+        print("SELF-TEST PASS: RC guard, 3.5 m goal bound, relative 0.5 m target, endpoint-ref timing")
         return 0
     lock = None
     try:
