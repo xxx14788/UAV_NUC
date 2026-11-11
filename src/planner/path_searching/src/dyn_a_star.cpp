@@ -89,12 +89,19 @@ vector<GridNodePtr> AStar::retrievePath(GridNodePtr current)
 }
 
 static const int kMaxAdjustIters = 200;  // 2026-11-11：50->200。深膨胀区(0.45m/step0.3)50 步不够，实测 858 次"end adjust hit cap"导致整套规划失败
+/* 2026-11-11（用户问 6：不许引入新问题）：撤销自机自由球后，起点若真在膨胀层里，
+   反向外推会第一次真正生效。必须限**距离**，否则 200 步的向后外推会被当成轨迹起点执行。
+   超过上限即放弃本次规划（交给 mission/FSM 处理），不产生"向后瞬移"。 */
+static const double kMaxStartAdjustDist = 1.5;   // 起点反向外推上限
+static const double kMaxEndAdjustDist   = 3.0;   // 终点外推上限（超过=目标不可达）
 
 bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d end_pt, Vector3i &start_idx, Vector3i &end_idx)
 {
     if (!Coord2Index(start_pt, start_idx) || !Coord2Index(end_pt, end_idx))
         return false;
 
+    const Vector3d start_pt_orig = start_pt;
+    const Vector3d end_pt_orig = end_pt;
     if (checkOccupancy(Index2Coord(start_idx)))
     {
         //ROS_WARN("Start point is insdide an obstacle.");
@@ -106,9 +113,10 @@ bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d en
             start_pt = (start_pt - end_pt).normalized() * step_size_ + start_pt;
             if (!Coord2Index(start_pt, start_idx))
                 return false;
-            if (++it > kMaxAdjustIters)
+            if (++it > kMaxAdjustIters || (start_pt - start_pt_orig).norm() > kMaxStartAdjustDist)
             {
-                ROS_WARN("[A*] start adjust hit cap (%d), give up", kMaxAdjustIters);
+                ROS_WARN("[A*] start adjust hit cap (%d it, %.2f m), give up", it,
+                         (start_pt - start_pt_orig).norm());
                 return false;
             }
         } while (checkOccupancy(Index2Coord(start_idx)));
@@ -124,9 +132,10 @@ bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d en
             end_pt = (end_pt - start_pt).normalized() * step_size_ + end_pt;
             if (!Coord2Index(end_pt, end_idx))
                 return false;
-            if (++it > kMaxAdjustIters)
+            if (++it > kMaxAdjustIters || (end_pt - end_pt_orig).norm() > kMaxEndAdjustDist)
             {
-                ROS_WARN("[A*] end adjust hit cap (%d), give up", kMaxAdjustIters);
+                ROS_WARN("[A*] end adjust hit cap (%d it, %.2f m), give up", it,
+                         (end_pt - end_pt_orig).norm());
                 return false;
             }
         } while (checkOccupancy(Index2Coord(end_idx)));

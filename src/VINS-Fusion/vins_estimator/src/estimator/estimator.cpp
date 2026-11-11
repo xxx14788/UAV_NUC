@@ -213,9 +213,9 @@ void Estimator::inputImage(double t, const cv::Mat &_img, const cv::Mat &_img1)
     
     if(MULTIPLE_THREAD)  
     {     
-        /* 2026-11-10：原 `% 2` 是"30 fps 输入丢一半"，后端 15 Hz。
-           相机降到 15 fps 后必须每帧都送，后端仍 15 Hz；跟踪 30->15 Hz，
-           CPU 与录包数据各减半（实测 66 MB/s -> 约 33 MB/s）。 */
+        /* 2026-11-11：相机回到 30 fps（视觉不降流），所以恢复"每两帧送一次"，
+           后端仍是 15 Hz；跟踪保持 30 Hz。省流靠"关 RGB + 录包压缩"，不靠降帧。 */
+        if(inputImageCnt % 2 == 0)
         {
             mBuf.lock();
             featureBuf.push(make_pair(t, featureFrame));

@@ -2,7 +2,7 @@
 <!-- 2026-11-10 覆盖说明（同一参数不要在两处维护）：
      下面这几个 param 会被 ~/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch
      的"派生参数块"覆盖，**改这里无效**（后写的生效）：
-       grid_map/obstacles_inflation  0.299 -> 0.337（等效 0.45）
+       grid_map/obstacles_inflation  0.299 -> 0.299（2026-11-11 起回上游实机值，等效 0.30）
        grid_map/ground_height        -0.01 -> -0.10
        grid_map/max_ray_length        5.0  -> 2.5
        grid_map/pose_type             2    -> 1
@@ -12,7 +12,7 @@
 
   <!-- EGO-Planner SITL 参数（advanced_param_exp.xml 的仿真版，实机版不动）。
        与 _exp 版差异仅两处：
-       1) obstacles_inflation 0.337(实机D435标定) -> 0.299(上游默认，仿真机体无云台杆遮挡)
+       1) obstacles_inflation 0.299(上游实机值，等效 0.30；2026-11-11 用户令)
        2) 注释说明外参：SITL 无 VINS，grid_map 使用默认 optical->body 矩阵；
           iris_depth_camera 相机 RPY=0 时该默认旋转正确，平移差 (0.1,0,0.035)
           在膨胀半径内（A3 决策 2026-09-26）。

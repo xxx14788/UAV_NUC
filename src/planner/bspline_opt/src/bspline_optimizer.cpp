@@ -1397,7 +1397,9 @@ namespace ego_planner
             }
         }
         else
-          ROS_WARN("Failed to generate direction. It doesn't matter.");
+          // 2026-11-11（用户问：日志刷屏）：实测一袋 20687 条，占 rosout 88%。
+          // 这条是优化器逐点方向估计失败的正常兜底，不影响结果 -> 降频。
+          ROS_WARN_THROTTLE(5.0, "Failed to generate direction. It doesn't matter.");
       }
 
       force_stop_type_ = STOP_FOR_REBOUND;
