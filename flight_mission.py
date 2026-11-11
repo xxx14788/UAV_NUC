@@ -170,7 +170,8 @@ class RosFlight:
         self.anchor = None
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
-        self.nav_deadline = None          # 当前目标的 180 s 导航超时（按目标重置）
+        self.nav_deadline = None          # 当前目标的 60 s 导航超时（按目标重置）
+        self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
         # 2026-11-08（方案 v2 C3）：目标停滞自降状态（发目标后 5 s 内指令不动 -> 中止）
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
@@ -243,7 +244,8 @@ class RosFlight:
     def _fsm(self):
         if not self._fresh("/debugPx4ctrl/fsm_state", 2.5):
             return None
-        return self.cache["/debugPx4ctrl/fsm_state"].data.split()[0]
+        _t = (self.cache["/debugPx4ctrl/fsm_state"].data or "").split()
+        return _t[0] if _t else None
 
     def _odom(self):
         topic = "/vins_estimator/imu_propagate"
@@ -271,8 +273,9 @@ class RosFlight:
             validate_rc_channels(channels)
         elif len(channels) < 8 or any(x < 800 or x > 2200 for x in channels[:8]):
             raise RuntimeError("遥控器通道数量/范围异常")
-        if channels[4] <= 1750:
-            raise RuntimeError("必须保持 CH5 悬停档（CH5=%.0f）" % channels[4])
+        _ch5_min = int(_contract_value("runtime.rc.ch5_min", 1750))
+        if channels[4] <= _ch5_min:
+            raise RuntimeError("必须保持 CH5 悬停档（CH5=%.0f <= %d）" % (channels[4], _ch5_min))
 
     # ---------------------------------------------------------------- P0-1
     def _map_cb(self, msg):
@@ -346,6 +349,12 @@ class RosFlight:
             print("!! 悬停指令发送失败：%r" % (exc,), flush=True)
         self.phase = "await_goal"
         self.goal_used = False
+        # 2026-11-11 修 bug：原来这里不设倒计时，monitor 的"无目标"分支会无限等待
+        # -> 目标不可达时飞机一直悬停到没电。现在 15 s 无新目标就自动降落。
+        self.next_goal_deadline = time.monotonic() + 15.0
+        self.endpoint_ref = None
+        self.goal_cmd_t0 = None
+        self.goal_target_xy = None
 
     def _goal_cb(self, msg):
         if self.phase != "await_goal" or self.goal_used or LANDING_FILE.exists() or STOP_FILE.exists():
@@ -386,7 +395,8 @@ class RosFlight:
             gated.pose.position.z = target[2]
             self.goal_used = True
             self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
-            self.nav_deadline = time.monotonic() + 180.0   # 每个目标各自 180 s 导航预算
+            self.nav_deadline = time.monotonic() + 60.0   # 每个目标各自 60 s 导航预算
+            self.endpoint_ref = None                        # 新目标重新锁存端点
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
@@ -663,7 +673,7 @@ class RosFlight:
             # 2026-11-11 修 bug：原 deadline 只在首次赋值，第二个目标起沿用同一个
             # 180 s 计时器 -> 多航点（S 形）飞到第 3-4 个点会被误判超时并抛错。
             if self.nav_deadline is None:
-                self.nav_deadline = time.monotonic() + 180.0
+                self.nav_deadline = time.monotonic() + 60.0
             deadline = self.nav_deadline
             # 2026-11-08（方案 v2 C3）目标停滞自降：发目标后 5 s，若 /position_cmd 原地不动
             # 就报根因并中止。22:36 那轮的形态：规划器 EMERGENCY_STOP -> traj_server 以
@@ -672,8 +682,8 @@ class RosFlight:
                     and time.monotonic() - self.goal_cmd_t0 >= 5.0:
                 if self._fresh("/position_cmd", 0.5):
                     cmd = self.cache["/position_cmd"]
-                    gap = math.hypot(cmd.position.x - self.goal_target_xy[0],
-                                     cmd.position.y - self.goal_target_xy[1])
+                    _rx, _ry = (self.endpoint_ref[0], self.endpoint_ref[1])                         if self.endpoint_ref is not None else self.goal_target_xy
+                    gap = math.hypot(cmd.position.x - _rx, cmd.position.y - _ry)
                     vcmd = math.hypot(cmd.velocity.x, cmd.velocity.y)
                     if goal_stall_verdict(time.monotonic() - self.goal_cmd_t0, gap, vcmd):
                         msg = ("目标已发出 %.1f s，但 /position_cmd 离目标还差 %.2f m 且"
@@ -706,17 +716,22 @@ class RosFlight:
             p, v = odom.pose.pose.position, odom.twist.twist.linear
             # 2026-11-11：参考点优先用"规划器实际终点"（planned_path 末点），
             # 因为它可能比目标短 0.2-0.4 m（A* 把未观测格子当障碍做端点外推）。
-            ref = self.target
-            _lp = self.cache.get("/flight_v1/planned_path")
-            if _lp is not None and self._fresh("/flight_v1/planned_path", 2.0) and len(_lp.poses) > 0:
-                _e = _lp.poses[-1].pose.position
-                ref = (_e.x, _e.y, _e.z)
+            # 2026-11-11：端点参考**锁存**——拿到一次就记住，直到下一个目标。
+            # 原来要求 planned_path 必须 2 s 内新鲜；到点后规划器不再发轨迹 ->
+            # 参考点退回目标（差 0.2-0.4 m）-> 到位判定永远不成立 -> 60 s 超时。
+            if self.endpoint_ref is None:
+                _lp = self.cache.get("/flight_v1/planned_path")
+                if (_lp is not None and self._fresh("/flight_v1/planned_path", 2.0)
+                        and len(_lp.poses) > 0):
+                    _e = _lp.poses[-1].pose.position
+                    self.endpoint_ref = (_e.x, _e.y, _e.z)
+            ref = self.endpoint_ref if self.endpoint_ref is not None else self.target
             d = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), ref)))
             d_goal = math.sqrt(sum((a - b) ** 2 for a, b in zip((p.x, p.y, p.z), self.target)))
             speed = math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
             # 2026-11-11：A* 端点外推会把终点拉回 ~0.19 m（实测 2.00 -> 1.82），
             # 原 0.2 m 门只剩 1 cm 余量；放宽到 0.30 m。
-            if fsm == "CMD_CTRL" and d <= 0.30 and speed <= 0.15:
+            if fsm == "CMD_CTRL" and d <= 0.20 and speed <= 0.15:
                 self.stable_since = self.stable_since or time.monotonic()
                 if time.monotonic() - self.stable_since >= GOAL_HOVER_SECONDS:
                     # 到点：进入"等下一个目标"窗口，不立刻降落
@@ -735,7 +750,7 @@ class RosFlight:
             else:
                 self.stable_since = None
             self.rospy.sleep(0.1)
-        raise RuntimeError("导航 180 秒内未确认目标点稳定；遥控器接管")
+        raise RuntimeError("导航 60 秒内未确认目标点稳定；遥控器接管")
 
     def land(self):
         if STOP_FILE.exists():
