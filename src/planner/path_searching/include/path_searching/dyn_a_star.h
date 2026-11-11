@@ -60,15 +60,15 @@ private:
 
 	//bool (*checkOccupancyPtr)( const Eigen::Vector3d &pos );
 
-	// 2026-11-08（用户令 5）：与 bspline 优化器同一豁免 —— 离搜索起点
-	// 不超过等效膨胀半径的点视为自由（机体物理上就在那儿）。
-	Eigen::Vector3d self_pos_{0, 0, 0};
-	double self_bubble_{0.0};
-	inline bool inSelfBubble(const Eigen::Vector3d &pos) const {
-	  return self_bubble_ > 1e-9 && (pos - self_pos_).norm() <= self_bubble_;
-	}
+	/* 2026-11-11（用户问 5/7 根因，bag 20261111_212822 实测）：
+	   撤销"以搜索起点为心、半径=等效膨胀"的自由球。它会把真障碍一起遮住：
+	   36.19 s 起点离箱心 0.34 m，箱旁膨胀格在图里已 7 s，球内 0.45 m 全当自由，
+	   A* 于是贴箱切角出轨迹，FSM 随即报 Suddenly discovered obstacles。
+	   同日深度图实测 <0.30 m 像素数=0（无自机点），证明"起点在膨胀层里"是
+	   "离障碍太近"，不是"自己看见自己"。
+	   正确语义回上游：起点碰撞由 ConvertToIndexAndAdjustStartEndPoints 沿
+	   start->end 反向外推解决，搜索本身必须看膨胀层。 */
 	inline bool checkOccupancy(const Eigen::Vector3d &pos) {
-	  if (inSelfBubble(pos)) return false;
 	  return (bool)grid_map_->getInflateOccupancy(pos);
 	}
 

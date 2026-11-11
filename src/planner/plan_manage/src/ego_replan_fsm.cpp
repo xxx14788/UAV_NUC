@@ -698,7 +698,7 @@ namespace ego_planner
     // 而是从根上让新轨迹的起点就是飞机现在的位置/速度。
     {
       const double track_dev = (odom_pos_ - start_pt_).norm();
-      if (track_dev > 0.08)
+      if (track_dev > 0.25)   // 2026-11-11：0.08->0.25，避免每次重规划都换锚点（抖动）
       {
         ROS_WARN("[replan] start anchored to odom: projection dev %.2f m -> use measured state",
                  track_dev);
@@ -731,6 +731,27 @@ namespace ego_planner
 
     return true;
   }
+
+/* 2026-11-11（用户问 5/7 根因）：碰撞判据 = 真实占据格，不再拿规划膨胀层当碰撞层。
+   膨胀(0.45)是规划裕度；把它当碰撞判据的实测后果：机身离箱面 0.25-0.30 m 时，
+   "当前位置"必然落在膨胀层里，checkCollisionCallback 每 50 ms 判一次碰撞 ->
+   EMERGENCY_STOP 锁死成永久悬停（212822 袋 36.4 s 起 78 条）。
+   现在：剩余轨迹 1 个体素邻域（0.15 m，含对角）内没有原始占据格才算安全；
+   规划裕度仍由 reboundReplan 的 0.45 m 膨胀 + 周期重规划保证。 */
+static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
+{
+  const double res = map->getResolution();
+  for (int dx = -1; dx <= 1; ++dx)
+    for (int dy = -1; dy <= 1; ++dy)
+      for (int dz = -1; dz <= 1; ++dz)
+      {
+        // 绑定成具名 Vector3d：Eigen 懒表达式同时可转 Vector3d/Vector3i，会重载歧义
+        const Eigen::Vector3d q = p + Eigen::Vector3d(dx, dy, dz) * res;
+        if (map->getOccupancy(q) == 1)
+          return true;
+      }
+  return false;
+}
 
   void EGOReplanFSM::checkCollisionCallback(const ros::TimerEvent &e)
   {
@@ -810,16 +831,24 @@ namespace ego_planner
     constexpr double time_step = 0.01;
     double t_cur = (ros::Time::now() - info->start_time_).toSec();
     Eigen::Vector3d p_cur = info->position_traj_.evaluateDeBoorT(t_cur);
+    /* 2026-11-11（用户问 5/7 根因）：两个物理事实写进判据。
+       ① 停车轨迹（剩余速度 < 0.05 m/s）不判碰撞：急停后的保持轨迹本来就不动，
+          它不是"会造成碰撞的动作"；继续判会把急停锁成 50 ms 重入的死循环。
+       ② 0.30 s 反应时延内的采样不判：这段时间唯一可执行的动作是保持，
+          用它判"将撞"没有可执行性（机体半径 0.169 m，0.4 m/s 下 0.3 s 只走 0.12 m）。 */
+    if (info->velocity_traj_.evaluateDeBoorT(t_cur).norm() < 0.05)
+      return;
+    const double t_check0 = t_cur + 0.30;
     const double CLEARANCE = 1.0 * planner_manager_->getSwarmClearance();
     double t_cur_global = ros::Time::now().toSec();
     double t_2_3 = info->duration_ * 2 / 3;
-    for (double t = t_cur; t < info->duration_; t += time_step)
+    for (double t = t_check0; t < info->duration_; t += time_step)
     {
       if (t_cur < t_2_3 && t >= t_2_3) // If t_cur < t_2_3, only the first 2/3 partition of the trajectory is considered valid and will get checked.
         break;
 
       bool occ = false;
-      occ |= map->getInflateOccupancy(info->position_traj_.evaluateDeBoorT(t));
+      occ |= rawOccNear(map.get(), info->position_traj_.evaluateDeBoorT(t));
 
       for (size_t id = 0; id < planner_manager_->swarm_trajs_buf_.size(); id++)
       {

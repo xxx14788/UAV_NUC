@@ -88,7 +88,7 @@ vector<GridNodePtr> AStar::retrievePath(GridNodePtr current)
     return path;
 }
 
-static const int kMaxAdjustIters = 50;   // 2026-11-08：起终点外推上限（50*step≈够绕出膨胀层）
+static const int kMaxAdjustIters = 200;  // 2026-11-11：50->200。深膨胀区(0.45m/step0.3)50 步不够，实测 858 次"end adjust hit cap"导致整套规划失败
 
 bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d end_pt, Vector3i &start_idx, Vector3i &end_idx)
 {
@@ -144,9 +144,6 @@ bool AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d end_
 
     step_size_ = step_size;
     inv_step_size_ = 1 / step_size;
-    // 2026-11-08（用户令 5）：自身气泡圆心=本次搜索起点，半径=等效膨胀（参数派生）
-    self_pos_ = start_pt;
-    self_bubble_ = grid_map_->getSelfBubble();   // 同一参数口径（缺省=等效膨胀）
     center_ = (start_pt + end_pt) / 2;
 
     Vector3i start_idx, end_idx;
