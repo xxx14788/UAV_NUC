@@ -81,9 +81,10 @@ case "$CMD" in
         [ -s "$PIDFILE" ] || { echo "没有本入口启动的录包进程。"; exit 1; }
         RP="$(cat "$PIDFILE")"
         kill -TERM "$RP" 2>/dev/null || true
-        for _ in $(seq 1 15); do kill -0 "$RP" 2>/dev/null || break; sleep 1; done
+        # 2026-11-12：15 -> 40s。record 收尾里 wait_landing 最多等 30s 落地（未解锁会立即返回）。
+        for _ in $(seq 1 40); do kill -0 "$RP" 2>/dev/null || break; sleep 1; done
         if kill -0 "$RP" 2>/dev/null; then
-          echo "录包未在 15 秒内完成优雅收尾；未强杀，请检查 $STATE/record_*.log。" >&2; exit 1
+          echo "录包未在 40 秒内完成优雅收尾；未强杀，请检查 $STATE/record_*.log。" >&2; exit 1
         fi
         rm -f "$PIDFILE"
         echo "录包已停止并执行 rosbag 收尾。"

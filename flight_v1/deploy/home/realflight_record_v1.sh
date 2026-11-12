@@ -47,33 +47,34 @@ START_EPOCH=$(date +%s)
 
 # --- v1.5: 收尾（正常结束 / Ctrl+C / SIGTERM 都执行）——截取录制时间窗内的 VINS/px4ctrl 日志 ---
 FINISHED=0
+
+  # 2026-11-12 P10：落地后再停录。**必须在杀掉 rosbag 之前调用**（trap 里先 wait_landing 再 kill），
+  # 否则袋已经关了，等落地只是空等。
+  wait_landing() {
+      echo "--- 等待落地（最多 30s）---"
+      local _t0=$(date +%s) _landed=0 _armed=0
+      # 2026-11-12：未解锁=已落地，立即返回。否则正常停录也要等 30s，会撞 flight.sh stop 的等待窗。
+      if [ "$(timeout 2 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c 'armed: True')" -eq 0 ]; then
+          echo "  ✓ 未解锁（视为已落地），跳过等待"; return 0
+      fi
+      while [ $(( $(date +%s) - _t0 )) -lt 30 ]; do
+          _landed=$(timeout 2 rostopic echo -n1 /mavros/extended_state 2>/dev/null | grep -c "landed_state: 1")
+          _armed=$(timeout 2 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c "armed: False")
+          if [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ]; then
+              echo "  ✓ 已落地+已上锁（等了 $(( $(date +%s) - _t0 ))s）"; return 0
+          fi
+          sleep 1
+      done
+      echo "  ⚠ 30s 未确认落地，强制停录"
+      return 0
+  }
+
 finish() {
     [ "$FINISHED" = "1" ] && return 0
     FINISHED=1
     END_EPOCH=$(date +%s)
     echo "DONE: $BAG_DIR"
 
-    # 2026-11-12 P10：落地后再停录（最多 30s；实测 000019/001036 袋结束时 z=0.27/0.44 仍在空中）
-    echo "--- 等待落地（最多 30s）---"
-    for _wi in $(seq 1 30); do
-        _landed=$(timeout 3 rostopic echo -n1 /mavros/extended_state 2>/dev/null | grep -c "landed_state: 1")
-        _armed=$(timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c "armed: False")
-        [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ] && { echo "  ✓ 已落地+已上锁（等了 ${_wi}s）"; break; }
-        sleep 1
-    done
-    [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ] || echo "  ⚠ 30s 未确认落地，强制停录"
-
-    # 2026-11-12 P10：空袋自动判废（<30s 且无 position_cmd → 移到 _empty/）
-    # 实测 20261112_000314 起飞 1s 后停录，286MB 废数据
-    if [ -n "${BAGFILE:-}" ] && [ -f "$BAGFILE" ]; then
-        _dur=$(timeout 10 rosbag info "$BAGFILE" 2>/dev/null | grep -oP "duration: \\K[\\d.]+" | head -1)
-        _ncmd=$(timeout 10 rosbag info "$BAGFILE" 2>/dev/null | grep -c "/position_cmd")
-        if [ -n "$_dur" ] && (( $(echo "$_dur < 30" | bc -l 2>/dev/null || echo 0) )) && [ "${_ncmd:-0}" -eq 0 ]; then
-            mkdir -p ~/flight_data/_empty
-            mv "$BAGFILE" ~/flight_data/_empty/ 2>/dev/null
-            echo "  ⚠ 空袋（${_dur}s 无 position_cmd），已移至 _empty/"
-        fi
-    fi
     _extract_window() {
         local log="$1" out="$2"
         [ -f "$log" ] || return 0
@@ -151,8 +152,23 @@ finish() {
     if [ -f "$BAG_DIR/flight.bag" ]; then
         python3 "$HOME/sitl_realmachine/flight_v1/record_audit.py" "$BAG_DIR/flight.bag"             | tee "$BAG_DIR/record_audit.txt" || true
     fi
+
+    # 2026-11-12 P10：空袋自动判废。rosbag info 的 duration 形如 "1:34s (94s)"，
+    # 旧正则 duration: \K[\d.]+ 只会抓到 "1"（错）；改为取括号里的秒数。
+    # position_cmd 取**消息数**（话题行 "  /position_cmd  6212 msgs"），不是行数。
+    if [ -f "$BAG_DIR/flight.bag" ]; then
+        # 2026-11-12（实测）：短袋 human 格式是 "21.1s"（无括号），长袋是 "1:34s (94s)"；
+        # 统一改用 --yaml（duration 是纯秒数，实测 21.133527 / 94.3），不再解析 h:m:s。
+        _dur=$(timeout 15 rosbag info --yaml "$BAG_DIR/flight.bag" 2>/dev/null | awk '/^duration:/{print $2; exit}')
+        _ncmd=$(timeout 15 rosbag info "$BAG_DIR/flight.bag" 2>/dev/null | grep -oP "/position_cmd\s+\K[0-9]+" | head -1)
+        if [ -n "$_dur" ] && awk -v d="$_dur" "BEGIN{exit !(d<30)}" && [ "${_ncmd:-0}" -eq 0 ]; then
+            mkdir -p ~/flight_data/_empty
+            mv "$BAG_DIR" ~/flight_data/_empty/ 2>/dev/null
+            echo "  ⚠ 空袋（${_dur}s 无 position_cmd），已移至 _empty/"
+        fi
+    fi
 }
-trap 'kill -INT $RECORD_PID 2>/dev/null; for _i in 1 2 3 4 5 6 7 8 9 10; do kill -0 $RECORD_PID 2>/dev/null || break; sleep 1; done; kill -TERM $RECORD_PID 2>/dev/null; [ -n "${RSS_PID:-}" ] && kill ${RSS_PID} 2>/dev/null; wait $RECORD_PID 2>/dev/null; finish; exit 0' INT TERM HUP
+trap 'wait_landing; kill -INT $RECORD_PID 2>/dev/null; for _i in 1 2 3 4 5 6 7 8 9 10; do kill -0 $RECORD_PID 2>/dev/null || break; sleep 1; done; kill -TERM $RECORD_PID 2>/dev/null; [ -n "${RSS_PID:-}" ] && kill ${RSS_PID} 2>/dev/null; wait $RECORD_PID 2>/dev/null; finish; exit 0' INT TERM HUP
 
 AVAIL=$(df -BG --output=avail $HOME | tail -1 | tr -d 'G ')
 # 2026-11-06：门限 40G -> 35G。实测录速约 36MB/s；rosbag 自身还有 --min-space 10G 兜底，

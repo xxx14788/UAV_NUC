@@ -158,6 +158,7 @@ def main():
     def on_ack(msg):
         ack_state["text"] = msg.data
         ack_state["stamp"] = rospy.Time.now()
+        ack_state["deleted"] = False
     rospy.Subscriber("/flight_v1/goal_ack", String, on_ack)
 
     rate = rospy.Rate(1.0)
@@ -168,9 +169,16 @@ def main():
             pub_plan.publish(state["plan"])
         if state["goal"] is not None:
             pub_goal.publish(build_goal())
-        # 2026-11-12 P6：显示最近一次点击反馈（5 s 内）
+        # 2026-11-12 P6：显示最近一次点击反馈（5 s 内；过期发 DELETE，否则 latch 会让文字永久留在 RViz）
         if ack_state["text"] and ack_state["stamp"] is not None:
             age = (rospy.Time.now() - ack_state["stamp"]).to_sec()
+            if age >= 5.0 and not ack_state.get("deleted"):
+                d = Marker()
+                d.header.frame_id = "world"; d.header.stamp = rospy.Time.now()
+                d.ns = "flight_v1_goal_ack"; d.id = 1
+                d.action = Marker.DELETE
+                pub_goal.publish(d)
+                ack_state["deleted"] = True
             if age < 5.0:
                 m2 = Marker()
                 m2.header.frame_id = "world"

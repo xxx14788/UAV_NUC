@@ -343,11 +343,15 @@ namespace ego_planner
         Eigen::Vector3d v_end_p2 = pos.getDerivative().evaluateDeBoorT(t_end_p2);
         if (v_end_p2.norm() > 0.03)
         {
-          cps_p2.conservativeResize(Eigen::NoChange, n_cp + 1);
-          cps_p2.col(n_cp) = cps_p2.col(n_cp - 1);
+          // 实测（/tmp/test_p2k）：cubic B 样条追加 1 个副本只把末端速度减半（3.0->1.5），
+          // 追加 2 个（= order-1）才归零（3.0->0）。太少=没治好，太多=多绕一段。
+          const int kDup = 2;
+          cps_p2.conservativeResize(Eigen::NoChange, n_cp + kDup);
+          for (int k = 0; k < kDup; ++k)
+            cps_p2.col(n_cp + k) = cps_p2.col(n_cp - 1);
           pos = UniformBspline(cps_p2, 3, pos.getInterval());
-          ROS_INFO("[P2] end velocity %.3f m/s -> 0 (appended 1 CP, now %d)",
-                   v_end_p2.norm(), (int)cps_p2.cols());
+          ROS_INFO("[P2] end velocity %.3f m/s -> 0 (appended %d CP, now %d)",
+                   v_end_p2.norm(), kDup, (int)cps_p2.cols());
         }
       }
 
@@ -358,12 +362,14 @@ namespace ego_planner
         double ratio_p5;
         if (pos.checkFeasibility(ratio_p5, false))
           break;
-        double new_int = pos.getInterval() * (1.0 + ratio_p5);
+        // 实测（/tmp/test_bspline_p2p5）：ratio = max(v_max/limit, sqrt(a_max/limit))，
+        // 是超限倍数不是超出比例；时间轴乘 ratio 才把 v 降到 limit（乘 1+ratio 会过慢）。
+        double new_int = pos.getInterval() * ratio_p5;
         Eigen::MatrixXd cp_p5 = pos.getControlPoint();
         pos = UniformBspline(cp_p5, 3, new_int);
         if (iter_p5 == 0)
           ROS_WARN("[P5] trajectory exceeded limits (ratio=%.2f), interval %.3f -> %.3f",
-                   ratio_p5, pos.getInterval() / (1.0 + ratio_p5), new_int);
+                   ratio_p5, pos.getInterval() / ratio_p5, new_int);
       }
     }
 

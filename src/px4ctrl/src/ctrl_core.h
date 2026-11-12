@@ -256,7 +256,7 @@ inline bool refSettled(const Ref &r, const Ref &target, double p_tol, double v_t
 struct TakeoffCfg
 {
   double height = 0.5;     // 目标高度（地面起算）[m]
-  double speed = 0.45;     // 爬升速度 [m/s]
+  double speed = 0.5;      // 爬升速度 [m/s]（2026-11-12 用户令：限速 0.5；yaml 同值）
   double acc = 1.0;        // 加速/减速度 [m/s^2]（沿用现网 a=1.0）
   double spinup = 3.0;     // 电机加速段 [s]（此间 des 保持在地面）
   double arrive_k = 0.208; // 预测到位系数 1/(2*Kv2) [s]
