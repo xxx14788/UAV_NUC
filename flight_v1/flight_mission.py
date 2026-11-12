@@ -364,6 +364,7 @@ class RosFlight:
         # 2026-11-11 修 bug：原来这里不设倒计时，monitor 的"无目标"分支会无限等待
         # -> 目标不可达时飞机一直悬停到没电。现在 NEXT_GOAL_WAIT 秒无新目标就自动降落。
         self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+        self._last_countdown_s = None
         self.endpoint_ref = None
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
