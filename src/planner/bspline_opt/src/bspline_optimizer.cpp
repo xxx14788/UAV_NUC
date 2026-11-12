@@ -1246,7 +1246,7 @@ namespace ego_planner
           const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));
           occ = (pj - self_p).norm() <= self_bubble
                     ? 0
-                    : grid_map_->getOccupancy(pj);
+                    : grid_map_->getConfirmedOccupancy(pj);   // 2026-11-12：规划锚点用确认层
           if (!occ)
           {
             in_id = j;
@@ -1261,7 +1261,7 @@ namespace ego_planner
 
         for (j = i + 1; j < cps_.size; ++j)
         {
-          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));  // 终点同理：只看真障碍
+          occ = grid_map_->getConfirmedOccupancy(Eigen::Vector3d(cps_.points.col(j)));  // 2026-11-12：确认层
 
           if (!occ)
           {
@@ -1527,7 +1527,7 @@ namespace ego_planner
                  起点贴着箱子/墙角时前三段必然落在**膨胀层**内，而膨胀是安全余量、
                  不是"站不站得住"的判据——否则整个规划永远被否掉（实测拒绝 8060 次）。
                  只落在膨胀层：接受，交给优化器的 cost 把轨迹推离。 */
-              if (grid_map_->getOccupancy(Eigen::Vector3d(traj.evaluateDeBoorT(t))))
+              if (grid_map_->getConfirmedOccupancy(Eigen::Vector3d(traj.evaluateDeBoorT(t))))   // 2026-11-12
               {
                 ROS_WARN("First 3 control points in REAL obstacles! return false, t=%f", t);
                 return false;

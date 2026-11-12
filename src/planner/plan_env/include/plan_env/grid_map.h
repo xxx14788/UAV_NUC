@@ -67,6 +67,7 @@ struct MappingParameters {
   bool use_depth_filter_;
   double k_depth_scaling_factor_;
   int skip_pixel_;
+  int confirm_frames_;   // 2026-11-12：确认窗口（帧），默认 2
 
   /* raycasting */
   double p_hit_, p_miss_, p_min_, p_max_, p_occ_;  // occupancy probability
@@ -123,6 +124,10 @@ struct MappingData {
   // flag buffers for speeding up raycasting
 
   vector<short> count_hit_, count_hit_and_miss_;
+  /* 2026-11-12：确认层。frame_id_ 每帧深度自增；只有最近 confirm_frames_ 帧内
+     被命中过的格才算"确认占据"。规划/膨胀/显示只用确认层，FSM 安全判据用原始层。 */
+  vector<unsigned int> last_hit_frame_;
+  unsigned int frame_id_{0};
   vector<char> flag_traverse_, flag_rayend_;
   char raycast_num_;
   queue<Eigen::Vector3i> cache_voxel_;
@@ -162,6 +167,8 @@ public:
   inline int getOccupancy(Eigen::Vector3d pos);
   inline int getOccupancy(Eigen::Vector3i id);
   inline int getInflateOccupancy(Eigen::Vector3d pos);
+  inline int getConfirmedOccupancy(Eigen::Vector3d pos);
+  inline int getConfirmedOccupancy(Eigen::Vector3i id);
 
   inline void boundIndex(Eigen::Vector3i& id);
   inline bool isUnknown(const Eigen::Vector3i& id);
@@ -213,7 +220,7 @@ private:
   void raycastProcess();
   void clearAndInflateLocalMap();
 
-  inline void inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);
+  inline int inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);   // 2026-11-12: 球膨胀返回点数
   int setCacheOccupancy(Eigen::Vector3d pos, int occ);
   Eigen::Vector3d closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt);
 
@@ -344,6 +351,25 @@ inline int GridMap::getOccupancy(Eigen::Vector3i id) {
   return md_.occupancy_buffer_[toAddress(id)] > mp_.min_occupancy_log_ ? 1 : 0;
 }
 
+// 2026-11-12：确认占据。原始 log-odds 过门 + 最近 confirm_frames_ 帧内被命中过。
+inline int GridMap::getConfirmedOccupancy(Eigen::Vector3d pos) {
+  if (!isInMap(pos)) return -1;
+  Eigen::Vector3i id;
+  posToIndex(pos, id);
+  const int adr = toAddress(id);
+  return (md_.occupancy_buffer_[adr] > mp_.min_occupancy_log_ &&
+          md_.frame_id_ - md_.last_hit_frame_[adr] < (unsigned int)mp_.confirm_frames_) ? 1 : 0;
+}
+
+inline int GridMap::getConfirmedOccupancy(Eigen::Vector3i id) {
+  if (id(0) < 0 || id(0) >= mp_.map_voxel_num_(0) || id(1) < 0 || id(1) >= mp_.map_voxel_num_(1) ||
+      id(2) < 0 || id(2) >= mp_.map_voxel_num_(2))
+    return -1;
+  const int adr = toAddress(id);
+  return (md_.occupancy_buffer_[adr] > mp_.min_occupancy_log_ &&
+          md_.frame_id_ - md_.last_hit_frame_[adr] < (unsigned int)mp_.confirm_frames_) ? 1 : 0;
+}
+
 inline bool GridMap::isInMap(const Eigen::Vector3d& pos) {
   if (pos(0) < mp_.map_min_boundary_(0) + 1e-4 || pos(1) < mp_.map_min_boundary_(1) + 1e-4 ||
       pos(2) < mp_.map_min_boundary_(2) + 1e-4) {
@@ -376,7 +402,8 @@ inline void GridMap::indexToPos(const Eigen::Vector3i& id, Eigen::Vector3d& pos)
   for (int i = 0; i < 3; ++i) pos(i) = (id(i) + 0.5) * mp_.resolution_ + mp_.map_origin_(i);
 }
 
-inline void GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts) {
+// 2026-11-12：球膨胀（原来是立方体：轴向 0.30、对角 0.42）。返回实际点数。
+inline int GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts) {
   int num = 0;
 
   /* ---------- + shape inflate ---------- */
@@ -397,12 +424,15 @@ inline void GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Ei
   //   pts[num++] = Eigen::Vector3i(pt(0), pt(1), pt(2) + z);
   // }
 
-  /* ---------- all inflate ---------- */
+  /* ---------- 球膨胀（2026-11-12）---------- */
   for (int x = -step; x <= step; ++x)
     for (int y = -step; y <= step; ++y)
       for (int z = -step; z <= step; ++z) {
+        if (x * x + y * y + z * z > step * step)
+          continue;
         pts[num++] = Eigen::Vector3i(pt(0) + x, pt(1) + y, pt(2) + z);
       }
+  return num;
 }
 
 inline double GridMap::getResolution() { return mp_.resolution_; }

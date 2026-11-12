@@ -201,9 +201,11 @@ def static_checks(ck, contract, paths):
     mcur = re.search(r'CONTRACT="([^"]+)"', st)
     stack_contract = (os.path.expandvars(os.path.expanduser(mcur.group(1)))
                       if mcur else None)
+    # 2026-11-12：改 realpath——flight_v1 已并入主仓，~/sitl_realmachine/flight_v1 是符号链接；
+    # abspath 只做词法拼接会把它当不同路径（实测 md5 相同却 FAIL）。
     ck.add("接缝:起栈脚本读的契约 == 本次校验的契约",
            stack_contract is not None
-           and os.path.abspath(stack_contract) == os.path.abspath(paths["contract"]),
+           and os.path.realpath(stack_contract) == os.path.realpath(paths["contract"]),
            {"stack": stack_contract, "checker": paths["contract"]})
     ck.add("接缝:健康门深度 == 契约深度(修 P0 缺陷)",
            bool(gate_depth) and gate_depth == depth and uses_contract_var

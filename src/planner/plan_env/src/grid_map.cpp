@@ -35,6 +35,7 @@ void GridMap::initMap(ros::NodeHandle &nh)
   node_.param("grid_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
   node_.param("grid_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
   node_.param("grid_map/skip_pixel", mp_.skip_pixel_, -1);
+  node_.param("grid_map/confirm_frames", mp_.confirm_frames_, 2);   // 2026-11-12：确认窗口
 
   node_.param("grid_map/p_hit", mp_.p_hit_, 0.70);
   node_.param("grid_map/p_miss", mp_.p_miss_, 0.35);
@@ -89,6 +90,7 @@ void GridMap::initMap(ros::NodeHandle &nh)
 
   md_.count_hit_and_miss_ = vector<short>(buffer_size, 0);
   md_.count_hit_ = vector<short>(buffer_size, 0);
+  md_.last_hit_frame_ = vector<unsigned int>(buffer_size, 0);   // 2026-11-12：确认层
   md_.flag_rayend_ = vector<char>(buffer_size, -1);
   md_.flag_traverse_ = vector<char>(buffer_size, -1);
 
@@ -521,6 +523,10 @@ void GridMap::raycastProcess()
     double log_odds_update =
         md_.count_hit_[idx_ctns] >= md_.count_hit_and_miss_[idx_ctns] - md_.count_hit_[idx_ctns] ? mp_.prob_hit_log_ : mp_.prob_miss_log_;
 
+    // 2026-11-12：命中则记帧号（确认层用）。即使已到 clamp 上限也要记。
+    if (log_odds_update >= 0)
+      md_.last_hit_frame_[idx_ctns] = md_.frame_id_;
+
     md_.count_hit_[idx_ctns] = md_.count_hit_and_miss_[idx_ctns] = 0;
 
     if (log_odds_update >= 0 && md_.occupancy_buffer_[idx_ctns] >= mp_.clamp_max_log_)
@@ -667,9 +673,9 @@ void GridMap::clearAndInflateLocalMap()
       for (int z = md_.local_bound_min_(2); z <= md_.local_bound_max_(2); ++z)
       {
 
-        if (md_.occupancy_buffer_[toAddress(x, y, z)] > mp_.min_occupancy_log_)
+        if (getConfirmedOccupancy(Eigen::Vector3i(x, y, z)) > 0)   // 2026-11-12：只膨胀确认格
         {
-          inflatePoint(Eigen::Vector3i(x, y, z), inf_step, inf_pts);
+          inf_pts.resize(inflatePoint(Eigen::Vector3i(x, y, z), inf_step, inf_pts));
 
           for (int k = 0; k < (int)inf_pts.size(); ++k)
           {
@@ -756,6 +762,7 @@ void GridMap::updateOccupancyCallback(const ros::TimerEvent & /*event*/)
 void GridMap::depthPoseCallback(const sensor_msgs::ImageConstPtr &img,
                                 const geometry_msgs::PoseStampedConstPtr &pose)
 {
+  md_.frame_id_ += 1;   // 2026-11-12：确认层帧号（每帧深度 +1）
   /* get depth image */
   cv_bridge::CvImagePtr cv_ptr;
   cv_ptr = cv_bridge::toCvCopy(img, img->encoding);
@@ -924,7 +931,7 @@ void GridMap::publishMap()
     for (int y = min_cut(1); y <= max_cut(1); ++y)
       for (int z = min_cut(2); z <= max_cut(2); ++z)
       {
-        if (md_.occupancy_buffer_[toAddress(x, y, z)] < mp_.min_occupancy_log_)
+        if (getConfirmedOccupancy(Eigen::Vector3i(x, y, z)) <= 0)   // 2026-11-12：显示也只用确认格
           continue;
 
         Eigen::Vector3d pos;

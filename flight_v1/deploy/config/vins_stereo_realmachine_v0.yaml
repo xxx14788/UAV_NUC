@@ -56,15 +56,15 @@ show_track: 1
 flow_back: 1
 
 #optimization parameters
-max_solver_time: 0.04
-max_num_iterations: 8
+max_solver_time: 0.08
+max_num_iterations: 16
 keyframe_parallax: 10.0
 
 #imu parameters (源1=上游实机值; 源2=Allan 实测待补, 差>3x 呈报换值)
 acc_n: 0.15
 gyr_n: 0.03
-acc_w: 0.000001  # 2026-11-06 一档收紧(1e-5->1e-6)：手拿激励实测 |Bas| 0.0037->0.079(0.46deg)，按 sqrt 标度预期降到 ~0.026   # 2026-11-05 冻结加计零偏（原 0.001=上游25倍，起飞后 |Bas| 炸到 0.82 导致姿态偏 3.7°/漂 0.4m）
-gyr_w: 0.0002
+acc_w: 0.0001  # 2026-11-12 用户令：1e-6 -> 1e-4（11-11 定案：1e-6 把零偏焊死，8iter/40ms 不够；上游 1e-3，取中间值）
+gyr_w: 0.0001
 g_norm: 9.805
 
 #unsynchronization parameters

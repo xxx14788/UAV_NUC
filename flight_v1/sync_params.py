@@ -39,7 +39,6 @@ P = {
     # 任务层
     'takeoff_height': 0.7,
     'goal_radius': 3.5,
-    'goal_clearance_min': 0.15,   # 收点时目标离膨胀层的最小净空（P0-1）
     'no_replan_m': 0.3,           # 距目标多少米内仍允许重规划（P0-2；1.0 会造成末段开环）
     'replan_time': 0.5,           # 两次重规划最小间隔（用户令 1.0 -> 0.5）
     'hover_s': 5.0,
@@ -50,9 +49,11 @@ P = {
                                   #   （现场实测净空 0.25-0.30 m；机体直径 0.337，留 0.13 m 裕度）
     'ground_height': -0.10,      # 2026-11-08 用户令：图底压到 -0.10（地板点稳在图内）
     'ceiling_max': 1.5,
-    'max_ray': 2.5,
-    'max_vel': 0.4,
-    'max_acc': 3.0,                 # 2026-11-08 用户令：6.0 -> 3.0（太快）
+    'max_ray': 5.0,                  # 2026-11-12 用户令：回上游 5.0（实测 CPU 无压力，见下）
+    'max_vel': 0.5,                 # 2026-11-12 用户令：0.4 -> 0.5（对齐上游；进近限速 1.0 m）
+    'max_acc': 4.0,                 # 2026-11-12 用户令：3.0 -> 4.0（上游 6.0 的一半，倾角 22°<25°）
+    'near_goal_dist': 1.0,          # 进近限速起点（>= 减速距离 v/kp；0.6 在 v=0.5 时太晚）
+    'planning_horizon': 6.0,        # 2026-11-12：回上游 6.0（=1.2x 感知 5.0，>=1.5x 规则的 7.5>6 略紧但上游即此值）
     # 近场剔除下限：用户令 0.2（显式给定，不再按 eff 派生；几何自洽由 checker 把关）
     'depth_mindist': 0.2,
     'local_map_margin': 10,
@@ -193,7 +194,7 @@ def launch_block(d):
         '  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="%.3f"/>' % d['mindist'],
         '  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="%.1f"/>' % P['no_replan_m'],
         '  <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="%.1f"/>' % P['replan_time'],
-        '  <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="0.6"/>',
+        '  <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="%.1f"/>' % P['near_goal_dist'],
         '  <param name="/drone_0_ego_planner_node/fsm/near_goal_vel" value="0.15"/>',
         '  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="%d"/>' % P['pose_type'],
         '  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="%d"/>' % P['local_map_margin'],
@@ -254,7 +255,8 @@ def note_block(d):
         % d['ceiling'],
         '',
         '       感知/规划：depth_filter_maxdist 5.0 采样、max_ray_length %.1f 截断；' % P['max_ray'],
-        '         planning_horizon 4.0（= 1.6 x 感知，满足上游 "horizon >= 1.5 x sensing"）',
+        '         planning_horizon %.1f（感知 %.1f m，满足上游 "horizon >= 1.5 x sensing"）'
+        % (P['planning_horizon'], P['max_ray']),
         '',
         '       近场：mindist %.3f + 相机前移 %.3f = 盲面 %.3f <= 有效膨胀 %.3f'
         % (d['mindist'], P['cam_fwd'], blind, d['eff_infl']),
@@ -319,6 +321,8 @@ def w_launch(d):
             ln = '    <arg name="max_vel" value="%.1f"/>' % P['max_vel']
         elif st.startswith('<arg name="max_acc"'):
             ln = '    <arg name="max_acc" value="%.1f"/>' % P['max_acc']
+        elif st.startswith('<arg name="planning_horizon"'):
+            ln = '    <arg name="planning_horizon" value="%.1f"/>' % P['planning_horizon']
         elif st.startswith('<arg name="goal_topic"'):
             ln = '    <arg name="goal_topic" value="%s"/>' % P['goal_topic']
         elif GOAL_TOPIC_LEGACY in ln:
@@ -379,7 +383,6 @@ def params_block(d):
         'params:',
         '  takeoff_height: %.2f          # == px4ctrl takeoff_height == 规划器 manual_goal_z' % P['takeoff_height'],
         '  goal_radius_m: %.1f            # == 规划器 manual_goal_max_distance == mission GOAL_RADIUS' % P['goal_radius'],
-        '  goal_clearance_min: %.2f       # 目标点离膨胀层最小净空（mission 收点即拒）' % P['goal_clearance_min'],
         '  no_replan_m: %.1f              # == 规划器 fsm/thresh_no_replan_meter（末段死区）' % P['no_replan_m'],
         '  replan_time: %.1f             # == 规划器 fsm/thresh_replan_time' % P['replan_time'],
         '  takeoff_hover_s: %.1f' % P['hover_s'],

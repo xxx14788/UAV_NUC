@@ -27,7 +27,7 @@ auto_takeoff_land:
     enable_auto_arm: true
     no_RC: false
     takeoff_height: 0.70 # m  # 2026-11-06 用户令：悬停 0.5->0.7
-    takeoff_land_speed: 0.45 # m/s   //<1.5  # 2026-11-04 用户指令：0.5→0.45
+    takeoff_land_speed: 0.5 # m/s   //<1.5  # 2026-11-12 用户令：回上游 0.5
     takeoff_tilt_max_deg: 10.0 # deg 2026-11-04 兜底：起飞窗(离地<0.3m)内倾角上限
     land_speed: 0.15
     hover_at_takeoff_xy: true  # 2026-11-05 用户指令：悬停锁起飞点 xy（不锁"进悬停瞬间"的漂移位置）         # m/s 2026-11-04 用户指令：降落固定 0.15
@@ -72,8 +72,8 @@ gain:
     # 改这里的值**不会**影响 v2 的行为。别在这儿调参。
     # ========================================================================
     # Cascade PID controller. Recommend to read the code.
-    Kp0: 1.7
-    Kp1: 1.7 
+    Kp0: 1.5
+    Kp1: 1.5 
     Kp2: 1.5
     Kv0: 1.5
     Kv1: 1.5
