@@ -1,0 +1,82 @@
+%YAML:1.0
+
+# T1 v11.28 单元 1c — 实机 config v0 (旧机 D435 + PX4 FMU v6C.x + mavros IMU)
+# 基线=上游 fast_drone_250.yaml 逐键 + 我方增强键(SITL 战果)
+# 决策行: D-IMU=mavros(相机=D435 无 IMU 实证+上游工程实证) / D-RES=848x480（11-11 用户令；实测见 REPORT_EXECUTION.md）
+# 估计器开关(与 SITL 基线差异,均预注册): estimate_extrinsic=1(实机无真值先验,上游同;
+#   SITL=0 系 sim 精确先验域) / estimate_td=1+td=-0.05(实机时戳漂移 -1.17ms/min 实证;
+#   1f 台架观察收敛,发散即降级 0——T2-W4 bag 域发散教训的实机预案)
+# IMU 噪声: acc_n=0.1 上游值起步(1c §1.4 两源并列; 1f 见 Bas 爆炸切 0.2 臂[SITL 调定值])
+
+#common parameters
+imu: 1
+num_of_cam: 2
+
+imu_topic: "/mavros/imu/data_raw"
+image0_topic: "/camera/infra1/image_rect_raw"
+image1_topic: "/camera/infra2/image_rect_raw"
+
+output_path: "/home/uav/vins_output"
+
+cam0_calib: "left.yaml"
+cam1_calib: "right.yaml"
+image_width: 848
+image_height: 480
+
+# Extrinsic parameter between IMU and Camera.
+estimate_extrinsic: 0   # 2026-11-04 冻结（根因：起飞后在线外参发散，tic0 漂 2-6cm、|Bas| 0.004→0.97，M4）；改用实测外参
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [-0.03059710573435037, -0.005892783524167222, 0.9995144282215331, 0.033999957421591,
+       -0.9995314462665196, -0.0006596618070580096, -0.030601515822914926, 0.016000045354189814,
+       0.0008396696021568117, -0.9999824198197875, -0.005869838696387131, 0.08359999085891315,
+       0.0, 0.0, 0.0, 1.0]
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [-0.030069515759978405, -0.005718378519331269, 0.9995314524161157, 0.03154583894072318,
+       -0.9995474432387377, -0.0006844640058383256, -0.030073912680706305, -0.03404424279376664,
+       0.00085611731814772, -0.9999834156905474, -0.005695209127258183, 0.08375530773911312,
+       0.0, 0.0, 0.0, 1.0]
+# 注: 上游外参为 mavros IMU 帧系(与 D-IMU 定案一致); 实机装配差异经 estimate_extrinsic=1 在线精化(1f 迭代)
+
+#Multiple thread support
+multiple_thread: 1
+
+#feature traker paprameters
+max_cnt: 200
+min_dist: 27
+freq: 10
+F_threshold: 1.0
+show_track: 1
+flow_back: 1
+
+#optimization parameters
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+
+#imu parameters (源1=上游实机值; 源2=Allan 实测待补, 差>3x 呈报换值)
+acc_n: 0.15
+gyr_n: 0.03
+acc_w: 0.000001  # 2026-11-06 一档收紧(1e-5->1e-6)：手拿激励实测 |Bas| 0.0037->0.079(0.46deg)，按 sqrt 标度预期降到 ~0.026   # 2026-11-05 冻结加计零偏（原 0.001=上游25倍，起飞后 |Bas| 炸到 0.82 导致姿态偏 3.7°/漂 0.4m）
+gyr_w: 0.0002
+g_norm: 9.805
+
+#unsynchronization parameters
+estimate_td: 0                      # 实机开(上游同; SITL=0 系确定性时延域)
+td: 0.0                           # 初值=上游值(mavros IMU 域)
+
+#loop closure parameters (回环不接=用户裁定, 默认保留开关)
+load_previous_pose_graph: 0
+pose_graph_save_path: "/home/uav/vins_output/pose_graph/"
+save_image: 1
+
+# ===== 我方增强键 (SITL 战果平移; 与 054ddc8d 栈语义一致) =====
+t2_cauchy_delta: 4.0                # cauchy4: CauchyLoss(0) 风暴根因修复(D-1006-T1-09+RAREP1 复刻 PASS)
+# T2_IQG 门系列键实机 v0 全默认关(栈默认=0, observe-only 键 T2 线在途不在此锁定;
+#   实机启用决策=M1 门后依 INPUTFACE 分带标定[T2 主战]再定)
