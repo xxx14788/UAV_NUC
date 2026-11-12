@@ -582,15 +582,15 @@ class RosFlight:
 
     def _rc_summary(self):
         """2026-11-07 取证工具：MANUAL_CTRL 时打印 RC 前 8 通道，
-        直接看出是 CH5 被拨低（接管）还是 CH6（kill）还是别的。"""
+        直接看出是不是 CH5 被拨低（接管）。CH6 已在 2026-11-12 按用户令移出判定与显示。"""
         if self.rc is None:
             return "RC 无数据"
         ch = list(self.rc.channels)
         if len(ch) < 6:
             return "RC 通道数=%d（异常）" % len(ch)
-        return ("CH1-4=%s CH5=%d(%s) CH6=%d(%s)"
-                % (ch[:4], ch[4], "高档/悬停" if ch[4] > 1750 else "低档=接管",
-                   ch[5], "高档/指令" if ch[5] > 1750 else "低档"))
+        # 2026-11-12 用户令：CH6 不参与任何判定，也不再显示（只看 CH5）。
+        return ("CH1-4=%s CH5=%d(%s)"
+                % (ch[:4], ch[4], "高档/悬停" if ch[4] > 1750 else "低档=接管"))
 
     @staticmethod
     def _tilt_error(vins, px4):

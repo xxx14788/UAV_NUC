@@ -831,12 +831,18 @@ void PX4CtrlFSM::process()
 		}
 	}
 
-	if (use_px4_position_ctrl && !need_direct_thrust) {
-		publish_position_ctrl(des, now_time);
-	} else if (param.use_bodyrate_ctrl) {
-		publish_bodyrate_ctrl(u, now_time);
-	} else {
-		publish_attitude_ctrl(u, des, now_time);
+	/* 2026-11-12（用户报告：手动接管后油门无效）：MANUAL_CTRL 下必须**停止发送 setpoint**。
+	   原实现无条件发送：PX4 只要继续收到 setpoint 就不会触发 OFFBOARD 失控保护，
+	   于是一直留在 OFFBOARD；OFFBOARD 下 RC 油门被忽略 -> "打底油门不落"。
+	   停止发送后 COM_OF_LOSS_T=1.0s 触发，COM_OBL_RC_ACT=0(Position) 把控制权交还遥控器。 */
+	if (state != MANUAL_CTRL) {
+		if (use_px4_position_ctrl && !need_direct_thrust) {
+			publish_position_ctrl(des, now_time);
+		} else if (param.use_bodyrate_ctrl) {
+			publish_bodyrate_ctrl(u, now_time);
+		} else {
+			publish_attitude_ctrl(u, des, now_time);
+		}
 	}
 
 	// STEP5: Detect if the drone has landed
