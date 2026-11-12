@@ -53,10 +53,28 @@ case "${1:-help}" in
     bash "$FLOW/flight.sh" record start || { echo "✗ 开录失败，停止"; exit 1; }
     echo "--- 起飞；到位后请在 RViz 点目标（<=3.5 m）。之后全自动。 ---"
     RC=0
-    if bash "$FLOW/flight.sh" takeoff $DRYARG; then
+    _LOG="/tmp/flight_mission_$(date +%Y%m%d_%H%M%S).log"
+    # 2026-11-13 用户令：去掉通用"遥控器接管"横幅 —— 失败时打印 mission 给出的具体原因。
+    # flight_mission.py 异常退出前打印 `FLIGHT FAIL: <原因>`（多行时后续行以 "- " 开头）；
+    # PYTHONUNBUFFERED=1 保证经 tee 后仍逐行实时显示。
+    PYTHONUNBUFFERED=1 bash "$FLOW/flight.sh" takeoff $DRYARG 2>&1 | tee "$_LOG"
+    _MISSION_RC=${PIPESTATUS[0]}
+    if [ "$_MISSION_RC" -eq 0 ]; then
       echo "===== 任务完成：已到点并自动降落 ====="
     else
-      echo "===== ✗ 任务异常中止（遥控器接管） ====="
+      _fail=$(sed -n '/^FLIGHT FAIL: /,$p' "$_LOG")
+      if [ -n "$_fail" ]; then
+        _reason=$(printf '%s\n' "$_fail" | head -n 1 | sed 's/^FLIGHT FAIL: //; s/：$//')
+        echo "===== ✗ 任务异常中止：${_reason} ====="
+        printf '%s\n' "$_fail" | tail -n +2 | sed 's/^/  /'
+      else
+        # flight.sh 在 exec mission 之前失败（规划器未就绪/录包起不来等）：取最后一条错误行
+        _reason=$(grep -aE '✗|未就绪|失败|拒绝|ERROR|错误' "$_LOG" | tail -n 1 | sed 's/^[[:space:]]*//')
+        [ -n "$_reason" ] || _reason=$(grep -av '^[[:space:]]*$' "$_LOG" | tail -n 1 | sed 's/^[[:space:]]*//')
+        [ -n "$_reason" ] || _reason="无输出"
+        echo "===== ✗ 任务异常中止：${_reason} ====="
+      fi
+      echo "  （完整输出：$_LOG）"
       RC=1   # 2026-11-07 审查修正：原来异常也 exit 0，上层/人会以为成功
     fi
     bash "$FLOW/flight.sh" record stop || true
