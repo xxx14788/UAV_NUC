@@ -138,6 +138,21 @@ def classify_goal_event(phase, goal_used, landing=False, stop=False):
         return "REJECT:目标已锁定（等待到位）"
     return "ACCEPT"
 
+def takeoff_manual_takeover(armed, fsm, fsm_stamp, takeoff_cmd_t, since, now, hold=1.5):
+    """TAKEOFF 后是否真的被 px4ctrl 退回手动（2026-11-13 实飞竞态修复）。
+
+    /debugPx4ctrl/fsm_state 只有 1 Hz：TAKEOFF 被接受的瞬间 PX4 已 armed，但下一帧
+    状态串可能仍是 MANUAL_CTRL（实测 00:58:08 误判，0.39 s 后 px4ctrl 实际进 AUTO_TAKEOFF）。
+    所以：命令之前的样本一律不信；命令后的 MANUAL_CTRL 要连续 hold 秒才算接管。
+    返回 (is_takeover, new_since)。
+    """
+    if (not armed or fsm != "MANUAL_CTRL" or takeoff_cmd_t is None
+            or fsm_stamp < takeoff_cmd_t):
+        return False, None
+    since = since if since is not None else now
+    return (now - since >= hold), since
+
+
 def validate_goal(frame, stamp, now, goal_xy, current_xy, anchor_z):
     if TARGET_Z is None:
         raise ValueError("目标高度未初始化（preflight 未跑，或读不到 px4ctrl takeoff_height）")
@@ -622,11 +637,15 @@ class RosFlight:
         print("发出 TAKEOFF；在升至 %.2f m 并稳定 %.0f 秒前不接收 RViz 目标。" % (TARGET_Z, TAKEOFF_HOVER_SECONDS), flush=True)
         deadline = time.monotonic() + 120.0
         takeoff_started = time.monotonic()
+        takeoff_cmd_t = None          # 第一帧 TAKEOFF 发出的时刻（忽略此前的 fsm 样本）
+        manual_armed_since = None
         next_pub = 0.0
         while time.monotonic() < deadline and not self.rospy.is_shutdown():
             now = time.monotonic()
             if now >= next_pub and self._fsm() in ("MANUAL_CTRL", "AUTO_TAKEOFF"):
                 self._pub_takeoff()
+                if takeoff_cmd_t is None:
+                    takeoff_cmd_t = now
                 next_pub = now + 1.0
             state = self._state()
             if not state.connected:
@@ -634,8 +653,13 @@ class RosFlight:
             fsm = self._fsm()
             if not state.armed and now - takeoff_started > 15.0:
                 raise RuntimeError("TAKEOFF 后 15 秒仍未确认解锁；遥控器接管")
-            if state.armed and fsm == "MANUAL_CTRL":
-                raise RuntimeError("已解锁但 px4ctrl 退回 MANUAL_CTRL；遥控器接管。%s"
+            # 2026-11-13 实测竞态：fsm_state 1 Hz，TAKEOFF 被接受后 0.39 s 内还是旧
+            # MANUAL_CTRL -> 旧代码立即误判退出（实际 px4ctrl 已进 AUTO_TAKEOFF 并起飞）。
+            takeover, manual_armed_since = takeoff_manual_takeover(
+                state.armed, fsm, self.times.get("/debugPx4ctrl/fsm_state", 0.0),
+                takeoff_cmd_t, manual_armed_since, now)
+            if takeover:
+                raise RuntimeError("已解锁但 px4ctrl 持续 1.5 s 处于 MANUAL_CTRL；遥控器接管。%s"
                                    % self._rc_summary())
             if fsm == "AUTO_HOVER":
                 odom = self._odom()

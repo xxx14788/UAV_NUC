@@ -141,6 +141,19 @@ f4 = build(c4, w4)
 expect_raise("T4 超时抛错", f4.navigation_monitor, RuntimeError)
 check("T4 未误触发降落", len(f4.landed) == 0, "landed=%d" % len(f4.landed))
 
+print("=== T8 TAKEOFF 后 MANUAL_CTRL 采样竞态 ===")
+check("T8a 命令前的旧样本 -> 不算接管",
+      fm.takeoff_manual_takeover(True, "MANUAL_CTRL", 9.0, 10.0, None, 10.1) == (False, None))
+check("T8b 命令后 <1.5s -> 不算接管",
+      fm.takeoff_manual_takeover(True, "MANUAL_CTRL", 10.2, 10.0, None, 10.5)[0] is False)
+_since = fm.takeoff_manual_takeover(True, "MANUAL_CTRL", 10.2, 10.0, None, 10.5)[1]
+check("T8c 命令后持续到 1.5s -> 判接管",
+      fm.takeoff_manual_takeover(True, "MANUAL_CTRL", 11.8, 10.0, _since, 12.0)[0] is True)
+check("T8d 已进 AUTO_TAKEOFF -> 不判接管",
+      fm.takeoff_manual_takeover(True, "AUTO_TAKEOFF", 10.2, 10.0, None, 10.5) == (False, None))
+check("T8e 未解锁 -> 不判接管",
+      fm.takeoff_manual_takeover(False, "MANUAL_CTRL", 10.2, 10.0, None, 11.0) == (False, None))
+
 print("=== T7 120s 未确认到点但已停在目标附近 -> 自动降落 ===")
 c6 = Clock(); w6 = {"target": (0.5, 0.0, 0.7), "pos": (0.5, 0.0, 0.7)}
 f6 = build(c6, w6, fsm="AUTO_HOVER")   # CMD_CTRL 不成立 -> 5 s 到位判定永远不走完
