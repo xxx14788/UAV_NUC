@@ -384,6 +384,9 @@ class RosFlight:
             self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
             self.nav_deadline = time.monotonic() + 60.0   # 每个目标各自 60 s 导航预算
             self.endpoint_ref = None                        # 新目标重新锁存端点
+            # 2026-11-12（P6 复检）：REPLACE 时必须重置到位悬停计时。否则旧目标已累计的
+            # stable_since 会被新目标继承，到点瞬间就满足 5s 悬停 -> 假到位。
+            self.stable_since = None
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)

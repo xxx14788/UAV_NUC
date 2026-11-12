@@ -35,7 +35,6 @@ void GridMap::initMap(ros::NodeHandle &nh)
   node_.param("grid_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
   node_.param("grid_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
   node_.param("grid_map/skip_pixel", mp_.skip_pixel_, -1);
-  node_.param("grid_map/confirm_frames", mp_.confirm_frames_, 2);   // 2026-11-12：确认窗口
 
   node_.param("grid_map/p_hit", mp_.p_hit_, 0.70);
   node_.param("grid_map/p_miss", mp_.p_miss_, 0.35);
@@ -386,6 +385,7 @@ void GridMap::raycastProcess()
   ros::Time t1, t2;
 
   md_.raycast_num_ += 1;
+  md_.frame_id_ += 1;   // 2026-11-12：出生门时间基准=地图更新帧（20 Hz），不是深度帧（30 Hz）
 
   int vox_idx;
   double length;
@@ -523,8 +523,12 @@ void GridMap::raycastProcess()
     double log_odds_update =
         md_.count_hit_[idx_ctns] >= md_.count_hit_and_miss_[idx_ctns] - md_.count_hit_[idx_ctns] ? mp_.prob_hit_log_ : mp_.prob_miss_log_;
 
-    // 2026-11-12：命中则记帧号（确认层用）。即使已到 clamp 上限也要记。
-    if (log_odds_update >= 0)
+    /* 2026-11-12：出生门取证。hit_now/was_occ/prev_hit/hits_now 必须在清零前取。 */
+    const bool hit_now = log_odds_update >= 0;
+    const bool was_occ = md_.occupancy_buffer_[idx_ctns] > mp_.min_occupancy_log_;
+    const unsigned int prev_hit = md_.last_hit_frame_[idx_ctns];
+    const int hits_now = md_.count_hit_[idx_ctns];
+    if (hit_now)
       md_.last_hit_frame_[idx_ctns] = md_.frame_id_;
 
     md_.count_hit_[idx_ctns] = md_.count_hit_and_miss_[idx_ctns] = 0;
@@ -546,9 +550,16 @@ void GridMap::raycastProcess()
       md_.occupancy_buffer_[idx_ctns] = mp_.clamp_min_log_;
     }
 
-    md_.occupancy_buffer_[idx_ctns] =
+    double new_val =
         std::min(std::max(md_.occupancy_buffer_[idx_ctns] + log_odds_update, mp_.clamp_min_log_),
                  mp_.clamp_max_log_);
+    /* 出生门：新格（was_occ=false）要跨过占据阈值，必须有足够证据。
+       实测（bag 000019）：幽灵格只在 7% 的帧出现、单帧 1-2 条射线；真箱面每帧几十条。
+       规则：本次 >=3 条射线，或 >=2 条且上一更新也命中过。 */
+    if (hit_now && !was_occ &&
+        !(hits_now >= 3 || (hits_now >= 2 && md_.frame_id_ - prev_hit <= 1)))
+      new_val = std::min(new_val, mp_.min_occupancy_log_ - 1e-3);
+    md_.occupancy_buffer_[idx_ctns] = new_val;
   }
 }
 
@@ -673,7 +684,7 @@ void GridMap::clearAndInflateLocalMap()
       for (int z = md_.local_bound_min_(2); z <= md_.local_bound_max_(2); ++z)
       {
 
-        if (getConfirmedOccupancy(Eigen::Vector3i(x, y, z)) > 0)   // 2026-11-12：只膨胀确认格
+        if (md_.occupancy_buffer_[toAddress(x, y, z)] > mp_.min_occupancy_log_)   // 2026-11-12：出生门已在 buffer 层
         {
           inf_pts.resize(inflatePoint(Eigen::Vector3i(x, y, z), inf_step, inf_pts));
 
@@ -762,7 +773,6 @@ void GridMap::updateOccupancyCallback(const ros::TimerEvent & /*event*/)
 void GridMap::depthPoseCallback(const sensor_msgs::ImageConstPtr &img,
                                 const geometry_msgs::PoseStampedConstPtr &pose)
 {
-  md_.frame_id_ += 1;   // 2026-11-12：确认层帧号（每帧深度 +1）
   /* get depth image */
   cv_bridge::CvImagePtr cv_ptr;
   cv_ptr = cv_bridge::toCvCopy(img, img->encoding);
@@ -931,8 +941,8 @@ void GridMap::publishMap()
     for (int y = min_cut(1); y <= max_cut(1); ++y)
       for (int z = min_cut(2); z <= max_cut(2); ++z)
       {
-        if (getConfirmedOccupancy(Eigen::Vector3i(x, y, z)) <= 0)   // 2026-11-12：显示也只用确认格
-          continue;
+        if (md_.occupancy_buffer_[toAddress(x, y, z)] < mp_.min_occupancy_log_)
+          continue;   // 2026-11-12：出生门已在 buffer 层，显示用持久图（出视野不消失）
 
         Eigen::Vector3d pos;
         indexToPos(Eigen::Vector3i(x, y, z), pos);

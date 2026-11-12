@@ -67,7 +67,6 @@ struct MappingParameters {
   bool use_depth_filter_;
   double k_depth_scaling_factor_;
   int skip_pixel_;
-  int confirm_frames_;   // 2026-11-12：确认窗口（帧），默认 2
 
   /* raycasting */
   double p_hit_, p_miss_, p_min_, p_max_, p_occ_;  // occupancy probability
@@ -124,8 +123,11 @@ struct MappingData {
   // flag buffers for speeding up raycasting
 
   vector<short> count_hit_, count_hit_and_miss_;
-  /* 2026-11-12：确认层。frame_id_ 每帧深度自增；只有最近 confirm_frames_ 帧内
-     被命中过的格才算"确认占据"。规划/膨胀/显示只用确认层，FSM 安全判据用原始层。 */
+  /* 2026-11-12（重做）：幽灵格"出生门"。
+     frame_id_ 按地图更新（raycastProcess）自增；新格要跨过占据阈值，必须有证据：
+     本次更新命中 >=3 条射线，或 >=2 条且上一更新也命中过。出生后与上游一致（持久，
+     靠 p_miss 衰减）——不做"最近 N 帧"持续确认，否则出视野的障碍会消失，
+     且 30Hz 深度帧号 vs 20Hz 地图更新会让真实障碍隔帧翻成"未确认"。 */
   vector<unsigned int> last_hit_frame_;
   unsigned int frame_id_{0};
   vector<char> flag_traverse_, flag_rayend_;
@@ -167,8 +169,6 @@ public:
   inline int getOccupancy(Eigen::Vector3d pos);
   inline int getOccupancy(Eigen::Vector3i id);
   inline int getInflateOccupancy(Eigen::Vector3d pos);
-  inline int getConfirmedOccupancy(Eigen::Vector3d pos);
-  inline int getConfirmedOccupancy(Eigen::Vector3i id);
 
   inline void boundIndex(Eigen::Vector3i& id);
   inline bool isUnknown(const Eigen::Vector3i& id);
@@ -349,25 +349,6 @@ inline int GridMap::getOccupancy(Eigen::Vector3i id) {
     return -1;
 
   return md_.occupancy_buffer_[toAddress(id)] > mp_.min_occupancy_log_ ? 1 : 0;
-}
-
-// 2026-11-12：确认占据。原始 log-odds 过门 + 最近 confirm_frames_ 帧内被命中过。
-inline int GridMap::getConfirmedOccupancy(Eigen::Vector3d pos) {
-  if (!isInMap(pos)) return -1;
-  Eigen::Vector3i id;
-  posToIndex(pos, id);
-  const int adr = toAddress(id);
-  return (md_.occupancy_buffer_[adr] > mp_.min_occupancy_log_ &&
-          md_.frame_id_ - md_.last_hit_frame_[adr] < (unsigned int)mp_.confirm_frames_) ? 1 : 0;
-}
-
-inline int GridMap::getConfirmedOccupancy(Eigen::Vector3i id) {
-  if (id(0) < 0 || id(0) >= mp_.map_voxel_num_(0) || id(1) < 0 || id(1) >= mp_.map_voxel_num_(1) ||
-      id(2) < 0 || id(2) >= mp_.map_voxel_num_(2))
-    return -1;
-  const int adr = toAddress(id);
-  return (md_.occupancy_buffer_[adr] > mp_.min_occupancy_log_ &&
-          md_.frame_id_ - md_.last_hit_frame_[adr] < (unsigned int)mp_.confirm_frames_) ? 1 : 0;
 }
 
 inline bool GridMap::isInMap(const Eigen::Vector3d& pos) {
