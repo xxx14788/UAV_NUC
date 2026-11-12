@@ -97,11 +97,18 @@ fm.LANDING_FILE = Path("/tmp/__t_nonexist_landing")
 fm.STOP_FILE    = Path("/tmp/__t_nonexist_stopping")
 c = Clock(); w = {"target": (1.0, 0.0, 0.7), "pos": (1.0, 0.0, 0.7)}
 f = build(c, w)
+class _Pub(object):
+    def __init__(self): self.msgs = []
+    def publish(self, m): self.msgs.append(m.data)
+f.ack_pub = _Pub()
+f.String = lambda data="": type("_M", (), {"data": data})()
 f.navigation_monitor()
 check("T1 到达计数", f.goal_count == 1, "goal_count=%d" % f.goal_count)
 check("T1 进入等待窗口", f.phase == "await_goal", "phase=%s" % f.phase)
 check("T1 自动降落一次", len(f.landed) == 1, "land@t=%.1fs" % (f.landed[0] if f.landed else -1))
 check("T1 等满 20s 才降", f.landed and f.landed[0] >= 5.0 + 20.0 - 0.2, "t=%.1f (>=25)" % (f.landed[0] if f.landed else -1))
+check("T1 倒计时发到 RViz(goal_ack)", sum(1 for m in f.ack_pub.msgs if "内点下一个目标" in m) >= 3,
+      "msgs=%d" % len(f.ack_pub.msgs))
 
 print("=== T2 等待窗口内来第二个目标 -> 继续飞 -> 再超时降落（S 形基础） ===")
 c2 = Clock(); w2 = {"target": (1.0, 0.0, 0.7), "pos": (1.0, 0.0, 0.7)}
