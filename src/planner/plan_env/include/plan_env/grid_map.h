@@ -383,7 +383,7 @@ inline void GridMap::indexToPos(const Eigen::Vector3i& id, Eigen::Vector3d& pos)
   for (int i = 0; i < 3; ++i) pos(i) = (id(i) + 0.5) * mp_.resolution_ + mp_.map_origin_(i);
 }
 
-// 2026-11-12：球膨胀（原来是立方体：轴向 0.30、对角 0.42）。返回实际点数。
+// 2026-11-13 用户令：回上游**立方体**膨胀（撤销 11-12 的球膨胀）。返回实际点数。
 inline int GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts) {
   int num = 0;
 
@@ -405,12 +405,10 @@ inline int GridMap::inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eig
   //   pts[num++] = Eigen::Vector3i(pt(0), pt(1), pt(2) + z);
   // }
 
-  /* ---------- 球膨胀（2026-11-12）---------- */
+  /* ---------- 立方体（上游）---------- */
   for (int x = -step; x <= step; ++x)
     for (int y = -step; y <= step; ++y)
       for (int z = -step; z <= step; ++z) {
-        if (x * x + y * y + z * z > step * step)
-          continue;
         pts[num++] = Eigen::Vector3i(pt(0) + x, pt(1) + y, pt(2) + z);
       }
   return num;
