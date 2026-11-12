@@ -97,6 +97,12 @@ GOAL_HOVER_SECONDS = 5.0
 TAKEOFF_HOVER_SECONDS = _contract_value("params.takeoff_hover_s", TAKEOFF_HOVER_SECONDS)
 GOAL_HOVER_SECONDS = _contract_value("params.goal_hover_s", GOAL_HOVER_SECONDS)
 
+# 2026-11-13 用户令：到点稳定后 NEXT_GOAL_WAIT 秒内没有新目标 -> 自动降落。
+# 单一来源：候选点窗口与 UNREACHABLE 悬停等待共用，禁止再写字面量。
+NEXT_GOAL_WAIT = 20.0
+# 每个目标的导航预算（2026-11-13 起集中定义；超时且已停在目标附近 -> 自动降落）
+NAV_TIMEOUT = 60.0
+
 
 def validate_rc_channels(channels):
     """RC 闸门（2026-11-08 用户令④）：判据全部读契约 runtime.rc，与 preflight 共用一份。"""
@@ -203,6 +209,7 @@ class RosFlight:
         self.anchor = None
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
+        self._last_countdown_s = None      # 到点等待窗口倒计时播报（终端+RViz）
         self.nav_deadline = None          # 当前目标的 60 s 导航超时（按目标重置）
         self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
         self.goal_sent_t = 0.0            # 本次目标发出的时刻（只接受其后的 planned_path）
@@ -355,8 +362,8 @@ class RosFlight:
         self.phase = "await_goal"
         self.goal_used = False
         # 2026-11-11 修 bug：原来这里不设倒计时，monitor 的"无目标"分支会无限等待
-        # -> 目标不可达时飞机一直悬停到没电。现在 15 s 无新目标就自动降落。
-        self.next_goal_deadline = time.monotonic() + 15.0
+        # -> 目标不可达时飞机一直悬停到没电。现在 NEXT_GOAL_WAIT 秒无新目标就自动降落。
+        self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
         self.endpoint_ref = None
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
@@ -395,11 +402,12 @@ class RosFlight:
             gated.pose.position.z = target[2]
             self.goal_used = True
             self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
-            self.nav_deadline = time.monotonic() + 60.0   # 每个目标各自 60 s 导航预算
+            self.nav_deadline = time.monotonic() + NAV_TIMEOUT   # 每个目标各自导航预算
             self.endpoint_ref = None                        # 新目标重新锁存端点
             # 2026-11-12（P6 复检）：REPLACE 时必须重置到位悬停计时。否则旧目标已累计的
             # stable_since 会被新目标继承，到点瞬间就满足 5s 悬停 -> 假到位。
             self.stable_since = None
+            self._last_countdown_s = None
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
@@ -653,13 +661,30 @@ class RosFlight:
             self.rospy.sleep(0.1)
         raise RuntimeError("120 秒内未确认稳定悬停；遥控器接管，不自动执行其他动作")
 
+    def _announce_countdown(self, remain):
+        """到点等待窗口的倒计时：终端 + RViz（goal_ack 文本），每 5 s 一次。"""
+        sec = int(math.ceil(remain))
+        if sec <= 0 or sec % 5 != 0:
+            return
+        if getattr(self, "_last_countdown_s", None) == sec:
+            return
+        self._last_countdown_s = sec
+        text = "已到点：%d s 内点下一个目标，否则自动降落" % sec
+        print("[countdown] " + text, flush=True)
+        pub = getattr(self, "ack_pub", None)
+        msg_type = getattr(self, "String", None)
+        if pub is not None and msg_type is not None:
+            try:
+                pub.publish(msg_type(data="AT_GOAL " + text))
+            except Exception:
+                pass
+
     def navigation_monitor(self):
         """2026-11-07 多航点：到点后给 NEXT_GOAL_WAIT 秒点下一个目标，超时自动降落。
 
         为什么要多航点：ego_planner 是**局部**规划器（视界 4 m，无全局路径），
         两组箱子时它不保证自己找到 S 形。用人工拐点把 S 形变成几何约束，最确定。
         """
-        NEXT_GOAL_WAIT = 15.0   # 2026-11-11 用户令：20 -> 15 s
         print("目标已发送；到点稳定 %.0fs 后，%.0f 秒内可在 RViz 点下一个目标"
               "（依次点几个拐点 = S 形绕行），否则自动降落。" % (GOAL_HOVER_SECONDS, NEXT_GOAL_WAIT), flush=True)
         deadline = None
@@ -668,17 +693,21 @@ class RosFlight:
                 return
             if not self.goal_used:
                 # 没有待飞目标：首个目标无限等；后续目标只等 NEXT_GOAL_WAIT
-                if (self.next_goal_deadline is not None
-                        and time.monotonic() >= self.next_goal_deadline):
-                    print("没有更多目标；自动降落。", flush=True)
+                if self.next_goal_deadline is None:
+                    self.rospy.sleep(0.1)
+                    continue
+                remain = self.next_goal_deadline - time.monotonic()
+                if remain <= 0.0:
+                    print("已到点 %.0f 秒仍无新目标；自动降落。" % NEXT_GOAL_WAIT, flush=True)
                     self.land()
                     return
+                self._announce_countdown(remain)
                 self.rospy.sleep(0.1)
                 continue
             # 2026-11-11 修 bug：原 deadline 只在首次赋值，第二个目标起沿用同一个
             # 180 s 计时器 -> 多航点（S 形）飞到第 3-4 个点会被误判超时并抛错。
             if self.nav_deadline is None:
-                self.nav_deadline = time.monotonic() + 60.0
+                self.nav_deadline = time.monotonic() + NAV_TIMEOUT
             deadline = self.nav_deadline
             # 2026-11-08（方案 v2 C3）目标停滞自降：发目标后 5 s，若 /position_cmd 原地不动
             # 就报根因并中止。22:36 那轮的形态：规划器 EMERGENCY_STOP -> traj_server 以
@@ -687,7 +716,10 @@ class RosFlight:
                     and time.monotonic() - self.goal_cmd_t0 >= 5.0:
                 if self._fresh("/position_cmd", 0.5):
                     cmd = self.cache["/position_cmd"]
-                    _rx, _ry = (self.endpoint_ref[0], self.endpoint_ref[1])                         if self.endpoint_ref is not None else self.goal_target_xy
+                    if self.endpoint_ref is not None:
+                        _rx, _ry = self.endpoint_ref[0], self.endpoint_ref[1]
+                    else:
+                        _rx, _ry = self.goal_target_xy
                     gap = math.hypot(cmd.position.x - _rx, cmd.position.y - _ry)
                     vcmd = math.hypot(cmd.velocity.x, cmd.velocity.y)
                     if goal_stall_verdict(time.monotonic() - self.goal_cmd_t0, gap, vcmd):
@@ -707,7 +739,30 @@ class RosFlight:
                         raise RuntimeError(msg)
                     self.goal_cmd_t0 = None  # 已在动/已接近，目标停滞完成使命
             if time.monotonic() >= deadline:
-                break
+                # 2026-11-13：60 s 未确认到点。若飞机已停在目标附近（<=1 m 且慢），
+                # 就是"到位判定没走完"，不是没飞到 -> 自动降落，别让它一直悬停。
+                # 远离目标则不在陌生位置盲降，交还遥控器。
+                try:
+                    _o = self._odom()
+                    _p = _o.pose.pose.position
+                    _v = _o.twist.twist.linear
+                    _d_goal = math.sqrt((_p.x - self.target[0]) ** 2 +
+                                        (_p.y - self.target[1]) ** 2 +
+                                        (_p.z - self.target[2]) ** 2)
+                    _sp = math.sqrt(_v.x ** 2 + _v.y ** 2 + _v.z ** 2)
+                except Exception:
+                    _d_goal, _sp = -1.0, 1e9
+                if 0.0 <= _d_goal <= 1.0 and _sp <= 0.20:
+                    print("导航 %.0f s 未确认到点，但已停在目标 %.2f m 内（|v|=%.2f）；自动降落。"
+                          % (NAV_TIMEOUT, _d_goal, _sp), flush=True)
+                    try:
+                        self.land()
+                    except Exception as lexc:
+                        print("!! 自动降落失败（%s）；遥控器接管（CH5 拨低）" % lexc, flush=True)
+                    else:
+                        return
+                raise RuntimeError("导航 %.0f 秒内未确认目标点稳定（距目标 %.2f m，|v|=%.2f）；遥控器接管"
+                                   % (NAV_TIMEOUT, _d_goal, _sp))
             state = self._state()
             fsm = self._fsm()
             if not state.connected or not state.armed or fsm == "MANUAL_CTRL":
@@ -733,7 +788,8 @@ class RosFlight:
                 self.cache.get("/flight_v1/planned_path"),
                 self.times.get("/flight_v1/planned_path", 0.0),
                 self.goal_sent_t, time.monotonic(), 2.0, self.target)
-            if _prev_ref is None and self.endpoint_ref is not None                     and self.endpoint_ref != self.target:
+            if _prev_ref is None and self.endpoint_ref is not None \
+                    and self.endpoint_ref != self.target:
                 print("[arrival_ref] 规划终点=(%.2f,%.2f,%.2f) 距目标 %.2f m"
                       % (self.endpoint_ref[0], self.endpoint_ref[1], self.endpoint_ref[2],
                          math.hypot(self.endpoint_ref[0] - self.target[0],
@@ -753,17 +809,19 @@ class RosFlight:
                     self.goal_used = False
                     self.stable_since = None
                     self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+                    self._last_countdown_s = None
                     self.goal_cmd_t0 = None
                     self.goal_target_xy = None
                     self.phase = "await_goal"
                     deadline = None
                     print("第 %d 个目标到达并稳定悬停 %.0f 秒（距目标 %.2f m）。%.0f 秒内可点下一个目标，否则自动降落。"
                           % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT), flush=True)
+                    self._announce_countdown(NEXT_GOAL_WAIT)
                     continue
             else:
                 self.stable_since = None
             self.rospy.sleep(0.1)
-        raise RuntimeError("导航 60 秒内未确认目标点稳定；遥控器接管")
+        raise RuntimeError("导航监测被中断（rospy shutdown）")
 
     def land(self):
         if STOP_FILE.exists():
@@ -845,6 +903,32 @@ class RosFlight:
             raise RuntimeError("120 秒内未确认落地；保持栈运行，由遥控器接管")
 
 
+class _Tee(object):
+    """2026-11-13：把任务输出同时写到终端和 ~/flight_data/last_mission.log。"""
+
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, data):
+        for st in self.streams:
+            try:
+                st.write(data)
+                st.flush()
+            except Exception:
+                pass
+        return len(data)
+
+    def flush(self):
+        for st in self.streams:
+            try:
+                st.flush()
+            except Exception:
+                pass
+
+
+_LOG_STREAM = None
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sim", action="store_true",
@@ -856,6 +940,19 @@ def main():
     global DRY, SIM
     DRY = bool(args.dry)
     SIM = bool(args.sim)
+    # 2026-11-13：任务输出落盘（此前"是否触发自动降落"只能靠猜；全部轮次 AUTO_LAND=0）
+    global _LOG_STREAM
+    try:
+        _lp = Path.home() / "flight_data" / "last_mission.log"
+        _lp.parent.mkdir(parents=True, exist_ok=True)
+        _LOG_STREAM = open(str(_lp), "a", encoding="utf-8")
+        _LOG_STREAM.write("\n===== %s action=%s =====\n"
+                          % (time.strftime("%Y-%m-%d %H:%M:%S"), args.action))
+        _LOG_STREAM.flush()
+        sys.stdout = _Tee(sys.stdout, _LOG_STREAM)
+        sys.stderr = _Tee(sys.stderr, _LOG_STREAM)
+    except Exception as exc:
+        print("警告：任务日志落盘失败：%r" % (exc,), file=sys.stderr)
     if args.action == "self-test":
         # 2026-11-07 审查修正（独立审计发现）：self-test 不跑 preflight，
         # TARGET_Z 仍是 None -> validate_goal 直接抛 ValueError，自检必然失败。

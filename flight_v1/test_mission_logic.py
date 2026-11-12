@@ -55,6 +55,10 @@ def build(clock, world, fsm="CMD_CTRL", state=None):
     f.rospy = Obj(); f.rospy.sleep = clock.sleep; f.rospy.is_shutdown = lambda: False
     f.goal_used = True; f.next_goal_deadline = None; f.goal_count = 0
     f.target = world["target"]; f.nav_done = False; f.nav_fail = None
+    # 2026-11-13：补齐 11-11 新增字段（此前缺 nav_deadline，测试一直崩）
+    f.nav_deadline = None; f.goal_sent_t = 0.0; f.endpoint_ref = None
+    f.goal_cmd_t0 = None; f.goal_target_xy = None; f.cache = {}; f.times = {}
+    f._last_countdown_s = None
     f.stable_since = None; f.phase = "navigation"; f.anchor = 0.0
     f.rc = None          # 2026-11-07 测试修正：RosFlight 新增 RC 取证字段（__init__ 置 None）
     f._state = lambda: (state or mk_state())
@@ -105,6 +109,10 @@ f2 = build(c2, w2)
 def inject(t):
     if f2.phase == "await_goal" and f2.goal_count == 1 and f2.next_goal_deadline is not None:
         f2.goal_used = True; f2.next_goal_deadline = None
+        f2.nav_deadline = None
+        # 真 _goal_cb 会重置 endpoint_ref/stable_since；注入必须同口径，否则
+        # 端点仍锁在旧目标上，d 永远 >0.2（2026-11-13 测试抓出）。
+        f2.endpoint_ref = None; f2.stable_since = None
         f2.target = (2.0, 0.0, 0.7); f2.phase = "navigation"
         w2["pos"] = (2.0, 0.0, 0.7)
 c2.cb = inject
@@ -125,6 +133,17 @@ c4 = Clock(); w4 = {"target": (9.0, 0.0, 0.7), "pos": (0.0, 0.0, 0.7)}
 f4 = build(c4, w4)
 expect_raise("T4 超时抛错", f4.navigation_monitor, RuntimeError)
 check("T4 未误触发降落", len(f4.landed) == 0, "landed=%d" % len(f4.landed))
+
+print("=== T7 60s 未确认到点但已停在目标附近 -> 自动降落 ===")
+c6 = Clock(); w6 = {"target": (0.5, 0.0, 0.7), "pos": (0.5, 0.0, 0.7)}
+f6 = build(c6, w6, fsm="AUTO_HOVER")   # CMD_CTRL 不成立 -> 5 s 到位判定永远不走完
+try:
+    f6.navigation_monitor()
+except RuntimeError:
+    pass
+check("T7 超时后自动降落一次", len(f6.landed) == 1, "land@t=%.1fs" % (f6.landed[0] if f6.landed else -1))
+check("T7 约 60s 触发", bool(f6.landed) and 59.0 <= f6.landed[0] <= 61.5,
+      "t=%.1f" % (f6.landed[0] if f6.landed else -1))
 
 print("=== T5 遥控器通道校验 ===")
 good = [1500, 1500, 999, 1500, 1800, 1800, 1000, 1000]
