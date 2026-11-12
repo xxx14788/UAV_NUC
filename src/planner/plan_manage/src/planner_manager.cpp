@@ -325,6 +325,48 @@ namespace ego_planner
 
     t_refine = ros::Time::now() - t_start;
 
+
+    /* 2026-11-12 P2+P5：末端零速化 + 无条件限速（用户批准的方案，不加门）
+       P2：优化器不约束末端导数（末端速度 ∝ P_n − P_{n-1}）。
+            追加一个与 P_n 相同的控制点 → 末端速度 = 0。
+            实测 bag 000019 每条轨迹末端 0.05–0.34 m/s，到点全靠位置环刹。
+       P5：refine 的重参数化只是近似（多项式拟合），可能仍超限。
+            实测 bag 001036 参考速度 0.597 m/s（限 0.4，refine 后仍超 49%）。
+            修法：同一路径拉伸时间轴（速度 ∝ 1/interval），迭代直到可行。 */
+    {
+      // P2: 末端零速化
+      Eigen::MatrixXd cps_p2 = pos.getControlPoint();
+      int n_cp = cps_p2.cols();
+      if (n_cp >= 2)
+      {
+        double t_end_p2 = pos.getTimeSum();
+        Eigen::Vector3d v_end_p2 = pos.getDerivative().evaluateDeBoorT(t_end_p2);
+        if (v_end_p2.norm() > 0.03)
+        {
+          cps_p2.conservativeResize(Eigen::NoChange, n_cp + 1);
+          cps_p2.col(n_cp) = cps_p2.col(n_cp - 1);
+          pos = UniformBspline(cps_p2, 3, pos.getInterval());
+          ROS_INFO("[P2] end velocity %.3f m/s -> 0 (appended 1 CP, now %d)",
+                   v_end_p2.norm(), (int)cps_p2.cols());
+        }
+      }
+
+      // P5: 无条件限速（最多 3 轮迭代拉伸时间轴）
+      for (int iter_p5 = 0; iter_p5 < 3; ++iter_p5)
+      {
+        pos.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_, pp_.feasibility_tolerance_);
+        double ratio_p5;
+        if (pos.checkFeasibility(ratio_p5, false))
+          break;
+        double new_int = pos.getInterval() * (1.0 + ratio_p5);
+        Eigen::MatrixXd cp_p5 = pos.getControlPoint();
+        pos = UniformBspline(cp_p5, 3, new_int);
+        if (iter_p5 == 0)
+          ROS_WARN("[P5] trajectory exceeded limits (ratio=%.2f), interval %.3f -> %.3f",
+                   ratio_p5, pos.getInterval() / (1.0 + ratio_p5), new_int);
+      }
+    }
+
     // save planned results
     updateTrajInfo(pos, ros::Time::now());
 

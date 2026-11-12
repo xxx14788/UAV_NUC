@@ -52,6 +52,28 @@ finish() {
     FINISHED=1
     END_EPOCH=$(date +%s)
     echo "DONE: $BAG_DIR"
+
+    # 2026-11-12 P10：落地后再停录（最多 30s；实测 000019/001036 袋结束时 z=0.27/0.44 仍在空中）
+    echo "--- 等待落地（最多 30s）---"
+    for _wi in $(seq 1 30); do
+        _landed=$(timeout 3 rostopic echo -n1 /mavros/extended_state 2>/dev/null | grep -c "landed_state: 1")
+        _armed=$(timeout 3 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c "armed: False")
+        [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ] && { echo "  ✓ 已落地+已上锁（等了 ${_wi}s）"; break; }
+        sleep 1
+    done
+    [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ] || echo "  ⚠ 30s 未确认落地，强制停录"
+
+    # 2026-11-12 P10：空袋自动判废（<30s 且无 position_cmd → 移到 _empty/）
+    # 实测 20261112_000314 起飞 1s 后停录，286MB 废数据
+    if [ -n "${BAGFILE:-}" ] && [ -f "$BAGFILE" ]; then
+        _dur=$(timeout 10 rosbag info "$BAGFILE" 2>/dev/null | grep -oP "duration: \\K[\\d.]+" | head -1)
+        _ncmd=$(timeout 10 rosbag info "$BAGFILE" 2>/dev/null | grep -c "/position_cmd")
+        if [ -n "$_dur" ] && (( $(echo "$_dur < 30" | bc -l 2>/dev/null || echo 0) )) && [ "${_ncmd:-0}" -eq 0 ]; then
+            mkdir -p ~/flight_data/_empty
+            mv "$BAGFILE" ~/flight_data/_empty/ 2>/dev/null
+            echo "  ⚠ 空袋（${_dur}s 无 position_cmd），已移至 _empty/"
+        fi
+    fi
     _extract_window() {
         local log="$1" out="$2"
         [ -f "$log" ] || return 0

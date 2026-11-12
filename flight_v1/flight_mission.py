@@ -167,7 +167,8 @@ class RosFlight:
         from sensor_msgs.msg import Imu
         from nav_msgs.msg import Odometry
         from quadrotor_msgs.msg import PositionCommand, TakeoffLand
-        from std_msgs.msg import String
+        from std_msgs.msg import String  # 2026-11-12 P6：goal_ack 也用
+        self.String = String
         from nav_msgs.msg import Path
 
         self.rospy = rospy
@@ -232,6 +233,8 @@ class RosFlight:
         sub("/flight_v1/planned_path", Path)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
+        # 2026-11-12 P6：点击 ack 通道（每次点击必有反馈）
+        self.ack_pub = rospy.Publisher("/flight_v1/goal_ack", String, queue_size=4)
 
     def _rc_cb(self, msg):
         self.rc = msg
@@ -341,8 +344,21 @@ class RosFlight:
         self.goal_target_xy = None
 
     def _goal_cb(self, msg):
-        if self.phase != "await_goal" or self.goal_used or LANDING_FILE.exists() or STOP_FILE.exists():
-            print("忽略目标：当前不在可选点阶段，或降落已开始", flush=True)
+        def _ack(status, detail=""):
+            self.ack_pub.publish(self.String(data="%s %s" % (status, detail)))
+            print("[goal_ack] %s %s" % (status, detail), flush=True)
+        if LANDING_FILE.exists() or STOP_FILE.exists():
+            _ack("REJECTED", "降落已开始")
+            return
+        # 2026-11-12 P6：导航中允许替换目标（原来是静默丢弃，6 点只收 2）
+        if self.phase == "navigation" and self.goal_used:
+            _ack("REPLACE", "导航中替换目标")
+            # 不 return，继续走 validate（下面会重置 goal_used / deadline）
+        elif self.phase != "await_goal":
+            _ack("REJECTED", "当前阶段 %s 不收点" % self.phase)
+            return
+        elif self.goal_used and self.phase == "await_goal":
+            _ack("REJECTED", "目标已锁定（等待到位）")
             return
         try:
             state = self._state()
@@ -371,6 +387,7 @@ class RosFlight:
             self.target = target
             self.phase = "navigation"
             self.goal_pub.publish(gated)
+            _ack("ACCEPTED", "(%.2f, %.2f, %.2f)" % (target[0], target[1], target[2]))
             self.goal_sent_t = time.monotonic()   # 之后的 planned_path 才算本次目标的
             # 目标停滞起点（方案 v2 C3 + 二审 F2）：只记"目标 xy + 时刻"，
             # 判据用"指令离目标还差多少"，不再依赖 /position_cmd 是否已有流。

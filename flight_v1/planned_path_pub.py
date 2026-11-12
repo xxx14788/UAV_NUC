@@ -17,6 +17,7 @@ import rospy
 from geometry_msgs.msg import Point, PoseStamped
 from nav_msgs.msg import Path
 from visualization_msgs.msg import Marker
+from std_msgs.msg import String  # 2026-11-12 P6：goal_ack
 
 PATH_PLAN = "/flight_v1/planned_path"
 PATH_TRAIL = "/flight_v1/executed_trail"
@@ -152,6 +153,12 @@ def main():
     rospy.Subscriber(BSPLINE, Bspline, on_bspline)
     rospy.Subscriber(CMD, PositionCommand, on_cmd)
     rospy.Subscriber(GOAL, PoseStamped, on_goal)
+    # 2026-11-12 P6：目标点击反馈（文本 Marker）
+    ack_state = {"text": "", "stamp": None}
+    def on_ack(msg):
+        ack_state["text"] = msg.data
+        ack_state["stamp"] = rospy.Time.now()
+    rospy.Subscriber("/flight_v1/goal_ack", String, on_ack)
 
     rate = rospy.Rate(1.0)
     while not rospy.is_shutdown():
@@ -161,6 +168,33 @@ def main():
             pub_plan.publish(state["plan"])
         if state["goal"] is not None:
             pub_goal.publish(build_goal())
+        # 2026-11-12 P6：显示最近一次点击反馈（5 s 内）
+        if ack_state["text"] and ack_state["stamp"] is not None:
+            age = (rospy.Time.now() - ack_state["stamp"]).to_sec()
+            if age < 5.0:
+                m2 = Marker()
+                m2.header.frame_id = "world"
+                m2.header.stamp = rospy.Time.now()
+                m2.ns = "flight_v1_goal_ack"
+                m2.id = 1
+                m2.type = Marker.TEXT_VIEW_FACING
+                m2.action = Marker.ADD
+                if state["goal"] is not None:
+                    m2.pose.position = Point(state["goal"][0], state["goal"][1],
+                                             state["goal"][2] + 0.25)
+                else:
+                    m2.pose.position = Point(0, 0, 1.0)
+                m2.pose.orientation.w = 1.0
+                m2.scale.z = 0.12
+                txt = ack_state["text"]
+                if txt.startswith("ACCEPTED"):
+                    m2.color.g, m2.color.a = 1.0, 0.9
+                elif txt.startswith("REJECTED"):
+                    m2.color.r, m2.color.a = 1.0, 0.9
+                else:
+                    m2.color.b, m2.color.a = 1.0, 0.9
+                m2.text = txt[:80]
+                pub_goal.publish(m2)
         rate.sleep()
     return 0
 
