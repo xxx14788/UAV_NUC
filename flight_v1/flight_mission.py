@@ -100,8 +100,8 @@ GOAL_HOVER_SECONDS = _contract_value("params.goal_hover_s", GOAL_HOVER_SECONDS)
 # 2026-11-13 用户令：到点稳定后 NEXT_GOAL_WAIT 秒内没有新目标 -> 自动降落。
 # 单一来源：候选点窗口与 UNREACHABLE 悬停等待共用，禁止再写字面量。
 NEXT_GOAL_WAIT = 20.0
-# 每个目标的导航预算（2026-11-13 起集中定义；超时且已停在目标附近 -> 自动降落）
-NAV_TIMEOUT = 60.0
+# 每个目标的导航预算（2026-11-13 用户令：60 -> 120 s；超时且已停在目标附近 -> 自动降落）
+NAV_TIMEOUT = 120.0
 
 
 def validate_rc_channels(channels):
@@ -210,7 +210,7 @@ class RosFlight:
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
         self._last_countdown_s = None      # 到点等待窗口倒计时播报（终端+RViz）
-        self.nav_deadline = None          # 当前目标的 60 s 导航超时（按目标重置）
+        self.nav_deadline = None          # 当前目标的 NAV_TIMEOUT 导航超时（按目标重置）
         self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
         self.goal_sent_t = 0.0            # 本次目标发出的时刻（只接受其后的 planned_path）
         # 2026-11-08（方案 v2 C3）：目标停滞自降状态（发目标后 5 s 内指令不动 -> 中止）

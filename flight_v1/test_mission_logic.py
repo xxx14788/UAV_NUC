@@ -135,13 +135,13 @@ c3 = Clock(); w3 = {"target": (5.0, 0.0, 0.7), "pos": (0.0, 0.0, 0.7)}
 f3 = build(c3, w3, fsm="MANUAL_CTRL")
 expect_raise("T3 接管即抛错", f3.navigation_monitor, RuntimeError)
 
-print("=== T4 180s 到不了 -> 抛错 ===")
+print("=== T4 120s 到不了 -> 抛错 ===")
 c4 = Clock(); w4 = {"target": (9.0, 0.0, 0.7), "pos": (0.0, 0.0, 0.7)}
 f4 = build(c4, w4)
 expect_raise("T4 超时抛错", f4.navigation_monitor, RuntimeError)
 check("T4 未误触发降落", len(f4.landed) == 0, "landed=%d" % len(f4.landed))
 
-print("=== T7 60s 未确认到点但已停在目标附近 -> 自动降落 ===")
+print("=== T7 120s 未确认到点但已停在目标附近 -> 自动降落 ===")
 c6 = Clock(); w6 = {"target": (0.5, 0.0, 0.7), "pos": (0.5, 0.0, 0.7)}
 f6 = build(c6, w6, fsm="AUTO_HOVER")   # CMD_CTRL 不成立 -> 5 s 到位判定永远不走完
 try:
@@ -149,7 +149,7 @@ try:
 except RuntimeError:
     pass
 check("T7 超时后自动降落一次", len(f6.landed) == 1, "land@t=%.1fs" % (f6.landed[0] if f6.landed else -1))
-check("T7 约 60s 触发", bool(f6.landed) and 59.0 <= f6.landed[0] <= 61.5,
+check("T7 约 120s 触发", bool(f6.landed) and 119.0 <= f6.landed[0] <= 121.5,
       "t=%.1f" % (f6.landed[0] if f6.landed else -1))
 
 print("=== T5 遥控器通道校验 ===")
