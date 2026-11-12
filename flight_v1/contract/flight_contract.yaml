@@ -103,6 +103,7 @@ record_topics:   # 录包唯一清单（recorder 读 generated/record_topics.txt
   - /drone_0_ego_planner_node/grid_map/occupancy_inflate
   - /flight_v1/planned_path
   - /flight_v1/goal_status
+  - /flight_v1/goal_ack
   - /tf
   - /tf_static
   - /rosout

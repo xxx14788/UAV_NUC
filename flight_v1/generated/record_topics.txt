@@ -33,6 +33,7 @@
 /drone_0_ego_planner_node/grid_map/occupancy_inflate
 /flight_v1/planned_path
 /flight_v1/goal_status
+/flight_v1/goal_ack
 /tf
 /tf_static
 /rosout

@@ -93,7 +93,8 @@ RECORD_TOPICS = [
     '/drone_0_ego_planner_node/grid_map/occupancy',           # 2026-11-11：原始占据图（真实净空的唯一判据）
     '/drone_0_ego_planner_node/grid_map/occupancy_inflate',   # P1-6：离线判目标是否在膨胀层
     '/flight_v1/planned_path',
-    '/flight_v1/goal_status',   # 2026-11-11：规划器 OK/ADJUSTED/UNREACHABLE（判读必需） '/flight_v1/executed_trail', '/flight_v1/goal_marker',
+    '/flight_v1/goal_status',
+    '/flight_v1/goal_ack',       # 2026-11-12 P6：点击反馈（ACCEPTED/REJECTED/REPLACE）   # 2026-11-11：规划器 OK/ADJUSTED/UNREACHABLE（判读必需） '/flight_v1/executed_trail', '/flight_v1/goal_marker',
     '/tf', '/tf_static', '/rosout',
 ]
 
