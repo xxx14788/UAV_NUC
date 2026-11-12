@@ -1,0 +1,106 @@
+<launch>
+  <arg name="drone_id" default="0"/>
+    <arg name="depth_fx" default="427.873138"/>
+    <arg name="depth_fy" default="427.873138"/>
+    <arg name="depth_cx" default="427.866150"/>
+    <arg name="depth_cy" default="231.891785"/>
+
+  <!-- ===== 设计说明（由 sync_params.py 生成，勿手改；派生值见下方 BEGIN/END 块）=====
+
+       地图：resolution 0.15 m；图底 ground_height -0.10；顶 = -0.10 + 1.60 = 1.50 m
+         · 图底比真实地面低 0.10 m，地板点稳定落在图内并被记成"障碍"。
+         · 出图的点不会被丢弃，而是 clamp 到边界后按 miss 投票（等于"把地板擦掉"），
+           所以图底不能高于地板；地面测试用它区分"地板在地图里"与"地板被擦掉"。
+
+       膨胀：param 0.299 -> ceil(0.299/0.15) = 2 格 -> 有效 0.30 m（机体直径 0.337，净裕度 0.13 m）
+         · 2026-11-11（用户问 5/7 根因）：A*/优化器的"自机自由球"已撤销 —— 它把球内真障碍
+           一起当自由（实测起点离箱心 0.34 m 时整箱被抹掉，贴箱切角）。起点在膨胀层里由
+           A* 的 start/end 反向外推解决；FSM 碰撞判据改用原始占据格。本参数只决定规划裕度。
+
+       天花板：地图顶 1.50 必须不高于箱高 1.50（"禁止从箱子上方飞越"）；检查器门是 <=。
+
+       感知/规划：depth_filter_maxdist 5.0 采样、max_ray_length 2.5 截断；
+         planning_horizon 4.0（= 1.6 x 感知，满足上游 "horizon >= 1.5 x sensing"）
+
+       近场：mindist 0.200 + 相机前移 0.034 = 盲面 0.234 <= 有效膨胀 0.300
+         自机点（桨/保护圈/脚架）由 grid_map.cpp 的自机排除盒剔除，不靠 mindist：
+         机体系 ((-0.32, 0.32), (-0.32, 0.32), (-0.16, 0.1)) -> 相机系 AABB lo=[-0.313, -0.018, -0.363] hi=[0.347, 0.246, 0.298]（外参读 VINS yaml）
+
+       历史（别按旧注释理解现象）：
+         11-07 ground_height=-0.30 -> 地图下有走廊，实测钻到 z=-0.25
+         11-08 morning  ground_height=0.05 -> 地板被 miss 擦掉，机体自己出图
+         11-08 19:33    ground -0.01 + 膨胀 0.15（回上游）
+         11-08 21:xx    ground -0.10 + 膨胀 0.337（用户令，已废止）
+         11-11          膨胀 0.299 -> 有效 0.30（上游实机值；对齐现场 0.25-0.30 m 净空）
+       ================================================================== -->
+  <include file="$(find ego_planner)/launch/advanced_param_sitl.xml">
+    <arg name="drone_id" value="$(arg drone_id)"/>
+    <arg name="map_size_x_" value="30.0"/>
+    <arg name="map_size_y_" value="30.0"/>
+    <arg name="map_size_z_" value="1.60"/>
+    <arg name="odometry_topic" value="/vins_estimator/imu_propagate"/>
+    <arg name="obj_num_set" value="10"/>
+    <arg name="camera_pose_topic" value="/planner/camera_pose"/>
+    <arg name="depth_topic" value="/camera/depth/image_rect_raw"/>
+    <arg name="cloud_topic" value="nouse2"/>
+    <!-- 目标点只走校验门：flight_mission.py 把校验过的目标发到 /flight_v1/goal_gate。
+         RViz 原始目标（/move_base_simple/goal）与 mavros guided_target 都不进规划器。
+         注意：roslaunch 顶层 <remap> 不作用于 <include> 内的节点，所以必须走这个 arg。 -->
+    <arg name="goal_topic" value="/flight_v1/goal_gate"/>
+    <arg name="cx" value="$(arg depth_cx)"/>
+    <arg name="cy" value="$(arg depth_cy)"/>
+    <arg name="fx" value="$(arg depth_fx)"/>
+    <arg name="fy" value="$(arg depth_fy)"/>
+    <arg name="max_vel" value="0.4"/>
+    <arg name="max_acc" value="3.0"/>
+    <arg name="planning_horizon" value="4.0"/>
+    <arg name="use_distinctive_trajs" value="false"/>
+    <arg name="flight_type" value="1"/>
+    <arg name="point_num" value="1"/>
+    <arg name="point0_x" value="0.0"/><arg name="point0_y" value="0.0"/><arg name="point0_z" value="0.5"/>
+    <arg name="point1_x" value="0.0"/><arg name="point1_y" value="0.0"/><arg name="point1_z" value="0.5"/>
+    <arg name="point2_x" value="0.0"/><arg name="point2_y" value="0.0"/><arg name="point2_z" value="0.5"/>
+    <arg name="point3_x" value="0.0"/><arg name="point3_y" value="0.0"/><arg name="point3_z" value="0.5"/>
+    <arg name="point4_x" value="0.0"/><arg name="point4_y" value="0.0"/><arg name="point4_z" value="0.5"/>
+  </include>
+
+  <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====
+       原始量: takeoff_height 0.70 / goal_radius 3.5 / inflation 0.299 / ground_height -0.10 /
+               ceiling_max 1.50 / max_ray 2.5 / max_vel 0.4 / resolution 0.15
+       派生: map_size_z=1.60 (天花板 1.50) / eff_inflation=0.30 / mindist=0.200 -->
+  <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.299"/>
+  <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.10"/>
+  <param name="/drone_0_ego_planner_node/grid_map/map_size_z" value="1.60"/>
+  <param name="/drone_0_ego_planner_node/grid_map/max_ray_length" value="2.5"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_maxdist" value="5.0"/>
+  <param name="/drone_0_ego_planner_node/grid_map/depth_filter_mindist" value="0.200"/>
+  <param name="/drone_0_ego_planner_node/fsm/thresh_no_replan_meter" value="0.3"/>
+  <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="0.5"/>
+  <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="0.6"/>
+  <param name="/drone_0_ego_planner_node/fsm/near_goal_vel" value="0.15"/>
+  <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
+  <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
+  <param name="/drone_0_ego_planner_node/grid_map/resolution" value="0.15"/>
+  <param name="/drone_0_ego_planner_node/grid_map/fx" value="427.873138"/>
+  <param name="/drone_0_ego_planner_node/grid_map/fy" value="427.873138"/>
+  <param name="/drone_0_ego_planner_node/grid_map/cx" value="427.866150"/>
+  <param name="/drone_0_ego_planner_node/grid_map/cy" value="231.891785"/>
+  <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.70"/>
+  <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>
+  <!-- ===== END 派生参数块 ===== -->
+
+  <!-- pose_type=1：规划器直接消费 VINS 的 T_world_cam（/planner/camera_pose），
+       不走 odom + 写死外参那条路（vins_to_mavros 负责转发）。 -->
+  <!-- 目标高度恒定 0.7（与 px4ctrl takeoff_height 对齐）。false = 丢弃 RViz 消息里的 z：
+       RViz 2D Nav Goal 在地面平面打点、z=0，守卫只拒 z<-0.1，会把飞机命令到地面。 -->
+  <param name="/drone_0_ego_planner_node/fsm/manual_goal_use_msg_z" value="false"/>
+  <!-- 急停自愈开关与健康确认窗（方案 v2 P2）。false / 大值 = 回到旧行为。 -->
+  <param name="/drone_0_ego_planner_node/fsm/fail_safe_recover" value="true"/>
+  <param name="/drone_0_ego_planner_node/fsm/fail_safe_recover_hold_s" value="2.5"/>
+
+  <node pkg="ego_planner" name="drone_0_traj_server" type="traj_server" output="screen">
+    <remap from="~planning/bspline" to="/drone_0_planning/bspline"/>
+    <param name="traj_server/time_forward" value="1.0" type="double"/>
+    <param name="traj_server/odom_topic" value="/vins_estimator/imu_propagate"/>
+  </node>
+</launch>

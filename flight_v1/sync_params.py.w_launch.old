@@ -1,0 +1,55 @@
+def w_launch(d):
+    lines = read(LAUNCH).split(NL)
+    HDR = '<!-- ====='
+    out, first_at, i = [], None, 0
+    while i < len(lines):
+        if HDR in lines[i] and ('派生参数块' in lines[i] or 'user-order items' in lines[i]):
+            if first_at is None:
+                first_at = len(out)
+            if 'END 派生参数块' in lines[i]:          # 单行块（理论上不会）
+                i += 1
+                continue
+            if 'BEGIN 派生参数块' in lines[i]:
+                while i < len(lines) and 'END 派生参数块' not in lines[i]:
+                    i += 1
+                i += 1
+                continue
+            # 旧英文块：删到 local_map_margin
+            while i < len(lines) and 'grid_map/local_map_margin' not in lines[i]:
+                i += 1
+            i += 1
+            continue
+        if ('fsm/manual_goal_z"' in lines[i] or 'fsm/manual_goal_max_distance"' in lines[i])                 and '<param' in lines[i]:
+            i += 1          # 旧值，交由派生块统一给
+            continue
+        out.append(lines[i])
+        i += 1
+    if first_at is None:
+        first_at = next(k for k, l in enumerate(out) if 'fsm/manual_goal_z' in l
+                        or 'obstacles_inflation' in l)
+    out[first_at:first_at] = [launch_block(d)]
+    res = []
+    for ln in out:
+        st = ln.strip()
+        if st.startswith('<arg name="map_size_z_"'):
+            ln = '    <arg name="map_size_z_" value="%.2f"/>' % d['map_size_z']
+        elif st.startswith('<arg name="max_vel"'):
+            ln = '    <arg name="max_vel" value="%.1f"/>' % P['max_vel']
+        elif st.startswith('<arg name="max_acc"'):
+            ln = '    <arg name="max_acc" value="%.1f"/>' % P['max_acc']
+        elif st.startswith('<arg name="goal_topic"'):
+            ln = '    <arg name="goal_topic" value="%s"/>' % P['goal_topic']
+        elif st.startswith('<arg name="depth_fx"'):
+            ln = '    <arg name="depth_fx" default="%.6f"/>' % P['depth_fx']
+        elif st.startswith('<arg name="depth_fy"'):
+            ln = '    <arg name="depth_fy" default="%.6f"/>' % P['depth_fy']
+        elif st.startswith('<arg name="depth_cx"'):
+            ln = '    <arg name="depth_cx" default="%.6f"/>' % P['depth_cx']
+        elif st.startswith('<arg name="depth_cy"'):
+            ln = '    <arg name="depth_cy" default="%.6f"/>' % P['depth_cy']
+        elif '地面(-0.30)' in ln or re.search(r'地面\(-?[0-9.]+\)', ln):
+            ln = re.sub(r'地面\(-?[0-9.]+\)', '地面(%.2f)' % P['ground_height'], ln)
+        res.append(ln)
+    return NL.join(res)
+
+
