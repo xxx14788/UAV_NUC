@@ -51,13 +51,16 @@ FINISHED=0
   # 2026-11-12 P10：落地后再停录。**必须在杀掉 rosbag 之前调用**（trap 里先 wait_landing 再 kill），
   # 否则袋已经关了，等落地只是空等。
   wait_landing() {
-      echo "--- 等待落地（最多 30s）---"
+      # 2026-11-12 质量修复 G：参数=最多等几秒；0=用户主动中止，立即返回。
+      local _max=${1:-30}
+      if [ "$_max" -le 0 ]; then echo "  (中止：跳过落地等待)"; return 0; fi
+      echo "--- 等待落地（最多 ${_max}s）---"
       local _t0=$(date +%s) _landed=0 _armed=0
       # 2026-11-12：未解锁=已落地，立即返回。否则正常停录也要等 30s，会撞 flight.sh stop 的等待窗。
       if [ "$(timeout 2 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c 'armed: True')" -eq 0 ]; then
           echo "  ✓ 未解锁（视为已落地），跳过等待"; return 0
       fi
-      while [ $(( $(date +%s) - _t0 )) -lt 30 ]; do
+      while [ $(( $(date +%s) - _t0 )) -lt $_max ]; do
           _landed=$(timeout 2 rostopic echo -n1 /mavros/extended_state 2>/dev/null | grep -c "landed_state: 1")
           _armed=$(timeout 2 rostopic echo -n1 /mavros/state 2>/dev/null | grep -c "armed: False")
           if [ "${_landed:-0}" -ge 1 ] && [ "${_armed:-0}" -ge 1 ]; then
@@ -65,7 +68,7 @@ FINISHED=0
           fi
           sleep 1
       done
-      echo "  ⚠ 30s 未确认落地，强制停录"
+      echo "  ⚠ ${_max}s 未确认落地，强制停录"
       return 0
   }
 
@@ -168,7 +171,19 @@ finish() {
         fi
     fi
 }
-trap 'wait_landing; kill -INT $RECORD_PID 2>/dev/null; for _i in 1 2 3 4 5 6 7 8 9 10; do kill -0 $RECORD_PID 2>/dev/null || break; sleep 1; done; kill -TERM $RECORD_PID 2>/dev/null; [ -n "${RSS_PID:-}" ] && kill ${RSS_PID} 2>/dev/null; wait $RECORD_PID 2>/dev/null; finish; exit 0' INT TERM HUP
+on_stop() {
+    # 2026-11-12 质量修复 G：TERM/HUP=优雅停（等落地 30s）；INT=用户主动中止（立即停）。
+    wait_landing "$1"
+    kill -INT $RECORD_PID 2>/dev/null
+    for _i in 1 2 3 4 5 6 7 8 9 10; do kill -0 $RECORD_PID 2>/dev/null || break; sleep 1; done
+    kill -TERM $RECORD_PID 2>/dev/null
+    [ -n "${RSS_PID:-}" ] && kill ${RSS_PID} 2>/dev/null
+    wait $RECORD_PID 2>/dev/null
+    finish
+    exit 0
+}
+trap 'on_stop 30' TERM HUP
+trap 'on_stop 0' INT
 
 AVAIL=$(df -BG --output=avail $HOME | tail -1 | tr -d 'G ')
 # 2026-11-06：门限 40G -> 35G。实测录速约 36MB/s；rosbag 自身还有 --min-space 10G 兜底，

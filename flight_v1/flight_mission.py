@@ -114,6 +114,24 @@ def validate_rc_channels(channels):
         raise ValueError("起飞前需保持 CH5 悬停档（CH5=%.0f <= %d）" % (ch[4], ch5_min))
 
 
+def classify_goal_event(phase, goal_used, landing=False, stop=False):
+    """2026-11-12 P6：点击决策（纯函数，self-test 直接覆盖）。
+
+    返回 "ACCEPT" / "REPLACE" / "REJECT:<原因>"。
+    REPLACE = 导航中收到新点：允许替换目标（不再静默丢弃）。
+    """
+    if landing:
+        return "REJECT:降落已开始"
+    if stop:
+        return "REJECT:已请求停栈"
+    if phase == "navigation" and goal_used:
+        return "REPLACE"
+    if phase != "await_goal":
+        return "REJECT:当前阶段 %s 不收点" % phase
+    if goal_used:
+        return "REJECT:目标已锁定（等待到位）"
+    return "ACCEPT"
+
 def validate_goal(frame, stamp, now, goal_xy, current_xy, anchor_z):
     if TARGET_Z is None:
         raise ValueError("目标高度未初始化（preflight 未跑，或读不到 px4ctrl takeoff_height）")
@@ -347,19 +365,14 @@ class RosFlight:
         def _ack(status, detail=""):
             self.ack_pub.publish(self.String(data="%s %s" % (status, detail)))
             print("[goal_ack] %s %s" % (status, detail), flush=True)
-        if LANDING_FILE.exists() or STOP_FILE.exists():
-            _ack("REJECTED", "降落已开始")
+        ev = classify_goal_event(self.phase, self.goal_used,
+                                 LANDING_FILE.exists(), STOP_FILE.exists())
+        if ev.startswith("REJECT"):
+            _ack("REJECTED", ev.split(":", 1)[1])
             return
-        # 2026-11-12 P6：导航中允许替换目标（原来是静默丢弃，6 点只收 2）
-        if self.phase == "navigation" and self.goal_used:
+        if ev == "REPLACE":
             _ack("REPLACE", "导航中替换目标")
-            # 不 return，继续走 validate（下面会重置 goal_used / deadline）
-        elif self.phase != "await_goal":
-            _ack("REJECTED", "当前阶段 %s 不收点" % self.phase)
-            return
-        elif self.goal_used and self.phase == "await_goal":
-            _ack("REJECTED", "目标已锁定（等待到位）")
-            return
+            # 不 return，继续走 validate（下面会重置 goal_used / deadline / stable_since）
         try:
             state = self._state()
             odom = self._odom()
@@ -865,6 +878,18 @@ def main():
             pass
         else:
             raise AssertionError("goal beyond 2 m accepted")
+        # 2026-11-12 P6：点击决策矩阵（ACCEPT/REPLACE/REJECT）
+        for _args, _want in [
+            (("await_goal", False, False, False), "ACCEPT"),
+            (("navigation", True, False, False), "REPLACE"),
+            (("navigation", False, False, False), "REJECT"),
+            (("await_goal", True, False, False), "REJECT"),
+            (("await_goal", False, True, False), "REJECT"),
+            (("await_goal", False, False, True), "REJECT"),
+        ]:
+            _got = classify_goal_event(*_args)
+            _ok = (_got == _want) if _want in ("ACCEPT", "REPLACE") else _got.startswith(_want)
+            assert _ok, (_args, _got)
         # 2026-11-11：到位参考点的时序场景（这三条对应实飞里最容易错的点）
         class _P(object):
             def __init__(self, x, y, z):
@@ -883,7 +908,7 @@ def main():
         assert pick_endpoint_ref(None, _old, 25.0, 20.0, 26.0, 2.0, (2.0, 0.0, 0.7)) == (9.0, 9.0, 0.7)
         # C) 路径过期 -> 沿用上一次的锁存值，不退回目标
         assert pick_endpoint_ref((9.0, 9.0, 0.7), _new, 25.0, 20.0, 40.0, 2.0, (2.0, 0.0, 0.7)) == (9.0, 9.0, 0.7)
-        print("SELF-TEST PASS: RC guard, 3.5 m goal bound, relative 0.5 m target, endpoint-ref timing")
+        print("SELF-TEST PASS: RC guard, 3.5 m goal bound, relative 0.5 m target, endpoint-ref timing, P6 goal decision")
         return 0
     lock = None
     try:

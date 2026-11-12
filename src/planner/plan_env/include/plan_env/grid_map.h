@@ -124,12 +124,12 @@ struct MappingData {
 
   vector<short> count_hit_, count_hit_and_miss_;
   /* 2026-11-12（重做）：幽灵格"出生门"。
-     frame_id_ 按地图更新（raycastProcess）自增；新格要跨过占据阈值，必须有证据：
+     occ_update_cnt_ 按地图更新（raycastProcess）自增；新格要跨过占据阈值，必须有证据：
      本次更新命中 >=3 条射线，或 >=2 条且上一更新也命中过。出生后与上游一致（持久，
      靠 p_miss 衰减）——不做"最近 N 帧"持续确认，否则出视野的障碍会消失，
      且 30Hz 深度帧号 vs 20Hz 地图更新会让真实障碍隔帧翻成"未确认"。 */
   vector<unsigned int> last_hit_frame_;
-  unsigned int frame_id_{0};
+  unsigned int occ_update_cnt_{0};
   vector<char> flag_traverse_, flag_rayend_;
   char raycast_num_;
   queue<Eigen::Vector3i> cache_voxel_;

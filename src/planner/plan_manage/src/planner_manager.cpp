@@ -334,47 +334,116 @@ namespace ego_planner
             实测 bag 001036 参考速度 0.597 m/s（限 0.4，refine 后仍超 49%）。
             修法：同一路径拉伸时间轴（速度 ∝ 1/interval），迭代直到可行。 */
     {
-      // P2: 末端零速化
-      Eigen::MatrixXd cps_p2 = pos.getControlPoint();
-      int n_cp = cps_p2.cols();
+      // P2: 末端零速化（带膨胀约束的追加）
+      Eigen::MatrixXd cps_base = pos.getControlPoint();
+      int n_cp = cps_base.cols();
       if (n_cp >= 2)
       {
-        double t_end_p2 = pos.getTimeSum();
-        Eigen::Vector3d v_end_p2 = pos.getDerivative().evaluateDeBoorT(t_end_p2);
+        const double t_old = pos.getTimeSum();
+        const double dt_int = pos.getInterval();
+        Eigen::Vector3d v_end_p2 = pos.getDerivative().evaluateDeBoorT(t_old);
         if (v_end_p2.norm() > 0.03)
         {
-          // 实测（/tmp/test_p2k）：cubic B 样条追加 1 个副本只把末端速度减半（3.0->1.5），
-          // 追加 2 个（= order-1）才归零（3.0->0）。太少=没治好，太多=多绕一段。
-          const int kDup = 2;
-          cps_p2.conservativeResize(Eigen::NoChange, n_cp + kDup);
-          for (int k = 0; k < kDup; ++k)
-            cps_p2.col(n_cp + k) = cps_p2.col(n_cp - 1);
-          pos = UniformBspline(cps_p2, 3, pos.getInterval());
-          ROS_INFO_THROTTLE(2.0, "[P2] end velocity %.3f m/s -> 0 (appended %d CP, now %d)",
-                            v_end_p2.norm(), kDup, (int)cps_p2.cols());
+          /* 实测（/tmp/test_p2k）：cubic 追加 1 个副本只把末端速度减半，追加 2 个（order-1）才归零。
+             2026-11-12 质量修复 A：追加段是优化后的后处理，必须检查它不进入膨胀层；
+             撞了就退化为 1 个副本（减半），再撞就不追加（保留残余速度），绝不硬塞。 */
+          /* 2026-11-12 质量修复 A（实测 /tmp/test_p2end）：
+             追加"最后控制点副本"会把终点向前推（1.2 -> 1.35），且膨胀检查常常因此失败。
+             正确做法：把最后一个控制点**改为样条原终点 pe**，再追加 2 个 pe。
+             实测：end=pe 精确不变、|v_end|=0、尾段最大 x 不超过 pe（无前冲）。
+             膨胀检查只看尾段**内部**（排除终点自身：终点是规划器已接受的自由点）。 */
+          const Eigen::Vector3d p_end_p2 = pos.evaluateDeBoorT(t_old);
+          const bool end_inflated = grid_map_->getInflateOccupancy(p_end_p2) > 0;
+          UniformBspline orig_pos = pos;
+          auto try_dup = [&](int k, UniformBspline &out) -> bool {
+            Eigen::MatrixXd c = cps_base;
+            c.col(n_cp - 1) = p_end_p2;   // 关键：终点不前进（实测 1.2 -> 1.2，尾部无前冲）
+            c.conservativeResize(Eigen::NoChange, n_cp + k);
+            for (int i = 0; i < k; ++i)
+              c.col(n_cp + i) = p_end_p2;
+            UniformBspline cand(c, 3, dt_int);
+            const double t_new = cand.getTimeSum();
+            /* 只拒绝"新增"侵入：同一 t 上，改后进了膨胀格而原轨迹没进 -> 拒绝。
+               原来已贴着膨胀层的采样点不算（终点本身就在自由边界上）。 */
+            const double step = std::max(0.02, dt_int * 0.1);
+            for (double tt = std::max(0.0, t_old - dt_int); tt < t_old; tt += step)
+            {
+              const int o = grid_map_->getInflateOccupancy(orig_pos.evaluateDeBoorT(tt));
+              const int m = grid_map_->getInflateOccupancy(cand.evaluateDeBoorT(tt));
+              if (m > 0 && o <= 0)
+                return false;
+            }
+            /* 尾段：终点自由时才要求尾段自由；终点本身贴层时，尾段最大前冲=终点，
+               不增加峰值侵入（实测 max_x_tail=pe）。 */
+            if (!end_inflated)
+            {
+              for (double tt = t_old + 1e-6; tt < t_new - 1e-9; tt += step)
+                if (grid_map_->getInflateOccupancy(cand.evaluateDeBoorT(tt)) > 0)
+                  return false;
+            }
+            out = cand;
+            return true;
+          };
+          UniformBspline cand;
+          int used = -1;
+          const int tries[3] = {2, 1, 0};
+          for (int k = 0; k < 3; ++k)
+            if (try_dup(tries[k], cand)) { used = tries[k]; break; }
+          if (used >= 0)
+          {
+            pos = cand;
+            if (used < 2)
+              ROS_WARN_THROTTLE(2.0, "[P2] brake extension reduced to %d CP (inflation)", used);
+            else
+              ROS_INFO_THROTTLE(2.0, "[P2] end velocity %.3f -> 0 (2 CP appended)", v_end_p2.norm());
+          }
+          else
+          {
+            ROS_WARN_THROTTLE(2.0, "[P2] brake extension blocked by inflation; residual %.3f m/s kept",
+                              v_end_p2.norm());
+          }
         }
       }
-
-      // P5: 无条件限速（最多 3 轮迭代拉伸时间轴）
+      // P5: 无条件限速（优先上游 refineTrajAlgo 重定时，失败才均匀拉伸）
       for (int iter_p5 = 0; iter_p5 < 3; ++iter_p5)
       {
         pos.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_, pp_.feasibility_tolerance_);
         double ratio_p5;
         if (pos.checkFeasibility(ratio_p5, false))
           break;
-        // 实测（/tmp/test_bspline_p2p5）：ratio = max(v_max/limit, sqrt(a_max/limit))，
-        // 是超限倍数不是超出比例；时间轴乘 ratio 才把 v 降到 limit（乘 1+ratio 会过慢）。
-        double new_int = pos.getInterval() * ratio_p5;
-        Eigen::MatrixXd cp_p5 = pos.getControlPoint();
-        pos = UniformBspline(cp_p5, 3, new_int);
-        if (iter_p5 == 0)
-          ROS_WARN("[P5] trajectory exceeded limits (ratio=%.2f), interval %.3f -> %.3f",
-                   ratio_p5, pos.getInterval() / ratio_p5, new_int);
+
+        bool fixed = false;
+        {
+          Eigen::MatrixXd ocp;
+          double ts_try = ts;
+          if (refineTrajAlgo(pos, start_end_derivatives, ratio_p5, ts_try, ocp))
+          {
+            UniformBspline cand(ocp, 3, ts_try);
+            cand.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_, pp_.feasibility_tolerance_);
+            double r2;
+            if (cand.checkFeasibility(r2, false) || r2 < ratio_p5)
+            {
+              pos = cand;
+              ts = ts_try;
+              fixed = true;
+              ROS_WARN_THROTTLE(2.0, "[P5] re-timed via refineTrajAlgo (ratio %.2f -> %.2f)", ratio_p5, r2);
+            }
+          }
+        }
+        if (!fixed)
+        {
+          const double new_int = pos.getInterval() * ratio_p5;
+          Eigen::MatrixXd cp_p5 = pos.getControlPoint();
+          pos = UniformBspline(cp_p5, 3, new_int);
+          ROS_WARN_THROTTLE(2.0, "[P5] uniform stretch (ratio %.2f): interval %.3f -> %.3f",
+                            ratio_p5, pos.getInterval() / ratio_p5, new_int);
+        }
       }
-      double r_final;
-      if (!pos.checkFeasibility(r_final, false))
-        ROS_ERROR("[P5] still infeasible after 3 time-stretches (ratio=%.2f), publishing anyway",
-                  r_final);
+      {
+        double r_final;
+        if (!pos.checkFeasibility(r_final, false))
+          ROS_ERROR_THROTTLE(2.0, "[P5] still infeasible after 3 rounds (ratio=%.2f), publishing", r_final);
+      }
     }
 
     // save planned results

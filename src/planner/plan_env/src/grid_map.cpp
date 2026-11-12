@@ -385,7 +385,7 @@ void GridMap::raycastProcess()
   ros::Time t1, t2;
 
   md_.raycast_num_ += 1;
-  md_.frame_id_ += 1;   // 2026-11-12：出生门时间基准=地图更新帧（20 Hz），不是深度帧（30 Hz）
+  md_.occ_update_cnt_ += 1;   // 2026-11-12：出生门时间基准=地图更新帧（20 Hz），不是深度帧（30 Hz）
 
   int vox_idx;
   double length;
@@ -529,7 +529,7 @@ void GridMap::raycastProcess()
     const unsigned int prev_hit = md_.last_hit_frame_[idx_ctns];
     const int hits_now = md_.count_hit_[idx_ctns];
     if (hit_now)
-      md_.last_hit_frame_[idx_ctns] = md_.frame_id_;
+      md_.last_hit_frame_[idx_ctns] = md_.occ_update_cnt_;
 
     md_.count_hit_[idx_ctns] = md_.count_hit_and_miss_[idx_ctns] = 0;
 
@@ -557,7 +557,7 @@ void GridMap::raycastProcess()
        实测（bag 000019）：幽灵格只在 7% 的帧出现、单帧 1-2 条射线；真箱面每帧几十条。
        规则：本次 >=3 条射线，或 >=2 条且上一更新也命中过。 */
     if (hit_now && !was_occ &&
-        !(hits_now >= 3 || (hits_now >= 2 && md_.frame_id_ - prev_hit <= 1)))
+        !(hits_now >= 3 || (hits_now >= 2 && md_.occ_update_cnt_ - prev_hit <= 1)))
       new_val = std::min(new_val, mp_.min_occupancy_log_ - 1e-3);
     md_.occupancy_buffer_[idx_ctns] = new_val;
   }

@@ -43,3 +43,10 @@ add_library( bspline_opt
 target_link_libraries( bspline_opt
     ${catkin_LIBRARIES} 
     )  
+
+# 2026-11-12 质量修复 C：P2/P5 不变量自检（catkin build 后可直接运行：
+#   devel/.private/bspline_opt/lib/bspline_opt/bspline_selfcheck）
+enable_testing()
+add_executable(bspline_selfcheck test/bspline_selfcheck.cpp)
+target_link_libraries(bspline_selfcheck bspline_opt )
+add_test(NAME bspline_selfcheck COMMAND bspline_selfcheck)
