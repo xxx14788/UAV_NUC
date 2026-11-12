@@ -350,8 +350,8 @@ namespace ego_planner
           for (int k = 0; k < kDup; ++k)
             cps_p2.col(n_cp + k) = cps_p2.col(n_cp - 1);
           pos = UniformBspline(cps_p2, 3, pos.getInterval());
-          ROS_INFO("[P2] end velocity %.3f m/s -> 0 (appended %d CP, now %d)",
-                   v_end_p2.norm(), kDup, (int)cps_p2.cols());
+          ROS_INFO_THROTTLE(2.0, "[P2] end velocity %.3f m/s -> 0 (appended %d CP, now %d)",
+                            v_end_p2.norm(), kDup, (int)cps_p2.cols());
         }
       }
 
@@ -371,6 +371,10 @@ namespace ego_planner
           ROS_WARN("[P5] trajectory exceeded limits (ratio=%.2f), interval %.3f -> %.3f",
                    ratio_p5, pos.getInterval() / ratio_p5, new_int);
       }
+      double r_final;
+      if (!pos.checkFeasibility(r_final, false))
+        ROS_ERROR("[P5] still infeasible after 3 time-stretches (ratio=%.2f), publishing anyway",
+                  r_final);
     }
 
     // save planned results
