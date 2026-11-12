@@ -7,6 +7,12 @@ chk() { # $1=repo file, $2=live path
   a=$(sha256sum "$1" | cut -d' ' -f1); b=$(sha256sum "$2" | cut -d' ' -f1)
   if [ "$a" = "$b" ]; then echo "OK      $2"; else echo "DIFF    $2"; fail=1; fi
 }
-for f in home/*; do chk "$f" "$HOME/$(basename "$f")"; done
+for f in home/*; do
+  b=$(basename "$f")
+  case "$b" in
+    realmachine_*) chk "$f" "$HOME/sitl_realmachine/$b" ;;   # 这组部署在 ~/sitl_realmachine/
+    *)             chk "$f" "$HOME/$b" ;;
+  esac
+done
 for f in config/*; do chk "$f" "$HOME/sitl_realmachine/03_realmachine_config/$(basename "$f")"; done
 exit $fail
