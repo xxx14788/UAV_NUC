@@ -642,6 +642,14 @@ class RosFlight:
         next_pub = 0.0
         while time.monotonic() < deadline and not self.rospy.is_shutdown():
             now = time.monotonic()
+            # 2026-11-13 安全快速路：CH5 拨低 = 飞手接管，立即停发 TAKEOFF 并退出，
+            # 不等 1.5 s 的 fsm 判据（飞机控制权由 px4ctrl/PX4 的 RC 链路负责，与本计时器无关）。
+            if not SIM and self.rc is not None and self._fresh("/mavros/rc/in", 0.5):
+                _ch = list(self.rc.channels)
+                _ch5_min = int(_contract_value("runtime.rc.ch5_min", 1750))
+                if len(_ch) > 4 and _ch[4] <= _ch5_min:
+                    raise RuntimeError("CH5 已拨低（%.0f<=%d）：飞手接管，已停止发送 TAKEOFF"
+                                       % (_ch[4], _ch5_min))
             if now >= next_pub and self._fsm() in ("MANUAL_CTRL", "AUTO_TAKEOFF"):
                 self._pub_takeoff()
                 if takeoff_cmd_t is None:
