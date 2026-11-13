@@ -233,7 +233,7 @@ class RosFlight:
         from sensor_msgs.msg import Imu
         from nav_msgs.msg import Odometry
         from quadrotor_msgs.msg import PositionCommand, TakeoffLand
-        from std_msgs.msg import String  # 2026-11-12 P6：goal_ack 也用
+        from std_msgs.msg import String  # fsm_state
         self.String = String
         from nav_msgs.msg import Path
 
@@ -254,6 +254,7 @@ class RosFlight:
         self.shape_pilot = None
         self.shape_abort_reason = None
         self.shape_stats = {}
+        self.shape_completed = False
         self.auto_record = True
         # 2026-11-13 自查：goal 回调 / navigation_monitor / ShapePilot 三线程共享
         # mission 状态；只锁"状态迁移"临界区，不锁 sleep/ROS 调用。
@@ -611,6 +612,28 @@ class RosFlight:
         while time.monotonic() < deadline and not self.rospy.is_shutdown():
             self.rospy.sleep(0.05)
 
+    def clear_stale_landing(self):
+        """清上一轮 land() 留下的 landing.requested。
+
+        RViz 任务落地会写该文件；只有 `flight.sh stop` 会清，`realflight_stack.sh`
+        重启不清。飞机已在地面且未解锁时，这个标志属于上一轮，清掉才允许新轮。
+        在空中/已解锁/状态不明时**不清**（那可能是真实的降落请求），让 preflight 拒绝。
+        """
+        if not LANDING_FILE.exists():
+            return False
+        try:
+            st = self._state()
+            ext = self.cache.get("/mavros/extended_state")
+            if (not st.armed and ext is not None and ext.landed_state == 1
+                    and self._fresh("/mavros/extended_state", 2.5)
+                    and self._fresh_stamp(ext, 2.5)):
+                LANDING_FILE.unlink()
+                self._log("PRECHECK", "清除上一轮遗留的 landing.requested（在地面/未解锁）")
+                return True
+        except Exception as exc:
+            self._log("PRECHECK", "landing.requested 清理检查失败：%r" % (exc,))
+        return False
+
     def preflight(self):
         if STOP_FILE.exists():
             raise RuntimeError("检测到停栈流程，拒绝起飞")
@@ -623,6 +646,9 @@ class RosFlight:
         if (not self._fresh("/mavros/extended_state", 2.5) or ext.landed_state != 1
                 or not self._fresh_stamp(ext, 2.5)):
             failures.append("飞控未提供新鲜 ON_GROUND 状态")
+        # 2026-11-13：上一轮 land() 的 landing.requested 必须在**状态新鲜确认后**清，
+        # 否则早于 MAVROS 收敛时清不掉，后面第 717 行仍会拒绝新轮。
+        self.clear_stale_landing()
         if self._fsm() != "MANUAL_CTRL":
             failures.append("px4ctrl 必须在 MANUAL_CTRL；不自动重启控制器")
         try:
@@ -1320,6 +1346,7 @@ class ShapePilot(threading.Thread):
                 f.rospy.sleep(1.0 / self.rate)
         finally:
             fcsv.close()
+            f.shape_completed = bool(self.done)
             f.shape_stats = {"length": total * self.laps, "sent": self.sent,
                              "max_lat": self.max_lat, "max_z": self.max_z,
                              "adjusted": f.adjusted_count, "adjusted_max": f.adjusted_max,
@@ -1384,6 +1411,24 @@ def main():
         args.obstacle_xy = (ox, oy)
     except Exception:
         parser.error("--obstacle 格式应为 x,y")
+    if not (0.05 <= args.speed <= 0.50):
+        parser.error("--speed 必须在 0.05..0.50（规划器 max_vel=0.5）")
+    if not (0.30 <= args.lookahead <= 1.50):
+        parser.error("--lookahead 必须在 0.30..1.50")
+    if not (0.02 <= args.min_step <= 0.50):
+        parser.error("--min-step 必须在 0.02..0.50")
+    if not (1 <= args.laps <= 10):
+        parser.error("--laps 必须在 1..10")
+    if not (5.0 <= args.rate <= 50.0):
+        parser.error("--rate 必须在 5..50 Hz")
+    if args.max_time < 10.0:
+        parser.error("--max-time 必须 >=10 s")
+    if args.circle_diameter < 0.5 or args.eight_length < 0.5 or args.eight_width < 0.3:
+        parser.error("形状尺寸过小（圆直径>=0.5，八字长>=0.5、宽>=0.3）")
+    if args.obstacle_size < 0.0 or args.min_clearance < 0.0:
+        parser.error("--obstacle-size/--min-clearance 不能为负")
+    if args.max_forward <= 0.0 or args.max_lateral <= 0.0:
+        parser.error("--max-forward/--max-lateral 必须 >0")
     global DRY, SIM
     DRY = bool(args.dry)
     SIM = bool(args.sim)
@@ -1523,12 +1568,18 @@ def main():
             if not args.no_record:
                 flight._record_stop()
             st = flight.shape_stats
-            flight._log("DONE", "形状任务完成：%s 长 %.2f m，发点 %d 次，ADJ %d(max %.2f)，"
-                                "最大侧偏 %.2f m，最大高度偏差 %.3f m，用时 %.1f s"
-                        % (args.shape, st.get("length", 0.0), st.get("sent", 0),
-                           st.get("adjusted", 0), st.get("adjusted_max", 0.0),
-                           st.get("max_lat", 0.0), st.get("max_z", 0.0),
-                           st.get("duration", 0.0)))
+            if flight.shape_completed:
+                flight._log("DONE", "形状任务完成：%s 长 %.2f m，发点 %d 次，ADJ %d(max %.2f)，"
+                                    "最大侧偏 %.2f m，最大高度偏差 %.3f m，用时 %.1f s"
+                            % (args.shape, st.get("length", 0.0), st.get("sent", 0),
+                               st.get("adjusted", 0), st.get("adjusted_max", 0.0),
+                               st.get("max_lat", 0.0), st.get("max_z", 0.0),
+                               st.get("duration", 0.0)))
+            else:
+                flight._log("DONE", "形状任务提前结束（未完成：降落/停栈/监控中断）："
+                                    "%s 发点 %d 次，ADJ %d，最大侧偏 %.2f m，用时 %.1f s"
+                            % (args.shape, st.get("sent", 0), st.get("adjusted", 0),
+                               st.get("max_lat", 0.0), st.get("duration", 0.0)))
             return 0
         elif args.action == "land":
             flight.land()
@@ -1542,6 +1593,14 @@ def main():
                     or ext.landed_state != 1 or not flight._fresh_stamp(ext, 2.5)):
                 raise RuntimeError("状态未知/仍解锁/未确认落地，拒绝停栈")
             print("新鲜 MAVROS 状态确认：connected、disarmed、ON_GROUND")
+    except KeyboardInterrupt:
+        print("收到 Ctrl-C；执行异常收口（停发点/停录/提示 CH5）...", file=sys.stderr)
+        if flight is not None:
+            try:
+                flight.safe_handover("用户 Ctrl-C")
+            except Exception as exc2:
+                print("ABORT 收口失败：%r" % (exc2,), file=sys.stderr)
+        return 1
     except Exception as exc:
         print("FLIGHT FAIL: %s" % exc, file=sys.stderr)
         if flight is not None:
