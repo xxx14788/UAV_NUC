@@ -255,6 +255,9 @@ class RosFlight:
         self.shape_abort_reason = None
         self.shape_stats = {}
         self.auto_record = True
+        # 2026-11-13 自查：goal 回调 / navigation_monitor / ShapePilot 三线程共享
+        # mission 状态；只锁"状态迁移"临界区，不锁 sleep/ROS 调用。
+        self._state_lock = threading.RLock()
         self.adjusted_count = 0
         self.adjusted_max = 0.0
         self.unreachable_count = 0
@@ -403,6 +406,11 @@ class RosFlight:
         self.unreachable_count += 1
         self._log("PLAN", "UNREACHABLE（连续 1.5 s 规划失败）")
         # 悬停：把当前位置作为新目标发出去（与原 mission 一致；ShapePilot 随后中止）
+        with self._state_lock:
+            self._hold_current_and_await()
+
+    def _hold_current_and_await(self):
+        """UNREACHABLE 收口：发当前位置悬停并进入等待窗口（调用方持 _state_lock）。"""
         if self.phase != "navigation":
             return
         try:
@@ -428,6 +436,11 @@ class RosFlight:
         self.goal_target_xy = None
 
     def _apply_goal(self, msg, quiet=False):
+        """加锁包装：目标校验+状态迁移必须原子（pilot/monitor/回调三线程）。"""
+        with self._state_lock:
+            return self._apply_goal_locked(msg, quiet)
+
+    def _apply_goal_locked(self, msg, quiet=False):
         """校验并转发一个目标（原 _goal_cb 的校验体，改为形状线程可直接调用）。
 
         返回 (ok, reason)。quiet=True 时不打印每次接收/ack（形状 2-3 Hz 会刷屏），
@@ -864,6 +877,21 @@ class RosFlight:
         self._last_countdown_s = sec
         self._log("ARRIVAL", "已到点：%d s 后自动降落（无新目标）" % sec)
 
+    def _on_arrival(self, d_goal):
+        """到位状态迁移（调用方持 _state_lock）。"""
+        self.goal_count += 1
+        self.nav_done = True
+        self.goal_used = False
+        self.stable_since = None
+        self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+        self._last_countdown_s = None
+        self.goal_cmd_t0 = None
+        self.goal_target_xy = None
+        self.phase = "await_goal"
+        self._log("ARRIVAL", "第 %d 个目标到位并稳定 %.0f s（距目标 %.2f m）；%.0f s 后自动降落"
+                  % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT))
+        self._announce_countdown(NEXT_GOAL_WAIT)
+
     def navigation_monitor(self):
         """到点后给 NEXT_GOAL_WAIT 秒；形状模式结束后 20 s 自动降落。
 
@@ -888,6 +916,9 @@ class RosFlight:
                     continue
                 remain = self.next_goal_deadline - time.monotonic()
                 if remain <= 0.0:
+                    with self._state_lock:
+                        if self.goal_used or self.next_goal_deadline is None                                 or time.monotonic() < self.next_goal_deadline:
+                            continue
                     print("已到点 %.0f 秒仍无新目标；自动降落。" % NEXT_GOAL_WAIT, flush=True)
                     self.land()
                     return
@@ -973,11 +1004,12 @@ class RosFlight:
             # 直接锁存会把**旧终点**当成本次终点 -> 多航点时"刚飞到的地方"被误判为到点。
             # 现在只接受 `goal_sent_t` 之后收到的 planned_path，并随重规划持续更新。
             _prev_ref = self.endpoint_ref
-            self.endpoint_ref = pick_endpoint_ref(
-                self.endpoint_ref,
-                self.cache.get("/flight_v1/planned_path"),
-                self.times.get("/flight_v1/planned_path", 0.0),
-                self.goal_sent_t, time.monotonic(), 2.0, self.target)
+            with self._state_lock:
+                self.endpoint_ref = pick_endpoint_ref(
+                    self.endpoint_ref,
+                    self.cache.get("/flight_v1/planned_path"),
+                    self.times.get("/flight_v1/planned_path", 0.0),
+                    self.goal_sent_t, time.monotonic(), 2.0, self.target)
             if _prev_ref is None and self.endpoint_ref is not None \
                     and self.endpoint_ref != self.target:
                 print("[arrival_ref] 规划终点=(%.2f,%.2f,%.2f) 距目标 %.2f m"
@@ -993,20 +1025,8 @@ class RosFlight:
             if fsm == "CMD_CTRL" and d <= 0.20 and speed <= 0.15:
                 self.stable_since = self.stable_since or time.monotonic()
                 if time.monotonic() - self.stable_since >= GOAL_HOVER_SECONDS:
-                    # 到点：进入"等下一个目标"窗口，不立刻降落
-                    self.goal_count += 1
-                    self.nav_done = True
-                    self.goal_used = False
-                    self.stable_since = None
-                    self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
-                    self._last_countdown_s = None
-                    self.goal_cmd_t0 = None
-                    self.goal_target_xy = None
-                    self.phase = "await_goal"
-                    deadline = None
-                    self._log("ARRIVAL", "第 %d 个目标到位并稳定 %.0f s（距目标 %.2f m）；%.0f s 后自动降落"
-                              % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT))
-                    self._announce_countdown(NEXT_GOAL_WAIT)
+                    with self._state_lock:
+                        self._on_arrival(d_goal)
                     continue
             else:
                 self.stable_since = None
@@ -1265,7 +1285,9 @@ class ShapePilot(threading.Thread):
                                 f._log("SHAPE", "已发最终目标 (%.2f,%.2f)，等待 mission 到位判定"
                                        % (tx, ty))
                 else:
-                    if f.phase == "await_goal" and not f.goal_used:
+                    with f._state_lock:
+                        _arrived = (f.phase == "await_goal" and not f.goal_used)
+                    if _arrived:
                         f._log("SHAPE", "mission 判定到位/进入等待窗口，形状任务结束")
                         self.done = True
                         return

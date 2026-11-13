@@ -8,6 +8,7 @@
 """
 import importlib.util
 import math
+import threading
 import os
 import sys
 import types
@@ -83,6 +84,7 @@ class FakeFlight:
         self.shape_abort_reason = None
         self.shape_stats = {}
         self.logs = []
+        self._state_lock = threading.RLock()
 
     def _log(self, stage, msg):
         self.logs.append("[%s] %s" % (stage, msg))
