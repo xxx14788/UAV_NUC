@@ -145,14 +145,10 @@ pkill -f "run_planner" 2>/dev/null; sleep 2
 # 原因：任务 B 期间若手动重启 VINS 而没传 PLANNER_LAUNCH，规划器会悄悄退回 vins 版
 # -> 天花板(map_size_z 1.3)、膨胀(0.337)、goal_gate 全部丢失（D1/D5/D6/D7 同时失效）。
 # 悬停任务不受影响（规划器只是空转）。
-# 2026-11-07 用户裁定回退：默认仍是 vins 版（悬停用）。
-# 但加一道警告：若当前跑的是地图版而没传 PLANNER_LAUNCH，重启会把它换回 vins 版
-#（天花板/膨胀/goal_gate 全丢），必须先提醒。
-if [ -z "${PLANNER_LAUNCH:-}" ] && pgrep -af "run_planner_realmachine_map_v1" >/dev/null 2>&1; then
-  echo "  ⚠ 当前是【地图版】规划器，但 PLANNER_LAUNCH 未设置 —— 重启后将退回【vins 版】！"
-  echo "     任务模式请改用：bash ~/realflight_mission.sh vins"
-  sleep 3
-fi
+# 2026-11-14 用户令：VINS 重启脚本由 RViz/形状两个任务共用，重启 VINS 必须
+# **同时完全重启 EGO**（原点重锚后旧栅格地图坐标系失效），且统一用地图版规划器。
+# 默认即地图版；不再存在"退回 vins 版"的分支。
+echo "  [vins restart] 统一地图版规划器；EGO 随 VINS 一起重启（原点重锚）"
 PLANNER_LAUNCH="${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch}"
 PLOG=~/sitl_realmachine/planner_$(date +%H%M%S).log
 nohup roslaunch $PLANNER_LAUNCH > "$PLOG" 2>&1 &
