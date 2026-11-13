@@ -78,7 +78,7 @@ P = {
 RECORD_TOPICS = [
     '/mavros/state', '/mavros/extended_state', '/mavros/battery',
     '/mavros/imu/data', '/mavros/imu/data_raw', '/mavros/imu/mag',
-    '/mavros/imu/temperature_imu', '/mavros/altitude', '/vins_imu/data_raw',
+    '/mavros/imu/temperature_imu', '/mavros/altitude',
     '/mavros/local_position/odom',
     '/mavros/vision_pose/pose', '/mavros/rc/in', '/mavros/rc/out',
     '/mavros/setpoint_raw/attitude', '/mavros/time_reference', '/mavros/estimator_status',

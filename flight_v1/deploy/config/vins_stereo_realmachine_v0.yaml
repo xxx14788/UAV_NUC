@@ -12,7 +12,7 @@
 imu: 1
 num_of_cam: 2
 
-imu_topic: "/vins_imu/data_raw"   # 2026-11-15 V1：35Hz 低通中继（63-81Hz 振动）
+imu_topic: "/mavros/imu/data_raw"
 image0_topic: "/camera/infra1/image_rect_raw"
 image1_topic: "/camera/infra2/image_rect_raw"
 
