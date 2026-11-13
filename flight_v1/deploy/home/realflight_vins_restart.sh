@@ -164,6 +164,38 @@ if [ "$PLN_OK" = 1 ]; then
 else
   echo "--- ⚠ 规划器 30s 内未上线（$PLANNER_LAUNCH，日志 $PLOG）——悬停轮不依赖；发目标点前必须解决 ---"
 fi
+# 2026-11-14（用户令）：VINS 重启后 RViz 也重启。
+# 旧 RViz 订阅的是旧 VINS/规划器实例的 latch 话题，VINS 原点重锚后显示与坐标系会错位；
+# 重启 VINS 就必须把 RViz 一起换掉。SSH 终端没有 DISPLAY 时先探测 :0，探不到就不动旧窗口。
+echo "--- 同步重启 RViz ---"
+RVIZ_SH="$HOME/sitl_realmachine/rviz_mapping_v1/map_rviz.sh"
+RVIZ_DISPLAY="${DISPLAY:-}"
+if [ -z "$RVIZ_DISPLAY" ] && command -v xdpyinfo >/dev/null 2>&1 && xdpyinfo -display :0 >/dev/null 2>&1; then
+  RVIZ_DISPLAY=:0
+fi
+if [ -z "$RVIZ_DISPLAY" ]; then
+  echo "  ⚠ 无可用 DISPLAY：RViz 未重启（旧窗口保持原样；请在桌面终端再跑一次）"
+elif [ ! -f "$RVIZ_SH" ]; then
+  echo "  ⚠ 找不到 $RVIZ_SH：RViz 未重启"
+else
+  pkill -TERM -x rviz 2>/dev/null || true
+  pkill -f "[m]ap_rviz.sh" 2>/dev/null || true
+  sleep 1
+  RVIZ_LOG=~/sitl_realmachine/rviz_$(date +%H%M%S).log
+  DISPLAY="$RVIZ_DISPLAY" nohup bash "$RVIZ_SH" > "$RVIZ_LOG" 2>&1 &
+  RV_OK=0
+  # shellcheck disable=SC2034  # 循环变量只用于计数
+  for _k in $(seq 1 15); do
+    rosnode list 2>/dev/null | grep -qx "/mapping_rviz" && { RV_OK=1; break; }
+    sleep 1
+  done
+  if [ "$RV_OK" = 1 ]; then
+    echo "  ✓ RViz 已重启并在线（DISPLAY=$RVIZ_DISPLAY，日志 $RVIZ_LOG）"
+  else
+    echo "  ⚠ RViz 15s 内未上线（DISPLAY=$RVIZ_DISPLAY，日志 $RVIZ_LOG）"
+  fi
+fi
+
 # 2026-11-07（用户令）：px4ctrl 吃 VINS odom，VINS 重锚后它的 sanity gate/悬停锚点是旧状态。
 # **只在未解锁时重启**（空中绝不动控制器）。
 echo "--- 同步重启 px4ctrl（仅未解锁时）---"
@@ -185,4 +217,4 @@ else
     echo "  ⚠ px4ctrl 20s 内未上线（$CTRL_LOG）"
   fi
 fi
-echo "===== 重启成功：VINS 初始化+收敛全过、vins_to_mavros/转接/规划器/px4ctrl 均已处理 ====="
+echo "===== 重启成功：VINS 初始化+收敛全过、vins_to_mavros/转接/规划器/RViz/px4ctrl 均已处理 ====="
