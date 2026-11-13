@@ -2,3 +2,7 @@ runtime/
 __pycache__/
 *.pyc
 *.bak_*
+
+# 2026-11-13：config_history 必须入库（覆盖本目录 *.bak_*）
+!deploy/config_history/
+!deploy/config_history/*
