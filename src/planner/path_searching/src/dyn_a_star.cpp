@@ -99,6 +99,9 @@ bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d en
 {
     if (!Coord2Index(start_pt, start_idx) || !Coord2Index(end_pt, end_idx))
         return false;
+    // 2026-11-15（审查修正）：图外点直接快速失败，别让 raw 豁免保留图外起点后搜索报错。
+    if (!grid_map_->isInMap(start_pt) || !grid_map_->isInMap(end_pt))
+        return false;
 
     const Vector3d start_pt_orig = start_pt;
     const Vector3d end_pt_orig = end_pt;

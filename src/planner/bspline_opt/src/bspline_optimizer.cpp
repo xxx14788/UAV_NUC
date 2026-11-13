@@ -451,7 +451,7 @@ namespace ego_planner
     bool flag_got_start = false, flag_got_end = false, flag_got_end_maybe = false;
     // 2026-11-15（根因）：旧版只查前 2/3，目标常在最后 1/3（11-14 第二只箱子 1.73 m 正好在带外），
     // 最后一段根本不避障。改为查到末段；末 order_ 个 CP 留给末端锚定。
-    int i_end = (int)init_points.cols() - order_;
+    int i_end = (int)init_points.cols() - order_ - 1;   // 审查修正：末 order_ 个（N-3..N-1）排除
     for (int i = order_; i <= i_end; ++i)
     {
       //cout << " *" << i-1 << "*" ;
@@ -1206,7 +1206,7 @@ namespace ego_planner
     int in_id, out_id;
     vector<std::pair<int, int>> segment_ids;
     bool flag_new_obs_valid = false;
-    int i_end = end_idx;   // 2026-11-15：CP 碰撞检查覆盖到末端
+    int i_end = end_idx - 1;   // 审查修正：end_idx=N-order_，i<=end_idx-1 只到 N-order_-1
     for (int i = order_ - 1; i <= i_end; ++i)
     {
 
@@ -1518,7 +1518,7 @@ namespace ego_planner
         double tm, tmp;
         traj.getTimeSpan(tm, tmp);
         double t_step = (tmp - tm) / ((traj.evaluateDeBoorT(tmp) - traj.evaluateDeBoorT(tm)).norm() / grid_map_->getResolution());
-        for (double t = tm; t < tmp; t += t_step) // 2026-11-15：最终检查覆盖全轨迹（含目标段）
+        for (double t = tm; t <= tmp + 1e-9; t += t_step) // 2026-11-15：最终检查覆盖全轨迹（含目标段）
         {
           flag_occ = grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t));
           if (flag_occ)
@@ -1531,7 +1531,9 @@ namespace ego_planner
                  起点贴着箱子/墙角时前三段必然落在**膨胀层**内，而膨胀是安全余量、
                  不是"站不站得住"的判据——否则整个规划永远被否掉（实测拒绝 8060 次）。
                  只落在膨胀层：接受，交给优化器的 cost 把轨迹推离。 */
-              if (grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t)))   // 2026-11-12
+              // 2026-11-15（审查阻断修正）：外层已判 inflate；内层必须判 raw（仅膨胀层则接受）。
+              // 之前把内层也改成 inflate，等于"起点贴障即否决"，开放环 89 次 First 3 + 108 次失败。
+              if (grid_map_->getOccupancy(Eigen::Vector3d(traj.evaluateDeBoorT(t))))
               {
                 ROS_WARN("First 3 control points in REAL obstacles! return false, t=%f", t);
                 return false;
@@ -1666,7 +1668,7 @@ namespace ego_planner
       double tm, tmp;
       traj.getTimeSpan(tm, tmp);
       double t_step = (tmp - tm) / ((traj.evaluateDeBoorT(tmp) - traj.evaluateDeBoorT(tm)).norm() / grid_map_->getResolution()); // Step size is defined as the maximum size that can passes throgth every gird.
-      for (double t = tm; t < tmp; t += t_step)   // 2026-11-15：全轨迹
+      for (double t = tm; t <= tmp + 1e-9; t += t_step)   // 2026-11-15：全轨迹
       {
         if (grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t)))
         {

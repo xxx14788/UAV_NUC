@@ -59,9 +59,10 @@ namespace ego_planner
 
     if ((start_pt - local_target_pt).norm() < 0.2)
     {
+      // 2026-11-15（审查修正）：到点不是失败；返回 true 让 FSM 保持/结束，别让 P3 计时器
+      // 在目标 0.2 m 内 1.5 s 后误触发 EMERGENCY。
       cout << "Close to goal" << endl;
-      continous_failures_count_++;
-      return false;
+      return true;
     }
 
     bspline_optimizer_->setLocalTargetPt(local_target_pt);
@@ -228,7 +229,7 @@ namespace ego_planner
           }
           point_set.push_back(local_target_pt);
         } while (point_set.size() < 7 && ++cps_guard < 25); // If the start point is very close to end point, this will help
-        if (point_set.size() < 4)
+        if (point_set.size() < 5)
         {
           // 细分 25 次仍然凑不满 4 个点：种子退化，直接换全新多项式
           flag_force_polynomial = true;

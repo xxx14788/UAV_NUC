@@ -200,6 +200,7 @@ namespace ego_planner
       last_goal_dist_ = 1e9;
       last_progress_t_ = ros::Time::now();
       plan_fail_since_ = ros::Time(0);
+      unreach_since_ = ros::Time(0);   // 审查修正：新目标清残留，防首次失败即 UNREACHABLE
 
       /*** FSM ***/
       if (exec_state_ == WAIT_TARGET)
@@ -262,8 +263,10 @@ namespace ego_planner
     const auto &v_ = msg->twist.twist.linear;
     const bool finite_ = std::isfinite(p_.x) && std::isfinite(p_.y) && std::isfinite(p_.z) &&
                          std::isfinite(v_.x) && std::isfinite(v_.y) && std::isfinite(v_.z);
-    const bool sane_ = finite_ && std::fabs(p_.x) < 20.0 && std::fabs(p_.y) < 20.0 &&
-                       p_.z > -1.0 && p_.z < 3.0;
+    // 2026-11-15（审查修正）：按批准口径贴地图范围（z∈[-0.10,1.50]，xy±15），
+    // 不再用 (-1,3)：z=-0.5/1.6、x=16 仍会喂规划器并在图外狂刷。
+    const bool sane_ = finite_ && std::fabs(p_.x) < 15.5 && std::fabs(p_.y) < 15.5 &&
+                       p_.z > -0.3 && p_.z < 1.6;
     if (!sane_)
     {
       if (!odom_invalid_)
@@ -605,6 +608,9 @@ namespace ego_planner
         {
           ROS_ERROR("[replan] planning failed for >1.5 s -> EMERGENCY_STOP (do not keep stale traj)");
           plan_fail_since_ = ros::Time(0);
+          // 审查修正：低速分支也必须先刹车，否则 EMERGENCY 会直接转 GEN_NEW_TRAJ，
+          // 旧轨迹仍在 local_data_ 被 traj_server 继续执行。置 flag 让 EMERGENCY 首拍刹车。
+          flag_escape_emergency_ = true;
           changeFSMExecState(EMERGENCY_STOP, "PLAN_FAIL");
         }
         else
@@ -994,6 +1000,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
     if (plan_and_refine_success)
     {
+      plan_fail_since_ = ros::Time(0);   // 2026-11-15（审查修正）：成功即清零，防旧时间戳残留
 
       auto info = &planner_manager_->local_data_;
 
@@ -1063,7 +1070,10 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
         const double dz = end_pt_.z() - start_pt_.z();
         double zoff = goal_z_gain_ * dz;
         zoff = std::max(-goal_z_offset_max_, std::min(goal_z_offset_max_, zoff));
-        if (std::fabs(zoff) > 0.01)
+        // 2026-11-15（审查阻断修正）：只允许**向上**抬（治下沉）；向下压会把原本 inflate-free
+        // 的轨迹压回箱顶/天花板膨胀层（开放环实测 -0.042 m 全部被 raw 检查放过）。
+        if (zoff < 0.0) zoff = 0.0;
+        if (zoff > 0.01)
         {
           Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
           cp.row(2).array() += zoff;
@@ -1077,7 +1087,8 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
             const double dur_z = cand.getTimeSum();
             for (double t = 0.0; t <= dur_z + 1e-9; t += 0.05)
             {
-              if (planner_manager_->grid_map_->getOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))))
+              // 抬升后必须重新过**硬判据（inflate）**，不能只查 raw；否则会踩进安全裕度。
+              if (planner_manager_->grid_map_->getInflateOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))))
               { ok = false; break; }
             }
           }
