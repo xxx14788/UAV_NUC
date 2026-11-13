@@ -314,8 +314,6 @@ class RosFlight:
         sub("/flight_v1/planned_path", Path)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
-        # 2026-11-12 P6：点击 ack 通道（每次点击必有反馈）
-        self.ack_pub = rospy.Publisher("/flight_v1/goal_ack", String, queue_size=4)
 
     def _rc_cb(self, msg):
         self.rc = msg
@@ -447,10 +445,9 @@ class RosFlight:
         但拒绝原因一定返回给调用方，由 ShapePilot 转成 ABORT。
         """
         def _ack(status, detail=""):
-            if quiet:
-                return
-            self.ack_pub.publish(self.String(data="%s %s" % (status, detail)))
-            self._log("GOAL", "%s %s" % (status, detail))
+            # 2026-11-13 形状变体：不再发 goal_ack（原用途是 RViz 文本），只写终端日志。
+            if not quiet:
+                self._log("GOAL", "%s %s" % (status, detail))
         ev = classify_goal_event(self.phase, self.goal_used,
                                  LANDING_FILE.exists(), STOP_FILE.exists())
         if ev.startswith("REJECT"):
