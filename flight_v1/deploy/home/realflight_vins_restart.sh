@@ -8,14 +8,32 @@
 #   [5] 日志病理带（|Bas|≤0.8，末 20 条中位；cost≤1e4，**初始化段**前 20 条中位；
 #       2026-11-11：cost 随滑窗残差数增长（实测同名链 init≈200 -> 90 min 后 1.4e4，与健康无关），
 #       原"末 20 条"在晚检查时会假报警 -> 改为取 init 段。日志无行=⚠ 不判死）
+# v4（2026-11-14 用户令"起栈太慢，尽量并行"）：**判据/文案零改动，只压时序**——
+#   ① `pkill; sleep 2` 固定等待 → 0.1~0.5s 步长轮询（vins / v2m / 转接 / 规划器 / px4ctrl 五处）；
+#   ② 转接 + 规划器 + px4ctrl 的重启**挪到收敛三查(8s)期间并行跑**（原来串行排在最后），
+#      输出先落临时文件、最后按原顺序 cat —— 屏幕上读到的行和以前一样；
+#   ③ [5/5] 前 `sleep 3` → 轮询"日志出现 ≥20 条 cost"（上限 3s，通常 1s 内）；
+#   ④ 每步打印 [+Xs] 分段计时。
+# v5（2026-11-14 第二轮，用户令"不要为快丢余量，不稳的步骤留 1~3s"）：**门限不动，补余量**——
+#   ① pkill/pgrep 全部改括号模式（`[r]un_planner`）——普通词会连调用者 shell 行一起命中（实测两次自伤）；
+#   ② 组件重启前各留 **1s 释放余量**（旧进程退出 → 端口/话题/共享内存真正释放后再起新实例），
+#      这 1s 在 8s 采样窗内并行，不占关键路径；
+#   ③ 临时文件 trap 清理（Ctrl+C 不再留 /tmp 残件）。
 # 末行"重启成功"才可开下一轮；任何 ✗ = 禁飞下一轮。
 set +u; source /opt/ros/noetic/setup.bash; source ~/catkin_ws/devel/setup.bash 2>/dev/null; set -u
 FAIL=0
 WAIT_MAX=20   # 出流等待上限（秒），嫌长嫌短改这里
 
+# v4：分段计时 [+Xs]——只用于看耗时，不参与任何判定
+T0MS=$(date +%s%3N)
+el() { awk -v a="$T0MS" -v b="$(date +%s%3N)" 'BEGIN{printf "%.1f", (b-a)/1000}'; }
+mark() { printf '[+%ss] %s\n' "$(el)" "$1"; }
+
 echo "--- 杀旧 VINS ---"
-pkill -x vins_node 2>/dev/null; sleep 2
+pkill -x vins_node 2>/dev/null
+W=0; while pgrep -x vins_node >/dev/null 2>&1 && [ $W -lt 30 ]; do sleep 0.1; W=$((W+1)); done
 pgrep -x vins_node >/dev/null && { echo "✗ 杀不掉"; exit 1; } || echo "✓ 已清"
+mark "杀旧 VINS"
 
 LOG=~/sitl_realmachine/vins_restart_$(date +%H%M%S).log
 nohup rosrun vins vins_node ~/sitl_realmachine/03_realmachine_config/vins_stereo_realmachine_v0.yaml > "$LOG" 2>&1 &
@@ -25,10 +43,11 @@ echo "--- 新 VINS pid=$! 日志=$LOG ---"
 # /mavros/vision_pose 的中继。它若带旧首帧锚点/旧偏置，PX4 的 EV 位姿就会错。
 # 一并重启，代价 1 s，消掉一整类"位姿对不上"的怀疑。
 echo "--- 同步重启 vins_to_mavros ---"
-pkill -f "[v]ins_to_mavros_node" 2>/dev/null; sleep 1
+pkill -f "[v]ins_to_mavros_node" 2>/dev/null
+W=0; while pgrep -f "[v]ins_to_mavros_node" >/dev/null 2>&1 && [ $W -lt 20 ]; do sleep 0.1; W=$((W+1)); done
 V2M_LOG=~/sitl_realmachine/v2m_restart_$(date +%H%M%S).log
 nohup rosrun vins_to_mavros vins_to_mavros_node > "$V2M_LOG" 2>&1 &
-sleep 2
+W=0; while ! pgrep -f "[v]ins_to_mavros_node" >/dev/null 2>&1 && [ $W -lt 20 ]; do sleep 0.1; W=$((W+1)); done
 if pgrep -f "[v]ins_to_mavros_node" >/dev/null; then
   echo "  ✓ vins_to_mavros 已重启（日志 $V2M_LOG）"
 else
@@ -45,6 +64,100 @@ if [ "$SEEN" = 1 ]; then
 else
   echo "  ✗ ${WAIT_MAX}s 未见出流——看日志："; tail -8 "$LOG" | sed 's/^/    /'; exit 1
 fi
+mark "VINS 出流"
+
+# --- 附加：同步重启转接/规划器/px4ctrl（VINS 原点重锚后 ego 旧栅格地图坐标系错位）---
+# 2026-11-07（检查发现）：原来先打"重启成功"再去起规划器，规划器起挂了也算成功。
+# 现在把"成功"挪到最后，并且**验证节点真的起来了**。
+# 2026-11-07（用户令）：VINS 重启必须把 ego+vins 的**所有相关组件**都带到干净状态，
+# 但**不动全栈**（rosmaster / mavros / 相机 一律不重启）。
+# 组件顺序：转接（规划器吃 /planner/camera_pose）-> 规划器 -> px4ctrl（吃 VINS odom）
+# v4：这三件整块挪进后台，与下面 [2-4/5] 的 8s 收敛采样**并行**（原来串行 ~10s）；
+#     输出落临时文件，等采样+病理带判完再按原顺序打印（顺序/文案与以前完全一致）。
+TAIL_OUT=/tmp/vins_restart_tail_$$.log
+trap 'rm -f "$TAIL_OUT"' EXIT
+(
+  # ===== v5：先"一次杀齐"，再"共享 1s 释放余量"，最后按原顺序起（转接 -> 规划器 -> px4ctrl）=====
+  # 旧版每个组件各自 kill+poll+sleep 1 → 三段串行 ~3s；这里三段共用一个余量，
+  # 但语义不变：仍是"旧实例确实死透 -> 留 1s 让 socket/栅格/setpoint 释放 -> 再起新实例"。
+  ARMED=0
+  timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q "armed: True" && ARMED=1
+  pkill -f "[c]amera_pose_relay.py" 2>/dev/null
+  pkill -f "[r]un_planner" 2>/dev/null
+  [ $ARMED = 0 ] && pkill -f "[r]un_ctrl" 2>/dev/null
+  W=0
+  while [ $W -lt 30 ]; do
+    ALIVE=0
+    pgrep -f "[c]amera_pose_relay.py" >/dev/null 2>&1 && ALIVE=1
+    pgrep -f "[r]un_planner" >/dev/null 2>&1 && ALIVE=1
+    [ $ARMED = 0 ] && pgrep -f "[r]un_ctrl" >/dev/null 2>&1 && ALIVE=1
+    [ $ALIVE = 0 ] && break
+    sleep 0.1; W=$((W+1))
+  done
+  sleep 1   # 共享释放余量（1s：不再是每件 1s 串行）
+
+  echo "--- 同步重启相机位姿转接 ---"
+  RELAY_LOG=~/sitl_realmachine/camera_pose_relay_$(date +%H%M%S).log
+  nohup python3 "$HOME/sitl_realmachine/flight_v1/camera_pose_relay.py" > "$RELAY_LOG" 2>&1 &
+
+  # 2026-11-07：规划器 launch 参数化。任务模式（地图版）必须传
+  #   PLANNER_LAUNCH="ego_planner run_planner_realmachine_map_v1.launch"
+  # 否则重启 VINS 会把"地图版"换回"vins 版"，坐标系/地图全错。
+  # 2026-11-07 审查修正：默认值从 vins 版改成**地图版**。
+  # 原因：任务 B 期间若手动重启 VINS 而没传 PLANNER_LAUNCH，规划器会悄悄退回 vins 版
+  # -> 天花板(map_size_z 1.3)、膨胀(0.337)、goal_gate 全部丢失（D1/D5/D6/D7 同时失效）。
+  # 悬停任务不受影响（规划器只是空转）。
+  # 2026-11-14 用户令：VINS 重启脚本由 RViz/形状两个任务共用，重启 VINS 必须
+  # **同时完全重启 EGO**（原点重锚后旧栅格地图坐标系失效），且统一用地图版规划器。
+  # 默认即地图版；不再存在"退回 vins 版"的分支。
+  echo "  [vins restart] 统一地图版规划器；EGO 随 VINS 一起重启（原点重锚）"
+  PLANNER_LAUNCH="${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch}"
+  PLOG=~/sitl_realmachine/planner_$(date +%H%M%S).log
+  nohup roslaunch $PLANNER_LAUNCH > "$PLOG" 2>&1 &
+
+  # 2026-11-07（用户令）：px4ctrl 吃 VINS odom，VINS 重锚后它的 sanity gate/悬停锚点是旧状态。
+  # **只在未解锁时重启**（空中绝不动控制器）。
+  echo "--- 同步重启 px4ctrl（仅未解锁时）---"
+  if [ $ARMED = 1 ]; then
+    echo "  ⚠ 当前已解锁：跳过 px4ctrl 重启（空中不动控制器）"
+  else
+    CTRL_LOG=~/sitl_realmachine/px4ctrl_$(date +%H%M%S).log
+    nohup roslaunch px4ctrl run_ctrl.launch > "$CTRL_LOG" 2>&1 &
+  fi
+
+  # 三件在线并行轮询（各自原上限不变：规划器 30s、px4ctrl 20s；转接原 8s，这里共用 30s 只更宽松）
+  T_TAIL=$(date +%s); RL_OK=0; PLN_OK=0; P4_OK=0
+  [ $ARMED = 1 ] && P4_OK=1
+  while :; do
+    REG2=$(rosnode list 2>/dev/null)
+    echo "$REG2" | grep -qx "/planner_camera_pose_relay" && RL_OK=1
+    echo "$REG2" | grep -qE "ego_planner|traj_server" && PLN_OK=1
+    echo "$REG2" | grep -qx "/px4ctrl" && P4_OK=1
+    [ $RL_OK = 1 ] && [ $PLN_OK = 1 ] && [ $P4_OK = 1 ] && break
+    ELT=$(( $(date +%s) - T_TAIL ))
+    [ $ELT -ge 30 ] && break
+    sleep 0.5
+  done
+  ELT=$(( $(date +%s) - T_TAIL ))
+  if [ "$RL_OK" = 1 ]; then
+    echo "  ✓ 相机位姿转接已在线（$RELAY_LOG，${ELT}s）"
+  else
+    echo "  ⚠ 相机位姿转接未上线（$RELAY_LOG）—— 规划器地图会是空的"
+  fi
+  if [ "$PLN_OK" = 1 ]; then
+    echo "--- ✓ 规划器已随 VINS 重启并在线（$PLANNER_LAUNCH，日志 $PLOG，${ELT}s）---"
+  else
+    echo "--- ⚠ 规划器 30s 内未上线（$PLANNER_LAUNCH，日志 $PLOG）——悬停轮不依赖；发目标点前必须解决 ---"
+  fi
+  if [ $ARMED = 1 ]; then
+    :   # 已解锁分支上面已打"跳过"行
+  elif [ "$P4_OK" = 1 ]; then
+    echo "  ✓ px4ctrl 已重启并在线（$CTRL_LOG，${ELT}s）"
+  else
+    echo "  ⚠ px4ctrl 20s 内未上线（$CTRL_LOG）"
+  fi
+) > "$TAIL_OUT" 2>&1 &
+TAILPID=$!
 
 echo "--- [2-4/5] 收敛三查（采样 8s：频率门 / 数值健全 / 静置判定）---"
 python3 <<'PYEOF'
@@ -101,9 +214,16 @@ if fails:
 print("  ✓ 收敛三查过")
 PYEOF
 [ $? = 0 ] || FAIL=1
+mark "收敛三查(8s，与转接/EGO/px4ctrl 重启并行)"
 
 echo "--- [5/5] 日志病理带（|Bas| 末20 中位 / cost init前20 中位）---"
-sleep 3
+# v4：原 sleep 3 → 轮询日志出现 ≥20 条 cost（上限 3s，通常 1s 内）
+W=0
+while [ $W -lt 30 ]; do
+  LN=$(grep -c 'final_cost=' "$LOG" 2>/dev/null || true)
+  [ "${LN:-0}" -ge 20 ] && break
+  sleep 0.1; W=$((W+1))
+done
 med() { sort -g | awk '{a[NR]=$1} END{if(NR==0)exit; if(NR%2)print a[(NR+1)/2]; else printf "%.6g",(a[NR/2]+a[NR/2+1])/2}'; }
 BASMED=$(grep -o '|Bas|=[0-9.e+-]*' "$LOG" | cut -d= -f2 | tail -20 | med)
 COSTMED=$(grep -o 'final_cost=[0-9.e+-]*' "$LOG" | cut -d= -f2 | head -20 | med)   # init 段，勿改回 tail
@@ -114,107 +234,13 @@ if [ -n "$BASMED" ] && [ -n "$COSTMED" ]; then
 else
   echo "  ⚠ 日志暂无 Bas/cost 行（缓冲未积累）——不判失败，可开盯盘人工复核 Bas"
 fi
+# v4：收编并行跑的转接/EGO/px4ctrl 重启输出（按原顺序打印在此处）
+wait $TAILPID 2>/dev/null
+cat "$TAIL_OUT" 2>/dev/null; rm -f "$TAIL_OUT"
+mark "病理带 + 组件重启"
 
 if [ $FAIL -ne 0 ]; then
   echo "===== ✗ 收敛检查未过——禁飞下一轮：开盯盘 bash ~/realflight_vins_watch.sh 观察，或看日志 $LOG ====="
   exit 1
 fi
-
-# --- 附加：同步重启规划器（VINS 原点重锚后 ego 旧栅格地图坐标系错位，航线轮前必须随之重启）---
-# 2026-11-07（检查发现）：原来先打"重启成功"再去起规划器，规划器起挂了也算成功。
-# 现在把"成功"挪到最后，并且**验证节点真的起来了**。
-# 2026-11-07（用户令）：VINS 重启必须把 ego+vins 的**所有相关组件**都带到干净状态，
-# 但**不动全栈**（rosmaster / mavros / 相机 一律不重启）。
-# 组件顺序：转接（规划器吃 /planner/camera_pose）-> 规划器 -> px4ctrl（吃 VINS odom）
-echo "--- 同步重启相机位姿转接 ---"
-pkill -f "[c]amera_pose_relay.py" 2>/dev/null; sleep 1
-RELAY_LOG=~/sitl_realmachine/camera_pose_relay_$(date +%H%M%S).log
-nohup python3 "$HOME/sitl_realmachine/flight_v1/camera_pose_relay.py" > "$RELAY_LOG" 2>&1 &
-sleep 2
-if rosnode list 2>/dev/null | grep -qx "/planner_camera_pose_relay"; then
-  echo "  ✓ 相机位姿转接已在线（$RELAY_LOG）"
-else
-  echo "  ⚠ 相机位姿转接未上线（$RELAY_LOG）—— 规划器地图会是空的"
-fi
-
-pkill -f "run_planner" 2>/dev/null; sleep 2
-# 2026-11-07：规划器 launch 参数化。任务模式（地图版）必须传
-#   PLANNER_LAUNCH="ego_planner run_planner_realmachine_map_v1.launch"
-# 否则重启 VINS 会把"地图版"换回"vins 版"，坐标系/地图全错。
-# 2026-11-07 审查修正：默认值从 vins 版改成**地图版**。
-# 原因：任务 B 期间若手动重启 VINS 而没传 PLANNER_LAUNCH，规划器会悄悄退回 vins 版
-# -> 天花板(map_size_z 1.3)、膨胀(0.337)、goal_gate 全部丢失（D1/D5/D6/D7 同时失效）。
-# 悬停任务不受影响（规划器只是空转）。
-# 2026-11-14 用户令：VINS 重启脚本由 RViz/形状两个任务共用，重启 VINS 必须
-# **同时完全重启 EGO**（原点重锚后旧栅格地图坐标系失效），且统一用地图版规划器。
-# 默认即地图版；不再存在"退回 vins 版"的分支。
-echo "  [vins restart] 统一地图版规划器；EGO 随 VINS 一起重启（原点重锚）"
-PLANNER_LAUNCH="${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch}"
-PLOG=~/sitl_realmachine/planner_$(date +%H%M%S).log
-nohup roslaunch $PLANNER_LAUNCH > "$PLOG" 2>&1 &
-# 2026-11-07：验证规划器节点真的起来了（最多等 30 s）
-PLN_OK=0
-# shellcheck disable=SC2034  # 循环变量只用于计数
-for _i in $(seq 1 30); do
-  if rosnode list 2>/dev/null | grep -qE "ego_planner|traj_server"; then PLN_OK=1; break; fi
-  sleep 1
-done
-if [ "$PLN_OK" = 1 ]; then
-  echo "--- ✓ 规划器已随 VINS 重启并在线（$PLANNER_LAUNCH，日志 $PLOG）---"
-else
-  echo "--- ⚠ 规划器 30s 内未上线（$PLANNER_LAUNCH，日志 $PLOG）——悬停轮不依赖；发目标点前必须解决 ---"
-fi
-# 2026-11-14（用户令）：VINS 重启后 RViz 也重启。
-# 旧 RViz 订阅的是旧 VINS/规划器实例的 latch 话题，VINS 原点重锚后显示与坐标系会错位；
-# 重启 VINS 就必须把 RViz 一起换掉。SSH 终端没有 DISPLAY 时先探测 :0，探不到就不动旧窗口。
-echo "--- 同步重启 RViz ---"
-RVIZ_SH="$HOME/sitl_realmachine/rviz_mapping_v1/map_rviz.sh"
-RVIZ_DISPLAY="${DISPLAY:-}"
-if [ -z "$RVIZ_DISPLAY" ] && command -v xdpyinfo >/dev/null 2>&1 && xdpyinfo -display :0 >/dev/null 2>&1; then
-  RVIZ_DISPLAY=:0
-fi
-if [ -z "$RVIZ_DISPLAY" ]; then
-  echo "  ⚠ 无可用 DISPLAY：RViz 未重启（旧窗口保持原样；请在桌面终端再跑一次）"
-elif [ ! -f "$RVIZ_SH" ]; then
-  echo "  ⚠ 找不到 $RVIZ_SH：RViz 未重启"
-else
-  pkill -TERM -x rviz 2>/dev/null || true
-  pkill -f "[m]ap_rviz.sh" 2>/dev/null || true
-  sleep 1
-  RVIZ_LOG=~/sitl_realmachine/rviz_$(date +%H%M%S).log
-  DISPLAY="$RVIZ_DISPLAY" nohup bash "$RVIZ_SH" > "$RVIZ_LOG" 2>&1 &
-  RV_OK=0
-  # shellcheck disable=SC2034  # 循环变量只用于计数
-  for _k in $(seq 1 15); do
-    rosnode list 2>/dev/null | grep -qx "/mapping_rviz" && { RV_OK=1; break; }
-    sleep 1
-  done
-  if [ "$RV_OK" = 1 ]; then
-    echo "  ✓ RViz 已重启并在线（DISPLAY=$RVIZ_DISPLAY，日志 $RVIZ_LOG）"
-  else
-    echo "  ⚠ RViz 15s 内未上线（DISPLAY=$RVIZ_DISPLAY，日志 $RVIZ_LOG）"
-  fi
-fi
-
-# 2026-11-07（用户令）：px4ctrl 吃 VINS odom，VINS 重锚后它的 sanity gate/悬停锚点是旧状态。
-# **只在未解锁时重启**（空中绝不动控制器）。
-echo "--- 同步重启 px4ctrl（仅未解锁时）---"
-if timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep -q "armed: True"; then
-  echo "  ⚠ 当前已解锁：跳过 px4ctrl 重启（空中不动控制器）"
-else
-  pkill -f "run_ctrl" 2>/dev/null; sleep 2
-  CTRL_LOG=~/sitl_realmachine/px4ctrl_$(date +%H%M%S).log
-  nohup roslaunch px4ctrl run_ctrl.launch > "$CTRL_LOG" 2>&1 &
-  P4_OK=0
-  # shellcheck disable=SC2034
-  for _j in $(seq 1 20); do
-    rosnode list 2>/dev/null | grep -qx "/px4ctrl" && { P4_OK=1; break; }
-    sleep 1
-  done
-  if [ "$P4_OK" = 1 ]; then
-    echo "  ✓ px4ctrl 已重启并在线（$CTRL_LOG）"
-  else
-    echo "  ⚠ px4ctrl 20s 内未上线（$CTRL_LOG）"
-  fi
-fi
-echo "===== 重启成功：VINS 初始化+收敛全过、vins_to_mavros/转接/规划器/RViz/px4ctrl 均已处理 ====="
+echo "===== 重启成功：VINS 初始化+收敛全过、vins_to_mavros/转接/规划器/px4ctrl 均已处理（v4 总耗时 $(el)s）====="

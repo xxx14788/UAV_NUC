@@ -8,16 +8,20 @@
 两个都不是药。先在 IMU 入口把 63-81 Hz 压掉，再按滤波后的 Allan 重设噪声。
 
 实现：4 阶 Butterworth（两级 biquad，fc=35 Hz，Q=0.5412/1.3066），fs 默认 200 Hz。
-- 加计/陀螺 6 轴各一套；零相位不需要（因果滤波，5 Hz 处相位延迟约 8 ms，对 15 Hz 图像
-  同步的影响 <2 mm/0.004 rad，可忽略）。
-- 首样本做 DC 初始化（z1/z2 设到稳态），避免启动阶跃。
+- 加计/陀螺 6 轴各一套；因果滤波，实测相位延迟 5 Hz ≈10.7 ms、15 Hz ≈11.1 ms
+  （群延迟 10.8–12.1 ms），VINS `td=0` 未补偿——重新启用前必须做 td/estimate_td A/B。
+- 首样本做 DC 初始化（z1/z2 设到稳态），避免启动阶跃；输入非有限值时直通并复位滤波器。
 - 时间戳/协方差/orientation 原样保留；只改 linear_acceleration 与 angular_velocity。
 - 默认 in=/mavros/imu/data_raw，out=/vins_imu/data_raw（VINS yaml 的 imu_topic 指到 out）。
+- 2026-11-15 第三方审查 B1：空中 VINS failure-detection reboot 后必须**重新直通** raw，
+  否则会用滤波 IMU 重新 init（重放实测会卡死）。订阅 /vins_estimator/reboot_notify
+  （std_msgs/UInt32, latched）复位 bypass 计数与滤波器状态。
 """
 import math
 
 import rospy
 from sensor_msgs.msg import Imu
+from std_msgs.msg import UInt32
 
 
 class Biquad:
@@ -76,8 +80,20 @@ class ImuLpf:
         self.n = 0
         self.pub = rospy.Publisher(out_topic, Imu, queue_size=20)
         rospy.Subscriber(in_topic, Imu, self.cb, queue_size=20)
+        # B1：VINS 空中 failure-detection reboot 会重新 init；收到通知就重新直通 raw。
+        rospy.Subscriber("/vins_estimator/reboot_notify", UInt32, self.reboot_cb, queue_size=1)
+        self.reboot_cnt = 0
         rospy.loginfo("imu_lpf: %s -> %s | 4th-order Butterworth fc=%.1f Hz fs=%.1f Hz",
                       in_topic, out_topic, self.fc, self.fs)
+
+    def reboot_cb(self, msg):
+        self.n = 0
+        for c in self.acc + self.gyr:
+            c.s1.started = False
+            c.s2.started = False
+        self.reboot_cnt += 1
+        rospy.logwarn("imu_lpf: VINS reboot_notify=%s -> re-arm raw bypass (%d)",
+                      msg.data, self.reboot_cnt)
 
     def cb(self, m):
         out = Imu()
@@ -88,6 +104,16 @@ class ImuLpf:
         out.angular_velocity_covariance = m.angular_velocity_covariance
         a = m.linear_acceleration
         g = m.angular_velocity
+        if not all(math.isfinite(v) for v in (a.x, a.y, a.z, g.x, g.y, g.z)):
+            # L3：非有限值直通并复位滤波器，避免 NaN 永久污染 z1/z2。
+            for c in self.acc + self.gyr:
+                c.s1.started = False
+                c.s2.started = False
+            out.linear_acceleration = a
+            out.angular_velocity = g
+            self.pub.publish(out)
+            self.n += 1
+            return
         if self.n < self.bypass_n:
             # init 窗口：原样直通（VINS 的初始化和实飞一致）
             out.linear_acceleration = a
