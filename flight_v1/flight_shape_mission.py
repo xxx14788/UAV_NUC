@@ -553,11 +553,27 @@ class RosFlight:
             self.shape_pilot = None
 
     def safe_handover(self, reason):
-        """异常收口：停发点 -> 尝试发当前位置悬停 -> 提示 CH5 -> 停录制 -> 退出。"""
+        """异常收口：停发点 -> 尝试发当前位置悬停 -> 提示 CH5 -> 停录制 -> 退出。
+
+        注意：monitor 已退出，悬停后**不会**再有 5 s/20 s 自动降落逻辑；
+        控制权必须由 CH5 接管（脚本不做自动降落，符合"交还遥控器"的用户令）。
+        """
         self._log("ABORT", reason)
         self.stop_shape()
+        armed = None
         try:
-            if self._fsm() == "CMD_CTRL":
+            armed = bool(self._state().armed)
+        except Exception:
+            armed = None
+        if armed is False:
+            self._log("ABORT", "飞机未解锁（在地面），无需交还控制权")
+            if self.auto_record:
+                self._record_stop()
+            self._log("DONE", "脚本退出（ABORT，exit 1）")
+            return
+        fsm = self._fsm()
+        if fsm in ("AUTO_HOVER", "CMD_CTRL"):
+            try:
                 p = self._odom().pose.pose.position
                 hold = self.PoseStamped()
                 hold.header.stamp = self.rospy.Time.now()
@@ -568,13 +584,13 @@ class RosFlight:
                 hold.pose.orientation.w = 1.0
                 ok, err = self._apply_goal(hold, quiet=True)
                 if ok:
-                    self._log("ABORT", "已发当前位置悬停（零位移轨迹）")
+                    self._log("ABORT", "已发当前位置悬停（零位移轨迹）；脚本不做自动降落")
                 else:
                     self._log("ABORT", "悬停目标未被接受：%s" % err)
-            else:
-                self._log("ABORT", "当前 FSM=%s，不发悬停目标（控制权应在遥控器）" % self._fsm())
-        except Exception as exc:
-            self._log("ABORT", "悬停目标发送失败：%r" % (exc,))
+            except Exception as exc:
+                self._log("ABORT", "悬停目标发送失败：%r" % (exc,))
+        else:
+            self._log("ABORT", "当前 FSM=%s（遥控器接管/无控制），脚本停止发点" % fsm)
         self._log("ABORT", "【请立即拨 CH5 接管】控制权交还遥控器")
         if self.auto_record:
             self._record_stop()
@@ -760,8 +776,9 @@ class RosFlight:
         a, b = gravity(vins), gravity(px4)
         return math.degrees(math.acos(max(-1.0, min(1.0, sum(x*y for x, y in zip(a, b))))))
 
-    def takeoff(self):
-        self.preflight()
+    def takeoff(self, skip_preflight=False):
+        if not skip_preflight:
+            self.preflight()
         if DRY:
             print("[DRY] 飞前检查全过（RC 四杆 / 姿态门 / 里程计 / 高度参数）。", flush=True)
             print("[DRY] 本次**不发布 TAKEOFF**、不解锁、不起飞 —— 到此为止。", flush=True)
@@ -774,6 +791,7 @@ class RosFlight:
         takeoff_cmd_t = None          # 第一帧 TAKEOFF 发出的时刻（忽略此前的 fsm 样本）
         manual_armed_since = None
         next_pub = 0.0
+        next_log = 0.0
         while time.monotonic() < deadline and not self.rospy.is_shutdown():
             now = time.monotonic()
             # 2026-11-13 安全快速路：CH5 拨低 = 飞手接管，立即停发 TAKEOFF 并退出，
@@ -792,6 +810,13 @@ class RosFlight:
             state = self._state()
             if not state.connected:
                 raise RuntimeError("飞控连接丢失；遥控器接管")
+            if now >= next_log:
+                next_log = now + 0.5
+                try:
+                    _z = "%.2f" % self._odom().pose.pose.position.z
+                except Exception:
+                    _z = "?"
+                self._log("TAKEOFF", "z=%s fsm=%s armed=%s" % (_z, self._fsm(), state.armed))
             fsm = self._fsm()
             if not state.armed and now - takeoff_started > 15.0:
                 raise RuntimeError("TAKEOFF 后 15 秒仍未确认解锁；遥控器接管")
@@ -1043,8 +1068,9 @@ class RosFlight:
             else:
                 raise RuntimeError("命令流未停止或 FSM 未回 AUTO_HOVER；未发送 LAND，遥控器接管")
             self._check_rc(require_centered=False)
-            print("轨迹命令已停止，FSM 回到 AUTO_HOVER，持续发送 LAND 并等待飞控着地确认。", flush=True)
+            self._log("LAND", "轨迹命令已停止，FSM 回到 AUTO_HOVER；持续发 LAND 并等待着地")
             next_pub = 0.0
+            next_log = 0.0
             deadline = time.monotonic() + 120.0
             landed_since = None
             while time.monotonic() < deadline and not self.rospy.is_shutdown():
@@ -1053,6 +1079,13 @@ class RosFlight:
                     self._pub_land()
                     next_pub = now + 1.0
                 state = self._state()
+                if now >= next_log:
+                    next_log = now + 1.0
+                    try:
+                        _z = "%.2f" % self._odom().pose.pose.position.z
+                    except Exception:
+                        _z = "?"
+                    self._log("LAND", "z=%s fsm=%s armed=%s" % (_z, self._fsm(), state.armed))
                 ext = self.cache.get("/mavros/extended_state")
                 grounded = (not state.armed and self._fresh("/mavros/extended_state", 2.5)
                             and ext.landed_state == 1 and self._fresh_stamp(ext, 2.5)
@@ -1060,7 +1093,7 @@ class RosFlight:
                 if grounded:
                     landed_since = landed_since or now
                     if now - landed_since >= 2.0:
-                        print("已连续确认 ON_GROUND 且未解锁。", flush=True)
+                        self._log("LAND", "已连续确认 ON_GROUND 且未解锁")
                         return
                 else:
                     landed_since = None
@@ -1455,10 +1488,13 @@ def main():
             if DRY:
                 flight.takeoff()   # 只跑 preflight；不录包、不起形状
                 return 0
+            # 2026-11-13 自查修正：preflight 先过，再开录制；避免 preflight 失败
+            # 留下废袋 + 40 s 收尾等待。
+            flight.preflight()
             if not args.no_record:
                 flight._record_start()
             try:
-                flight.takeoff()
+                flight.takeoff(skip_preflight=True)
                 flight.start_shape(args)
                 flight.navigation_monitor()
             finally:
