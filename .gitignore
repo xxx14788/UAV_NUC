@@ -58,3 +58,7 @@ sitl_sim/t1_evidence/**/*.log
 *.orig
 .catkin_tools/
 *.bak_*
+
+# 2026-11-13：deploy/config_history 是 VINS 配置历史，必须入库（覆盖 *.bak_* 忽略）
+!flight_v1/deploy/config_history/
+!flight_v1/deploy/config_history/*

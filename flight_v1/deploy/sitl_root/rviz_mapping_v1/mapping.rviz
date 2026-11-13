@@ -1,0 +1,124 @@
+Panels:
+  - Class: rviz/Displays
+    Name: Displays
+  - Class: rviz/Views
+    Name: Views
+  - Class: rviz/Tool Properties
+    Name: Tool Properties
+Visualization Manager:
+  Class: ""
+  Global Options:
+    Background Color: 35; 38; 42
+    Fixed Frame: world
+    Frame Rate: 15
+  Displays:
+    - Class: rviz/Grid
+      Name: Metric reference (not occupancy)
+      Enabled: true
+      Cell Size: 1
+      Plane Cell Count: 20
+      Color: 100; 100; 100
+      Reference Frame: world
+    - Class: rviz/Axes
+      Name: World axes
+      Enabled: true
+      Reference Frame: world
+      Length: 0.5
+      Radius: 0.01
+    - Class: rviz/PointCloud2
+      Name: Occupied voxels
+      Enabled: true
+      Topic: /drone_0_ego_planner_node/grid_map/occupancy
+      Queue Size: 2
+      Position Transformer: XYZ
+      Color Transformer: AxisColor
+      Axis: Z
+      Style: Boxes
+      Size (m): 0.15
+      Alpha: 1
+      Decay Time: 0
+    - Class: rviz/PointCloud2
+      Name: Inflated obstacles (toggle)
+      Enabled: false
+      Topic: /drone_0_ego_planner_node/grid_map/occupancy_inflate
+      Queue Size: 2
+      Position Transformer: XYZ
+      Color Transformer: FlatColor
+      Color: 255; 150; 40
+      Style: Boxes
+      Size (m): 0.15
+      Alpha: 0.25
+      Decay Time: 0
+    - Class: rviz/Odometry
+      Name: VINS body pose
+      Enabled: true
+      Topic: /vins_estimator/imu_propagate
+      Keep: 1
+      Position Tolerance: 0.01
+      Angle Tolerance: 0.01
+      Shape:
+        Value: Axes
+        Axes Length: 0.3
+        Axes Radius: 0.02
+    - Class: rviz/Pose
+      Name: Depth camera pose
+      Enabled: true
+      Topic: /planner/camera_pose
+      Shape: Axes
+      Axes Length: 0.2
+      Axes Radius: 0.01
+    - Class: rviz/Path
+      Name: VINS path
+      Enabled: true
+      Topic: /vins_estimator/path
+      Color: 60; 210; 255
+      Line Style: Lines
+      Line Width: 0.02
+    - Class: rviz/Path
+      Name: 期望轨迹 Planned path
+      Enabled: true
+      Topic: /flight_v1/planned_path
+      Color: 255; 200; 0
+      Line Style: Lines
+      Line Width: 0.04
+    - Class: rviz/Path
+      Name: 实际指令轨迹 Executed trail
+      Enabled: true
+      Topic: /flight_v1/executed_trail
+      Color: 0; 255; 120
+      Line Style: Lines
+      Line Width: 0.02
+    - Class: rviz/Marker
+      Name: 目标点 Goal
+      Enabled: true
+      Marker Topic: /flight_v1/goal_marker
+      Namespaces: {}
+      Queue Size: 10
+    - Class: rviz/Image
+      Name: Raw depth (optional)
+      Enabled: false
+      Image Topic: /camera/depth/image_rect_raw
+      Transport Hint: raw
+      Queue Size: 2
+  Tools:
+    - Class: rviz/Interact
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/Measure
+    - Class: rviz/SetGoal
+      Topic: /move_base_simple/goal
+  Views:
+    Current:
+      Class: rviz/Orbit
+      Distance: 7
+      Focal Point:
+        X: 2
+        Y: 0
+        Z: 0.5
+      Pitch: 0.6
+      Yaw: 3.14
+Window Geometry:
+  Width: 1280
+  Height: 800
+  Hide Left Dock: false
+  Hide Right Dock: false
