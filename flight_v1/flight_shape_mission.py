@@ -1512,6 +1512,8 @@ def main():
             flight.preflight()
             if not args.no_record:
                 flight._record_start()
+            # 录包启动与 TAKEOFF 之间有几秒；再确认一次杆位/CH5，避免这段空窗内动杆。
+            flight._check_rc()
             try:
                 flight.takeoff(skip_preflight=True)
                 flight.start_shape(args)
