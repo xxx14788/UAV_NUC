@@ -195,6 +195,10 @@ namespace ego_planner
     double ctrl_pt_dist;                  // distance between adjacient B-spline control points
     double feasibility_tolerance_;        // permitted ratio of vel/acc exceeding limits
     double planning_horizen_;
+    // 2026-11-15（P2 根因修复）：重规划种子只用上一条轨迹的前 seed_horizon_ 秒。
+    // 旧实现把整条 14-19 s 的尾巴灌回优化器，回环返回段在 1-2 m 外，0.5 s 只走 0.1 m
+    // -> 永远到不了、越绕越大；截到 2 s 后返回段进入可见时域。
+    double seed_horizon_ = 2.0;
     bool use_distinctive_trajs;
     int drone_id; // single drone: drone_id <= -1, swarm: drone_id >= 0
 

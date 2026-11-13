@@ -449,7 +449,9 @@ namespace ego_planner
     int same_occ_state_times = ENOUGH_INTERVAL + 1;
     bool occ, last_occ = false;
     bool flag_got_start = false, flag_got_end = false, flag_got_end_maybe = false;
-    int i_end = (int)init_points.cols() - order_ - ((int)init_points.cols() - 2 * order_) / 3; // only check closed 2/3 points.
+    // 2026-11-15（根因）：旧版只查前 2/3，目标常在最后 1/3（11-14 第二只箱子 1.73 m 正好在带外），
+    // 最后一段根本不避障。改为查到末段；末 order_ 个 CP 留给末端锚定。
+    int i_end = (int)init_points.cols() - order_;
     for (int i = order_; i <= i_end; ++i)
     {
       //cout << " *" << i-1 << "*" ;
@@ -776,7 +778,7 @@ namespace ego_planner
   void BsplineOptimizer::calcSwarmCost(const Eigen::MatrixXd &q, double &cost, Eigen::MatrixXd &gradient)
   {
     cost = 0.0;
-    int end_idx = q.cols() - order_ - (double)(q.cols() - 2 * order_) * 1.0 / 3.0; // Only check the first 2/3 points
+    int end_idx = q.cols() - order_; // 2026-11-15：代价覆盖到末段（末 3 CP 仍排除）
     const double CLEARANCE = swarm_clearance_ * 2;
     double t_now = ros::Time::now().toSec();
     constexpr double a = 2.0, b = 1.0, inv_a2 = 1 / a / a, inv_b2 = 1 / b / b;
@@ -1204,10 +1206,12 @@ namespace ego_planner
     int in_id, out_id;
     vector<std::pair<int, int>> segment_ids;
     bool flag_new_obs_valid = false;
-    int i_end = end_idx - (end_idx - order_) / 3;
+    int i_end = end_idx;   // 2026-11-15：CP 碰撞检查覆盖到末端
     for (int i = order_ - 1; i <= i_end; ++i)
     {
 
+      // 2026-11-15（最终方向）：refine 的硬判据保持 inflate（0.30 安全裕度）；
+      // 真正要改的是下面段尾 j 的选取——它原来按 raw，A* 按 inflate 拒绝，才成批失败。
       bool occ = grid_map_->getInflateOccupancy(cps_.points.col(i));
 
       /*** check if the new collision will be valid ***/
@@ -1246,7 +1250,7 @@ namespace ego_planner
           const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));
           occ = (pj - self_p).norm() <= self_bubble
                     ? 0
-                    : grid_map_->getOccupancy(pj);   // 2026-11-12：规划锚点用确认层
+                    : grid_map_->getInflateOccupancy(pj);   // 2026-11-15：与 A*/最终检查同层（修复错配）
           if (!occ)
           {
             in_id = j;
@@ -1261,7 +1265,7 @@ namespace ego_planner
 
         for (j = i + 1; j < cps_.size; ++j)
         {
-          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));  // 2026-11-12：确认层
+          occ = grid_map_->getInflateOccupancy(cps_.points.col(j));  // 2026-11-15：与 A*/最终检查同层
 
           if (!occ)
           {
@@ -1514,7 +1518,7 @@ namespace ego_planner
         double tm, tmp;
         traj.getTimeSpan(tm, tmp);
         double t_step = (tmp - tm) / ((traj.evaluateDeBoorT(tmp) - traj.evaluateDeBoorT(tm)).norm() / grid_map_->getResolution());
-        for (double t = tm; t < tmp * 2 / 3; t += t_step) // Only check the closest 2/3 partition of the whole trajectory.
+        for (double t = tm; t < tmp; t += t_step) // 2026-11-15：最终检查覆盖全轨迹（含目标段）
         {
           flag_occ = grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t));
           if (flag_occ)
@@ -1527,7 +1531,7 @@ namespace ego_planner
                  起点贴着箱子/墙角时前三段必然落在**膨胀层**内，而膨胀是安全余量、
                  不是"站不站得住"的判据——否则整个规划永远被否掉（实测拒绝 8060 次）。
                  只落在膨胀层：接受，交给优化器的 cost 把轨迹推离。 */
-              if (grid_map_->getOccupancy(Eigen::Vector3d(traj.evaluateDeBoorT(t))))   // 2026-11-12
+              if (grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t)))   // 2026-11-12
               {
                 ROS_WARN("First 3 control points in REAL obstacles! return false, t=%f", t);
                 return false;
@@ -1662,7 +1666,7 @@ namespace ego_planner
       double tm, tmp;
       traj.getTimeSpan(tm, tmp);
       double t_step = (tmp - tm) / ((traj.evaluateDeBoorT(tmp) - traj.evaluateDeBoorT(tm)).norm() / grid_map_->getResolution()); // Step size is defined as the maximum size that can passes throgth every gird.
-      for (double t = tm; t < tmp * 2 / 3; t += t_step)
+      for (double t = tm; t < tmp; t += t_step)   // 2026-11-15：全轨迹
       {
         if (grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t)))
         {

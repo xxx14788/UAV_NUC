@@ -22,6 +22,7 @@ namespace ego_planner
     nh.param("manager/feasibility_tolerance", pp_.feasibility_tolerance_, 0.0);
     nh.param("manager/control_points_distance", pp_.ctrl_pt_dist, -1.0);
     nh.param("manager/planning_horizon", pp_.planning_horizen_, 5.0);
+    nh.param("manager/seed_horizon", pp_.seed_horizon_, 2.0);   // 2026-11-15（P2）
     nh.param("manager/use_distinctive_trajs", pp_.use_distinctive_trajs, false);
     nh.param("manager/drone_id", pp_.drone_id, -1);
 
@@ -145,7 +146,11 @@ namespace ego_planner
         vector<double> pseudo_arc_length;
         vector<Eigen::Vector3d> segment_point;
         pseudo_arc_length.push_back(0.0);
-        for (t = t_cur; t < local_data_.duration_ + 1e-3; t += ts)
+        // 2026-11-15（P2 根因修复）：只取上一条轨迹的前 seed_horizon_ 秒做种子。
+        // 不这样做的话整条回环尾巴（14-19 s）被继承，飞机 0.5 s 只走 0.1 m，
+        // 返回段永远到不了（11-14 bag1 绕到 y=1.33 的直接机制）。
+        const double t_seed_end = std::min(local_data_.duration_, t_cur + pp_.seed_horizon_);
+        for (t = t_cur; t < t_seed_end + 1e-3; t += ts)
         {
           segment_point.push_back(local_data_.position_traj_.evaluateDeBoorT(t));
           if (t > t_cur)
@@ -153,9 +158,20 @@ namespace ego_planner
             pseudo_arc_length.push_back((segment_point.back() - segment_point[segment_point.size() - 2]).norm() + pseudo_arc_length.back());
           }
         }
+        if (segment_point.empty())
+        {
+          // 2026-11-15（P2）：轨迹已走完（t_cur >= duration_）时尾巴为空；不能对空
+          // vector 取 back()。直接改用全新多项式分支（flag_regenerate 回到循环头）。
+          flag_force_polynomial = true;
+          flag_regenerate = true;
+          continue;
+        }
         t -= ts;
 
-        double poly_time = (local_data_.position_traj_.evaluateDeBoorT(t) - local_target_pt).norm() / pp_.max_vel_ * 2;
+        // 2026-11-15（P2）：尾段后面的多项式时长改用上游"距离/最大速度 + 2*v/a"
+        // （与全新目标同一公式），不再 *2；否则 2 m 缺口给 8 s，种子仍偏长。
+        const double poly_dist = (local_data_.position_traj_.evaluateDeBoorT(t) - local_target_pt).norm();
+        double poly_time = poly_dist / pp_.max_vel_ + 2.0 * pp_.max_vel_ / pp_.max_acc_;
         if (poly_time > ts)
         {
           PolynomialTraj gl_traj = PolynomialTraj::one_segment_traj_gen(local_data_.position_traj_.evaluateDeBoorT(t),
@@ -179,9 +195,20 @@ namespace ego_planner
           }
         }
 
+        // 2026-11-15（P2 自检抓到的坑）：截短后的种子可能几乎是原地（弧长≈0），
+        // 下面的 do/while 会因插值区间为 0 而永远凑不满 7 个点 -> 规划器死循环。
+        // 零弧长直接改用全新多项式；并给 cps_dist 细分加硬上限，双保险。
+        if (pseudo_arc_length.back() < 1e-3)
+        {
+          flag_force_polynomial = true;
+          flag_regenerate = true;
+          continue;
+        }
+
         double sample_length = 0;
         double cps_dist = pp_.ctrl_pt_dist * 1.5; // cps_dist will be divided by 1.5 in the next
         size_t id = 0;
+        int cps_guard = 0;
         do
         {
           cps_dist /= 1.5;
@@ -200,7 +227,14 @@ namespace ego_planner
               id++;
           }
           point_set.push_back(local_target_pt);
-        } while (point_set.size() < 7); // If the start point is very close to end point, this will help
+        } while (point_set.size() < 7 && ++cps_guard < 25); // If the start point is very close to end point, this will help
+        if (point_set.size() < 4)
+        {
+          // 细分 25 次仍然凑不满 4 个点：种子退化，直接换全新多项式
+          flag_force_polynomial = true;
+          flag_regenerate = true;
+          continue;
+        }
 
         start_end_derivatives.push_back(local_data_.velocity_traj_.evaluateDeBoorT(t_cur));
         start_end_derivatives.push_back(local_target_vel);

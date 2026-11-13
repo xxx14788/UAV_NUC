@@ -25,6 +25,9 @@ namespace ego_planner
   nh.param("fsm/near_goal_dist", near_goal_dist_, 0.6);
   nh.param("fsm/near_goal_vel", near_goal_vel_, 0.15);
   nh.param("fsm/near_goal_brake", near_goal_brake_, 0.5);   // 2026-11-13 v3：刹车剖面减速度
+  // 2026-11-15（P4）：z 参考比例偏置（治"EGO 起点=实测 z"导致的下沉自锁）
+  nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
+  nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -193,6 +196,10 @@ namespace ego_planner
       end_vel_.setZero();
       have_target_ = true;
       have_new_target_ = true;
+      // 2026-11-15（P2/P3）：新目标 -> 重置进展/失败计时
+      last_goal_dist_ = 1e9;
+      last_progress_t_ = ros::Time::now();
+      plan_fail_since_ = ros::Time(0);
 
       /*** FSM ***/
       if (exec_state_ == WAIT_TARGET)
@@ -247,6 +254,25 @@ namespace ego_planner
 
   void EGOReplanFSM::odometryCallback(const nav_msgs::OdometryConstPtr &msg)
   {
+    // 2026-11-15（P3 根因修复）：VINS 发散时 z 会到 -14 之类，跑出地图 z 范围。
+    // 这种位姿绝不能继续喂规划器：A* 会在地图 pool 外狂刷错误（11-14 重放 7000+ 条），
+    // 旧轨迹还会继续执行。判无效后跳过规划；px4ctrl 自己的 odom sanity gate 负责
+    // 最后的悬停/保护（11-14 日志已实证它在连续拒绝）。
+    const auto &p_ = msg->pose.pose.position;
+    const auto &v_ = msg->twist.twist.linear;
+    const bool finite_ = std::isfinite(p_.x) && std::isfinite(p_.y) && std::isfinite(p_.z) &&
+                         std::isfinite(v_.x) && std::isfinite(v_.y) && std::isfinite(v_.z);
+    const bool sane_ = finite_ && std::fabs(p_.x) < 20.0 && std::fabs(p_.y) < 20.0 &&
+                       p_.z > -1.0 && p_.z < 3.0;
+    if (!sane_)
+    {
+      if (!odom_invalid_)
+        ROS_ERROR("[FSM] odom invalid (p=%.2f,%.2f,%.2f v=%.2f) -> skip planning", p_.x, p_.y, p_.z, v_.x);
+      odom_invalid_ = true;
+      return;
+    }
+    odom_invalid_ = false;
+
     odom_pos_(0) = msg->pose.pose.position.x;
     odom_pos_(1) = msg->pose.pose.position.y;
     odom_pos_(2) = msg->pose.pose.position.z;
@@ -455,6 +481,15 @@ namespace ego_planner
   {
     exec_timer_.stop(); // To avoid blockage
 
+    // 2026-11-15（P3）：位姿无效时不再规划，保住最后一条有效指令；
+    // 保护由 px4ctrl 的 odom sanity gate 负责。定时器必须重启，否则 FSM 停摆。
+    if (odom_invalid_)
+    {
+      ROS_WARN_THROTTLE(1.0, "[FSM] odom invalid -> skip planning (px4ctrl odom gate owns protection)");
+      exec_timer_.start();
+      return;
+    }
+
     static int fsm_num = 0;
     fsm_num++;
     if (fsm_num == 100)
@@ -554,12 +589,28 @@ namespace ego_planner
 
       if (planFromCurrentTraj(1))
       {
+        plan_fail_since_ = ros::Time(0);
         changeFSMExecState(EXEC_TRAJ, "FSM");
         publishSwarmTrajs(false);
       }
       else
       {
-        changeFSMExecState(REPLAN_TRAJ, "FSM");
+        // 2026-11-15（P3 根因修复）：REPLAN_TRAJ 每 0.01 s 重试一次；连续失败超过
+        // 1.5 s 说明当前旧轨迹不可修（贴障回环），不能再让它继续执行。进 EMERGENCY_STOP
+        // 刹车保持，等 fail-safe 自愈（数据健康 + 速度<0.1）后用全新多项式重规划。
+        const ros::Time now_f = ros::Time::now();
+        if (plan_fail_since_.isZero())
+          plan_fail_since_ = now_f;
+        else if ((now_f - plan_fail_since_).toSec() > 1.5)
+        {
+          ROS_ERROR("[replan] planning failed for >1.5 s -> EMERGENCY_STOP (do not keep stale traj)");
+          plan_fail_since_ = ros::Time(0);
+          changeFSMExecState(EMERGENCY_STOP, "PLAN_FAIL");
+        }
+        else
+        {
+          changeFSMExecState(REPLAN_TRAJ, "FSM");
+        }
       }
 
       break;
@@ -701,7 +752,25 @@ namespace ego_planner
     start_vel_ = odom_vel_;
     start_acc_.setZero();
 
-    bool success = callReboundReplan(false, false);
+    // 2026-11-15（P2）：进展停滞检测。到目标距离 1.5 s 内没有减少 >5 cm -> 判停滞，
+    // 第一次尝试就用"全新多项式"种子（flag_use_poly_init），不再沿用上一条尾巴；
+    // 这是 2 s 截断之外的第二道保险（例如地图变化导致旧种子一直可用但绕圈）。
+    const double d_goal = (end_pt_ - odom_pos_).norm();
+    const ros::Time now_t = ros::Time::now();
+    bool stalled = false;
+    if (d_goal < last_goal_dist_ - 0.05)
+    {
+      last_goal_dist_ = d_goal;
+      last_progress_t_ = now_t;
+    }
+    else if (!last_progress_t_.isZero() && (now_t - last_progress_t_).toSec() > 1.5)
+    {
+      stalled = true;
+      last_progress_t_ = now_t;
+      ROS_WARN("[replan] no progress toward goal for 1.5 s (d=%.2f) -> force fresh polynomial seed", d_goal);
+    }
+
+    bool success = callReboundReplan(stalled, false);
 
     if (!success)
     {
@@ -752,6 +821,8 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     LocalTrajData *info = &planner_manager_->local_data_;
     auto map = planner_manager_->grid_map_;
 
+    if (odom_invalid_)
+      return;
     if (exec_state_ == WAIT_TARGET || info->start_time_.toSec() < 1e-5)
       return;
 
@@ -834,11 +905,9 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     const double t_check0 = t_cur + 0.30;
     const double CLEARANCE = 1.0 * planner_manager_->getSwarmClearance();
     double t_cur_global = ros::Time::now().toSec();
-    double t_2_3 = info->duration_ * 2 / 3;
     for (double t = t_check0; t < info->duration_; t += time_step)
     {
-      if (t_cur < t_2_3 && t >= t_2_3) // If t_cur < t_2_3, only the first 2/3 partition of the trajectory is considered valid and will get checked.
-        break;
+      // 2026-11-15：不再在 2/3 处截断；最后 1/3（目标段）也要实时查碰撞。
 
       bool occ = false;
       occ |= rawOccNear(map.get(), info->position_traj_.evaluateDeBoorT(t));
@@ -980,6 +1049,50 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
           else
           {
             ROS_WARN_THROTTLE(2.0, "[end-anchor] skipped (finite/feas/raw/end-vel), keep original");
+          }
+        }
+      }
+
+      /* 2026-11-15（P4 根因）：EGO 的轨迹起点 = 实测 z，下沉时轨迹跟着下沉，z 误差≈0，
+         控制器不会纠（11-14 bag3: 0.69→0.45→0.1）。这里给整条轨迹一个**比例 z 偏置**
+         zoff = clamp(gain*(goal_z - meas_z), ±max)，作为"高度参考"：实测低于目标时整条
+         轨迹抬高，控制器看到正误差才爬升；实测接近目标时 zoff→0（P 控制，稳态=目标）。
+         只改 z、不动 xy；上限默认 0.10 m（天花板膨胀 0.87，目标 0.70 仍有余量）；
+         抬升后做 raw 占据 + 可行性检查，失败则不加。 */
+      {
+        const double dz = end_pt_.z() - start_pt_.z();
+        double zoff = goal_z_gain_ * dz;
+        zoff = std::max(-goal_z_offset_max_, std::min(goal_z_offset_max_, zoff));
+        if (std::fabs(zoff) > 0.01)
+        {
+          Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
+          cp.row(2).array() += zoff;
+          UniformBspline cand(cp, 3, info->position_traj_.getInterval());
+          cand.setPhysicalLimits(planner_manager_->pp_.max_vel_, planner_manager_->pp_.max_acc_,
+                                 planner_manager_->pp_.feasibility_tolerance_);
+          double r = 0.0;
+          bool ok = cp.allFinite() && cand.checkFeasibility(r, false);
+          if (ok)
+          {
+            const double dur_z = cand.getTimeSum();
+            for (double t = 0.0; t <= dur_z + 1e-9; t += 0.05)
+            {
+              if (planner_manager_->grid_map_->getOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))))
+              { ok = false; break; }
+            }
+          }
+          if (ok)
+          {
+            info->position_traj_ = cand;
+            info->velocity_traj_ = cand.getDerivative();
+            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
+            info->start_pos_ = cand.evaluateDeBoorT(0.0);
+            ROS_INFO_THROTTLE(1.0, "[z-ref] goal %.2f, measured %.2f -> offset %+.3f m",
+                              end_pt_.z(), start_pt_.z(), zoff);
+          }
+          else
+          {
+            ROS_WARN_THROTTLE(1.0, "[z-ref] offset %+.3f rejected (feasible/raw)", zoff);
           }
         }
       }

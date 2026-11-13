@@ -67,7 +67,17 @@ private:
 	   同日深度图实测 <0.30 m 像素数=0（无自机点），证明"起点在膨胀层里"是
 	   "离障碍太近"，不是"自己看见自己"。
 	   正确语义回上游：起点碰撞由 ConvertToIndexAndAdjustStartEndPoints 沿
-	   start->end 反向外推解决，搜索本身必须看膨胀层。 */
+	   start->end 反向外推解决。
+	   【2026-11-15 二次修正】上面这条"搜索本身必须看膨胀层"已被证伪：A* 只在
+	   bspline_optimizer 的碰撞段修补里被调用，用 inflate 会把"膨胀层里但真实可飞"
+	   的段尾判死（调用方已按 raw 选点），成批修补失败 -> 旧回环一直不被替换。
+	   现硬判据改 raw，膨胀层留给优化器 cost / FSM 规划裕度。 */
+	// 2026-11-15（根因修复，最终方向）：A* 的 start/end/搜索统一用 inflate（保住 0.30 安全裕度）。
+	// 11-14 的 `end adjust hit cap` 真正原因是**调用方错配**：refineTrajAlgo 的段尾 j 按
+	// raw 选（bspline_optimizer.cpp:1264），而被调用的 A* 按 inflate 拒绝。修法是把 j/pj
+	// 对齐到 inflate，而不是把 A* 降到 raw —— 11-15 闭环重放实测：硬判据用单点 raw 时，
+	// 轨迹从箱顶上方仅 0.10 m 擦过（机体半径 0.17 已被吃掉）。起点仍保留 raw 豁免
+	// （飞机物理上可能贴障，见 ConvertToIndexAndAdjustStartEndPoints）。
 	inline bool checkOccupancy(const Eigen::Vector3d &pos) {
 	  return (bool)grid_map_->getInflateOccupancy(pos);
 	}
