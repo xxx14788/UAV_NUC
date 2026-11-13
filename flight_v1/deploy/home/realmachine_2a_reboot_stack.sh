@@ -136,6 +136,16 @@ echo "camera_rate=$CAM_HZ" | tee rs_hz_$TS.txt
 [ -n "$CAM_HZ" ] && echo "✓ [2/6] 相机就绪：infra1 左目图像流(/camera/infra1/image_rect_raw) ${CAM_HZ}Hz（双目 848×480 + 深度 848×480 @30）" || echo "✗ [2/6] 相机无流——健康门将拦截"
 
 # 3) VINS (实机 config v0)
+# 2026-11-15（V1 根因修复）：IMU 35 Hz 低通中继。VINS 的 imu_topic 已指到 /vins_imu/data_raw；
+# 悬停实测 63-81 Hz 桨/电机振动（加计 std 0.26-0.52、陀螺 0.149）经非线性整流成低频零偏，
+# 先把入口振动压掉（离线实测加计 std 0.256→0.082、20-100Hz PSD 0.170→0.039）。
+pkill -f "[i]mu_lpf.py" 2>/dev/null; sleep 0.3
+nohup python3 "$HOME/sitl_realmachine/flight_v1/imu_lpf.py" > imu_lpf_$TS.log 2>&1 &
+LPF_W=0; until rostopic list 2>/dev/null | grep -qx "/vins_imu/data_raw"; do
+  sleep 0.3; LPF_W=$((LPF_W+1)); [ $LPF_W -ge 20 ] && break
+done
+[ "$LPF_W" -ge 20 ] && echo "  [3/6] ⚠ 6s 未见 /vins_imu/data_raw（检查 mavros IMU 流 / imu_lpf_$TS.log）" || echo "✓ [3/6] IMU 低通中继就绪（/vins_imu/data_raw，日志 imu_lpf_$TS.log）"
+
 rosrun vins vins_node ~/sitl_realmachine/03_realmachine_config/vins_stereo_realmachine_v0.yaml > vins_$TS.log 2>&1 &
 wait_msg /vins_estimator/imu_propagate 30 || echo "WARN VINS 30s 未出流" | tee -a vins_hz_$TS.txt
 OUT=$(timeout 10 rostopic hz /vins_estimator/imu_propagate -w 20 2>/dev/null | grep average | head -1)

@@ -17,6 +17,16 @@ echo "--- 杀旧 VINS ---"
 pkill -x vins_node 2>/dev/null; sleep 2
 pgrep -x vins_node >/dev/null && { echo "✗ 杀不掉"; exit 1; } || echo "✓ 已清"
 
+# 2026-11-15（V1）：确保 IMU 35 Hz 低通中继在跑（VINS 的 imu_topic=/vins_imu/data_raw）
+if ! pgrep -f "[i]mu_lpf.py" >/dev/null 2>&1; then
+  LPF_LOG=~/sitl_realmachine/imu_lpf_$(date +%H%M%S).log
+  nohup python3 "$HOME/sitl_realmachine/flight_v1/imu_lpf.py" > "$LPF_LOG" 2>&1 &
+  sleep 1
+  echo "  ✓ IMU 低通中继已起（$LPF_LOG）"
+else
+  echo "  ✓ IMU 低通中继已在跑"
+fi
+
 LOG=~/sitl_realmachine/vins_restart_$(date +%H%M%S).log
 nohup rosrun vins vins_node ~/sitl_realmachine/03_realmachine_config/vins_stereo_realmachine_v0.yaml > "$LOG" 2>&1 &
 echo "--- 新 VINS pid=$! 日志=$LOG ---"
