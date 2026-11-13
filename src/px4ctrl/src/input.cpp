@@ -227,7 +227,9 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
                 {
                     const double vz_fd = (p(2) - z_hist_.front().second) / dt;
                     const double dv = vz_fd - v(2);
-                    if (std::fabs(dv) > 0.05 && std::fabs(dv) < 0.30)
+                    // 2026-11-13 v3（用户令）：只在下沉（vz_fd < -0.03）时融合；
+                    // 起飞/爬升/悬停的 FD 噪声绝不进高度环，确保起飞不会飞太高。
+                    if (vz_fd < -0.03 && std::fabs(dv) > 0.05 && std::fabs(dv) < 0.30)
                     {
                         static ros::Time last_warn(0);
                         if ((now - last_warn).toSec() > 2.0)

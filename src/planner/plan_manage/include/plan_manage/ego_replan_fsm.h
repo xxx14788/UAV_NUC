@@ -103,6 +103,7 @@ namespace ego_planner
   // 2026-11-10（到点刹车）：距目标多近开始限速 / 限到多少
   double near_goal_dist_{0.6};
   double near_goal_vel_{0.15};
+  double near_goal_brake_{0.5};   // 2026-11-13 v3
 
     /* helper functions */
     bool callReboundReplan(bool flag_use_poly_init, bool flag_randomPolyTraj); // front-end and back-end method
