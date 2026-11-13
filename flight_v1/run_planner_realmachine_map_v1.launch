@@ -78,6 +78,7 @@
   <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="0.5"/>
   <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="1.0"/>
   <param name="/drone_0_ego_planner_node/fsm/near_goal_vel" value="0.15"/>
+  <param name="/drone_0_ego_planner_node/fsm/near_goal_brake" value="0.5"/>
   <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/grid_map/resolution" value="0.15"/>

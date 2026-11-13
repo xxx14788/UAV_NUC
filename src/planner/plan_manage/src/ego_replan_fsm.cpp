@@ -24,6 +24,7 @@ namespace ego_planner
   // 2026-11-10（到点刹车）：距目标 <near_goal_dist 时把规划 max_vel 压到 near_goal_vel
   nh.param("fsm/near_goal_dist", near_goal_dist_, 0.6);
   nh.param("fsm/near_goal_vel", near_goal_vel_, 0.15);
+  nh.param("fsm/near_goal_brake", near_goal_brake_, 0.5);   // 2026-11-13 v2：刹车剖面减速度
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -691,22 +692,14 @@ namespace ego_planner
     start_vel_ = info->velocity_traj_.evaluateDeBoorT(t_cur);
     start_acc_ = info->acceleration_traj_.evaluateDeBoorT(t_cur);
 
-    // 2026-11-09（P0-4 用户批准重设计）：跟踪偏差大时以**实测状态**为起点。
-    // 原实现一律取"旧轨迹在 t_cur 的点"：飞行实测该点与真机差 0.13~0.27 m
-    // （悬停时只有 0.01 m），新轨迹从机身身后起步，控制器必须先追回来，
-    // 贴障时这一段"追差"会直接把飞机顶进障碍。这里不做"拒绝替换"的门，
-    // 而是从根上让新轨迹的起点就是飞机现在的位置/速度。
-    {
-      const double track_dev = (odom_pos_ - start_pt_).norm();
-      if (track_dev > 0.25)   // 2026-11-11：0.08->0.25，避免每次重规划都换锚点（抖动）
-      {
-        ROS_WARN("[replan] start anchored to odom: projection dev %.2f m -> use measured state",
-                 track_dev);
-        start_pt_ = odom_pos_;
-        start_vel_ = odom_vel_;
-        start_acc_.setZero();
-      }
-    }
+    // 2026-11-13 v2（用户令）：重规划起点**无条件**用实测机身位置+速度。
+    // 旧实现默认用"旧轨迹在 t_cur 的投影"，只有偏差 >0.25 m 才改 odom；实测 72 条轨迹：
+    // 起点偏离机身 p50 0.082 / p95 0.220 / max 0.290 m（40% >0.1 m），
+    // 起点速度差 p50 0.055 / p95 0.150 m/s。每 0.5 s 重规划一次就把偏移重新注入一次，
+    // 形成"轨迹一直偏 + 首秒后退"的闭环。这里不再设阈值，也不再用投影的速度方向。
+    start_pt_  = odom_pos_;
+    start_vel_ = odom_vel_;
+    start_acc_.setZero();
 
     bool success = callReboundReplan(false, false);
 
@@ -909,9 +902,16 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     const bool near_goal = (d2goal < near_goal_dist_ && near_goal_vel_ > 0.0);
     if (near_goal)
     {
-      planner_manager_->pp_.max_vel_ = std::min(saved_max_vel, near_goal_vel_);
-      ROS_WARN_THROTTLE(1.0, "[replan] near goal %.2f m -> max_vel capped %.2f m/s",
-                        d2goal, planner_manager_->pp_.max_vel_);
+      /* 2026-11-13 v2：常量 0.15 突降会让"起点速度 0.3-0.5"与"限速 0.15"矛盾 ->
+         优化器急刹/不可行 -> ts=4 s/段 -> 整条轨迹爬行。改成随距离的刹车剖面：
+         v_cap = sqrt(2*a*(d-0.20)) + near_goal_vel_，最终仍降到 0.15 爬行
+         （用户明确允许爬行，给轨迹更多修正时间）。 */
+      const double d_rem = std::max(0.0, d2goal - 0.20);
+      const double v_cap = std::min(saved_max_vel,
+                             std::sqrt(2.0 * near_goal_brake_ * d_rem) + near_goal_vel_);
+      planner_manager_->pp_.max_vel_ = v_cap;
+      ROS_WARN_THROTTLE(1.0, "[replan] near goal %.2f m -> max_vel cap %.2f m/s (brake %.1f)",
+                        d2goal, v_cap, near_goal_brake_);
     }
 
     bool plan_and_refine_success =

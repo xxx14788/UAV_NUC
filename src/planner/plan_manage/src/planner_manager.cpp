@@ -215,6 +215,19 @@ namespace ego_planner
       }
     } while (flag_regenerate);
 
+    /* 2026-11-13 v2（深层根因）：A* 路径的第一个采样点是栅格中心（0.15 m 量化），
+       且 start_end_derivatives 取的是"上一条轨迹"在 t_cur 的速度/加速度，不是实测机身。
+       回放实测起点偏移 p50 0.16 / max 0.57 m、起点速度差 p95 0.13 m/s 都源于此。
+       这里把 B 样条第一个采样点改成 FSM 传入的实测 start_pt，起点导数改成实测
+       start_vel/start_acc —— 新轨迹从飞机当前位置/速度起步，而不是从栅格中心/旧轨迹起步。 */
+    if (!point_set.empty())
+      point_set[0] = start_pt;
+    if (start_end_derivatives.size() >= 3)
+    {
+      start_end_derivatives[0] = start_vel;
+      start_end_derivatives[2] = start_acc;
+    }
+
     Eigen::MatrixXd ctrl_pts, ctrl_pts_temp;
     UniformBspline::parameterizeToBspline(ts, point_set, start_end_derivatives, ctrl_pts);
 
@@ -404,45 +417,32 @@ namespace ego_planner
           }
         }
       }
-      // P5: 无条件限速（优先上游 refineTrajAlgo 重定时，失败才均匀拉伸）
-      for (int iter_p5 = 0; iter_p5 < 3; ++iter_p5)
+      // P5: 无条件限速（2026-11-13 v2：去掉 refineTrajAlgo，只做有界均匀拉伸）
+      for (int iter_p5 = 0; iter_p5 < 2; ++iter_p5)
       {
         pos.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_, pp_.feasibility_tolerance_);
         double ratio_p5;
         if (pos.checkFeasibility(ratio_p5, false))
           break;
-
-        bool fixed = false;
-        {
-          Eigen::MatrixXd ocp;
-          double ts_try = ts;
-          if (refineTrajAlgo(pos, start_end_derivatives, ratio_p5, ts_try, ocp))
-          {
-            UniformBspline cand(ocp, 3, ts_try);
-            cand.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_, pp_.feasibility_tolerance_);
-            double r2;
-            if (cand.checkFeasibility(r2, false) || r2 < ratio_p5)
-            {
-              pos = cand;
-              ts = ts_try;
-              fixed = true;
-              ROS_WARN_THROTTLE(2.0, "[P5] re-timed via refineTrajAlgo (ratio %.2f -> %.2f)", ratio_p5, r2);
-            }
-          }
-        }
-        if (!fixed)
-        {
-          const double new_int = pos.getInterval() * ratio_p5;
-          Eigen::MatrixXd cp_p5 = pos.getControlPoint();
-          pos = UniformBspline(cp_p5, 3, new_int);
-          ROS_WARN_THROTTLE(2.0, "[P5] uniform stretch (ratio %.2f): interval %.3f -> %.3f",
-                            ratio_p5, pos.getInterval() / ratio_p5, new_int);
-        }
+        /* refineTrajAlgo 会改控制点数量/时间基：实测把 interval 从 4 s 拉到 10-85 s、
+           总时长到 593 s。这里只做有界均匀拉伸：每轮 ≤2×，最多 2 轮（总 ≤4×）。
+           仍不可行 -> 拒绝本次轨迹（不发布超长/高加速度轨迹）。 */
+        const double step = std::min(2.0, std::max(1.0, ratio_p5));
+        if (step <= 1.0001)
+          break;
+        const double old_int = pos.getInterval();
+        Eigen::MatrixXd cp_p5 = pos.getControlPoint();
+        pos = UniformBspline(cp_p5, 3, old_int * step);
+        ROS_WARN_THROTTLE(2.0, "[P5] uniform stretch (ratio %.2f): interval %.3f -> %.3f",
+                          ratio_p5, old_int, pos.getInterval());
       }
       {
         double r_final;
         if (!pos.checkFeasibility(r_final, false))
-          ROS_ERROR_THROTTLE(2.0, "[P5] still infeasible after 3 rounds (ratio=%.2f), publishing", r_final);
+        {
+          ROS_ERROR("[P5] still infeasible after bounded stretch (ratio=%.2f), reject trajectory", r_final);
+          return false;
+        }
       }
     }
 

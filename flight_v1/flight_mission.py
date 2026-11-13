@@ -511,7 +511,7 @@ class RosFlight:
             latest = max(log_candidates, key=lambda p: p.stat().st_mtime)
             text = latest.read_text(errors="replace")
             log_ok = True
-            for name, limit in (("Bas", 0.8), ("Bgs", 0.02), ("final_cost", 1e4)):
+            for name, limit in (("Bas", 0.05), ("Bgs", 0.005), ("final_cost", 3000)):
                 if name == "final_cost":
                     vals = [float(x) for x in re.findall(r"final_cost=([0-9.eE+-]+)", text)[-20:]]
                 else:

@@ -72,6 +72,11 @@ private:
 	  return (bool)grid_map_->getInflateOccupancy(pos);
 	}
 
+	// 2026-11-13 v2：原始占据（不含膨胀），用于判断"起点只是落在安全膨胀层"还是真在障碍里
+	inline bool checkRawOccupancy(const Eigen::Vector3d &pos) {
+	  return grid_map_->getOccupancy(pos) > 0;
+	}
+
 	std::vector<GridNodePtr> retrievePath(GridNodePtr current);
 
 	double step_size_, inv_step_size_;

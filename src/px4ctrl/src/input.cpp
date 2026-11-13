@@ -210,6 +210,48 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
         rcv_stamp = now;
         recv_new_msg = true;
         p = p_in; v = v_in; q = q_in; w = w_in;
+        /* 2026-11-13 v2：VINS 的 z 位置与 z 速度在优化修正时会不一致。
+           实测 011554 的 58-60 s：z 掉 5.6 cm、imu_propagate vz≈0，
+           而 PX4 EKF vz=-0.09；高度环用 VINS vz 做速度反馈 -> "看不见下沉"
+           -> 掉高 5-6 cm。这里用 0.1 s 位置差分给出真实 z 速度，
+           与消息速度差 >0.05 m/s 时 50/50 融合（节流告警）。 */
+        {
+            const double t_now = now.toSec();
+            z_hist_.push_back(std::make_pair(t_now, p(2)));
+            while (z_hist_.size() > 2 && t_now - z_hist_.front().first > 0.10)
+                z_hist_.pop_front();
+            if (z_hist_.size() >= 3)
+            {
+                const double dt = t_now - z_hist_.front().first;
+                if (dt > 0.05)
+                {
+                    const double vz_fd = (p(2) - z_hist_.front().second) / dt;
+                    const double dv = vz_fd - v(2);
+                    if (std::fabs(dv) > 0.05 && std::fabs(dv) < 0.30)
+                    {
+                        static ros::Time last_warn(0);
+                        if ((now - last_warn).toSec() > 2.0)
+                        {
+                            last_warn = now;
+                            ROS_WARN("[px4ctrl] z velocity mismatch: vins=%.3f fd=%.3f -> blend",
+                                     v(2), vz_fd);
+                        }
+                        v(2) = 0.5 * v(2) + 0.5 * vz_fd;
+                    }
+                    else if (std::fabs(dv) >= 0.30)
+                    {
+                        // 大差 = VINS z 跳变/重初始化；差分速度不可信，不能喂进高度环
+                        static ros::Time last_big(0);
+                        if ((now - last_big).toSec() > 2.0)
+                        {
+                            last_big = now;
+                            ROS_WARN("[px4ctrl] z velocity mismatch too large (vins=%.3f fd=%.3f) -> ignore fd",
+                                     v(2), vz_fd);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 

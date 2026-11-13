@@ -104,22 +104,32 @@ bool AStar::ConvertToIndexAndAdjustStartEndPoints(Vector3d start_pt, Vector3d en
     const Vector3d end_pt_orig = end_pt;
     if (checkOccupancy(Index2Coord(start_idx)))
     {
-        //ROS_WARN("Start point is insdide an obstacle.");
-        /* 2026-11-08（用户令 5）：加迭代上限。原实现是 do/while，若整条射线都在
-           膨胀层里就一路往外走，只能靠出图才退出（表现为规划器长时间卡住）。 */
-        int it = 0;
-        do
+        /* 2026-11-13 v2（深层根因修复）：起点在膨胀层、但原始格自由 = 飞机物理上就在这里
+           （贴箱 0.25-0.30 m 的目标/跟踪误差都会让它进入 0.30 m 膨胀层）。旧逻辑沿
+           "远离目标"方向把起点外推 0.15-0.60 m；B 样条第一个采样点就是被外推的起点，
+           飞机必须先飞回去 -> 后撤/轨迹一直偏（回放实测起点偏移 p50 0.18 / max 0.58 m）。
+           原始格自由时保留起点，让轨迹从机身当前位置起步；只有原始格真被障碍占据才外推。 */
+        if (!checkRawOccupancy(start_pt_orig))
         {
-            start_pt = (start_pt - end_pt).normalized() * step_size_ + start_pt;
-            if (!Coord2Index(start_pt, start_idx))
-                return false;
-            if (++it > kMaxAdjustIters || (start_pt - start_pt_orig).norm() > kMaxStartAdjustDist)
+            ROS_WARN_THROTTLE(1.0, "[A*] start in inflation but raw free (start=(%.2f,%.2f,%.2f)) -> keep start",
+                              start_pt_orig(0), start_pt_orig(1), start_pt_orig(2));
+        }
+        else
+        {
+            int it = 0;
+            do
             {
-                ROS_WARN("[A*] start adjust hit cap (%d it, %.2f m), give up", it,
-                         (start_pt - start_pt_orig).norm());
-                return false;
-            }
-        } while (checkOccupancy(Index2Coord(start_idx)));
+                start_pt = (start_pt - end_pt).normalized() * step_size_ + start_pt;
+                if (!Coord2Index(start_pt, start_idx))
+                    return false;
+                if (++it > kMaxAdjustIters || (start_pt - start_pt_orig).norm() > kMaxStartAdjustDist)
+                {
+                    ROS_WARN("[A*] start adjust hit cap (%d it, %.2f m), give up", it,
+                             (start_pt - start_pt_orig).norm());
+                    return false;
+                }
+            } while (checkOccupancy(Index2Coord(start_idx)));
+        }
     }
 
     if (checkOccupancy(Index2Coord(end_idx)))

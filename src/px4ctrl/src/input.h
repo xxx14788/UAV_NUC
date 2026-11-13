@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <Eigen/Dense>
+#include <deque>
 
 #include <sensor_msgs/Imu.h>
 #include <quadrotor_msgs/PositionCommand.h>
@@ -65,6 +66,9 @@ public:
   Eigen::Vector3d v;
   Eigen::Quaterniond q;
   Eigen::Vector3d w;
+
+  // 2026-11-13 v2：z 位置差分历史（0.1 s），修正 VINS z 速度与位置不一致
+  std::deque<std::pair<double, double>> z_hist_;
 
   nav_msgs::Odometry msg;
   ros::Time rcv_stamp;
