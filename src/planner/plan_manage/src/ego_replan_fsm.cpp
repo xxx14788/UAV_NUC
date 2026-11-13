@@ -24,7 +24,6 @@ namespace ego_planner
   // 2026-11-10（到点刹车）：距目标 <near_goal_dist 时把规划 max_vel 压到 near_goal_vel
   nh.param("fsm/near_goal_dist", near_goal_dist_, 0.6);
   nh.param("fsm/near_goal_vel", near_goal_vel_, 0.15);
-  nh.param("fsm/near_goal_brake", near_goal_brake_, 0.5);   // 2026-11-13 v2：刹车剖面减速度
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -902,16 +901,12 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     const bool near_goal = (d2goal < near_goal_dist_ && near_goal_vel_ > 0.0);
     if (near_goal)
     {
-      /* 2026-11-13 v2：常量 0.15 突降会让"起点速度 0.3-0.5"与"限速 0.15"矛盾 ->
-         优化器急刹/不可行 -> ts=4 s/段 -> 整条轨迹爬行。改成随距离的刹车剖面：
-         v_cap = sqrt(2*a*(d-0.20)) + near_goal_vel_，最终仍降到 0.15 爬行
-         （用户明确允许爬行，给轨迹更多修正时间）。 */
-      const double d_rem = std::max(0.0, d2goal - 0.20);
-      const double v_cap = std::min(saved_max_vel,
-                             std::sqrt(2.0 * near_goal_brake_ * d_rem) + near_goal_vel_);
-      planner_manager_->pp_.max_vel_ = v_cap;
-      ROS_WARN_THROTTLE(1.0, "[replan] near goal %.2f m -> max_vel cap %.2f m/s (brake %.1f)",
-                        d2goal, v_cap, near_goal_brake_);
+      /* 2026-11-13 用户裁定：**爬行是允许的**（给轨迹更多时间修正），near_goal_vel 保持
+         0.15 常量，不做提速/刹车剖面。P5 已改为有界均匀拉伸（≤4x），不会再出现
+         10-85 s/段的爆炸；慢是允许的。 */
+      planner_manager_->pp_.max_vel_ = std::min(saved_max_vel, near_goal_vel_);
+      ROS_WARN_THROTTLE(1.0, "[replan] near goal %.2f m -> max_vel capped %.2f m/s (crawl)",
+                        d2goal, planner_manager_->pp_.max_vel_);
     }
 
     bool plan_and_refine_success =

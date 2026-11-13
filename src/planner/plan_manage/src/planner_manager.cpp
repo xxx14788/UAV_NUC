@@ -307,21 +307,27 @@ namespace ego_planner
     if (pp_.drone_id <= 0)
     {
 
+      /* 2026-11-13 v2：step-2 的 refine 只调用一次，保留有限 ratio 的重定时；
+         ratio=inf/NaN（起点贴障/优化器退化）时 lengthenTime(inf)->NaN，必须跳过，
+         交给下面 P5 有界均匀拉伸/拒发。P5 自身的 refine 已删除（迭代复合才是 10-85s 爆炸源）。 */
       double ratio;
       bool flag_step_2_success = true;
       if (!pos.checkFeasibility(ratio, false))
       {
-        cout << "Need to reallocate time." << endl;
-
-        Eigen::MatrixXd optimal_control_points;
-        flag_step_2_success = refineTrajAlgo(pos, start_end_derivatives, ratio, ts, optimal_control_points);
-        if (flag_step_2_success)
-          pos = UniformBspline(optimal_control_points, 3, ts);
+        if (std::isfinite(ratio) && ratio > 0.0 && ratio <= 10.0)
+        {
+          Eigen::MatrixXd optimal_control_points;
+          flag_step_2_success = refineTrajAlgo(pos, start_end_derivatives, ratio, ts, optimal_control_points);
+          if (flag_step_2_success)
+            pos = UniformBspline(optimal_control_points, 3, ts);
+        }
+        else
+        {
+          ROS_ERROR("[refine] step-2 ratio=%.3f non-finite/extreme -> skip refine (P5 bounded will handle)", ratio);
+        }
       }
-
       if (!flag_step_2_success)
       {
-        printf("\033[34mThis refined trajectory hits obstacles. It doesn't matter if appeares occasionally. But if continously appearing, Increase parameter \"lambda_fitness\".\n\033[0m");
         continous_failures_count_++;
         return false;
       }
