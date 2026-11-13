@@ -928,6 +928,61 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
       auto info = &planner_manager_->local_data_;
 
+      /* 2026-11-13 v2（用户令）：末端硬锚定只作用于**已经贴近目标**的情况（<=0.20 m）。
+         远距离末端交给优化器自然收敛；绝不把 0.2-0.74 m 硬拉过去（不可行/急刹）。
+         条件：local_target==全局目标、目标原始格自由、当前末端控制点距目标 <=0.20 m。
+         动作：最后 3 个控制点钉到目标（P2 已压末端速度 0，3 副本保持 0）。
+         校验：有限 / P5 可行 / 最后 0.5 s 原始格自由 / 末端速度 <=0.05；失败保留原轨迹。 */
+      if ((local_target_pt_ - end_pt_).norm() < 1e-3 &&
+          planner_manager_->grid_map_->getOccupancy(end_pt_) <= 0)
+      {
+        Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
+        const int n = cp.cols();
+        if (n >= 6 && (cp.col(n - 1) - end_pt_).norm() <= 0.20)
+        {
+          Eigen::MatrixXd cp2 = cp;
+          for (int k = 1; k <= 3; ++k)
+            cp2.col(n - k) = end_pt_;
+          UniformBspline cand(cp2, 3, info->position_traj_.getInterval());
+          bool ok = cp2.allFinite();
+          double r = 0.0;
+          if (ok)
+          {
+            cand.setPhysicalLimits(planner_manager_->pp_.max_vel_, planner_manager_->pp_.max_acc_,
+                                   planner_manager_->pp_.feasibility_tolerance_);
+            ok = cand.checkFeasibility(r, false);
+          }
+          if (ok)
+          {
+            const double dur_c = cand.getTimeSum();
+            for (double t = std::max(0.0, dur_c - 0.5); t <= dur_c + 1e-9; t += 0.02)
+            {
+              if (planner_manager_->grid_map_->getOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))) > 0)
+              {
+                ok = false;
+                break;
+              }
+            }
+          }
+          if (ok)
+            ok = cand.getDerivative().evaluateDeBoorT(cand.getTimeSum()).norm() <= 0.05;
+          if (ok)
+          {
+            info->position_traj_ = cand;
+            info->velocity_traj_ = cand.getDerivative();
+            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
+            info->duration_ = cand.getTimeSum();
+            info->start_pos_ = cand.evaluateDeBoorT(0.0);
+            ROS_INFO("[end-anchor] end within 0.20 m -> snap last 3 CPs to goal (%.2f,%.2f,%.2f), ratio=%.2f",
+                     end_pt_.x(), end_pt_.y(), end_pt_.z(), r);
+          }
+          else
+          {
+            ROS_WARN_THROTTLE(2.0, "[end-anchor] skipped (finite/feas/raw/end-vel), keep original");
+          }
+        }
+      }
+
       traj_utils::Bspline bspline;
       bspline.order = 3;
       bspline.start_time = info->start_time_;

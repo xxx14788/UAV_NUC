@@ -63,6 +63,27 @@ int main() {
   check(f3, "stretch by ratio -> feasible");
   check(v3 < 0.01, "stretch preserves zero end velocity");
 
+  // 2026-11-13 v2：近距锚定只对 <=0.20 m；0.2 m 在 1.2 s interval 下必须可行，
+  // 0.74 m 远距必须不可行（证明"远距离不强制锚定"的保护是必要的）。
+  {
+    const Eigen::MatrixXd cps_p_end = p_end.getControlPoint();
+    const Eigen::Vector3d te = cps_p_end.col(cps_p_end.cols() - 1);
+    const double gaps[2] = {0.20, 0.74};
+    for (int gi = 0; gi < 2; ++gi)
+    {
+      const Eigen::Vector3d goal = te + Eigen::Vector3d(gaps[gi], 0.0, 0.0);
+      Eigen::MatrixXd c = cps_p_end;
+      for (int k = 1; k <= 3; ++k)
+        c.col(c.cols() - k) = goal;
+      UniformBspline q(c, 3, 1.2);
+      q.setPhysicalLimits(0.5, 4.0, 0.05);
+      double rq;
+      const bool fq = q.checkFeasibility(rq, false);
+      check(gi == 0 ? fq : !fq,
+            gi == 0 ? "anchor 0.20m @1.2s feasible" : "anchor 0.74m @1.2s infeasible -> fallback path");
+    }
+  }
+
   std::cout << (g_fail ? "SELFCHECK FAIL" : "SELFCHECK PASS") << std::endl;
   return g_fail ? 1 : 0;
 }
