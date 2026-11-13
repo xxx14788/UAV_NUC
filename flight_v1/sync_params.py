@@ -78,7 +78,8 @@ P = {
 RECORD_TOPICS = [
     '/mavros/state', '/mavros/extended_state', '/mavros/battery',
     '/mavros/imu/data', '/mavros/imu/data_raw', '/mavros/imu/mag',
-    '/mavros/imu/temperature_imu', '/mavros/local_position/odom',
+    '/mavros/imu/temperature_imu', '/mavros/altitude', '/vins_imu/data_raw',
+    '/mavros/local_position/odom',
     '/mavros/vision_pose/pose', '/mavros/rc/in', '/mavros/rc/out',
     '/mavros/setpoint_raw/attitude', '/mavros/time_reference', '/mavros/estimator_status',
     '/record/infra1',      # 15 Hz 副本（throttle 生成；VINS 仍吃原始 30 Hz） '/camera/infra1/camera_info',

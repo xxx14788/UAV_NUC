@@ -213,6 +213,8 @@ TOPICS=(
     /mavros/imu/data_raw
     /mavros/imu/mag
     /mavros/imu/temperature_imu
+    /mavros/altitude
+    /vins_imu/data_raw
     /mavros/estimator_status
     /mavros/state
     /mavros/battery

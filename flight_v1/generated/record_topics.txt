@@ -7,6 +7,8 @@
 /mavros/imu/data_raw
 /mavros/imu/mag
 /mavros/imu/temperature_imu
+/mavros/altitude
+/vins_imu/data_raw
 /mavros/local_position/odom
 /mavros/vision_pose/pose
 /mavros/rc/in
