@@ -934,7 +934,8 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
          动作：最后 3 个控制点钉到目标（P2 已压末端速度 0，3 副本保持 0）。
          校验：有限 / P5 可行 / 最后 0.5 s 原始格自由 / 末端速度 <=0.05；失败保留原轨迹。 */
       if ((local_target_pt_ - end_pt_).norm() < 1e-3 &&
-          planner_manager_->grid_map_->getOccupancy(end_pt_) <= 0)
+          planner_manager_->grid_map_->getOccupancy(end_pt_) <= 0 &&
+          planner_manager_->grid_map_->getInflateOccupancy(end_pt_) == 0)
       {
         Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
         const int n = cp.cols();
@@ -957,7 +958,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
             const double dur_c = cand.getTimeSum();
             for (double t = std::max(0.0, dur_c - 0.5); t <= dur_c + 1e-9; t += 0.02)
             {
-              if (planner_manager_->grid_map_->getOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))) > 0)
+              if (planner_manager_->grid_map_->getInflateOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))) > 0)
               {
                 ok = false;
                 break;
