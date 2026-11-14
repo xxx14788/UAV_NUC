@@ -109,6 +109,7 @@ namespace ego_planner
   double last_goal_dist_{1e9};      // P2 停滞检测：上一次到目标的距离
   ros::Time last_progress_t_;       // P2 停滞检测：上次有进展的时刻
   ros::Time plan_fail_since_;       // P3 连续规划失败起点
+  ros::Time escape_last_try_;       // 2026-11-15：脱壳机动限频（>=1 s）
   bool odom_invalid_{false};        // P3 位姿无效（VINS 发散跑出地图）标志
   double goal_z_gain_{0.5};         // P4 z 参考比例增益
   double goal_z_offset_max_{0.10};  // P4 z 参考偏置上限（m）
@@ -118,6 +119,7 @@ namespace ego_planner
     bool callEmergencyStop(Eigen::Vector3d stop_pos);                          // front-end and back-end method
     bool planFromGlobalTraj(const int trial_times = 1);
     bool planFromCurrentTraj(const int trial_times = 1);
+    bool tryEscapeFromInflation();   // 2026-11-15（壳内死锁根因修复）
 
     /* return value: std::pair< Times of the same state be continuously called, current continuously called state > */
     void changeFSMExecState(FSM_EXEC_STATE new_state, string pos_call);

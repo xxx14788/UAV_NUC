@@ -31,6 +31,8 @@ namespace ego_planner
     bool reboundReplan(Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc,
                        Eigen::Vector3d end_pt, Eigen::Vector3d end_vel, bool flag_polyInit, bool flag_randomPolyTraj);
     bool EmergencyStop(Eigen::Vector3d stop_pos);
+    // 2026-11-15（壳内死锁根因修复）：从 start 直线飞到 target 的短机动（零首末速）。
+    bool escapeMove(const Eigen::Vector3d &start, const Eigen::Vector3d &target, double speed);
     bool planGlobalTraj(const Eigen::Vector3d &start_pos, const Eigen::Vector3d &start_vel, const Eigen::Vector3d &start_acc,
                         const Eigen::Vector3d &end_pos, const Eigen::Vector3d &end_vel, const Eigen::Vector3d &end_acc);
     bool planGlobalTrajWaypoints(const Eigen::Vector3d &start_pos, const Eigen::Vector3d &start_vel, const Eigen::Vector3d &start_acc,

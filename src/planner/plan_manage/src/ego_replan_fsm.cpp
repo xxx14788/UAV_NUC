@@ -224,6 +224,111 @@ namespace ego_planner
     }
   }
 
+  // 2026-11-15（壳内死锁根因修复）：闭环实测起点落在膨胀壳内时，refine 的 A* 段修补
+  // 恒失败（a star error 19.8 万次 / plan_success=0 / GEN_NEW_TRAJ 死循环），飞机永久停住。
+  // 这里给恢复分支：找最近的全自由体素（raw+inflate 都自由），直线飞过去，再交给正常规划。
+  bool EGOReplanFSM::tryEscapeFromInflation()
+  {
+    const ros::Time now = ros::Time::now();
+    if (!escape_last_try_.isZero() && (now - escape_last_try_).toSec() < 1.0)
+      return false;
+    escape_last_try_ = now;
+
+    const auto map = planner_manager_->grid_map_;
+    if (!map)
+      return false;
+
+    const Eigen::Vector3d start = odom_pos_;
+    if (map->getInflateOccupancy(start) == 0)
+      return false;   // 不在壳里：走正常重规划，不做机动
+    if (map->getOccupancy(start) != 0)
+    {
+      ROS_ERROR("[escape] start (%.2f,%.2f,%.2f) inside occupied voxel -> no escape",
+                start.x(), start.y(), start.z());
+      return false;
+    }
+
+    const double res = map->getResolution();
+    const int rx = (int)std::ceil(1.20 / res);
+    struct Cand { Eigen::Vector3d p; double d; };
+    std::vector<Cand> cands;
+    for (int ix = -rx; ix <= rx; ++ix)
+      for (int iy = -rx; iy <= rx; ++iy)
+        for (int iz = -1; iz <= rx; ++iz)   // 向下只 1 格，主要向上/水平脱壳
+        {
+          const Eigen::Vector3d q = start + Eigen::Vector3d(ix * res, iy * res, iz * res);
+          if (map->getInflateOccupancy(q) != 0 || map->getOccupancy(q) != 0)
+            continue;
+          // 2026-11-15 修正：一次必须挪出壳（>=0.45 m，一个壳直径+余量）；否则每步 0.15 m
+          // 挪完仍在壳内，会变成"贴障爬行"（首轮实测 4 次 escape 只走 0.37 m）。
+          const double d = (q - start).norm();
+          if (d < 0.45 || d > 1.20)
+            continue;
+          // 目标 6 邻域 1 格净空，避免"算自由但贴着另一面壳"
+          bool clear = true;
+          for (int a = 0; a < 3 && clear; ++a)
+            for (int sgn = -1; sgn <= 1 && clear; sgn += 2)
+            {
+              Eigen::Vector3d qn = q;
+              qn(a) += sgn * res;
+              if (map->getInflateOccupancy(qn) != 0) clear = false;
+            }
+          if (!clear)
+            continue;
+          Cand c; c.p = q; c.d = d;
+          cands.push_back(c);
+        }
+    std::sort(cands.begin(), cands.end(), [](const Cand &a, const Cand &b) { return a.d < b.d; });
+
+    int tried = 0;
+    for (size_t k = 0; k < cands.size(); ++k)
+    {
+      if (++tried > 60)
+        break;
+      const Eigen::Vector3d tgt = cands[k].p;
+      bool ok = true;
+      const int n = std::max(4, (int)std::ceil(cands[k].d / (0.5 * res)));
+      for (int i = 1; i <= n; ++i)
+      {
+        const Eigen::Vector3d s = start + (tgt - start) * (double(i) / double(n));
+        if (map->getOccupancy(s) != 0) { ok = false; break; }                       // 全程不许穿实体
+        if ((s - start).norm() > 0.30 && map->getInflateOccupancy(s) != 0) { ok = false; break; }
+      }
+      if (!ok)
+        continue;
+      if (!planner_manager_->escapeMove(start, tgt, 0.25))
+        continue;
+
+      ROS_WARN("[escape] start (%.2f,%.2f,%.2f) in inflation (raw free) -> free point (%.2f,%.2f,%.2f) d=%.2f m",
+               start.x(), start.y(), start.z(), tgt.x(), tgt.y(), tgt.z(), cands[k].d);
+
+      const auto info = &planner_manager_->local_data_;
+      traj_utils::Bspline bspline;
+      bspline.order = 3;
+      bspline.start_time = info->start_time_;
+      bspline.traj_id = info->traj_id_;
+      Eigen::MatrixXd pos_pts = info->position_traj_.getControlPoint();
+      bspline.pos_pts.reserve(pos_pts.cols());
+      for (int i = 0; i < pos_pts.cols(); ++i)
+      {
+        geometry_msgs::Point pt;
+        pt.x = pos_pts(0, i); pt.y = pos_pts(1, i); pt.z = pos_pts(2, i);
+        bspline.pos_pts.push_back(pt);
+      }
+      Eigen::VectorXd knots = info->position_traj_.getKnot();
+      bspline.knots.reserve(knots.rows());
+      for (int i = 0; i < knots.rows(); ++i)
+        bspline.knots.push_back(knots(i));
+      bspline_pub_.publish(bspline);
+      visualization_->displayOptimalList(info->position_traj_.get_control_points(), 0);
+      return true;
+    }
+
+    ROS_ERROR("[escape] no feasible free point (0.45~1.20 m) from (%.2f,%.2f,%.2f)",
+              start.x(), start.y(), start.z());
+    return false;
+  }
+
   void EGOReplanFSM::triggerCallback(const geometry_msgs::PoseStampedPtr &msg)
   {
     have_trigger_ = true;
@@ -622,7 +727,17 @@ namespace ego_planner
       }
       else
       {
-        changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+        // 2026-11-15（壳内死锁根因修复）：常规全局规划连续失败时，若起点在膨胀壳内，
+        // 先做一次有界脱壳机动，否则 GEN_NEW_TRAJ 会永久自循环（闭环实测）。
+        if (tryEscapeFromInflation())
+        {
+          plan_fail_since_ = ros::Time(0);
+          changeFSMExecState(EXEC_TRAJ, "ESCAPE");
+        }
+        else
+        {
+          changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+        }
       }
       break;
     }
@@ -646,6 +761,13 @@ namespace ego_planner
           plan_fail_since_ = now_f;
         else if ((now_f - plan_fail_since_).toSec() > 1.5)
         {
+          // 2026-11-15（壳内死锁根因修复）：急停前先试脱壳机动（能脱壳就不必停）
+          if (tryEscapeFromInflation())
+          {
+            plan_fail_since_ = ros::Time(0);
+            changeFSMExecState(EXEC_TRAJ, "ESCAPE");
+            break;
+          }
           ROS_ERROR("[replan] planning failed for >1.5 s -> EMERGENCY_STOP (do not keep stale traj)");
           plan_fail_since_ = ros::Time(0);
           // 审查修正：低速分支也必须先刹车，否则 EMERGENCY 会直接转 GEN_NEW_TRAJ，
@@ -1146,6 +1268,64 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
             ROS_WARN_THROTTLE(1.0, "[z-ref] offset %+.3f rejected (feasible/raw)", zoff);
           }
         }
+      }
+
+      // 2026-11-15（时间重分配，治"到点爬行"）：控制点被末端锚定/短距离密化后间距只有
+      // 0.05-0.2 m，而段时长 ts 仍按 ctrl_pt_dist/max_vel 固定（实测 1.50 s/段）——执行速度
+      // 变成"实际间距/ts"，闭环实测最后 0.58 m 用了 13.5 s（0.04 m/s），永远到不了点。
+      // 这里按弧长把时间压回速度预算（**只改时间不改几何**），用 checkFeasibility
+      // （限速/限加速度）保护，并沿用 near-goal 刹车剖面作为该次规划的速度上限。
+      {
+        auto arcLen = [](UniformBspline &b, double dur) {
+          double l = 0.0; Eigen::Vector3d prev = b.evaluateDeBoorT(0.0);
+          for (double tt = 0.05; tt <= dur + 1e-6; tt += 0.05)
+          { const Eigen::Vector3d cur = b.evaluateDeBoorT(tt); l += (cur - prev).norm(); prev = cur; }
+          return l;
+        };
+
+        const double d2goal_now = (end_pt_ - start_pt_).norm();
+        double vmax_eff = planner_manager_->pp_.max_vel_;
+        if (d2goal_now < near_goal_dist_ && near_goal_vel_ > 0.0)
+        {
+          const double d_rem = std::max(0.0, d2goal_now - 0.20);
+          vmax_eff = std::min(vmax_eff, std::sqrt(2.0 * near_goal_brake_ * d_rem) + near_goal_vel_);
+        }
+
+        const double len = arcLen(info->position_traj_, info->duration_);
+        const double amax = planner_manager_->pp_.max_acc_;
+        if (len > 0.15 && len / std::max(0.1, info->duration_) < 0.60 * vmax_eff)
+        {
+          UniformBspline best = info->position_traj_;
+          bool improved = false;
+          for (double s = 0.90; s >= 0.25 - 1e-9; s -= 0.05)
+          {
+            UniformBspline cand = info->position_traj_;
+            cand.lengthenTime(s);
+            cand.setPhysicalLimits(vmax_eff, amax, 0.10);
+            double ratio_chk = 0.0;
+            if (!cand.checkFeasibility(ratio_chk, false))
+              break;
+            best = cand; improved = true;
+          }
+          if (improved)
+          {
+            const double d_old = info->duration_;
+            info->position_traj_ = best;
+            info->velocity_traj_ = best.getDerivative();
+            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
+            info->start_pos_ = best.evaluateDeBoorT(0.0);
+            info->duration_ = best.getTimeSum();
+            ROS_WARN_THROTTLE(0.5, "[retime] d_goal=%.2f len=%.2fm dur %.2f -> %.2fs (vavg %.2f -> %.2f, vmax %.2f)",
+                              d2goal_now, len, d_old, info->duration_,
+                              len / std::max(0.1, d_old), len / std::max(0.1, info->duration_), vmax_eff);
+          }
+        }
+
+        ROS_WARN_THROTTLE(0.5, "[traj] dur=%.2fs len=%.2fm vavg=%.2f m/s d_goal=%.2f cp=%d ts=%.2f",
+                          info->duration_, len, len / std::max(0.1, info->duration_),
+                          d2goal_now,
+                          (int)info->position_traj_.getControlPoint().cols(),
+                          info->position_traj_.getInterval());
       }
 
       traj_utils::Bspline bspline;

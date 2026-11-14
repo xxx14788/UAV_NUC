@@ -514,6 +514,37 @@ namespace ego_planner
     return true;
   }
 
+  // 2026-11-15（壳内死锁根因修复）：机身跟踪误差会把飞机带进膨胀壳（raw 仍自由）。
+  // 此时 refine 的 A* 段修补从壳内起点出发找不到自由终点，plan 永久失败。
+  // 这里生成一条**有界直线机动**（零首末速、限速）把飞机带出壳，之后正常规划接管。
+  bool EGOPlannerManager::escapeMove(const Eigen::Vector3d &start, const Eigen::Vector3d &target, double speed)
+  {
+    const double dist = (target - start).norm();
+    if (dist < 0.05)
+      return false;
+
+    const double v = std::max(0.10, speed);
+    const int seg = std::max(4, (int)std::ceil(dist / 0.10));
+    const double ts = std::max(0.05, dist / v / double(seg));
+
+    std::vector<Eigen::Vector3d> point_set;
+    point_set.reserve(seg + 1);
+    for (int i = 0; i <= seg; ++i)
+      point_set.push_back(start + (target - start) * (double(i) / double(seg)));
+
+    std::vector<Eigen::Vector3d> start_end_derivative(4, Eigen::Vector3d::Zero());
+    Eigen::MatrixXd ctrl_pts;
+    UniformBspline::parameterizeToBspline(ts, point_set, start_end_derivative, ctrl_pts);
+    if (ctrl_pts.cols() < 4)
+    {
+      ROS_ERROR("[escape] bspline parameterize failed (cols=%d)", (int)ctrl_pts.cols());
+      return false;
+    }
+
+    updateTrajInfo(UniformBspline(ctrl_pts, 3, ts), ros::Time::now());
+    return true;
+  }
+
   bool EGOPlannerManager::checkCollision(int drone_id)
   {
     if (local_data_.start_time_.toSec() < 1e9) // It means my first planning has not started
