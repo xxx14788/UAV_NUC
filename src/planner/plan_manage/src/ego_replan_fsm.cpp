@@ -250,6 +250,46 @@ namespace ego_planner
     if (!std::isfinite(goal_z)) { ROS_ERROR("Reject RViz goal: non-finite z"); return; }
     Eigen::Vector3d end_wp(msg->pose.position.x, msg->pose.position.y, goal_z);
 
+    /* 2026-11-15（用户令）目标可达性门：与规划器**同一硬判据**（inflate）。
+       目标体素不自由 -> 拒绝，并给最近的自由点（±0.6 m 邻域搜索）、发布 goal_status REJECTED。
+       这不是 0.8 m 的死线：目标只要在膨胀外就接受（11-12 的 2.15、11-13 圆的 0.67 都过；
+       11-14 的 0.44 若体素自由也照过，只有体素落进膨胀才拒）。 */
+    {
+      const auto map = planner_manager_->grid_map_;
+      if (map && map->getInflateOccupancy(end_wp) != 0)
+      {
+        Eigen::Vector3d best = end_wp;
+        double best_d = 1e9;
+        bool found = false;
+        const double res = map->getResolution();
+        const int rxy = std::max(1, (int)std::ceil(0.60 / res));
+        const int rz = std::max(0, (int)std::ceil(0.30 / res));
+        for (int ix = -rxy; ix <= rxy; ++ix)
+          for (int iy = -rxy; iy <= rxy; ++iy)
+            for (int iz = -rz; iz <= rz; ++iz)
+            {
+              const Eigen::Vector3d q = end_wp + Eigen::Vector3d(ix * res, iy * res, iz * res);
+              if (map->getInflateOccupancy(q) == 0)
+              {
+                const double d = (q - end_wp).norm();
+                if (d < best_d) { best_d = d; best = q; found = true; }
+              }
+            }
+        char buf[256];
+        if (found)
+          snprintf(buf, sizeof(buf), "REJECTED nearest_free (%.2f,%.2f,%.2f) d=%.2f",
+                   best.x(), best.y(), best.z(), best_d);
+        else
+          snprintf(buf, sizeof(buf), "REJECTED no_free_in_0.6m");
+        std_msgs::String st;
+        st.data = buf;
+        goal_status_pub_.publish(st);
+        ROS_ERROR("[goal] %s: clicked (%.2f,%.2f,%.2f) is inside inflation (res=%.2f)",
+                  buf, end_wp.x(), end_wp.y(), end_wp.z(), res);
+        return;
+      }
+    }
+
     planNextWaypoint(end_wp);
   }
 

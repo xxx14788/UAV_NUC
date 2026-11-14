@@ -39,7 +39,7 @@ params:
   replan_time: 0.5             # == 规划器 fsm/thresh_replan_time
   takeoff_hover_s: 5.0
   goal_hover_s: 5.0
-  max_vel: 0.5
+  max_vel: 0.4
   max_acc: 4.0
   pose_type: 1
   resolution: 0.15
@@ -77,6 +77,7 @@ record_topics:   # 录包唯一清单（recorder 读 generated/record_topics.txt
   - /mavros/imu/data_raw
   - /mavros/imu/mag
   - /mavros/imu/temperature_imu
+  - /mavros/altitude
   - /mavros/local_position/odom
   - /mavros/vision_pose/pose
   - /mavros/rc/in

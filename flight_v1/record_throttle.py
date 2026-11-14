@@ -12,9 +12,9 @@ import rospy
 from sensor_msgs.msg import Image
 
 STREAMS = [
-    ("/camera/infra1/image_rect_raw", "/record/infra1", 15.0),
-    ("/camera/infra2/image_rect_raw", "/record/infra2", 15.0),
-    ("/camera/depth/image_rect_raw", "/record/depth", 10.0),
+    ("/camera/infra1/image_rect_raw", "/record/infra1", 30.0),
+    ("/camera/infra2/image_rect_raw", "/record/infra2", 30.0),
+    ("/camera/depth/image_rect_raw", "/record/depth", 15.0),
 ]
 
 

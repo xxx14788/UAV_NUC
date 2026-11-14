@@ -51,7 +51,7 @@
     <arg name="cy" value="$(arg depth_cy)"/>
     <arg name="fx" value="$(arg depth_fx)"/>
     <arg name="fy" value="$(arg depth_fy)"/>
-    <arg name="max_vel" value="0.5"/>
+    <arg name="max_vel" value="0.4"/>
     <arg name="max_acc" value="4.0"/>
     <arg name="planning_horizon" value="6.0"/>
     <arg name="use_distinctive_trajs" value="false"/>
@@ -66,7 +66,7 @@
 
   <!-- ===== BEGIN 派生参数块（由 flight_v1/sync_params.py 生成，勿手改） =====
        原始量: takeoff_height 0.70 / goal_radius 3.5 / inflation 0.299 / ground_height -0.10 /
-               ceiling_max 1.50 / max_ray 5.0 / max_vel 0.5 / resolution 0.15
+               ceiling_max 1.50 / max_ray 5.0 / max_vel 0.4 / resolution 0.15
        派生: map_size_z=1.60 (天花板 1.50) / eff_inflation=0.30 / mindist=0.200 -->
   <param name="/drone_0_ego_planner_node/grid_map/obstacles_inflation" value="0.299"/>
   <param name="/drone_0_ego_planner_node/grid_map/ground_height" value="-0.10"/>
@@ -78,7 +78,6 @@
   <param name="/drone_0_ego_planner_node/fsm/thresh_replan_time" value="0.5"/>
   <param name="/drone_0_ego_planner_node/fsm/near_goal_dist" value="1.0"/>
   <param name="/drone_0_ego_planner_node/fsm/near_goal_vel" value="0.15"/>
-  <param name="/drone_0_ego_planner_node/fsm/near_goal_brake" value="0.5"/>
   <param name="/drone_0_ego_planner_node/grid_map/pose_type" value="1"/>
   <param name="/drone_0_ego_planner_node/grid_map/local_map_margin" value="10"/>
   <param name="/drone_0_ego_planner_node/grid_map/resolution" value="0.15"/>
@@ -89,6 +88,7 @@
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_z" value="0.70"/>
   <param name="/drone_0_ego_planner_node/fsm/manual_goal_max_distance" value="3.5"/>
   <!-- ===== END 派生参数块 ===== -->
+  <param name="/drone_0_ego_planner_node/fsm/near_goal_brake" value="0.5"/>
 
   <!-- 2026-11-15 根因修复参数（非物理量，不进 sync_params 派生块） -->
   <param name="/drone_0_ego_planner_node/manager/seed_horizon" value="2.0"/>
