@@ -150,7 +150,10 @@ fi
 # 排布：预检最慢（~13s，工具内部 5s 采样 + 6 次 mavparam）→ 立刻起；
 #   健康门要靠 8s 窗口算率 → 留 2s 余量避开三件 launch 的 exec 抖动后再起（这 2s 同时计入 3/5 的 6s 下限）。
 PASS=1
-VL=$(ls -t ~/sitl_realmachine/*/vins_*.log ~/sitl_realmachine/vins_*.log 2>/dev/null | head -1)
+# 2026-11-15：只认 15 分钟内还在写的日志（活日志每帧都写，mtime 必新）；
+# 否则会拿上一轮/上次开机的旧日志判 VINS，操作正确也可能被判未收敛。
+VL=$(find ~/sitl_realmachine -maxdepth 2 -name 'vins_*.log' -mmin -15 -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-)
+[ -n "$VL" ] || VL=$(ls -t ~/sitl_realmachine/*/vins_*.log ~/sitl_realmachine/vins_*.log 2>/dev/null | head -1)
 (
   PASS_PF=1
   if [ -n "$VL" ]; then

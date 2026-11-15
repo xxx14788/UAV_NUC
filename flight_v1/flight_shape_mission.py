@@ -657,7 +657,7 @@ class RosFlight:
             failures.append(str(exc))
 
         for topic, minimum in (("/mavros/imu/data", 40),
-                               ("/mavros/imu/data_raw", 45 if SIM else 190),
+                               ("/mavros/imu/data_raw", 45 if SIM else 185),   # 2026-11-15：同 flight_mission（190 贴线误杀）
                                ("/vins_estimator/odometry", 8),
                                ("/vins_estimator/imu_propagate", 40)):
             times = self.history.get(topic, [])

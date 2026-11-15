@@ -75,8 +75,8 @@ fi
 sec "3 控制模式与参数"
 MODEOUT=$(~/"ctrl_mode.sh" 2>/dev/null)
 echo "$MODEOUT" | sed 's/^/       /'
-EN=$(echo "$MODEOUT" | grep -oP '(?<=ctrl_v2.enabled     = )\w+')
-HP=$(echo "$MODEOUT" | grep -oP '(?<=hover_percentage    = )[0-9.]+')
+EN=$(echo "$MODEOUT" | grep -oP 'ctrl_v2\.enabled\s*=\s*\K\w+' | head -1)
+HP=$(echo "$MODEOUT" | grep -oP 'hover_percentage\s*=\s*\K[0-9.]+' | head -1)
 if [ "$EN" = "True" ]; then
   ok "v2 已打开（增益/限幅锁在 ctrl_core.h）"
   # 0.46 以下：I_need 会超过 i_lim=2.943 -> 积分饱和、起飞拖到 7 s 以上甚至飞不起来
@@ -112,7 +112,7 @@ else
 fi
 R=$(rate /mavros/rc/in);        [ -n "$R" ] && ok "RC 在线 ${R} Hz" || bad "RC 无数据（px4ctrl 会停在等 RC 的门上）"
 IQ=$(rate /mavros/imu/data);     [ -n "$IQ" ] && ok "imu/data(姿态) ${IQ} Hz" || bad "imu/data 无数据（姿态来源）"
-IR=$(rate /mavros/imu/data_raw); [ -n "$IR" ] && { [ "${IR%%.*}" -ge 190 ] && ok "imu/data_raw(加速度) ${IR} Hz" || bad "data_raw ${IR} Hz < 190 —— 补发：~/set_imu_rate.sh （511/105/4000us；飞控重启即回 50，栈脚本 [1a] 会自动发，单独重启 mavros 时要补）"; } || bad "data_raw 无数据（加速度来源）"
+IR=$(rate /mavros/imu/data_raw); [ -n "$IR" ] && { [ "${IR%%.*}" -ge 185 ] && ok "imu/data_raw(加速度) ${IR} Hz" || bad "data_raw ${IR} Hz < 185 —— 补发：~/set_imu_rate.sh （511/105/4000us；飞控重启即回 50，栈脚本 [1a] 会自动发，单独重启 mavros 时要补）"; } || bad "data_raw 无数据（加速度来源）"
 O=$(rate /vins_estimator/imu_propagate); [ -n "$O" ] && ok "VINS odom ${O} Hz" || bad "VINS odom 无数据（VINS 未初始化）"
 C=$(rate /camera/infra1/image_rect_raw);  [ -n "$C" ] && ok "相机 infra1 ${C} Hz" || bad "相机无图像"
 

@@ -1,7 +1,9 @@
 #!/bin/bash
-# 飞前检查 v2.2（流式输出）——栈未起时跑；每项打印实测内容
+# 飞前检查 v2.3（流式输出）——栈未起时跑；每项打印实测内容
 # v2.1 变更（2026-10-21，随录制脚本 v1.1 联动）：磁盘门 25G→40G（对齐录制门）；record 指纹 57508a→a97bd9
 # v2.2 变更（2026-11-02，用户批准）：record 指纹 a97bd9→3269680b（对齐 10-22 正式版=Win scripts/实飞 正本；仅指纹登记更新，判据/门限零改动）
+# v2.3 变更（2026-11-15，用户批准）：record 指纹 1fed2e→cbdc1b（对齐 11-14 在役正式版：
+#   录 30/15 + 保留 /mavros/altitude；仅指纹登记更新，判据/门限零改动）
 PASS=1
 echo "===== 飞前检查 $(date '+%F %T') ====="
 echo "--- [信息] 系统状态 ---"
@@ -14,7 +16,7 @@ STALE=$( { pgrep -a -x rosmaster; pgrep -a -x vins_node; pgrep -af "mavros_node|
 if [ -z "$STALE" ]; then echo "  ✓ 无残留"; else echo "  ⚠ 残留（起栈脚本会清）："; echo "$STALE" | sed 's/^/    /'; fi
 echo "--- [3/5] 四脚本指纹（对照登记值）---"
 ok=1
-[ "$(md5sum ~/realflight_record_v1.sh 2>/dev/null | cut -c1-6)" = "1fed2e" ] && echo "  ✓ record_v1.14(双目无深度)" || { echo "  ✗ record 不符"; ok=0; PASS=0; }
+[ "$(md5sum ~/realflight_record_v1.sh 2>/dev/null | cut -c1-6)" = "cbdc1b" ] && echo "  ✓ record(cbdc1b, 11-14 版: 录30/15 + /mavros/altitude)" || { echo "  ✗ record 不符"; ok=0; PASS=0; }
 [ "$(md5sum ~/realflight_verify_v1.sh 2>/dev/null | cut -c1-6)" = "316c93" ] && echo "  ✓ verify_v1" || { echo "  ✗ verify_v1 不符"; ok=0; PASS=0; }
 [ -f ~/realflight_stack.sh ] && echo "  ✓ stack 在位($(md5sum ~/realflight_stack.sh | cut -c1-6))" || { echo "  ✗ stack 缺"; PASS=0; }
 [ -f ~/realflight_vins_restart.sh ] && echo "  ✓ vins_restart 在位($(md5sum ~/realflight_vins_restart.sh | cut -c1-6))" || { echo "  ✗ vins_restart 缺"; PASS=0; }

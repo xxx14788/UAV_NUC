@@ -113,16 +113,16 @@ for i in 1 2 3; do
   wait $A $B
   IMU_HZ=$(cat "$TMPD/hz_imu" 2>/dev/null)
   RC_HZ=$(cat "$TMPD/hz_rc" 2>/dev/null)
-  awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=190)}' && awk -v v="${RC_HZ:-0}" 'BEGIN{exit !(v>=20)}' && break
+  awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=185)}' && awk -v v="${RC_HZ:-0}" 'BEGIN{exit !(v>=20)}' && break
   echo "  [1a/1a2] 第${i}次未达标（IMU ${IMU_HZ:-无}Hz / RC ${RC_HZ:-无}Hz），重发 511"
   sleep 1
 done
 mark "IMU/RC 提频+并行测频（${i} 次尝试）"
 
-if awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=190)}'; then
-  echo "✓ [1a/6] IMU 提频：/mavros/imu/data_raw（VINS 的 IMU 输入流）实测 ${IMU_HZ}Hz——目标 200/门限 190，每栈自动发 511@4000µs"
+if awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=185)}'; then
+  echo "✓ [1a/6] IMU 提频：/mavros/imu/data_raw（VINS 的 IMU 输入流）实测 ${IMU_HZ}Hz——目标 200/门限 185（2026-11-15：190 贴线误杀），每栈自动发 511@4000µs"
 else
-  echo "✗ [1a/6] IMU 提频失败：/mavros/imu/data_raw 实测 ${IMU_HZ:-无}Hz <190——STACK FAIL（流率未生效，禁飞）"
+  echo "✗ [1a/6] IMU 提频失败：/mavros/imu/data_raw 实测 ${IMU_HZ:-无}Hz <185——STACK FAIL（流率未生效，禁飞）"
   exit 1
 fi
 if awk -v v="${RC_HZ:-0}" 'BEGIN{exit !(v>=20)}'; then

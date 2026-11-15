@@ -472,7 +472,7 @@ class RosFlight:
             failures.append(str(exc))
 
         for topic, minimum in (("/mavros/imu/data", 40),
-                               ("/mavros/imu/data_raw", 45 if SIM else 190),
+                               ("/mavros/imu/data_raw", 45 if SIM else 185),   # 2026-11-15：实测 191~199，190 贴线（189 曾误杀）；真故障=50/0
                                ("/vins_estimator/odometry", 8),
                                ("/vins_estimator/imu_propagate", 40)):
             times = self.history.get(topic, [])
@@ -507,13 +507,21 @@ class RosFlight:
 
         log_candidates = list((HOME / "sitl_realmachine").glob("vins_*.log"))
         log_candidates += list((HOME / "sitl_realmachine").glob("*/vins_*.log"))
-        if log_candidates:
-            latest = max(log_candidates, key=lambda p: p.stat().st_mtime)
+        # 2026-11-15：只认 15 分钟内还在写的日志（活日志每帧都写，mtime 必新）。否则会拿上一轮/
+        # 上次开机的旧日志判当前 VINS —— 操作正确也会被旧数据判 NO-GO（"读旧切片"同类缺陷）。
+        _fresh = [p for p in log_candidates if time.time() - p.stat().st_mtime < 900.0]
+        if log_candidates and not _fresh:
+            print("VINS 日志 15 分钟未更新（%d 个候选）——跳过日志病理带，按流健康门判" % len(log_candidates))
+        if _fresh:
+            latest = max(_fresh, key=lambda p: p.stat().st_mtime)
             text = latest.read_text(errors="replace")
             log_ok = True
-            for name, limit in (("Bas", 0.05), ("Bgs", 0.005), ("final_cost", 3000)):
+            # 2026-11-15：cost 取**初始化段前 20 条**、门 <=1e4（与 realflight_vins_restart.sh 同款判据）。
+            # 实测 cost 随滑窗残差数增长（init~340 -> 单轮 939；注释记 90min 后 1.4e4，与健康无关），
+            # 原来取 tail20 判 3000 —— 长会话必误杀。
+            for name, limit in (("Bas", 0.05), ("Bgs", 0.005), ("final_cost", 1e4)):
                 if name == "final_cost":
-                    vals = [float(x) for x in re.findall(r"final_cost=([0-9.eE+-]+)", text)[-20:]]
+                    vals = [float(x) for x in re.findall(r"final_cost=([0-9.eE+-]+)", text)[:20]]
                 else:
                     vals = [float(x) for x in re.findall(r"\|%s\|=([0-9.eE+-]+)" % name, text)[-20:]]
                 if not vals:
