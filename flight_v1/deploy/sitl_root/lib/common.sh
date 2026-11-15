@@ -156,13 +156,36 @@ topic_has_publisher() {   # $1=话题 $2=发布者节点名
   return 1
 }
 
-# 录包守卫：ps 里找"python 解释器直接起的 rosbag record"
-#   * 必须锚行首（`^`）：否则任何命令行里提到 "python … rosbag record" 的包装 shell 都会被误判
-#   * 用 awk 而不是 grep -q：grep -q 命中即退出，会给上游 printf 发 SIGPIPE，
-#     在 pipefail 下反倒返回失败（假放行）——这个守卫宁可慢一点也不许漏判
+# 录包守卫：只认"连我这个 master"的 rosbag record
+#   为什么不用 ps | grep：本机可能同时跑别的私有 master 台架（实测有 :11312），
+#   人家在录包不该拦住我的起栈；反之我的录包必须拦。判据 = 进程环境里的 ROS_MASTER_URI。
+#   * 不用 grep -q（pipefail 下早退会给上游 SIGPIPE 造成假放行），走 awk / case
 rosbag_recording() {
-  local args
-  args=$(ps -eo args= 2>/dev/null) || return 1
-  [ -n "$args" ] || return 1
-  printf '%s\n' "$args" | awk '/^[^ ]*python[0-9.]* [^ ]*rosbag record/{f=1} END{exit !f}'
+  local my=${ROS_MASTER_URI:-http://localhost:11311}
+  local p uri cmd
+  for p in $(pgrep -f 'rosbag record' 2>/dev/null); do
+    [ -r "/proc/$p/environ" ] || continue
+    uri=$(tr '\0' '\n' < "/proc/$p/environ" 2>/dev/null | awk -F= '/^ROS_MASTER_URI=/{print $2; exit}')
+    uri=${uri:-http://localhost:11311}
+    [ "$uri" = "$my" ] || continue
+    cmd=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null) || cmd=""
+    case $cmd in
+      *python*rosbag\ record*) return 0 ;;
+    esac
+  done
+  return 1
+}
+
+# 本机是否还有别的 ROS master（私有台架）。只做提示，不拦。
+foreign_master_hint() {
+  local p my=${ROS_MASTER_URI:-http://localhost:11311} myport uri
+  myport=${my##*:}
+  for p in $(pgrep -f 'rosmaster --core' 2>/dev/null); do
+    uri=$(tr '\0' '\n' < "/proc/$p/environ" 2>/dev/null | awk -F= '/^ROS_MASTER_URI=/{print $2; exit}') || uri=""
+    case $uri in
+      *":$myport"*) continue ;;
+      "") continue ;;
+    esac
+    printf '%s\n' "${uri:-未知}"
+  done
 }

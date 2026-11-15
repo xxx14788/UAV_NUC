@@ -98,6 +98,14 @@ phase_cleanup() {
   if rosbag_recording; then
     die "正在录包——先正常结束录制（flight.sh record stop）再起栈"
   fi
+  # 本机可能同时跑别人的私有 master 台架（实测有 :11312）：清场按进程名杀，可能波及对方。
+  # 只提示不拦——但要让人知道"我的起栈可能会打断另一条会话"。
+  local foreign
+  foreign=$(foreign_master_hint)
+  if [ -n "$foreign" ]; then
+    warn "本机另有 ROS master：$(printf '%s' "$foreign" | tr '\n' ' ')"
+    echo "    清场按进程名杀，可能影响对方台架——建议先停台架再起栈（本次继续）"
+  fi
 
   # 先把残留打出来（真出问题时好定位），再杀
   local stale
