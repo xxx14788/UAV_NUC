@@ -517,7 +517,8 @@ namespace ego_planner
   // 2026-11-15（壳内死锁根因修复）：机身跟踪误差会把飞机带进膨胀壳（raw 仍自由）。
   // 此时 refine 的 A* 段修补从壳内起点出发找不到自由终点，plan 永久失败。
   // 这里生成一条**有界直线机动**（零首末速、限速）把飞机带出壳，之后正常规划接管。
-  bool EGOPlannerManager::escapeMove(const Eigen::Vector3d &start, const Eigen::Vector3d &target, double speed)
+  bool EGOPlannerManager::escapeMove(const Eigen::Vector3d &start, const Eigen::Vector3d &target, double speed,
+                                    const Eigen::Vector3d &start_vel)
   {
     const double dist = (target - start).norm();
     if (dist < 0.05)
@@ -533,6 +534,8 @@ namespace ego_planner
       point_set.push_back(start + (target - start) * (double(i) / double(seg)));
 
     std::vector<Eigen::Vector3d> start_end_derivative(4, Eigen::Vector3d::Zero());
+    // 2026-11-15（自审修正）：用当前速度做起导（原来全零 -> 飞行中触发会命令急停，实机是 jerk）。
+    start_end_derivative[0] = start_vel;
     Eigen::MatrixXd ctrl_pts;
     UniformBspline::parameterizeToBspline(ts, point_set, start_end_derivative, ctrl_pts);
     if (ctrl_pts.cols() < 4)

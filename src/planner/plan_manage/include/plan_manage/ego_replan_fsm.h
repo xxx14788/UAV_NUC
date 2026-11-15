@@ -113,6 +113,7 @@ namespace ego_planner
   bool odom_invalid_{false};        // P3 位姿无效（VINS 发散跑出地图）标志
   double goal_z_gain_{0.5};         // P4 z 参考比例增益
   double goal_z_offset_max_{0.10};  // P4 z 参考偏置上限（m）
+  double retime_max_vel_{0.25};     // 2026-11-15 自审：时间重分配的速度上限（m/s）
 
     /* helper functions */
     bool callReboundReplan(bool flag_use_poly_init, bool flag_randomPolyTraj); // front-end and back-end method

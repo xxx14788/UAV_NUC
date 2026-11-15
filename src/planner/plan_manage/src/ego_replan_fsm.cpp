@@ -28,6 +28,7 @@ namespace ego_planner
   // 2026-11-15（P4）：z 参考比例偏置（治"EGO 起点=实测 z"导致的下沉自锁）
   nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
   nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
+  nh.param("fsm/retime_max_vel", retime_max_vel_, 0.25);   // 2026-11-15：只治爬行
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -241,12 +242,11 @@ namespace ego_planner
     const Eigen::Vector3d start = odom_pos_;
     if (map->getInflateOccupancy(start) == 0)
       return false;   // 不在壳里：走正常重规划，不做机动
+    // 2026-11-15（自审修正）：本机体素被判占据（贴墙/深度噪声/桨洗）时**不能放弃脱壳**——
+    // 那正是最需要离开的位置。仍按"目标自由 + 0.30 m 后路径自由"约束。
     if (map->getOccupancy(start) != 0)
-    {
-      ROS_ERROR("[escape] start (%.2f,%.2f,%.2f) inside occupied voxel -> no escape",
-                start.x(), start.y(), start.z());
-      return false;
-    }
+      ROS_WARN("[escape] start (%.2f,%.2f,%.2f) in occupied voxel (map noise?) -> try escape anyway",
+               start.x(), start.y(), start.z());
 
     const double res = map->getResolution();
     const int rx = (int)std::ceil(1.20 / res);
@@ -291,12 +291,13 @@ namespace ego_planner
       for (int i = 1; i <= n; ++i)
       {
         const Eigen::Vector3d s = start + (tgt - start) * (double(i) / double(n));
-        if (map->getOccupancy(s) != 0) { ok = false; break; }                       // 全程不许穿实体
-        if ((s - start).norm() > 0.30 && map->getInflateOccupancy(s) != 0) { ok = false; break; }
+        const double ds = (s - start).norm();
+        // 起点 0.30 m 内允许仍在本机所在体素/壳里（本来就是要爬出去）；0.30 m 之后必须 raw+inflate 都自由。
+        if (ds > 0.30 && (map->getOccupancy(s) != 0 || map->getInflateOccupancy(s) != 0)) { ok = false; break; }
       }
       if (!ok)
         continue;
-      if (!planner_manager_->escapeMove(start, tgt, 0.25))
+      if (!planner_manager_->escapeMove(start, tgt, 0.25, odom_vel_))
         continue;
 
       ROS_WARN("[escape] start (%.2f,%.2f,%.2f) in inflation (raw free) -> free point (%.2f,%.2f,%.2f) d=%.2f m",
@@ -1284,7 +1285,11 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
         };
 
         const double d2goal_now = (end_pt_ - start_pt_).norm();
-        double vmax_eff = planner_manager_->pp_.max_vel_;
+        // 2026-11-15（自审修正）：retime 只治"爬行"，不追可行性极限。
+        // 首版把时间压到 checkFeasibility 不通过为止 -> 末段 0.26-0.4 m/s，
+        // 是 11-12/11-13 实飞末段(0.15-0.2)的 2-2.7 倍，且 near-goal 刹车剖面
+        // 在 max_vel=0.4 时只有 d<0.2 m 才生效。现峰值上限 retime_max_vel_（默认 0.25）。
+        double vmax_eff = std::min(planner_manager_->pp_.max_vel_, retime_max_vel_);
         if (d2goal_now < near_goal_dist_ && near_goal_vel_ > 0.0)
         {
           const double d_rem = std::max(0.0, d2goal_now - 0.20);
@@ -1293,7 +1298,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
         const double len = arcLen(info->position_traj_, info->duration_);
         const double amax = planner_manager_->pp_.max_acc_;
-        if (len > 0.15 && len / std::max(0.1, info->duration_) < 0.60 * vmax_eff)
+        if (len > 0.15 && len / std::max(0.1, info->duration_) < 0.10)
         {
           UniformBspline best = info->position_traj_;
           bool improved = false;
@@ -1301,7 +1306,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
           {
             UniformBspline cand = info->position_traj_;
             cand.lengthenTime(s);
-            cand.setPhysicalLimits(vmax_eff, amax, 0.10);
+            cand.setPhysicalLimits(vmax_eff, amax, 0.02);   // 2026-11-15：不许超 max_vel 2%（原 10%）
             double ratio_chk = 0.0;
             if (!cand.checkFeasibility(ratio_chk, false))
               break;
@@ -1315,13 +1320,13 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
             info->acceleration_traj_ = info->velocity_traj_.getDerivative();
             info->start_pos_ = best.evaluateDeBoorT(0.0);
             info->duration_ = best.getTimeSum();
-            ROS_WARN_THROTTLE(0.5, "[retime] d_goal=%.2f len=%.2fm dur %.2f -> %.2fs (vavg %.2f -> %.2f, vmax %.2f)",
+            ROS_WARN_THROTTLE(2.0, "[retime] d_goal=%.2f len=%.2fm dur %.2f -> %.2fs (vavg %.2f -> %.2f, vmax %.2f)",
                               d2goal_now, len, d_old, info->duration_,
                               len / std::max(0.1, d_old), len / std::max(0.1, info->duration_), vmax_eff);
           }
         }
 
-        ROS_WARN_THROTTLE(0.5, "[traj] dur=%.2fs len=%.2fm vavg=%.2f m/s d_goal=%.2f cp=%d ts=%.2f",
+        ROS_INFO_THROTTLE(5.0, "[traj] dur=%.2fs len=%.2fm vavg=%.2f m/s d_goal=%.2f cp=%d ts=%.2f",
                           info->duration_, len, len / std::max(0.1, info->duration_),
                           d2goal_now,
                           (int)info->position_traj_.getControlPoint().cols(),
@@ -1387,16 +1392,20 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     }
     else
     {
-      /* 2026-11-09（P0-3）：连续失败 1.5 s 才报 UNREACHABLE（单拍失败是正常的） */
+      /* 2026-11-09（P0-3）：连续失败才报 UNREACHABLE（单拍失败是正常的）。
+         2026-11-15（自审修正）：1.5 s -> 5.0 s。全轨迹碰撞检查上线后，目标贴障时
+         "最后一小段在膨胀壳里"会让单次规划失败持续 >1.5 s；此时报 UNREACHABLE 会让
+         任务层**悬停等新点**（11-14 地图闭环实测：报了一次，但飞机随后脱壳并到点）。
+         5 s 内规划器自己还能重试/脱壳，超过才认为是真不可达。 */
       const ros::Time now = ros::Time::now();
       if (unreach_since_.isZero())
         unreach_since_ = now;
-      else if ((now - unreach_since_).toSec() > 1.5)
+      else if ((now - unreach_since_).toSec() > 5.0)
       {
         std_msgs::String st;
         st.data = "UNREACHABLE";
         goal_status_pub_.publish(st);
-        ROS_WARN("[replan] goal UNREACHABLE for >1.5 s, reported to mission");
+        ROS_WARN("[replan] goal UNREACHABLE for >5 s, reported to mission");
         unreach_since_ = ros::Time(0);
       }
     }
