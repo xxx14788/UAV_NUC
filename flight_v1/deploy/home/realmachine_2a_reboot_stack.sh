@@ -1,236 +1,298 @@
 #!/bin/bash
+# =============================================================================
+# realmachine_2a_reboot_stack.sh — 五件套（v5，2026-11-15 代码质量重构）
 # ⚠ 内部件：唯一正式起栈入口 = ~/realflight_stack.sh（清场/五件套/规划器/转接/RViz/健康门/preflight）。
-#    直调本脚本会绕过健康门与 preflight；除调试外不要单独使用。
-# shellcheck disable=SC1090  # source ~/catkin_ws/... 是非恒定路径，shellcheck 无法跟随（信息级）
-# T1 v11.34 2a v2（2026-10-21 加速版）— 旧机重上电复苏: 按台账正源命令重起五件全栈 (栈保留, 供 2b/2d)
-# v3（2026-10-21 二改，用户指令"先查飞控再起 VINS"）：mavros 连上后立即做飞控快检
-#   （连接/解锁态/模式/陀螺三轴标定硬门 |v|≤0.008、加计注记），坏了直接拦下不起相机/VINS
-#   ——坏 IMU 会毒化 VINS 初始化。电池项硬件损坏禁读（用户 10-18 裁定），仍手动计时管理。
-# v1→v2 加速：固定 sleep → 事件轮询（上限保底不变性）——
-#   roscore 5s→≤8s 轮询；mavros 15s→connected 轮询≤20s；相机 14s→infra1 出流轮询≤20s；
-#   VINS 12s→imu_propagate 出流轮询≤30s；v2m 3s→2s；px4ctrl 6s→节点轮询≤8s；
-#   规划器占位死等 8s 删除（launch 本就注释勘误在案）。
-#   证据 tee / 软检查语义不变（硬门仍在 realflight_stack.sh 4/5、5/5）。
-# v4（2026-11-14 用户令"起栈太慢，尽量并行"）：**只改时序，判据/门限/文案一字不动**——
-#   ① [2/6] 相机提前到 mavros 连上即起，与飞控块（IMU/RC 提频+快检）并行；提前退栈由 trap 收掉；
-#   ② IMU 与 RC 两条 511 背靠背发，然后**一次并行测频**（原来 2×(sleep 2 + 测频 6s) 串行）；
-#   ③ 测频 `timeout N rostopic hz | awk END` 改为 `-w` 窗口 + 3~4s 上限（原来每次吃满 6/10s）；
-#   ④ 飞控快检 6 个 param/get 并发（原来串行 = 6 次 rosservice 进程启动）；
-#   ⑤ VINS 出流后 v2m / px4ctrl 与 imu_propagate 测频并行，`sleep 2`→0.25s 步长轮询；
-#   ⑥ 删掉重复的 [留档] IMU 复测（timeout 10，测的是 1s 前刚测过的同一条流），复用已测值落同一文件；
-#   ⑦ 每步打印 [+Xs] 分段计时（下次慢在哪一眼看到）。
-#   实测依据：2026-11-14 01:03 那轮本脚本耗时 71s，其中 38.6s 花在"串行测频吃满超时 + sleep 2"上。
-# 正源: realmachine_2a_bench_p1.sh 的起栈序 + 02a_mavros_boot.log 的 fcu_url + 1b 的 rs640 显式版
-set -o pipefail
+#    直调会绕过健康门与 preflight；除调试外不要单独使用。
+#
+# 顺序（这几条顺序是有原因的，别随意调）:
+#   0) roscore
+#   1) mavros 连飞控  → 1a) 511@105 HIGHRES_IMU 200Hz + 511@65 RC_CHANNELS 50Hz
+#                        然后用**一次** measure_rate 同时复核两路（header 时基，不是到达率）
+#   2) 相机在 mavros 连上后**立刻**后台起（不依赖飞控，与 1a/1b 并行）——VINS 要它才能 init
+#   1b) 飞控快检：连接/解锁态/陀螺三轴 |v|≤0.008 硬门（坏 IMU 会毒化 VINS init），
+#       参数表 pull 后 6 个 param/get 并发取；不过 → 退栈并收掉相机
+#   3) VINS（实机 config v0）→ 等 imu_propagate 出流
+#   4) vins_to_mavros + 5) px4ctrl 与 imu_propagate 测频并行
+#
+# 硬门（不达标 exit 1，整栈失败）: IMU≥IMU_MIN_HZ、陀螺 |v|≤0.008、mavros connected、armed=False
+# 软告警（打印但不拦，后续健康门/任务门再判）: RC 无流、相机无流、VINS 未出流、px4ctrl 未注册
+# 证据留档（与旧版同名同形，供判读）: boot_$TS.log / mavros_connected_$TS.txt / imu_rate_$TS.txt /
+#   rs_hz_$TS.txt / vins_hz_$TS.txt
+# =============================================================================
+set +u
+# shellcheck source=/dev/null
 source /opt/ros/noetic/setup.bash
-source ~/catkin_ws/devel/setup.bash
-OUT=~/sitl_realmachine/09_reboot_stack_2026-10-09
-mkdir -p "$OUT" && cd "$OUT" || { echo "无法进入 $OUT（磁盘满/权限？）"; exit 1; }
-# 2026-11-10（用户批准）：本脚本只能由 realflight_stack.sh 调用。
-# 直调时若已有 master，会在别人的栈上再起一套五件套（同名节点互覆）。
+# shellcheck source=/dev/null
+source "$HOME/catkin_ws/devel/setup.bash"
+# shellcheck source=/dev/null
+source "$HOME/sitl_realmachine/lib/common.sh"
+set -u
+set -o pipefail
+# shellcheck disable=SC2034  # lib/common.sh 的 mark() 读这个变量（跨文件，shellcheck 看不到）
+MARK_INDENT="  "
+
+OUT=$HOME/sitl_realmachine/09_reboot_stack_2026-10-09
+mkdir -p "$OUT" || die "无法创建 $OUT（磁盘满/权限？）"
+cd "$OUT" || die "无法进入 $OUT（磁盘满/权限？）"
+
+# 本脚本只能由 realflight_stack.sh 调用：直调且已有 master 时，会在别人的栈上再起一套五件套
 if [ "${STACK_FROM_ORCHESTRATOR:-0}" != "1" ] && rostopic list >/dev/null 2>&1; then
-  echo "✗ 检测到已有 ROS master：请走 ~/realflight_stack.sh（本脚本仅允许其调用）"
-  exit 1
+  die "检测到已有 ROS master：请走 ~/realflight_stack.sh（本脚本仅允许其调用）"
 fi
+
 TS=$(date +%H%M%S)
 LOG=boot_$TS.log
 echo "=== 2a reboot stack start $(date -Is) ===" | tee "$LOG"
 
-# v4：分段计时 [+Xs]——只用于看耗时，不参与任何判定
-T0MS=$(date +%s%3N)
-el() { awk -v a="$T0MS" -v b="$(date +%s%3N)" 'BEGIN{printf "%.1f", (b-a)/1000}'; }
-mark() { printf '  [+%ss] %s\n' "$(el)" "$1"; }
-
-TMPD=$(mktemp -d)
-CAM_OWNED=0     # 1 = 相机已起但还没"交给栈"（提前退栈路径要收掉，避免留孤儿）
+CAMERA_OWNED=0     # 1 = 相机已起但还没"交给栈"（提前退栈要收掉，避免留孤儿）
 cleanup() {
-  rm -rf "$TMPD"
-  [ "$CAM_OWNED" = 1 ] && pkill -f "realsense2_camera" 2>/dev/null
+  if [ "$CAMERA_OWNED" = 1 ]; then
+    pkill -f '[r]ealsense2_camera' 2>/dev/null || true
+  fi
   return 0
 }
 trap cleanup EXIT
 
-# 等话题出现一条消息（$1=话题 $2=上限秒）；0=等到
-wait_msg() {
-  local t=0
-  while [ $t -lt "$2" ]; do
-    timeout 3 rostopic echo -n1 --noarr "$1" >/dev/null 2>&1 && return 0
-    sleep 1; t=$((t+4))
+# ---------------------------------------------------------------- 谓词
+rosmaster_up()  { rostopic list >/dev/null 2>&1; }
+mavros_conn() {
+  local s
+  s=$(timeout 2 rostopic echo -n1 --noarr /mavros/state 2>/dev/null) || s=""
+  case $s in *"connected: True"*) return 0 ;; esac
+  return 1
+}
+mavros_armed() {
+  local s
+  s=$(timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null) || s=""
+  case $s in *"armed: True"*) return 0 ;; esac
+  return 1
+}
+vins_streaming() { timeout 5 rostopic echo -n1 --noarr /vins_estimator/imu_propagate >/dev/null 2>&1; }
+v2m_running()    { pgrep -f '[v]ins_to_mavros_node' >/dev/null 2>&1; }
+px4ctrl_registered() { nodes_snapshot; has_node /px4ctrl; }
+
+# ---------------------------------------------------------------- 0) roscore
+phase_roscore() {
+  roscore >/dev/null 2>&1 &
+  wait_until 8 0.5 "roscore 就绪" rosmaster_up || die "roscore 8s 未起来"
+  echo "✓ [0/6] roscore 就绪"
+  mark "roscore 就绪"
+}
+
+# ---------------------------------------------------------------- 1) mavros
+phase_mavros() {
+  roslaunch mavros px4.launch fcu_url:=/dev/pixhawk:921600 > "mavros_$TS.log" 2>&1 &
+  local connected=0
+  if wait_until 20 1 "mavros 连上飞控" mavros_conn; then connected=1; fi
+  timeout 5 rostopic echo -n1 --noarr /mavros/state/connected 2>/dev/null | tail -1 | tee "mavros_connected_$TS.txt" || true
+  if [ "$connected" = 1 ]; then
+    echo "✓ [1/6] mavros 已连接飞控（/dev/pixhawk:921600）"
+  else
+    warn "[1/6] mavros 未连接——后续 IMU 提频/快检将拦截"
+  fi
+  mark "mavros 连接（$([ "$connected" = 1 ] && echo 完成 || echo 失败)）"
+}
+
+# ---------------------------------------------------------------- 1a) 511 提频
+set_msg_interval() {   # $1=MAVLink msg id  $2=interval us
+  rosrun mavros mavcmd long 511 "$1" "$2" 0 0 0 0 0 >/dev/null 2>&1 || true
+}
+
+# 用一次 measure_rate 同时复核 IMU 与 RC（header 时基），没达标的只重发那一条
+phase_imu_rc_rate() {
+  local attempt=1 resend_imu=1 resend_rc=1 blob li lr
+  local imu_rate=0 imu_gap=0 rc_rate=0 imu_ok=0 rc_ok=0
+  while [ "$attempt" -le 3 ]; do
+    [ "$resend_imu" = 1 ] && set_msg_interval 105 4000
+    [ "$resend_rc" = 1 ] && set_msg_interval 65 20000
+    sleep 1     # mavcmd 无 ACK：命令生效到流率稳定有时间差（用户令：不稳的步骤留 1~3s）
+    blob=$(measure_rate 3 /mavros/imu/data_raw /mavros/rc/in)
+    li=$(topic_line "$blob" /mavros/imu/data_raw)
+    lr=$(topic_line "$blob" /mavros/rc/in)
+    imu_rate=$(rate_of "$li")
+    imu_gap=$(gap_of "$li")
+    rc_rate=$(rate_of "$lr")
+    imu_ok=0; num_ge "$imu_rate" "$IMU_MIN_HZ" && imu_ok=1
+    rc_ok=0;  num_ge "$rc_rate" "$RC_MIN_HZ" && rc_ok=1
+    [ "$imu_ok" = 1 ] && [ "$rc_ok" = 1 ] && break
+    resend_imu=$(( 1 - imu_ok ))
+    resend_rc=$(( 1 - rc_ok ))
+    echo "  [1a/1a2] 第${attempt}次未达标（IMU ${imu_rate}Hz / RC ${rc_rate}Hz），只重发没达标的"
+    attempt=$((attempt + 1))
+    [ "$attempt" -le 3 ] && sleep 1
   done
+  mark "IMU/RC 提频+并行测频（$((attempt > 3 ? 3 : attempt)) 次尝试）"
+
+  if [ "$imu_ok" = 1 ]; then
+    echo "✓ [1a/6] IMU 提频：/mavros/imu/data_raw 实测 ${imu_rate}Hz——目标 200/门限 ${IMU_MIN_HZ}，每栈自动发 511@4000µs"
+    if ! num_ge "$IMU_MAX_GAP_MS" "$imu_gap"; then
+      warn "IMU 最大间隔 ${imu_gap}ms > ${IMU_MAX_GAP_MS}ms —— 疑似成段丢包（会污染预积分 Δv/Δθ，飞行中看 |Bas|/cost 趋势）"
+    fi
+  else
+    bad "[1a/6] IMU 提频失败：/mavros/imu/data_raw 实测 ${imu_rate}Hz <${IMU_MIN_HZ}——STACK FAIL（流率未生效，禁飞）"
+    exit 1
+  fi
+  if [ "$rc_ok" = 1 ]; then
+    echo "✓ [1a2/6] RC 流：/mavros/rc/in 实测 ${rc_rate}Hz（511@65@20000us）"
+  else
+    bad "[1a2/6] RC 流仍无数据（${rc_rate}Hz）——遥控器是否上电/对频？px4ctrl 会卡在 Waiting for RC"
+  fi
+
+  # 留档（保持旧格式的 average rate: 记号，追加新字段）
+  echo -n "  [留档] IMU 流率(/mavros/imu/data_raw): " | tee "imu_rate_$TS.txt"
+  echo "average rate: ${imu_rate} （门 ${IMU_MIN_HZ}Hz；最大间隔 ${imu_gap}ms；header 时基）" \
+    | tee -a "imu_rate_$TS.txt"
+}
+
+# ---------------------------------------------------------------- 2) 相机（提前起）
+phase_camera_launch() {
+  roslaunch realsense2_camera rs_camera.launch \
+    infra_width:=848 infra_height:=480 infra_fps:=30 \
+    depth_width:=848 depth_height:=480 depth_fps:=30 \
+    enable_infra1:=true enable_infra2:=true enable_depth:=true \
+    align_depth:=false enable_color:=false > "rs_$TS.log" 2>&1 &
+  CAMERA_OWNED=1
+  mark "相机 launch 已发（后台，与飞控块并行）"
+}
+
+phase_camera_ready() {
+  local blob l rate gap
+  # 等 publisher 出现（冷启动/USB 重枚举时 4s 窗口可能一帧都收不到）
+  wait_until 12 0.3 "infra1 出流" topic_published /camera/infra1/image_rect_raw || true
+  blob=$(measure_rate 4 /camera/infra1/image_rect_raw)
+  l=$(topic_line "$blob" /camera/infra1/image_rect_raw)
+  rate=$(rate_of "$l")
+  gap=$(gap_of "$l")
+  case $(src_of "$l") in
+    absent) rate=0 ;;
+  esac
+  echo "camera_rate=$rate" | tee "rs_hz_$TS.txt"
+  if num_gt "$rate" 0; then
+    echo "✓ [2/6] 相机就绪：infra1 左目图像流(/camera/infra1/image_rect_raw) ${rate}Hz（最大间隔 ${gap}ms；双目 848×480 + 深度 848×480 @30）"
+  else
+    bad "[2/6] 相机无流——健康门将拦截"
+  fi
+  mark "相机就绪（提前起 + 测频，实测 ${rate}Hz）"
+}
+
+# ---------------------------------------------------------------- 1b) 飞控快检
+fetch_param() { rosservice call /mavros/param/get "param_id: '$1'" 2>/dev/null | awk '/real:/{print $2}'; }
+
+wait_param_table() {   # pull 一次，然后 0.3s 步长轮询到可读（上限 10s）
+  local v="" t0
+  rosservice call /mavros/param/pull "{}" >/dev/null 2>&1 || true
+  t0=$(_now_ms)
+  while [ $(( ($(_now_ms) - t0) / 1000 )) -lt 10 ]; do
+    v=$(fetch_param CAL_GYRO0_XOFF)
+    if [ -n "$v" ] && [ "$v" != "0.0" ] && [ "$v" != "0" ]; then printf '%s' "$v"; return 0; fi
+    sleep 0.3
+  done
+  printf '%s' "$v"
   return 1
 }
 
-# 测一路话题频率（$1=话题 $2=-w 窗口 $3=上限秒）→ stdout 打印最后一帧 average rate
-# v4：-w 窗口给稳定均值，3~4s 上限就够（原来 timeout 6/10 全吃满才由 awk END 出数）
-hzr() { timeout "$3" rostopic hz -w "$2" "$1" 2>/dev/null | awk '/average rate/{r=$3} END{print r}'; }
+phase_fcu_quickcheck() {
+  if ! mavros_conn; then die "FCU_QUICK_FAIL: mavros 未连接——检查飞控供电/串口"; fi
+  if mavros_armed; then die "FCU_QUICK_FAIL: 飞控处于解锁态——禁止起栈"; fi
+  timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null | grep "mode:" | head -1 | sed 's/^/  [FCU 快检] /' || true
 
-# 0) roscore
-roscore >/dev/null 2>&1 &
-W=0; until rostopic list >/dev/null 2>&1; do sleep 0.5; W=$((W+1)); [ $W -ge 16 ] && break; done
-echo "✓ [0/6] roscore 就绪（${W}x0.5s）"
-mark "roscore 就绪"
-
-# 1) mavros (FCU=/dev/pixhawk:921600 正源)
-roslaunch mavros px4.launch fcu_url:=/dev/pixhawk:921600 > mavros_$TS.log 2>&1 &
-W=0; until timeout 2 rostopic echo -n1 --noarr /mavros/state 2>/dev/null | grep -q "connected: True"; do
-  sleep 1; W=$((W+3)); [ $W -ge 20 ] && { echo "WARN mavros 20s 未连接"; break; }
-done
-timeout 5 rostopic echo -n1 --noarr /mavros/state/connected 2>/dev/null | tail -1 | tee mavros_connected_$TS.txt
-CONN=0
-for i in 1 2 3; do
-  timeout 4 rostopic echo -n1 --noarr /mavros/state 2>/dev/null | grep -q "connected: True" && { CONN=1; break; }
-  sleep 1
-done
-[ "$CONN" = 1 ] && echo "✓ [1/6] mavros 已连接飞控（/dev/pixhawk:921600）" || echo "✗ [1/6] mavros 未连接——后续 IMU 提频/快检将拦截"
-mark "mavros 连接（$( [ "$CONN" = 1 ] && echo 完成 || echo 失败 )）"
-
-# 2) realsense：infra/depth 848x480@30（2026-11-11 用户令；与 1280 同水平视场 89.5°，
-#    双目跟踪 22ms < 33ms 帧预算；depth 必须与 IR 同档，跨档 depth 不出帧）
-#    RGB 关、align 关：均无消费方（align 产物自 11-08 健康门改造后无人用）
-# v4：**提前到这里起**——相机不依赖飞控，与下面 1a/1a2/1b 飞控块并行跑；
-#     后面 [2/6] 只做一个 4s 测频窗口（原来 wait_msg ≤20s + 6s 测频串行且在整个飞控块之后）
-roslaunch realsense2_camera rs_camera.launch infra_width:=848 infra_height:=480 infra_fps:=30 depth_width:=848 depth_height:=480 depth_fps:=30 enable_infra1:=true enable_infra2:=true enable_depth:=true align_depth:=false enable_color:=false > rs_$TS.log 2>&1 &
-CAM_OWNED=1
-mark "相机 launch 已发（后台，与飞控块并行）"
-
-# 1a) IMU 提频 200Hz（2026-10-22 用户令；历史：10-09 实测 203Hz 后回退 50Hz=主线纪律裁定非技术否决，现重启）
-# 511=SET_MESSAGE_INTERVAL, 105=HIGHRES_IMU(=/mavros/imu/data_raw 源), 4000us（实测选档：5000us→170Hz 成批欠发/4000us→200.6Hz 稳态/2000us→222Hz 超需，2026-10-22 三档亲测）
-# 坑（09-28 记录在案）：mavcmd 无 ACK、链路建立前发即丢——故放在 connected 确认后+发完实测复核
-# 1a2) RC_CHANNELS 提频（2026-11-06 新增，用户 RC 已开但 /mavros/rc/in 无数据）
-# 实测：PX4 默认**不转发** RC_CHANNELS(65)，/mavros/rc/in 恒空 ->
-#       px4ctrl 的 rc_is_received() 永远 false -> 卡在 "Waiting for RC"，
-#       起栈脚本因此判 STACK FAIL（这不是 RC 没开，是没让它转发）。
-# 511=SET_MESSAGE_INTERVAL, 65=RC_CHANNELS, 20000us=50Hz。设完实测 45.6Hz。
-# v4：两条命令背靠背发（原来各带 sleep 2），一次并行测频同时复核 IMU/RC（原来两次串行测频）
-# v6（2026-11-14 第二轮）：mavcmd 无 ACK，命令生效到流率稳定有时间差——测频前留 **1s 稳定余量**
-#   （用户令：不稳的步骤留 1~3s），否则窗口里混进改档前的低率样本（实测偶发 194Hz vs 稳态 200Hz），会白跑一轮重发。
-for i in 1 2 3; do
-  rosrun mavros mavcmd long 511 105 4000 0 0 0 0 0 >/dev/null 2>&1
-  rosrun mavros mavcmd long 511 65 20000 0 0 0 0 0 >/dev/null 2>&1
-  sleep 1
-  hzr /mavros/imu/data_raw 400 3 > "$TMPD/hz_imu" & A=$!
-  hzr /mavros/rc/in 200 3 > "$TMPD/hz_rc" & B=$!
-  wait $A $B
-  IMU_HZ=$(cat "$TMPD/hz_imu" 2>/dev/null)
-  RC_HZ=$(cat "$TMPD/hz_rc" 2>/dev/null)
-  awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=185)}' && awk -v v="${RC_HZ:-0}" 'BEGIN{exit !(v>=20)}' && break
-  echo "  [1a/1a2] 第${i}次未达标（IMU ${IMU_HZ:-无}Hz / RC ${RC_HZ:-无}Hz），重发 511"
-  sleep 1
-done
-mark "IMU/RC 提频+并行测频（${i} 次尝试）"
-
-if awk -v v="${IMU_HZ:-0}" 'BEGIN{exit !(v>=185)}'; then
-  echo "✓ [1a/6] IMU 提频：/mavros/imu/data_raw（VINS 的 IMU 输入流）实测 ${IMU_HZ}Hz——目标 200/门限 185（2026-11-15：190 贴线误杀），每栈自动发 511@4000µs"
-else
-  echo "✗ [1a/6] IMU 提频失败：/mavros/imu/data_raw 实测 ${IMU_HZ:-无}Hz <185——STACK FAIL（流率未生效，禁飞）"
-  exit 1
-fi
-if awk -v v="${RC_HZ:-0}" 'BEGIN{exit !(v>=20)}'; then
-  echo "✓ [1a2/6] RC 流：/mavros/rc/in 实测 ${RC_HZ}Hz（511@65@20000us）"
-else
-  echo "✗ [1a2/6] RC 流仍无数据（${RC_HZ:-无}Hz）——遥控器是否上电/对频？px4ctrl 会卡在 Waiting for RC"
-fi
-
-# 1b) 飞控快检（起相机/VINS 前——2026-10-21 用户指令：先查飞控再起 VINS）
-ST=$(timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null)
-echo "$ST" | grep -q "connected: True" || { echo "FCU_QUICK_FAIL: mavros 未连接——检查飞控供电/串口"; exit 1; }
-echo "$ST" | grep -q "armed: False"   || { echo "FCU_QUICK_FAIL: 飞控处于解锁态——禁止起栈"; exit 1; }
-echo "$ST" | grep "mode:" | head -1 | sed 's/^/  [FCU 快检] /'
-# 参数表显式同步（mavros 连接后异步拉取，秒读会拿到全 0 假值——最多重试 10s）
-# v6：pull+sleep 1 的粗轮询 → **先 pull 一次，然后 0.3s 步长轮询到可读**（上限仍是 10s，用时间判而不是次数，
-#     因为 rosservice 本身每次要 0.2~0.4s；实测快检段 3.1~6.1s 的抖动就是这里）
-PV=""
-rosservice call /mavros/param/pull "{}" >/dev/null 2>&1
-T_P0=$(date +%s)
-while [ $(( $(date +%s) - T_P0 )) -lt 10 ]; do
-  PV=$(rosservice call /mavros/param/get "param_id: 'CAL_GYRO0_XOFF'" 2>/dev/null | awk '/real:/{print $2}')
-  [ -n "$PV" ] && [ "$PV" != "0.0" ] && [ "$PV" != "0" ] && break
-  sleep 0.3
-done
-[ -n "$PV" ] && [ "$PV" != "0.0" ] && [ "$PV" != "0" ] || echo "  [FCU 快检] ⚠ 参数表 10s 未同步（快检读值可疑，以末尾预检为准）"
-# v4：6 个 param/get 并发（原来串行 = 6 次 rosservice 进程启动）
-# 坑：这里**不能写裸 `wait`** —— bash 的裸 wait 会等本 shell 的**所有**子进程，
-#     包括后台的 roscore / mavros / 相机 roslaunch -> 实测直接卡死（2026-11-14 复现）。
-pfetch() { rosservice call /mavros/param/get "param_id: '$1'" 2>/dev/null | awk '/real:/{print $2}' > "$TMPD/p_$1"; }
-PF_PIDS=""
-for p in CAL_GYRO0_XOFF CAL_GYRO0_YOFF CAL_GYRO0_ZOFF CAL_ACC0_XOFF CAL_ACC0_YOFF CAL_ACC0_ZOFF; do
-  pfetch "$p" & PF_PIDS="$PF_PIDS $!"
-done
-wait $PF_PIDS
-GFAIL=0
-for p in CAL_GYRO0_XOFF CAL_GYRO0_YOFF CAL_GYRO0_ZOFF; do
-  V=$(cat "$TMPD/p_$p" 2>/dev/null)
-  if [ -z "$V" ]; then echo "  [FCU 快检] ✗ $p 取值失败（参数服务未就绪）"; GFAIL=1; continue; fi
-  if awk -v x="$V" 'BEGIN{d=x<0?-x:x; exit !(d>0.008)}'; then
-    echo "  [FCU 快检] ✗ $p=$V 超带 |v|≤0.008——QGC 重校陀螺后再起栈"; GFAIL=1
-  else
-    echo "  [FCU 快检] ✓ $p=$V（带 |v|≤0.008）"
+  if ! wait_param_table >/dev/null; then
+    warn "[FCU 快检] 参数表 10s 未同步（快检读值可疑，以末尾预检为准）"
   fi
-done
-for p in CAL_ACC0_XOFF CAL_ACC0_YOFF CAL_ACC0_ZOFF; do
-  V=$(cat "$TMPD/p_$p" 2>/dev/null)
-  [ -n "$V" ] && echo "  [FCU 快检] ○ $p=$V（注记项，不拦）"
-done
-[ $GFAIL = 0 ] && echo "  [FCU 快检] ✓ 过——继续起相机/VINS" || exit 1
-mark "飞控快检（6 参数并发）"
-# 过了快检，相机归栈所有：正常收尾不再由 trap 收掉
-CAM_OWNED=0
-# 注：陀螺/加计读值依赖 mavros 参数表拉取完成——实测秒读会拿到全 0 假值，
-#     上面的取值带 pull 重试（见下）；快检为早期预警，末尾预检为权威门。
-# [IMU 率史料三行] ①10-09 用户令 511→203Hz 实测通（r2 批 202-222Hz 全优）；②10-10 晨停用（当时记因"压垮全家桶/链饿死 202→129→0Hz"——
-#   同日凌晨翻案定案：真根因=FC USB(cdc_acm) 断链重枚举+统计假象（断流时间入分母），与频率无关，SITL 走 UDP 无此病互证）；
-#   ③2026-10-22 用户重启裁定 200Hz（三档实测选 4000µs），实现于上方 §1a。备考旧命令：rosservice call /mavros/cmd/command "{broadcast: false, command: 511, confirmation: 0, param1: 105.0, param2: 4000.0, ...}"
-# v4：原 [留档] 单独复测（timeout 10）删除——1s 前刚测过同一条流，直接落同一文件
-echo -n "  [留档] IMU 流率(/mavros/imu/data_raw): " | tee imu_rate_$TS.txt
-echo "${IMU_HZ:-无}Hz（1a 同源实测）" | tee -a imu_rate_$TS.txt
 
-# 2) 相机就绪：出流判定与测频**合一**（hzr 会阻塞等 publisher 出现，超时即判无流）
-#    v4：原来 wait_msg(≤20s) + 独立 6s 测频串行；现在相机已并行跑了 ~15s，只留一个 4s 窗口
-#    v6（第二轮）：**补回"等 publisher"的余量**（最多 12s，0.3s 步长）——冷启动/相机 USB 重枚举时
-#    4s 窗口可能一帧都没收到就判"无流"，随后 VINS 会在死相机上空转 30s。有 publisher 时这段只花 ~0.3s。
-CAM_W=0
-until rostopic list 2>/dev/null | grep -qx "/camera/infra1/image_rect_raw"; do
-  sleep 0.3; CAM_W=$((CAM_W+1)); [ $CAM_W -ge 40 ] && break
-done
-[ "$CAM_W" -ge 40 ] && echo "  [2/6] ⚠ 12s 未见 infra1 publisher（相机可能没起来）"
-CAM_HZ=$(hzr /camera/infra1/image_rect_raw 60 4)
-echo "camera_rate=$CAM_HZ" | tee rs_hz_$TS.txt
-[ -n "$CAM_HZ" ] && echo "✓ [2/6] 相机就绪：infra1 左目图像流(/camera/infra1/image_rect_raw) ${CAM_HZ}Hz（双目 848×480 + 深度 848×480 @30）" || echo "✗ [2/6] 相机无流——健康门将拦截"
-mark "相机就绪（提前起 + 单窗口测频，实测 ${CAM_HZ:-无}Hz）"
+  # 6 个 param/get 并发（串行 = 6 次 rosservice 进程启动）
+  local p ids="" gfail=0 v
+  for p in CAL_GYRO0_XOFF CAL_GYRO0_YOFF CAL_GYRO0_ZOFF CAL_ACC0_XOFF CAL_ACC0_YOFF CAL_ACC0_ZOFF; do
+    ( fetch_param "$p" > "p_$p.txt" ) &
+    ids="$ids $!"
+  done
+  # shellcheck disable=SC2086  # ids 是一串 PID，必须分词
+  wait $ids
 
-# 3) VINS (实机 config v0)
-rosrun vins vins_node ~/sitl_realmachine/03_realmachine_config/vins_stereo_realmachine_v0.yaml > vins_$TS.log 2>&1 &
-wait_msg /vins_estimator/imu_propagate 30 || echo "WARN VINS 30s 未出流" | tee -a vins_hz_$TS.txt
-mark "VINS 出流（imu_propagate 已发布）"
+  for p in CAL_GYRO0_XOFF CAL_GYRO0_YOFF CAL_GYRO0_ZOFF; do
+    v=$(cat "p_$p.txt" 2>/dev/null) || v=""
+    if [ -z "$v" ]; then
+      bad "[FCU 快检] $p 取值失败（参数服务未就绪）"
+      gfail=1
+      continue
+    fi
+    if awk -v x="$v" 'BEGIN{d = x < 0 ? -x : x; exit !(d > 0.008)}'; then
+      bad "[FCU 快检] $p=$v 超带 |v|≤0.008——QGC 重校陀螺后再起栈"
+      gfail=1
+    else
+      echo "  [FCU 快检] ✓ $p=$v（带 |v|≤0.008）"
+    fi
+  done
+  for p in CAL_ACC0_XOFF CAL_ACC0_YOFF CAL_ACC0_ZOFF; do
+    v=$(cat "p_$p.txt" 2>/dev/null) || v=""
+    [ -n "$v" ] && echo "  [FCU 快检] ○ $p=$v（注记项，不拦）"
+  done
+  rm -f p_CAL_*.txt
+  if [ "$gfail" != 0 ]; then
+    bad "[FCU 快检] ✗ 未过——不起相机/VINS（先 QGC 重校）"
+    exit 1
+  fi
+  echo "  [FCU 快检] ✓ 过——继续起相机/VINS"
+  mark "飞控快检（6 参数并发）"
+}
 
-# 4) vins_to_mavros 与 5) px4ctrl：和 imu_propagate 测频**并行**（原来 v2m sleep 2 + px4ctrl 轮询后才测）
-rosrun vins_to_mavros vins_to_mavros_node > v2m_$TS.log 2>&1 &
-V2M_W=0; until pgrep -f "[v]ins_to_mavros_node" >/dev/null 2>&1; do
-  sleep 0.25; V2M_W=$((V2M_W+1)); [ $V2M_W -ge 20 ] && break
-done
-pgrep -f "[v]ins_to_mavros_node" >/dev/null && echo "✓ [4/6] vins_to_mavros 桥就绪（VINS 里程计→/mavros/vision_pose/pose）" || echo "✗ [4/6] vins_to_mavros 未起"
+# ---------------------------------------------------------------- 3) VINS
+phase_vins() {
+  rosrun vins vins_node "$HOME/sitl_realmachine/03_realmachine_config/vins_stereo_realmachine_v0.yaml" \
+    > "vins_$TS.log" 2>&1 &
+  if wait_until 30 0.6 "VINS 出流（imu_propagate）" vins_streaming; then
+    mark "VINS 出流（imu_propagate 已发布）"
+  else
+    warn "VINS 30s 未出流"
+    echo "VINS_ODOM_STALL" >> "vins_hz_$TS.txt"
+  fi
+}
 
-if rosnode list 2>/dev/null | grep -qx "/px4ctrl"; then
-  echo "✓ [5/6] px4ctrl 已在运行（跳过重复启动）"
-else
-  roslaunch px4ctrl run_ctrl.launch > px4ctrl_$TS.log 2>&1 &
-fi
-hzr /vins_estimator/imu_propagate 100 3 > "$TMPD/hz_prop" & HZP=$!
-W=0; until rosnode list 2>/dev/null | grep -qx "/px4ctrl"; do sleep 0.25; W=$((W+1)); [ $W -ge 32 ] && { echo "WARN px4ctrl 8s 未注册"; break; }; done
-wait $HZP
-PROP_HZ=$(cat "$TMPD/hz_prop" 2>/dev/null)
-if [ -n "$PROP_HZ" ]; then
-  echo "✓ [3/6] VINS 就绪：里程计传播流(/vins_estimator/imu_propagate) ${PROP_HZ}Hz"
-  echo "average rate: $PROP_HZ  (imu_propagate)" > vins_hz_$TS.txt
-else
-  echo VINS_ODOM_STALL | tee -a vins_hz_$TS.txt
-fi
-rosnode list 2>/dev/null | grep -qx "/px4ctrl" && echo "✓ [5/6] px4ctrl 就绪（控制器，MANUAL 态待命）" || echo "✗ [5/6] px4ctrl 未注册——健康门将拦截"
-mark "v2m + px4ctrl + imu_prop 测频（并行）"
+# ---------------------------------------------------------------- 4)+5) 桥与控制器
+phase_bridge_and_ctrl() {
+  rosrun vins_to_mavros vins_to_mavros_node > "v2m_$TS.log" 2>&1 &
+  if wait_until 5 0.25 "vins_to_mavros 起来" v2m_running; then
+    echo "✓ [4/6] vins_to_mavros 桥就绪（VINS 里程计→/mavros/vision_pose/pose）"
+  else
+    bad "[4/6] vins_to_mavros 未起"
+  fi
 
-# 6) planner
-# [2026-10-09 勘误] launch 旧机不存在(T1 v11.36 C-5) 永久注释: roslaunch planner single_run_in_exp.launch > planner_$TS.log 2>&1 &
-# [v2] 原此处死等 8s 删除（realflight_stack.sh 3/5 另起 ego_planner 并事件等待）
+  if px4ctrl_registered; then
+    echo "✓ [5/6] px4ctrl 已在运行（跳过重复启动）"
+  else
+    roslaunch px4ctrl run_ctrl.launch > "px4ctrl_$TS.log" 2>&1 &
+  fi
 
-echo "✓ [6/6] 五件套进程清单: rs=$(pgrep -f rs_camera | head -1) vins=$(pgrep -x vins_node | head -1) v2m=$(pgrep -f vins_to_mavros | head -1) mavros=$(pgrep -f 'mavros px4.launch' | head -1) px4c=$(pgrep -f run_ctrl | head -1) pln=$(pgrep -f ego_planner_node | head -1)" | tee -a "$LOG"
-echo "=== 2a reboot stack up $(date -Is)（v4 总耗时 $(el)s）===" | tee -a "$LOG"
+  local blob l rate
+  blob=$(measure_rate 3 /vins_estimator/imu_propagate)
+  l=$(topic_line "$blob" /vins_estimator/imu_propagate)
+  rate=$(rate_of "$l")
+  if num_gt "$rate" 0; then
+    echo "✓ [3/6] VINS 就绪：里程计传播流(/vins_estimator/imu_propagate) ${rate}Hz"
+    echo "average rate: $rate  (imu_propagate)" > "vins_hz_$TS.txt"
+  else
+    echo "VINS_ODOM_STALL" >> "vins_hz_$TS.txt"
+  fi
+
+  if wait_until 8 0.25 "px4ctrl 注册" px4ctrl_registered; then
+    echo "✓ [5/6] px4ctrl 就绪（控制器，MANUAL 态待命）"
+  else
+    bad "[5/6] px4ctrl 未注册——健康门将拦截"
+  fi
+  mark "v2m + px4ctrl + imu_prop 测频"
+}
+
+# ---------------------------------------------------------------- 主流程
+timer_start
+phase_roscore
+phase_mavros
+phase_camera_launch      # 越早越好：与下面飞控块并行，VINS 起点就能吃到图
+phase_imu_rc_rate
+phase_fcu_quickcheck
+CAMERA_OWNED=0           # 过了快检，相机归栈所有（cleanup 不再收）
+phase_camera_ready
+phase_vins
+phase_bridge_and_ctrl
+
+echo "✓ [6/6] 五件套进程清单: rs=$(pgrep -f rs_camera | awk 'NR==1') vins=$(pgrep -x vins_node | awk 'NR==1') v2m=$(pgrep -f vins_to_mavros | awk 'NR==1') mavros=$(pgrep -f 'mavros px4.launch' | awk 'NR==1') px4c=$(pgrep -f run_ctrl | awk 'NR==1') pln=$(pgrep -f ego_planner_node | awk 'NR==1')" | tee -a "$LOG"
+echo "=== 2a reboot stack up $(date -Is)（v5 总耗时 $(elapsed_s)s）===" | tee -a "$LOG"
