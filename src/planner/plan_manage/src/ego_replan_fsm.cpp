@@ -421,10 +421,12 @@ namespace ego_planner
       return;
     }
     odom_invalid_ = false;
+    odom_invalid_since_ = ros::Time(0);   // 2026-11-15：恢复有效即清去抖计时
 
     odom_pos_(0) = msg->pose.pose.position.x;
     odom_pos_(1) = msg->pose.pose.position.y;
     odom_pos_(2) = msg->pose.pose.position.z;
+    last_valid_pos_ = odom_pos_;   // 2026-11-15：坏位姿时用它悬停
 
     odom_vel_(0) = msg->twist.twist.linear.x;
     odom_vel_(1) = msg->twist.twist.linear.y;
@@ -634,7 +636,26 @@ namespace ego_planner
     // 保护由 px4ctrl 的 odom sanity gate 负责。定时器必须重启，否则 FSM 停摆。
     if (odom_invalid_)
     {
-      ROS_WARN_THROTTLE(1.0, "[FSM] odom invalid -> skip planning (px4ctrl odom gate owns protection)");
+      /* 2026-11-15（深挖缺口修复）：原来这里只 return —— 规划停了，但**已发布的轨迹继续执行**。
+         11-14 实测：VINS z 崩到 -14.5 时 /position_cmd 也跟到 -14.48（那是用坏位姿规划出来的
+         轨迹）。现在坏位姿第一拍就发"最后有效位置悬停"并进 EMERGENCY_STOP。 */
+      /* 去抖：VINS 偶发单帧野值（实测 odom 速度谱有 73 m/s 的跳变）不能立刻急停，
+         必须连续坏 0.5 s 才动作。 */
+      const ros::Time now_iv = ros::Time::now();
+      if (odom_invalid_since_.isZero())
+        odom_invalid_since_ = now_iv;
+      if ((now_iv - odom_invalid_since_).toSec() > 0.5)
+      {
+        if (have_odom_ && exec_state_ != EMERGENCY_STOP)
+        {
+          ROS_ERROR("[FSM] odom invalid for >0.5 s -> hold at last valid (%.2f,%.2f,%.2f) + EMERGENCY_STOP",
+                    last_valid_pos_.x(), last_valid_pos_.y(), last_valid_pos_.z());
+          callEmergencyStop(last_valid_pos_);
+          changeFSMExecState(EMERGENCY_STOP, "ODOM_INVALID");
+        }
+      }
+      else
+        ROS_WARN_THROTTLE(0.5, "[FSM] odom invalid (single frame?) -> hold off, waiting confirm");
       exec_timer_.start();
       return;
     }

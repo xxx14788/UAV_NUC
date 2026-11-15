@@ -532,7 +532,10 @@ class RosFlight:
                 print("VINS %s 中位数 %.6g（限值 %.6g）" % (name, median, limit))
                 log_ok = log_ok and math.isfinite(median) and median <= limit
             if not log_ok:
-                failures.append("VINS 收敛日志超出 |Bas|/|Bgs|/cost 门限")
+                # 2026-11-15（实测翻案）：降级为告警。11-12 成功轮起飞时 |Bas|≈1.0 仍正常飞完，
+                # 11-14 失败轮只有 0.03-0.05；cost 随滑窗残差数增长、Bas 随段累积，都不是健康判据。
+                # 硬判据保留上面的实时流/姿态一致性/静置位置三项（那些才是"能不能飞"）。
+                print("  [WARN] VINS 日志指标超门限（仅告警，不作禁飞依据）")
 
         # 2026-11-07（方案A）：高度以 px4ctrl 的 takeoff_height 为唯一来源。
         # 原来这里硬断言两者都 == 0.5，改高度就得改脚本；现在只要求两者相等。
