@@ -88,6 +88,7 @@ RECORD_TOPICS = [
     '/vins_estimator/odometry', '/vins_estimator/imu_propagate',
     '/vins_estimator/camera_pose', '/vins_estimator/extrinsic',
     '/vins_estimator/keyframe_pose',
+    '/vins_estimator/health',   # 2026-11-15：track/|Bas|/|Bgs|/cost 日志桥（vins_health_bridge.py）
     '/px4ctrl/takeoff_land', '/debugPx4ctrl', '/debugPx4ctrl/fsm_state',
     '/move_base_simple/goal', '/flight_v1/goal_gate',   # goal 项会被 record_topics() 换成 P['goal_topic']
     '/position_cmd', '/drone_0_planning/bspline',

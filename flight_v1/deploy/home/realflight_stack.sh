@@ -44,6 +44,7 @@ PLANNER_LAUNCH=${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_re
 CONTRACT=${CONTRACT:-$HOME/sitl_realmachine/flight_v1/contract/flight_contract.yaml}
 RELAY_PY=$HOME/sitl_realmachine/flight_v1/camera_pose_relay.py
 PATHPUB_PY=$HOME/sitl_realmachine/flight_v1/planned_path_pub.py
+HEALTH_PY=$HOME/sitl_realmachine/flight_v1/vins_health_bridge.py   # 2026-11-15：VINS 健康量桥
 PREFLIGHT_PY=$HOME/sitl_realmachine/tools/t1_preflight_check_v1.py
 STACK_2A=$HOME/sitl_realmachine/realmachine_2a_reboot_stack.sh
 LOCK=$HOME/sitl_realmachine/flight_v1/runtime/stack.lock
@@ -77,6 +78,7 @@ rosmaster_gone() { ! pgrep -x rosmaster >/dev/null 2>&1; }
 planner_registered() { has_node_pat '*ego_planner*|*traj_server*'; }
 relay_registered()   { has_node /planner_camera_pose_relay; }
 pathpub_registered() { has_node /planned_path_pub; }
+health_registered() { has_node /vins_health_bridge; }   # 2026-11-15
 
 three_registered() {
   nodes_snapshot
@@ -188,6 +190,20 @@ start_pathpub() {
   PPLOG=$HOME/sitl_realmachine/planned_path_$(date +%H%M%S).log
   nohup python3 "$PATHPUB_PY" > "$PPLOG" 2>&1 &
   echo "  轨迹回传 pid=$! 日志=$PPLOG（/flight_v1/planned_path|executed_trail|goal_marker）"
+}
+
+start_health_bridge() {
+  # 2026-11-15（用户令）：VINS 健康量进录包。只读 tail vins 日志，转发
+  # track/|Bas|/|Bgs|/cost 到 /vins_estimator/health；不动 VINS 本体。
+  if nodes_snapshot && health_registered; then
+    echo "  VINS 健康桥已在运行（当前 master 上，跳过）"
+    return 0
+  fi
+  pkill -f '[v]ins_health_bridge.py' 2>/dev/null || true
+  sleep_until_elapsed "$(_now_ms)" 0.3
+  HLOG=$HOME/sitl_realmachine/vins_health_$(date +%H%M%S).log
+  nohup python3 "$HEALTH_PY" > "$HLOG" 2>&1 &
+  echo "  VINS 健康桥 pid=$! 日志=$HLOG（/vins_estimator/health 进录包）"
 }
 
 read_contract() {
@@ -443,6 +459,7 @@ start_planner
 start_relay
 read_contract
 start_pathpub
+start_health_bridge
 
 # 门区在这里就后台启动：预检最慢（~13s）先起；健康门要算 ${HEALTH_WINDOW_S}s 平均率，
 # 留 GATE_SETTLE_S 秒余量避开三件 launch 的 exec 抖动后再测（这段余量同时计入 6s 下限）。
