@@ -14,12 +14,10 @@ if [ "$AVAIL" -ge 40 ]; then echo "  ✓ 通过"; else echo "  ✗ 不够——�
 echo "--- [2/5] 残留进程（应无输出=干净）---"
 STALE=$( { pgrep -a -x rosmaster; pgrep -a -x vins_node; pgrep -af "mavros_node|realsense2_camera|run_planner|roslaunch"; } 2>/dev/null | grep -v realflight )
 if [ -z "$STALE" ]; then echo "  ✓ 无残留"; else echo "  ⚠ 残留（起栈脚本会清）："; echo "$STALE" | sed 's/^/    /'; fi
-echo "--- [3/5] 四脚本指纹（对照登记值）---"
-ok=1
-[ "$(md5sum ~/realflight_record_v1.sh 2>/dev/null | cut -c1-6)" = "cbdc1b" ] && echo "  ✓ record(cbdc1b, 11-14 版: 录30/15 + /mavros/altitude)" || { echo "  ✗ record 不符"; ok=0; PASS=0; }
-[ "$(md5sum ~/realflight_verify_v1.sh 2>/dev/null | cut -c1-6)" = "316c93" ] && echo "  ✓ verify_v1" || { echo "  ✗ verify_v1 不符"; ok=0; PASS=0; }
-[ -f ~/realflight_stack.sh ] && echo "  ✓ stack 在位($(md5sum ~/realflight_stack.sh | cut -c1-6))" || { echo "  ✗ stack 缺"; PASS=0; }
-[ -f ~/realflight_vins_restart.sh ] && echo "  ✓ vins_restart 在位($(md5sum ~/realflight_vins_restart.sh | cut -c1-6))" || { echo "  ✗ vins_restart 缺"; PASS=0; }
+echo "--- [3/5] 脚本在位（2026-11-15 用户裁定：md5 指纹只打印，不作判据）---"
+for f in realflight_record_v1.sh realflight_verify_v1.sh realflight_stack.sh realflight_vins_restart.sh; do
+  if [ -f "$HOME/$f" ]; then echo "  ✓ $f 在位($(md5sum "$HOME/$f" | cut -c1-6))"; else echo "  ✗ $f 缺"; PASS=0; fi
+done
 echo "--- [4/5] 录制目标目录与文档 ---"
 [ -d ~/flight_data ] && echo "  ✓ ~/flight_data 在位" || { mkdir -p ~/flight_data && echo "  ✓ 已自动创建 ~/flight_data"; }
 ls ~/sitl_sim/docs/2026-10-18_VINS首飞教程_v3.md >/dev/null 2>&1 && echo "  ✓ 首飞教程 v3 在位" || echo "  ⚠ 教程文档未见（不影响飞行）"
