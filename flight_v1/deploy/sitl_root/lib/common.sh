@@ -157,7 +157,7 @@ topic_has_publisher() {   # $1=话题 $2=发布者节点名
 }
 
 # 录包守卫：只认"连我这个 master"的 rosbag record
-#   为什么不用 ps | grep：本机可能同时跑别的私有 master 台架（实测有 :11312），
+#   为什么不用 ps | grep：本机可能同时跑别人的私有 master 台架（实测 :11312），
 #   人家在录包不该拦住我的起栈；反之我的录包必须拦。判据 = 进程环境里的 ROS_MASTER_URI。
 #   * 不用 grep -q（pipefail 下早退会给上游 SIGPIPE 造成假放行），走 awk / case
 rosbag_recording() {
@@ -188,4 +188,48 @@ foreign_master_hint() {
     esac
     printf '%s\n' "${uri:-未知}"
   done
+}
+
+# ---------------------------- 进程清理（master 作用域） ----------------------------
+# 本机常有别人的私有 master 台架（实测 :11312，跑在 ~/tmp_replay/）。按进程名 kill 会误伤，
+# 所以清理一律先问"这个进程连的是不是我"：读 /proc/<pid>/environ 的 ROS_MASTER_URI；
+# 未设置 = 默认 http://localhost:11311，算我的。台架进程（11312）自动豁免。
+MY_MASTER_URI=${ROS_MASTER_URI:-http://localhost:11311}
+
+_pid_uses_my_master() {
+  local p=$1 uri
+  [ -r "/proc/$p/environ" ] || return 1
+  uri=$(tr '\0' '\n' < "/proc/$p/environ" 2>/dev/null | awk -F= '/^ROS_MASTER_URI=/{print $2; exit}')
+  [ -z "$uri" ] && uri=http://localhost:11311
+  [ "$uri" = "$MY_MASTER_URI" ]
+}
+
+# kill_mine <TERM|KILL> <x|f> <名字或模式...>
+#   x = pgrep -x（精确进程名）  f = pgrep -f（命令行正则，调用方负责用 [x]xx 括号式）
+kill_mine() {
+  local sig=$1 mode=$2
+  shift 2
+  local key p
+  for key in "$@"; do
+    for p in $(pgrep "-$mode" "$key" 2>/dev/null); do
+      [ "$p" = "$$" ] && continue
+      if _pid_uses_my_master "$p"; then
+        kill "-$sig" "$p" 2>/dev/null || true
+      fi
+    done
+  done
+  return 0
+}
+
+# mine_matching <名字或模式...> → 打印 "pid 命令行"，只含属于我的（诊断用，不改状态）
+mine_matching() {
+  local key pid rest
+  for key in "$@"; do
+    while read -r pid rest; do
+      [ -n "$pid" ] || continue
+      [ "$pid" = "$$" ] && continue
+      _pid_uses_my_master "$pid" && printf '%s %s\n' "$pid" "$rest"
+    done < <(pgrep -a -f "$key" 2>/dev/null)
+  done
+  return 0
 }

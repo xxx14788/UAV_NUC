@@ -44,7 +44,6 @@ PLANNER_LAUNCH=${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_re
 CONTRACT=${CONTRACT:-$HOME/sitl_realmachine/flight_v1/contract/flight_contract.yaml}
 RELAY_PY=$HOME/sitl_realmachine/flight_v1/camera_pose_relay.py
 PATHPUB_PY=$HOME/sitl_realmachine/flight_v1/planned_path_pub.py
-HEALTH_PY=$HOME/sitl_realmachine/flight_v1/vins_health_bridge.py   # 2026-11-15：VINS 健康量桥
 PREFLIGHT_PY=$HOME/sitl_realmachine/tools/t1_preflight_check_v1.py
 STACK_2A=$HOME/sitl_realmachine/realmachine_2a_reboot_stack.sh
 LOCK=$HOME/sitl_realmachine/flight_v1/runtime/stack.lock
@@ -78,7 +77,6 @@ rosmaster_gone() { ! pgrep -x rosmaster >/dev/null 2>&1; }
 planner_registered() { has_node_pat '*ego_planner*|*traj_server*'; }
 relay_registered()   { has_node /planner_camera_pose_relay; }
 pathpub_registered() { has_node /planned_path_pub; }
-health_registered() { has_node /vins_health_bridge; }   # 2026-11-15
 
 three_registered() {
   nodes_snapshot
@@ -109,41 +107,32 @@ phase_cleanup() {
     echo "    清场按进程名杀，可能影响对方台架——建议先停台架再起栈（本次继续）"
   fi
 
-  # 先把残留打出来（真出问题时好定位），再杀
+  # 只清"属于本 master"的进程：同机别人的私有 master 台架（实测 :11312，跑在 ~/tmp_replay/）
+  # 一个都不碰。括号式模式防自匹配（普通词会把调用者自己的 shell 行也命中，实测踩过两次）。
+  local -a local_pats=(
+    '[m]avros_node' '[r]ealsense2_camera' '[r]un_planner' '[r]oslaunch'
+    '[c]amera_pose_relay.py' '[p]lanned_path_pub.py' '[v]ins_to_mavros_node'
+    '[e]go_planner' '[t]raj_server' '[p]x4ctrl'
+  )
   local stale
-  stale=$( { pgrep -a -x rosmaster; pgrep -a -x vins_node
-             pgrep -af '[m]avros_node|[r]ealsense2_camera|[r]un_planner|[r]oslaunch'; } 2>/dev/null \
-           | grep -v realflight ) || stale=""
+  stale=$(mine_matching "${local_pats[@]}" rosmaster vins_node)
   if [ -n "$stale" ]; then
-    echo "发现残留："
+    echo "发现残留（属于本 master）："
     printf '%s\n' "$stale" | sed 's/^/  杀 /'
   else
     echo "无残留（干净）"
   fi
 
-  # 括号式模式：普通词会连调用者自己的 shell 行一起命中（实测踩过两次）
-  pkill -x vins_node 2>/dev/null || true
-  pkill -x rosmaster 2>/dev/null || true
-  pkill -x roscore 2>/dev/null || true
-  pkill -f '[m]avros_node' 2>/dev/null || true
-  pkill -f '[r]ealsense2_camera' 2>/dev/null || true
-  pkill -f '[r]un_planner' 2>/dev/null || true
-  pkill -f '[r]oslaunch' 2>/dev/null || true
-  pkill -f '[c]amera_pose_relay.py' 2>/dev/null || true
-  pkill -f '[p]lanned_path_pub.py' 2>/dev/null || true
-  pkill -f '[v]ins_to_mavros_node' 2>/dev/null || true
-  # 以下三项是 roslaunch 的子进程；launch 被杀后偶尔会剩孤儿（2026-11-08 P0-6 同形状）
-  pkill -f '[e]go_planner' 2>/dev/null || true
-  pkill -f '[t]raj_server' 2>/dev/null || true
-  pkill -f '[p]x4ctrl' 2>/dev/null || true
-  pkill -x rviz 2>/dev/null || true
+  kill_mine TERM x rosmaster roscore vins_node rviz
+  kill_mine TERM f "${local_pats[@]}"
   # 地图工具节点不在五件套里，但会抢 /grid_map 与 CPU（2026-11-10 用户批准）
   nodes_snapshot
   if has_node /mapping_view; then rosnode kill /mapping_view >/dev/null 2>&1 || true; fi
 
-  wait_until 3 0.1 "rosmaster 自行退出" rosmaster_gone || true
-  pkill -9 -x rosmaster 2>/dev/null || true
-  wait_until 3 0.1 "rosmaster 强制退出" rosmaster_gone \
+  wait_until 3 0.1 "rosmaster 自行退出" rosmaster_gone >/dev/null || true
+  kill_mine KILL x rosmaster roscore vins_node rviz
+  kill_mine KILL f "${local_pats[@]}"
+  wait_until 3 0.1 "rosmaster 强制退出" rosmaster_gone >/dev/null \
     || die "rosmaster 杀不掉——手动 ps 检查后重跑"
   ok "清场毕（rosmaster 0 残留）"
 }
@@ -190,20 +179,6 @@ start_pathpub() {
   PPLOG=$HOME/sitl_realmachine/planned_path_$(date +%H%M%S).log
   nohup python3 "$PATHPUB_PY" > "$PPLOG" 2>&1 &
   echo "  轨迹回传 pid=$! 日志=$PPLOG（/flight_v1/planned_path|executed_trail|goal_marker）"
-}
-
-start_health_bridge() {
-  # 2026-11-15（用户令）：VINS 健康量进录包。只读 tail vins 日志，转发
-  # track/|Bas|/|Bgs|/cost 到 /vins_estimator/health；不动 VINS 本体。
-  if nodes_snapshot && health_registered; then
-    echo "  VINS 健康桥已在运行（当前 master 上，跳过）"
-    return 0
-  fi
-  pkill -f '[v]ins_health_bridge.py' 2>/dev/null || true
-  sleep_until_elapsed "$(_now_ms)" 0.3
-  HLOG=$HOME/sitl_realmachine/vins_health_$(date +%H%M%S).log
-  nohup python3 "$HEALTH_PY" > "$HLOG" 2>&1 &
-  echo "  VINS 健康桥 pid=$! 日志=$HLOG（/vins_estimator/health 进录包）"
 }
 
 read_contract() {
@@ -459,7 +434,6 @@ start_planner
 start_relay
 read_contract
 start_pathpub
-start_health_bridge
 
 # 门区在这里就后台启动：预检最慢（~13s）先起；健康门要算 ${HEALTH_WINDOW_S}s 平均率，
 # 留 GATE_SETTLE_S 秒余量避开三件 launch 的 exec 抖动后再测（这段余量同时计入 6s 下限）。
