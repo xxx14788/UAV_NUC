@@ -87,125 +87,132 @@ namespace ego_planner
         flag_first_call = false;
         flag_force_polynomial = false;
 
-        // 2026-11-16（根因修复，用户批准）：种子的**形状**应该来自几何路线（A*），
-        // 而不是“当前状态→目标”的单段 min-jerk。后者把方向变化摊到整条轨迹（掉头在 23~42%），
-        // 而执行窗只有 0.5 s -> 每拍只执行“鼓包”前段，实测 y 棘轮 0.09→1.20（11-14 bag1）。
-        bool seed_astar_ok = false;
+        PolynomialTraj gl_traj;
+
+        double dist = (start_pt - local_target_pt).norm();
+        double time = pow(pp_.max_vel_, 2) / pp_.max_acc_ > dist ? sqrt(dist / pp_.max_acc_) : (dist - pow(pp_.max_vel_, 2) / pp_.max_acc_) / pp_.max_vel_ + 2 * pp_.max_vel_ / pp_.max_acc_;
+
+        /* 2026-11-16（根因，用户批准）：种子的**形状**应来自几何路线，而不是“起点→目标”两点直线。
+           证据（11-14 bag1）：计划最高点跟着起点走（起点+0.1~0.4），不钉在箱沿；掉头点落在轨迹
+           23~42%（1~2 s），而执行窗只有 0.5 s -> 每拍只执行“鼓包”前段 -> y 棘轮 0.09→1.20。
+           v1 教训：直接重采样 A* 栅格点会把阶梯带进种子（A/B 反而更差 4.7s/0.21m vs 4.0s/0.11m），
+           所以这里先做**视线捷径**去掉阶梯，再用 min-snap 过捷径拐点（与 planGlobalTraj 同款构造）。
+           开关 manager/seed_from_astar（默认 false，可参数化 A/B，无需重编）。 */
+        bool seed_from_route = false;
+        Eigen::MatrixXd route_pos;
+        Eigen::VectorXd route_t;
         if (pp_.seed_from_astar && !flag_randomPolyTraj && bspline_optimizer_->a_star_)
         {
           if (bspline_optimizer_->a_star_->AstarSearch(grid_map_->getResolution(), start_pt, local_target_pt))
           {
             std::vector<Eigen::Vector3d> raw = bspline_optimizer_->a_star_->getPath();
-            std::vector<Eigen::Vector3d> poly;
-            poly.push_back(start_pt);
+            std::vector<Eigen::Vector3d> wp;
+            wp.push_back(start_pt);
             for (size_t i = 0; i < raw.size(); ++i)
-              if ((raw[i] - poly.back()).norm() > 1e-3)
-                poly.push_back(raw[i]);
-            if ((poly.back() - local_target_pt).norm() > 1e-3)
-              poly.push_back(local_target_pt);
+              if ((raw[i] - wp.back()).norm() > 1e-3)
+                wp.push_back(raw[i]);
+            if ((wp.back() - local_target_pt).norm() > 1e-3)
+              wp.push_back(local_target_pt);
 
-            double plen = 0.0;
-            for (size_t i = 1; i < poly.size(); ++i)
-              plen += (poly[i] - poly[i - 1]).norm();
-
-            if (poly.size() >= 2 && plen > 0.30)
+            // 视线捷径：从 i 出发取最远的“整段在 inflate 图上自由”的 j
+            std::vector<Eigen::Vector3d> sw;
+            sw.push_back(wp.front());
+            const double res = grid_map_->getResolution();
+            size_t i = 0;
+            while (i + 1 < wp.size())
             {
-              const double ds = std::max(0.06, std::min(0.12, plen / 12.0));
-              const int n = std::max(8, (int)std::ceil(plen / ds));
-              const double step = plen / double(n);
-              point_set.clear();
-              point_set.push_back(poly.front());
-              size_t k = 1;
-              Eigen::Vector3d seg_a = poly[0];
-              Eigen::Vector3d seg_dir = (poly.size() > 1) ? (poly[1] - poly[0]).normalized() : Eigen::Vector3d::Zero();
-              double seg_left = (poly.size() > 1) ? (poly[1] - poly[0]).norm() : 0.0;
-              double need = step;
-              for (int i = 1; i < n; ++i)
+              size_t best = i + 1;
+              for (size_t j = wp.size() - 1; j > i + 1; --j)
               {
-                while (need > seg_left && k + 1 < poly.size())
+                const Eigen::Vector3d a = wp[i], b = wp[j];
+                const int n = std::max(2, (int)std::ceil((b - a).norm() / (0.5 * res)));
+                bool free = true;
+                for (int k = 1; k < n; ++k)
                 {
-                  need -= seg_left;
-                  ++k;
-                  seg_a = poly[k - 1];
-                  seg_dir = poly[k] - poly[k - 1];
-                  seg_left = seg_dir.norm();
-                  if (seg_left > 1e-6)
-                    seg_dir.normalize();
+                  if (grid_map_->getInflateOccupancy(a + (b - a) * (double(k) / double(n))))
+                  {
+                    free = false;
+                    break;
+                  }
                 }
-                point_set.push_back(seg_a + seg_dir * std::min(need, seg_left));
-                need += step;
+                if (free)
+                {
+                  best = j;
+                  break;
+                }
               }
-              if ((point_set.back() - poly.back()).norm() > 0.05)
-                point_set.push_back(poly.back());
-
-              if (point_set.size() >= 7)
-              {
-                ts = step / std::max(0.10, pp_.max_vel_);
-                start_end_derivatives.push_back(start_vel);
-                start_end_derivatives.push_back(local_target_vel);
-                start_end_derivatives.push_back(start_acc);
-                start_end_derivatives.push_back(Eigen::Vector3d::Zero());
-                seed_astar_ok = true;
-                ROS_INFO_THROTTLE(1.0, "[seed] A*route len=%.2fm pts=%d ts=%.2f", plen, (int)point_set.size(), ts);
-              }
+              sw.push_back(wp[best]);
+              i = best;
             }
-          }
-        }
 
-        if (!seed_astar_ok)
-        {
-          PolynomialTraj gl_traj;
-
-          double dist = (start_pt - local_target_pt).norm();
-          double time = pow(pp_.max_vel_, 2) / pp_.max_acc_ > dist ? sqrt(dist / pp_.max_acc_) : (dist - pow(pp_.max_vel_, 2) / pp_.max_acc_) / pp_.max_vel_ + 2 * pp_.max_vel_ / pp_.max_acc_;
-
-          if (!flag_randomPolyTraj)
-          {
-            gl_traj = PolynomialTraj::one_segment_traj_gen(start_pt, start_vel, start_acc, local_target_pt, local_target_vel, Eigen::Vector3d::Zero(), time);
-          }
-          else
-          {
-            Eigen::Vector3d horizen_dir = ((start_pt - local_target_pt).cross(Eigen::Vector3d(0, 0, 1))).normalized();
-            Eigen::Vector3d vertical_dir = ((start_pt - local_target_pt).cross(horizen_dir)).normalized();
-            Eigen::Vector3d random_inserted_pt = (start_pt + local_target_pt) / 2 +
-                                                 (((double)rand()) / RAND_MAX - 0.5) * (start_pt - local_target_pt).norm() * horizen_dir * 0.8 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989) +
-                                                 (((double)rand()) / RAND_MAX - 0.5) * (start_pt - local_target_pt).norm() * vertical_dir * 0.4 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989);
-            Eigen::MatrixXd pos(3, 3);
-            pos.col(0) = start_pt;
-            pos.col(1) = random_inserted_pt;
-            pos.col(2) = local_target_pt;
-            Eigen::VectorXd t(2);
-            t(0) = t(1) = time / 2;
-            gl_traj = PolynomialTraj::minSnapTraj(pos, start_vel, local_target_vel, start_acc, Eigen::Vector3d::Zero(), t);
-          }
-
-          double t;
-          bool flag_too_far;
-          ts *= 1.5; // ts will be divided by 1.5 in the next
-          do
-          {
-            ts /= 1.5;
-            point_set.clear();
-            flag_too_far = false;
-            Eigen::Vector3d last_pt = gl_traj.evaluate(0);
-            for (t = 0; t < time; t += ts)
+            if (sw.size() >= 3)
             {
-              Eigen::Vector3d pt = gl_traj.evaluate(t);
-              if ((last_pt - pt).norm() > pp_.ctrl_pt_dist * 1.5)
-              {
-                flag_too_far = true;
-                break;
-              }
-              last_pt = pt;
-              point_set.push_back(pt);
+              route_pos.resize(3, sw.size());
+              for (size_t k = 0; k < sw.size(); ++k)
+                route_pos.col(k) = sw[k];
+              route_t.resize(sw.size() - 1);
+              for (size_t k = 0; k + 1 < sw.size(); ++k)
+                route_t(k) = (sw[k + 1] - sw[k]).norm() / std::max(0.10, pp_.max_vel_);
+              route_t(0) *= 2.0;
+              route_t(route_t.rows() - 1) *= 2.0;
+              seed_from_route = true;
             }
-          } while (flag_too_far || point_set.size() < 7); // To make sure the initial path has enough points.
-          t -= ts;
-          start_end_derivatives.push_back(gl_traj.evaluateVel(0));
-          start_end_derivatives.push_back(local_target_vel);
-          start_end_derivatives.push_back(gl_traj.evaluateAcc(0));
-          start_end_derivatives.push_back(gl_traj.evaluateAcc(t));
+          }
         }
+
+        if (seed_from_route)
+        {
+          gl_traj = PolynomialTraj::minSnapTraj(route_pos, start_vel, local_target_vel, start_acc,
+                                                Eigen::Vector3d::Zero(), route_t);
+          time = route_t.sum();
+          ROS_INFO_THROTTLE(1.0, "[seed] route wp=%d T=%.2fs", (int)route_pos.cols(), time);
+        }
+        else if (!flag_randomPolyTraj)
+        {
+          gl_traj = PolynomialTraj::one_segment_traj_gen(start_pt, start_vel, start_acc, local_target_pt, local_target_vel, Eigen::Vector3d::Zero(), time);
+        }
+        else
+        {
+          Eigen::Vector3d horizen_dir = ((start_pt - local_target_pt).cross(Eigen::Vector3d(0, 0, 1))).normalized();
+          Eigen::Vector3d vertical_dir = ((start_pt - local_target_pt).cross(horizen_dir)).normalized();
+          Eigen::Vector3d random_inserted_pt = (start_pt + local_target_pt) / 2 +
+                                               (((double)rand()) / RAND_MAX - 0.5) * (start_pt - local_target_pt).norm() * horizen_dir * 0.8 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989) +
+                                               (((double)rand()) / RAND_MAX - 0.5) * (start_pt - local_target_pt).norm() * vertical_dir * 0.4 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989);
+          Eigen::MatrixXd pos(3, 3);
+          pos.col(0) = start_pt;
+          pos.col(1) = random_inserted_pt;
+          pos.col(2) = local_target_pt;
+          Eigen::VectorXd t(2);
+          t(0) = t(1) = time / 2;
+          gl_traj = PolynomialTraj::minSnapTraj(pos, start_vel, local_target_vel, start_acc, Eigen::Vector3d::Zero(), t);
+        }
+
+        double t;
+        bool flag_too_far;
+        ts *= 1.5; // ts will be divided by 1.5 in the next
+        do
+        {
+          ts /= 1.5;
+          point_set.clear();
+          flag_too_far = false;
+          Eigen::Vector3d last_pt = gl_traj.evaluate(0);
+          for (t = 0; t < time; t += ts)
+          {
+            Eigen::Vector3d pt = gl_traj.evaluate(t);
+            if ((last_pt - pt).norm() > pp_.ctrl_pt_dist * 1.5)
+            {
+              flag_too_far = true;
+              break;
+            }
+            last_pt = pt;
+            point_set.push_back(pt);
+          }
+        } while (flag_too_far || point_set.size() < 7); // To make sure the initial path has enough points.
+        t -= ts;
+        start_end_derivatives.push_back(gl_traj.evaluateVel(0));
+        start_end_derivatives.push_back(local_target_vel);
+        start_end_derivatives.push_back(gl_traj.evaluateAcc(0));
+        start_end_derivatives.push_back(gl_traj.evaluateAcc(t));
 
       }
       else // Initial path generated from previous trajectory.
