@@ -228,108 +228,6 @@ namespace ego_planner
   // 2026-11-15（壳内死锁根因修复）：闭环实测起点落在膨胀壳内时，refine 的 A* 段修补
   // 恒失败（a star error 19.8 万次 / plan_success=0 / GEN_NEW_TRAJ 死循环），飞机永久停住。
   // 这里给恢复分支：找最近的全自由体素（raw+inflate 都自由），直线飞过去，再交给正常规划。
-  bool EGOReplanFSM::tryEscapeFromInflation()
-  {
-    const ros::Time now = ros::Time::now();
-    if (!escape_last_try_.isZero() && (now - escape_last_try_).toSec() < 1.0)
-      return false;
-    escape_last_try_ = now;
-
-    const auto map = planner_manager_->grid_map_;
-    if (!map)
-      return false;
-
-    const Eigen::Vector3d start = odom_pos_;
-    if (map->getInflateOccupancy(start) == 0)
-      return false;   // 不在壳里：走正常重规划，不做机动
-    // 2026-11-15（自审修正）：本机体素被判占据（贴墙/深度噪声/桨洗）时**不能放弃脱壳**——
-    // 那正是最需要离开的位置。仍按"目标自由 + 0.30 m 后路径自由"约束。
-    if (map->getOccupancy(start) != 0)
-      ROS_WARN("[escape] start (%.2f,%.2f,%.2f) in occupied voxel (map noise?) -> try escape anyway",
-               start.x(), start.y(), start.z());
-
-    const double res = map->getResolution();
-    const int rx = (int)std::ceil(1.20 / res);
-    struct Cand { Eigen::Vector3d p; double d; };
-    std::vector<Cand> cands;
-    for (int ix = -rx; ix <= rx; ++ix)
-      for (int iy = -rx; iy <= rx; ++iy)
-        for (int iz = -1; iz <= rx; ++iz)   // 向下只 1 格，主要向上/水平脱壳
-        {
-          const Eigen::Vector3d q = start + Eigen::Vector3d(ix * res, iy * res, iz * res);
-          if (map->getInflateOccupancy(q) != 0 || map->getOccupancy(q) != 0)
-            continue;
-          // 2026-11-15 修正：一次必须挪出壳（>=0.45 m，一个壳直径+余量）；否则每步 0.15 m
-          // 挪完仍在壳内，会变成"贴障爬行"（首轮实测 4 次 escape 只走 0.37 m）。
-          const double d = (q - start).norm();
-          if (d < 0.45 || d > 1.20)
-            continue;
-          // 目标 6 邻域 1 格净空，避免"算自由但贴着另一面壳"
-          bool clear = true;
-          for (int a = 0; a < 3 && clear; ++a)
-            for (int sgn = -1; sgn <= 1 && clear; sgn += 2)
-            {
-              Eigen::Vector3d qn = q;
-              qn(a) += sgn * res;
-              if (map->getInflateOccupancy(qn) != 0) clear = false;
-            }
-          if (!clear)
-            continue;
-          Cand c; c.p = q; c.d = d;
-          cands.push_back(c);
-        }
-    std::sort(cands.begin(), cands.end(), [](const Cand &a, const Cand &b) { return a.d < b.d; });
-
-    int tried = 0;
-    for (size_t k = 0; k < cands.size(); ++k)
-    {
-      if (++tried > 60)
-        break;
-      const Eigen::Vector3d tgt = cands[k].p;
-      bool ok = true;
-      const int n = std::max(4, (int)std::ceil(cands[k].d / (0.5 * res)));
-      for (int i = 1; i <= n; ++i)
-      {
-        const Eigen::Vector3d s = start + (tgt - start) * (double(i) / double(n));
-        const double ds = (s - start).norm();
-        // 起点 0.30 m 内允许仍在本机所在体素/壳里（本来就是要爬出去）；0.30 m 之后必须 raw+inflate 都自由。
-        if (ds > 0.30 && (map->getOccupancy(s) != 0 || map->getInflateOccupancy(s) != 0)) { ok = false; break; }
-      }
-      if (!ok)
-        continue;
-      if (!planner_manager_->escapeMove(start, tgt, 0.25, odom_vel_))
-        continue;
-
-      ROS_WARN("[escape] start (%.2f,%.2f,%.2f) in inflation (raw free) -> free point (%.2f,%.2f,%.2f) d=%.2f m",
-               start.x(), start.y(), start.z(), tgt.x(), tgt.y(), tgt.z(), cands[k].d);
-
-      const auto info = &planner_manager_->local_data_;
-      traj_utils::Bspline bspline;
-      bspline.order = 3;
-      bspline.start_time = info->start_time_;
-      bspline.traj_id = info->traj_id_;
-      Eigen::MatrixXd pos_pts = info->position_traj_.getControlPoint();
-      bspline.pos_pts.reserve(pos_pts.cols());
-      for (int i = 0; i < pos_pts.cols(); ++i)
-      {
-        geometry_msgs::Point pt;
-        pt.x = pos_pts(0, i); pt.y = pos_pts(1, i); pt.z = pos_pts(2, i);
-        bspline.pos_pts.push_back(pt);
-      }
-      Eigen::VectorXd knots = info->position_traj_.getKnot();
-      bspline.knots.reserve(knots.rows());
-      for (int i = 0; i < knots.rows(); ++i)
-        bspline.knots.push_back(knots(i));
-      bspline_pub_.publish(bspline);
-      visualization_->displayOptimalList(info->position_traj_.get_control_points(), 0);
-      return true;
-    }
-
-    ROS_ERROR("[escape] no feasible free point (0.45~1.20 m) from (%.2f,%.2f,%.2f)",
-              start.x(), start.y(), start.z());
-    return false;
-  }
-
   void EGOReplanFSM::triggerCallback(const geometry_msgs::PoseStampedPtr &msg)
   {
     have_trigger_ = true;
@@ -749,17 +647,10 @@ namespace ego_planner
       }
       else
       {
-        // 2026-11-15（壳内死锁根因修复）：常规全局规划连续失败时，若起点在膨胀壳内，
-        // 先做一次有界脱壳机动，否则 GEN_NEW_TRAJ 会永久自循环（闭环实测）。
-        if (tryEscapeFromInflation())
-        {
-          plan_fail_since_ = ros::Time(0);
-          changeFSMExecState(EXEC_TRAJ, "ESCAPE");
-        }
-        else
-        {
-          changeFSMExecState(GEN_NEW_TRAJ, "FSM");
-        }
+        // 2026-11-16（用户裁定，删过度防御）：脱壳机动会把飞机向上抬 0.45 m/次，
+        // 闭环实测两次触发把 z 从 0.70 抬到 1.34、规划全失败。新架构（短视距+A*路线，
+        // A* 起点对膨胀层有 raw 豁免）不再需要它。
+        changeFSMExecState(GEN_NEW_TRAJ, "FSM");
       }
       break;
     }
@@ -783,13 +674,6 @@ namespace ego_planner
           plan_fail_since_ = now_f;
         else if ((now_f - plan_fail_since_).toSec() > 1.5)
         {
-          // 2026-11-15（壳内死锁根因修复）：急停前先试脱壳机动（能脱壳就不必停）
-          if (tryEscapeFromInflation())
-          {
-            plan_fail_since_ = ros::Time(0);
-            changeFSMExecState(EXEC_TRAJ, "ESCAPE");
-            break;
-          }
           ROS_ERROR("[replan] planning failed for >1.5 s -> EMERGENCY_STOP (do not keep stale traj)");
           plan_fail_since_ = ros::Time(0);
           // 审查修正：低速分支也必须先刹车，否则 EMERGENCY 会直接转 GEN_NEW_TRAJ，
@@ -1475,50 +1359,74 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
   void EGOReplanFSM::getLocalTarget()
   {
-    double t;
-
-    double t_step = local_target_dist_ / 20 / planner_manager_->pp_.max_vel_;
-    double dist_min = 9999, dist_min_t = 0.0;
-    for (t = planner_manager_->global_data_.last_progress_time_; t < planner_manager_->global_data_.global_duration_; t += t_step)
+    /* 2026-11-16（自适应视距）：默认 local_target_dist_（0.4 m）保证"计划时长≈执行窗"；
+       但若取到的局部目标落在**当前速度的反方向**（说明需要掉头），0.4 m 内没有空间让
+       min-jerk 把 180° 铺开 -> plan_success=0 暴涨。此时把视距放大到 3× 重取一次。 */
+    auto pick = [&](double horizon, Eigen::Vector3d &pt, double &t_out) -> bool
     {
-      Eigen::Vector3d pos_t = planner_manager_->global_data_.getPosition(t);
-      double dist = (pos_t - start_pt_).norm();
-
-      if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > local_target_dist_)
+      const double v = std::max(0.05, planner_manager_->pp_.max_vel_);
+      const double t_step = std::max(0.02, horizon / 20.0 / v);
+      double dist_min = 1e9, dist_min_t = 0.0;
+      for (double t = planner_manager_->global_data_.last_progress_time_;
+           t < planner_manager_->global_data_.global_duration_; t += t_step)
       {
-        // Important conor case!
-        for (; t < planner_manager_->global_data_.global_duration_; t += t_step)
+        Eigen::Vector3d pos_t = planner_manager_->global_data_.getPosition(t);
+        double dist = (pos_t - start_pt_).norm();
+
+        if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > horizon)
         {
-          Eigen::Vector3d pos_t_temp = planner_manager_->global_data_.getPosition(t);
-          double dist_temp = (pos_t_temp - start_pt_).norm();
-          if (dist_temp < local_target_dist_)
+          // 锥形特例：起点已被推过视距圈，向前找第一个进入圈内的点
+          for (; t < planner_manager_->global_data_.global_duration_; t += t_step)
           {
-            pos_t = pos_t_temp;
-            dist = (pos_t - start_pt_).norm();
-            cout << "Escape conor case \"getLocalTarget\"" << endl;
-            break;
+            Eigen::Vector3d q = planner_manager_->global_data_.getPosition(t);
+            if ((q - start_pt_).norm() < horizon)
+            {
+              pos_t = q;
+              dist = (pos_t - start_pt_).norm();
+              break;
+            }
           }
         }
-      }
 
-      if (dist < dist_min)
-      {
-        dist_min = dist;
-        dist_min_t = t;
+        if (dist < dist_min)
+        {
+          dist_min = dist;
+          dist_min_t = t;
+        }
+        if (dist >= horizon)
+        {
+          pt = pos_t;
+          t_out = t;
+          planner_manager_->global_data_.last_progress_time_ = dist_min_t;
+          return true;
+        }
       }
-
-      if (dist >= local_target_dist_)
-      {
-        local_target_pt_ = pos_t;
-        planner_manager_->global_data_.last_progress_time_ = dist_min_t;
-        break;
-      }
-    }
-    if (t > planner_manager_->global_data_.global_duration_) // Last global point
-    {
-      local_target_pt_ = end_pt_;
+      // 走到尽头：局部目标就是全局目标
+      pt = end_pt_;
+      t_out = planner_manager_->global_data_.global_duration_;
       planner_manager_->global_data_.last_progress_time_ = planner_manager_->global_data_.global_duration_;
+      return false;
+    };
+
+    Eigen::Vector3d pt;
+    double t_pt = 0.0;
+    const double lpt0 = planner_manager_->global_data_.last_progress_time_;
+    const bool near = pick(local_target_dist_, pt, t_pt);
+    if (near)
+    {
+      const Eigen::Vector3d dir = pt - start_pt_;
+      if (odom_vel_.norm() > 0.10 && dir.norm() > 1e-3 && odom_vel_.dot(dir) < 0.0)
+      {
+        /* 2026-11-16（用户裁定"EGO 本来能处理掉头"）：掉头时**退回上游行为**——
+           局部目标直接取全局目标，把整段剩余距离交给 min-jerk 去铺掉头弧。
+           短视距只用于"沿路线跟踪"；掉头需要空间，此时不该再截断。 */
+        pt = end_pt_;
+        t_pt = planner_manager_->global_data_.global_duration_;
+        planner_manager_->global_data_.last_progress_time_ = t_pt;
+        ROS_WARN_THROTTLE(1.0, "[local] reverse detected (v·d=%.2f) -> fallback to goal", odom_vel_.dot(dir));
+      }
     }
+    local_target_pt_ = pt;
 
     if ((end_pt_ - local_target_pt_).norm() < (planner_manager_->pp_.max_vel_ * planner_manager_->pp_.max_vel_) / (2 * planner_manager_->pp_.max_acc_))
     {
@@ -1526,15 +1434,13 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     }
     else
     {
-      local_target_vel_ = planner_manager_->global_data_.getVelocity(t);
-      /* 2026-11-16（同类隐患）：全局轨迹在拐角处 min-snap 的速度可能超过 max_vel，
-         末端导数超限会让整条轨迹不可行（与起点超限同一类）。钳到 0.95*max_vel。 */
-      {
-        const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
-        const double vn = local_target_vel_.norm();
-        if (vn > vlim && vn > 1e-6)
-          local_target_vel_ *= (vlim / vn);
-      }
+      local_target_vel_ = planner_manager_->global_data_.getVelocity(t_pt);
+      /* 2026-11-16（同类隐患）：全局轨迹拐角处 min-snap 速度可能超 max_vel，
+         末端导数超限会让整条轨迹不可行。钳到 0.95*max_vel。 */
+      const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
+      const double vn = local_target_vel_.norm();
+      if (vn > vlim && vn > 1e-6)
+        local_target_vel_ *= (vlim / vn);
     }
   }
 
