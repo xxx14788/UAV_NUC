@@ -94,8 +94,6 @@
   <param name="/drone_0_ego_planner_node/manager/seed_horizon" value="2.0"/>
   <param name="/drone_0_ego_planner_node/fsm/goal_z_gain" value="0.5"/>
   <param name="/drone_0_ego_planner_node/fsm/goal_z_offset_max" value="0.10"/>
-  <param name="/drone_0_ego_planner_node/fsm/retime_max_vel" value="0.25"/>
-  <param name="/drone_0_ego_planner_node/manager/seed_from_astar" value="false"/>
   <param name="/drone_0_ego_planner_node/manager/global_from_astar" value="true"/>
   <param name="/drone_0_ego_planner_node/fsm/local_target_dist" value="0.40"/>
 

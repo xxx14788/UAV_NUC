@@ -23,7 +23,6 @@ namespace ego_planner
     nh.param("manager/control_points_distance", pp_.ctrl_pt_dist, -1.0);
     nh.param("manager/planning_horizon", pp_.planning_horizen_, 5.0);
     nh.param("manager/seed_horizon", pp_.seed_horizon_, 2.0);   // 2026-11-15（P2）
-    nh.param("manager/seed_from_astar", pp_.seed_from_astar, false);   // 2026-11-16：路线种子
     nh.param("manager/global_from_astar", pp_.global_from_astar, true);   // 2026-11-16：全局路径走 A*
     nh.param("manager/use_distinctive_trajs", pp_.use_distinctive_trajs, false);
     nh.param("manager/drone_id", pp_.drone_id, -1);
@@ -93,82 +92,7 @@ namespace ego_planner
         double dist = (start_pt - local_target_pt).norm();
         double time = pow(pp_.max_vel_, 2) / pp_.max_acc_ > dist ? sqrt(dist / pp_.max_acc_) : (dist - pow(pp_.max_vel_, 2) / pp_.max_acc_) / pp_.max_vel_ + 2 * pp_.max_vel_ / pp_.max_acc_;
 
-        /* 2026-11-16（根因，用户批准）：种子的**形状**应来自几何路线，而不是“起点→目标”两点直线。
-           证据（11-14 bag1）：计划最高点跟着起点走（起点+0.1~0.4），不钉在箱沿；掉头点落在轨迹
-           23~42%（1~2 s），而执行窗只有 0.5 s -> 每拍只执行“鼓包”前段 -> y 棘轮 0.09→1.20。
-           v1 教训：直接重采样 A* 栅格点会把阶梯带进种子（A/B 反而更差 4.7s/0.21m vs 4.0s/0.11m），
-           所以这里先做**视线捷径**去掉阶梯，再用 min-snap 过捷径拐点（与 planGlobalTraj 同款构造）。
-           开关 manager/seed_from_astar（默认 false，可参数化 A/B，无需重编）。 */
-        bool seed_from_route = false;
-        Eigen::MatrixXd route_pos;
-        Eigen::VectorXd route_t;
-        if (pp_.seed_from_astar && !flag_randomPolyTraj && bspline_optimizer_->a_star_)
-        {
-          if (bspline_optimizer_->a_star_->AstarSearch(grid_map_->getResolution(), start_pt, local_target_pt))
-          {
-            std::vector<Eigen::Vector3d> raw = bspline_optimizer_->a_star_->getPath();
-            std::vector<Eigen::Vector3d> wp;
-            wp.push_back(start_pt);
-            for (size_t i = 0; i < raw.size(); ++i)
-              if ((raw[i] - wp.back()).norm() > 1e-3)
-                wp.push_back(raw[i]);
-            if ((wp.back() - local_target_pt).norm() > 1e-3)
-              wp.push_back(local_target_pt);
-
-            // 视线捷径：从 i 出发取最远的“整段在 inflate 图上自由”的 j
-            std::vector<Eigen::Vector3d> sw;
-            sw.push_back(wp.front());
-            const double res = grid_map_->getResolution();
-            size_t i = 0;
-            while (i + 1 < wp.size())
-            {
-              size_t best = i + 1;
-              for (size_t j = wp.size() - 1; j > i + 1; --j)
-              {
-                const Eigen::Vector3d a = wp[i], b = wp[j];
-                const int n = std::max(2, (int)std::ceil((b - a).norm() / (0.5 * res)));
-                bool free = true;
-                for (int k = 1; k < n; ++k)
-                {
-                  if (grid_map_->getInflateOccupancy(a + (b - a) * (double(k) / double(n))))
-                  {
-                    free = false;
-                    break;
-                  }
-                }
-                if (free)
-                {
-                  best = j;
-                  break;
-                }
-              }
-              sw.push_back(wp[best]);
-              i = best;
-            }
-
-            if (sw.size() >= 3)
-            {
-              route_pos.resize(3, sw.size());
-              for (size_t k = 0; k < sw.size(); ++k)
-                route_pos.col(k) = sw[k];
-              route_t.resize(sw.size() - 1);
-              for (size_t k = 0; k + 1 < sw.size(); ++k)
-                route_t(k) = (sw[k + 1] - sw[k]).norm() / std::max(0.10, pp_.max_vel_);
-              route_t(0) *= 2.0;
-              route_t(route_t.rows() - 1) *= 2.0;
-              seed_from_route = true;
-            }
-          }
-        }
-
-        if (seed_from_route)
-        {
-          gl_traj = PolynomialTraj::minSnapTraj(route_pos, start_vel, local_target_vel, start_acc,
-                                                Eigen::Vector3d::Zero(), route_t);
-          time = route_t.sum();
-          ROS_INFO_THROTTLE(1.0, "[seed] route wp=%d T=%.2fs", (int)route_pos.cols(), time);
-        }
-        else if (!flag_randomPolyTraj)
+        if (!flag_randomPolyTraj)
         {
           gl_traj = PolynomialTraj::one_segment_traj_gen(start_pt, start_vel, start_acc, local_target_pt, local_target_vel, Eigen::Vector3d::Zero(), time);
         }
@@ -776,6 +700,18 @@ namespace ego_planner
       }
       sw.push_back(wp[best]);
       i = best;
+    }
+
+    // 去重：捷径后若出现间距 <0.1 m 的重复拐点，min-snap 会病态
+    {
+      std::vector<Eigen::Vector3d> sw2;
+      sw2.push_back(sw.front());
+      for (size_t k = 1; k < sw.size(); ++k)
+        if ((sw[k] - sw2.back()).norm() > 0.10)
+          sw2.push_back(sw[k]);
+      if ((sw2.back() - sw.back()).norm() > 1e-3)
+        sw2.push_back(sw.back());
+      sw.swap(sw2);
     }
 
     if (sw.size() < 3)

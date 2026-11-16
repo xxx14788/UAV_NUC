@@ -115,7 +115,6 @@ namespace ego_planner
   ros::Time odom_invalid_since_;                              // 2026-11-15：坏位姿起始时刻（去抖 0.5 s）
   double goal_z_gain_{0.5};         // P4 z 参考比例增益
   double goal_z_offset_max_{0.10};  // P4 z 参考偏置上限（m）
-  double retime_max_vel_{0.25};     // 2026-11-15 自审：时间重分配的速度上限（m/s）
   double local_target_dist_{0.40};  // 2026-11-16：局部目标视距（m），与 planning_horizon 解耦
 
     /* helper functions */

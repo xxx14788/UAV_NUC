@@ -28,7 +28,6 @@ namespace ego_planner
   // 2026-11-15（P4）：z 参考比例偏置（治"EGO 起点=实测 z"导致的下沉自锁）
   nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
   nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
-  nh.param("fsm/retime_max_vel", retime_max_vel_, 0.25);   // 2026-11-15：只治爬行
   nh.param("fsm/local_target_dist", local_target_dist_, 0.40);   // 2026-11-16：局部目标视距
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
@@ -1307,68 +1306,6 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
         }
       }
 
-      // 2026-11-15（时间重分配，治"到点爬行"）：控制点被末端锚定/短距离密化后间距只有
-      // 0.05-0.2 m，而段时长 ts 仍按 ctrl_pt_dist/max_vel 固定（实测 1.50 s/段）——执行速度
-      // 变成"实际间距/ts"，闭环实测最后 0.58 m 用了 13.5 s（0.04 m/s），永远到不了点。
-      // 这里按弧长把时间压回速度预算（**只改时间不改几何**），用 checkFeasibility
-      // （限速/限加速度）保护，并沿用 near-goal 刹车剖面作为该次规划的速度上限。
-      {
-        auto arcLen = [](UniformBspline &b, double dur) {
-          double l = 0.0; Eigen::Vector3d prev = b.evaluateDeBoorT(0.0);
-          for (double tt = 0.05; tt <= dur + 1e-6; tt += 0.05)
-          { const Eigen::Vector3d cur = b.evaluateDeBoorT(tt); l += (cur - prev).norm(); prev = cur; }
-          return l;
-        };
-
-        const double d2goal_now = (end_pt_ - start_pt_).norm();
-        // 2026-11-15（自审修正）：retime 只治"爬行"，不追可行性极限。
-        // 首版把时间压到 checkFeasibility 不通过为止 -> 末段 0.26-0.4 m/s，
-        // 是 11-12/11-13 实飞末段(0.15-0.2)的 2-2.7 倍，且 near-goal 刹车剖面
-        // 在 max_vel=0.4 时只有 d<0.2 m 才生效。现峰值上限 retime_max_vel_（默认 0.25）。
-        double vmax_eff = std::min(planner_manager_->pp_.max_vel_, retime_max_vel_);
-        if (d2goal_now < near_goal_dist_ && near_goal_vel_ > 0.0)
-        {
-          const double d_rem = std::max(0.0, d2goal_now - 0.20);
-          vmax_eff = std::min(vmax_eff, std::sqrt(2.0 * near_goal_brake_ * d_rem) + near_goal_vel_);
-        }
-
-        const double len = arcLen(info->position_traj_, info->duration_);
-        const double amax = planner_manager_->pp_.max_acc_;
-        if (len > 0.15 && len / std::max(0.1, info->duration_) < 0.10)
-        {
-          UniformBspline best = info->position_traj_;
-          bool improved = false;
-          for (double s = 0.90; s >= 0.25 - 1e-9; s -= 0.05)
-          {
-            UniformBspline cand = info->position_traj_;
-            cand.lengthenTime(s);
-            cand.setPhysicalLimits(vmax_eff, amax, 0.02);   // 2026-11-15：不许超 max_vel 2%（原 10%）
-            double ratio_chk = 0.0;
-            if (!cand.checkFeasibility(ratio_chk, false))
-              break;
-            best = cand; improved = true;
-          }
-          if (improved)
-          {
-            const double d_old = info->duration_;
-            info->position_traj_ = best;
-            info->velocity_traj_ = best.getDerivative();
-            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
-            info->start_pos_ = best.evaluateDeBoorT(0.0);
-            info->duration_ = best.getTimeSum();
-            ROS_WARN_THROTTLE(2.0, "[retime] d_goal=%.2f len=%.2fm dur %.2f -> %.2fs (vavg %.2f -> %.2f, vmax %.2f)",
-                              d2goal_now, len, d_old, info->duration_,
-                              len / std::max(0.1, d_old), len / std::max(0.1, info->duration_), vmax_eff);
-          }
-        }
-
-        ROS_INFO_THROTTLE(5.0, "[traj] dur=%.2fs len=%.2fm vavg=%.2f m/s d_goal=%.2f cp=%d ts=%.2f",
-                          info->duration_, len, len / std::max(0.1, info->duration_),
-                          d2goal_now,
-                          (int)info->position_traj_.getControlPoint().cols(),
-                          info->position_traj_.getInterval());
-      }
-
       traj_utils::Bspline bspline;
       bspline.order = 3;
       bspline.start_time = info->start_time_;
@@ -1590,6 +1527,14 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     else
     {
       local_target_vel_ = planner_manager_->global_data_.getVelocity(t);
+      /* 2026-11-16（同类隐患）：全局轨迹在拐角处 min-snap 的速度可能超过 max_vel，
+         末端导数超限会让整条轨迹不可行（与起点超限同一类）。钳到 0.95*max_vel。 */
+      {
+        const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
+        const double vn = local_target_vel_.norm();
+        if (vn > vlim && vn > 1e-6)
+          local_target_vel_ *= (vlim / vn);
+      }
     }
   }
 
