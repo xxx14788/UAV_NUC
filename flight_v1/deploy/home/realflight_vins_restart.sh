@@ -45,7 +45,7 @@ v2m_dead()       { ! pgrep -f '[v]ins_to_mavros_node' >/dev/null 2>&1; }
 v2m_up()         { pgrep -f '[v]ins_to_mavros_node' >/dev/null 2>&1; }
 imu_prop_live()  { timeout 5 rostopic echo -n 1 --noarr /vins_estimator/imu_propagate >/dev/null 2>&1; }
 relay_up()       { nodes_snapshot; has_node /planner_camera_pose_relay; }
-planner_up()     { nodes_snapshot; has_node_pat '*ego_planner*|*traj_server*'; }
+planner_up()     { nodes_snapshot; has_node_glob '*ego_planner*' || has_node_glob '*traj_server*'; }
 px4ctrl_up()     { nodes_snapshot; has_node /px4ctrl; }
 fc_armed() {
   local s

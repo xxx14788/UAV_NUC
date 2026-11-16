@@ -140,7 +140,9 @@ src_of()  { local v; v=$(field_of "$1" src); printf '%s' "${v:-absent}"; }
 # 说明：全部基于命令替换 + case，pipefail 安全，且只起一次进程。
 nodes_snapshot() { _NODES=$(rosnode list 2>/dev/null) || _NODES=""; }
 has_node() { case $'\n'$_NODES$'\n' in *$'\n'"$1"$'\n'*) return 0 ;; esac; return 1; }
-has_node_pat() { case $_NODES in $1) return 0 ;; esac; return 1; }   # $1 = case 模式（如 *ego_planner*|*traj_server*）
+# 单个 glob 匹配（**不要让 $1 里带 |**：case 的 | 是语法层分隔符，经变量展开进来只是字面量，
+#  于是 `has_node_pat '*a*|*b*'` 会永远不匹配 —— 2026-11-16 踩过，表现为规划器永远"未见"）
+has_node_glob() { case $_NODES in $1) return 0 ;; esac; return 1; }
 
 topic_published() {
   local t=$1 out
@@ -222,14 +224,19 @@ kill_mine() {
 }
 
 # mine_matching <名字或模式...> → 打印 "pid 命令行"，只含属于我的（诊断用，不改状态）
+# mine_matching <x|f> <名字或模式...> → 打印 "pid 命令行"，只含属于我的（诊断用，不改状态）
+# 和 kill_mine 一样分 x/f：裸名字必须走 x，否则 pgrep -f 会把"命令行里提到这个词"的包装
+# shell（比如验收套件自己）也算进来，诊断里就冒假残留。
 mine_matching() {
+  local mode=$1
+  shift
   local key pid rest
   for key in "$@"; do
     while read -r pid rest; do
       [ -n "$pid" ] || continue
       [ "$pid" = "$$" ] && continue
       _pid_uses_my_master "$pid" && printf '%s %s\n' "$pid" "$rest"
-    done < <(pgrep -a -f "$key" 2>/dev/null)
+    done < <(pgrep -a "-$mode" "$key" 2>/dev/null)
   done
   return 0
 }

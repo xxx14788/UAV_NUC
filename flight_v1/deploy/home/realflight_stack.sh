@@ -74,7 +74,7 @@ cleanup() {
 # ---------------------------------------------------------------- 谓词
 rosmaster_gone() { ! pgrep -x rosmaster >/dev/null 2>&1; }
 
-planner_registered() { has_node_pat '*ego_planner*|*traj_server*'; }
+planner_registered() { has_node_glob '*ego_planner*' || has_node_glob '*traj_server*'; }
 relay_registered()   { has_node /planner_camera_pose_relay; }
 pathpub_registered() { has_node /planned_path_pub; }
 
@@ -115,7 +115,11 @@ phase_cleanup() {
     '[e]go_planner' '[t]raj_server' '[p]x4ctrl'
   )
   local stale
-  stale=$(mine_matching "${local_pats[@]}" rosmaster vins_node)
+  stale=$(
+    { mine_matching x rosmaster roscore vins_node
+      mine_matching f "${local_pats[@]}"
+    } 2>/dev/null
+  ) || stale=""
   if [ -n "$stale" ]; then
     echo "发现残留（属于本 master）："
     printf '%s\n' "$stale" | sed 's/^/  杀 /'
