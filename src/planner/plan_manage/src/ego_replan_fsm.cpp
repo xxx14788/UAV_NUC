@@ -29,6 +29,7 @@ namespace ego_planner
   nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
   nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
   nh.param("fsm/retime_max_vel", retime_max_vel_, 0.25);   // 2026-11-15：只治爬行
+  nh.param("fsm/local_target_dist", local_target_dist_, 0.40);   // 2026-11-16：局部目标视距
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -942,6 +943,20 @@ namespace ego_planner
     start_vel_ = odom_vel_;
     start_acc_.setZero();
 
+    /* 2026-11-16（短视距上线后暴露）：实测机身速度会超过 max_vel（假机身/真机都可能，
+       11-14 实飞 0.4 m/s vs 计划 0.267）。EGO 的可行性检查含起点段，|v0|>max_vel*(1+tol)
+       会让**每一拍** plan_success=0，FSM 只能继续执行旧轨迹（表现为“轨迹要转了飞机还往前”）。
+       这里把喂给规划器的起点速度钳到 0.95*max_vel（控制器自己会吸收这 5% 差）。 */
+    {
+      const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
+      const double vn = start_vel_.norm();
+      if (vn > vlim && vn > 1e-6)
+      {
+        start_vel_ *= (vlim / vn);
+        ROS_WARN_THROTTLE(1.0, "[replan] start_vel %.2f > %.2f -> clamped", vn, vlim);
+      }
+    }
+
     // 2026-11-15（P2）：进展停滞检测。到目标距离 1.5 s 内没有减少 >5 cm -> 判停滞，
     // 第一次尝试就用"全新多项式"种子（flag_use_poly_init），不再沿用上一条尾巴；
     // 这是 2 s 截断之外的第二道保险（例如地图变化导致旧种子一直可用但绕圈）。
@@ -1525,21 +1540,21 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
   {
     double t;
 
-    double t_step = planning_horizen_ / 20 / planner_manager_->pp_.max_vel_;
+    double t_step = local_target_dist_ / 20 / planner_manager_->pp_.max_vel_;
     double dist_min = 9999, dist_min_t = 0.0;
     for (t = planner_manager_->global_data_.last_progress_time_; t < planner_manager_->global_data_.global_duration_; t += t_step)
     {
       Eigen::Vector3d pos_t = planner_manager_->global_data_.getPosition(t);
       double dist = (pos_t - start_pt_).norm();
 
-      if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > planning_horizen_)
+      if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > local_target_dist_)
       {
         // Important conor case!
         for (; t < planner_manager_->global_data_.global_duration_; t += t_step)
         {
           Eigen::Vector3d pos_t_temp = planner_manager_->global_data_.getPosition(t);
           double dist_temp = (pos_t_temp - start_pt_).norm();
-          if (dist_temp < planning_horizen_)
+          if (dist_temp < local_target_dist_)
           {
             pos_t = pos_t_temp;
             dist = (pos_t - start_pt_).norm();
@@ -1555,7 +1570,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
         dist_min_t = t;
       }
 
-      if (dist >= planning_horizen_)
+      if (dist >= local_target_dist_)
       {
         local_target_pt_ = pos_t;
         planner_manager_->global_data_.last_progress_time_ = dist_min_t;

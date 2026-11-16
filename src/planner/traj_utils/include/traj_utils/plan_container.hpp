@@ -201,6 +201,8 @@ namespace ego_planner
     double seed_horizon_ = 2.0;
     // 2026-11-16：种子形状优先取自 A* 几何路线（true）或直线 min-jerk（false，旧行为）。
     bool seed_from_astar = false;
+    // 2026-11-16（策略修正）：全局路径 = A* 几何路线（true）或两点直线（false，旧行为）。
+    bool global_from_astar = true;
     bool use_distinctive_trajs;
     int drone_id; // single drone: drone_id <= -1, swarm: drone_id >= 0
 

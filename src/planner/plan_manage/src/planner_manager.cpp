@@ -24,6 +24,7 @@ namespace ego_planner
     nh.param("manager/planning_horizon", pp_.planning_horizen_, 5.0);
     nh.param("manager/seed_horizon", pp_.seed_horizon_, 2.0);   // 2026-11-15（P2）
     nh.param("manager/seed_from_astar", pp_.seed_from_astar, false);   // 2026-11-16：路线种子
+    nh.param("manager/global_from_astar", pp_.global_from_astar, true);   // 2026-11-16：全局路径走 A*
     nh.param("manager/use_distinctive_trajs", pp_.use_distinctive_trajs, false);
     nh.param("manager/drone_id", pp_.drone_id, -1);
 
@@ -727,9 +728,80 @@ namespace ego_planner
     return true;
   }
 
+
+  bool EGOPlannerManager::routeFromAstar(const Eigen::Vector3d &start, const Eigen::Vector3d &goal,
+                                         std::vector<Eigen::Vector3d> &waypoints)
+  {
+    waypoints.clear();
+    if (!bspline_optimizer_->a_star_)
+      return false;
+    if (!bspline_optimizer_->a_star_->AstarSearch(grid_map_->getResolution(), start, goal))
+      return false;
+
+    std::vector<Eigen::Vector3d> raw = bspline_optimizer_->a_star_->getPath();
+    std::vector<Eigen::Vector3d> wp;
+    wp.push_back(start);
+    for (size_t i = 0; i < raw.size(); ++i)
+      if ((raw[i] - wp.back()).norm() > 1e-3)
+        wp.push_back(raw[i]);
+    if ((wp.back() - goal).norm() > 1e-3)
+      wp.push_back(goal);
+
+    // 视线捷径：去掉栅格阶梯，只保留真正的拐点
+    const double res = grid_map_->getResolution();
+    std::vector<Eigen::Vector3d> sw;
+    sw.push_back(wp.front());
+    size_t i = 0;
+    while (i + 1 < wp.size())
+    {
+      size_t best = i + 1;
+      for (size_t j = wp.size() - 1; j > i + 1; --j)
+      {
+        const Eigen::Vector3d a = wp[i], b = wp[j];
+        const int n = std::max(2, (int)std::ceil((b - a).norm() / (0.5 * res)));
+        bool free = true;
+        for (int k = 1; k < n; ++k)
+        {
+          if (grid_map_->getInflateOccupancy(a + (b - a) * (double(k) / double(n))))
+          {
+            free = false;
+            break;
+          }
+        }
+        if (free)
+        {
+          best = j;
+          break;
+        }
+      }
+      sw.push_back(wp[best]);
+      i = best;
+    }
+
+    if (sw.size() < 3)
+      return false;
+    waypoints.assign(sw.begin() + 1, sw.end());   // 不含起点
+    waypoints.back() = goal;                       // 精确落到目标
+    return true;
+  }
+
   bool EGOPlannerManager::planGlobalTraj(const Eigen::Vector3d &start_pos, const Eigen::Vector3d &start_vel, const Eigen::Vector3d &start_acc,
                                          const Eigen::Vector3d &end_pos, const Eigen::Vector3d &end_vel, const Eigen::Vector3d &end_acc)
   {
+    /* 2026-11-16（策略修正，用户批准）：全局路径 = A* 几何路线（视线捷径后过拐点），
+       不再是两点直线。理由：局部目标视距已缩到 0.4 m，若全局路径是直线，0.4 m 的
+       局部目标会直接切角；只有路线过拐点，短视距才会"沿着算好的路线走"。 */
+    if (pp_.global_from_astar)
+    {
+      std::vector<Eigen::Vector3d> route_wps;
+      if (routeFromAstar(start_pos, end_pos, route_wps) && route_wps.size() >= 2)
+      {
+        ROS_INFO("[global] A*route wps=%d", (int)route_wps.size());
+        return planGlobalTrajWaypoints(start_pos, start_vel, start_acc, route_wps, end_vel, end_acc);
+      }
+      ROS_WARN_THROTTLE(1.0, "[global] A*route unavailable -> fallback straight");
+    }
+
 
     // generate global reference trajectory
 
