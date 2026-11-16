@@ -199,6 +199,8 @@ namespace ego_planner
     // 旧实现把整条 14-19 s 的尾巴灌回优化器，回环返回段在 1-2 m 外，0.5 s 只走 0.1 m
     // -> 永远到不了、越绕越大；截到 2 s 后返回段进入可见时域。
     double seed_horizon_ = 2.0;
+    // 2026-11-16：种子形状优先取自 A* 几何路线（true）或直线 min-jerk（false，旧行为）。
+    bool seed_from_astar = false;
     bool use_distinctive_trajs;
     int drone_id; // single drone: drone_id <= -1, swarm: drone_id >= 0
 
