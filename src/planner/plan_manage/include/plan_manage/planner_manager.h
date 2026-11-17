@@ -36,9 +36,6 @@ namespace ego_planner
                     const Eigen::Vector3d &start_vel);
     bool planGlobalTraj(const Eigen::Vector3d &start_pos, const Eigen::Vector3d &start_vel, const Eigen::Vector3d &start_acc,
                         const Eigen::Vector3d &end_pos, const Eigen::Vector3d &end_vel, const Eigen::Vector3d &end_acc);
-    // 2026-11-16：A* 几何路线（含视线捷径），waypoints 不含起点、末点=goal。
-    bool routeFromAstar(const Eigen::Vector3d &start, const Eigen::Vector3d &goal,
-                        std::vector<Eigen::Vector3d> &waypoints);
     bool planGlobalTrajWaypoints(const Eigen::Vector3d &start_pos, const Eigen::Vector3d &start_vel, const Eigen::Vector3d &start_acc,
                                  const std::vector<Eigen::Vector3d> &waypoints, const Eigen::Vector3d &end_vel, const Eigen::Vector3d &end_acc);
 

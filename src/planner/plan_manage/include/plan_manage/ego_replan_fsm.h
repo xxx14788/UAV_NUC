@@ -109,12 +109,8 @@ namespace ego_planner
   double last_goal_dist_{1e9};      // P2 停滞检测：上一次到目标的距离
   ros::Time last_progress_t_;       // P2 停滞检测：上次有进展的时刻
   ros::Time plan_fail_since_;       // P3 连续规划失败起点
-  bool odom_invalid_{false};        // P3 位姿无效（VINS 发散跑出地图）标志
-  Eigen::Vector3d last_valid_pos_{Eigen::Vector3d::Zero()};  // 2026-11-15：最近一次有效位姿（坏位姿时悬停用）
-  ros::Time odom_invalid_since_;                              // 2026-11-15：坏位姿起始时刻（去抖 0.5 s）
   double goal_z_gain_{0.5};         // P4 z 参考比例增益
   double goal_z_offset_max_{0.10};  // P4 z 参考偏置上限（m）
-  double local_target_dist_{0.40};  // 2026-11-16：局部目标视距（m），与 planning_horizon 解耦
 
     /* helper functions */
     bool callReboundReplan(bool flag_use_poly_init, bool flag_randomPolyTraj); // front-end and back-end method

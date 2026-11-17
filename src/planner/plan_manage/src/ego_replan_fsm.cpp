@@ -28,7 +28,6 @@ namespace ego_planner
   // 2026-11-15（P4）：z 参考比例偏置（治"EGO 起点=实测 z"导致的下沉自锁）
   nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
   nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
-  nh.param("fsm/local_target_dist", local_target_dist_, 0.40);   // 2026-11-16：局部目标视距
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -299,32 +298,9 @@ namespace ego_planner
 
   void EGOReplanFSM::odometryCallback(const nav_msgs::OdometryConstPtr &msg)
   {
-    // 2026-11-15（P3 根因修复）：VINS 发散时 z 会到 -14 之类，跑出地图 z 范围。
-    // 这种位姿绝不能继续喂规划器：A* 会在地图 pool 外狂刷错误（11-14 重放 7000+ 条），
-    // 旧轨迹还会继续执行。判无效后跳过规划；px4ctrl 自己的 odom sanity gate 负责
-    // 最后的悬停/保护（11-14 日志已实证它在连续拒绝）。
-    const auto &p_ = msg->pose.pose.position;
-    const auto &v_ = msg->twist.twist.linear;
-    const bool finite_ = std::isfinite(p_.x) && std::isfinite(p_.y) && std::isfinite(p_.z) &&
-                         std::isfinite(v_.x) && std::isfinite(v_.y) && std::isfinite(v_.z);
-    // 2026-11-15（审查修正）：按批准口径贴地图范围（z∈[-0.10,1.50]，xy±15），
-    // 不再用 (-1,3)：z=-0.5/1.6、x=16 仍会喂规划器并在图外狂刷。
-    const bool sane_ = finite_ && std::fabs(p_.x) < 15.5 && std::fabs(p_.y) < 15.5 &&
-                       p_.z > -0.3 && p_.z < 1.6;
-    if (!sane_)
-    {
-      if (!odom_invalid_)
-        ROS_ERROR("[FSM] odom invalid (p=%.2f,%.2f,%.2f v=%.2f) -> skip planning", p_.x, p_.y, p_.z, v_.x);
-      odom_invalid_ = true;
-      return;
-    }
-    odom_invalid_ = false;
-    odom_invalid_since_ = ros::Time(0);   // 2026-11-15：恢复有效即清去抖计时
-
     odom_pos_(0) = msg->pose.pose.position.x;
     odom_pos_(1) = msg->pose.pose.position.y;
     odom_pos_(2) = msg->pose.pose.position.z;
-    last_valid_pos_ = odom_pos_;   // 2026-11-15：坏位姿时用它悬停
 
     odom_vel_(0) = msg->twist.twist.linear.x;
     odom_vel_(1) = msg->twist.twist.linear.y;
@@ -532,32 +508,6 @@ namespace ego_planner
 
     // 2026-11-15（P3）：位姿无效时不再规划，保住最后一条有效指令；
     // 保护由 px4ctrl 的 odom sanity gate 负责。定时器必须重启，否则 FSM 停摆。
-    if (odom_invalid_)
-    {
-      /* 2026-11-15（深挖缺口修复）：原来这里只 return —— 规划停了，但**已发布的轨迹继续执行**。
-         11-14 实测：VINS z 崩到 -14.5 时 /position_cmd 也跟到 -14.48（那是用坏位姿规划出来的
-         轨迹）。现在坏位姿第一拍就发"最后有效位置悬停"并进 EMERGENCY_STOP。 */
-      /* 去抖：VINS 偶发单帧野值（实测 odom 速度谱有 73 m/s 的跳变）不能立刻急停，
-         必须连续坏 0.5 s 才动作。 */
-      const ros::Time now_iv = ros::Time::now();
-      if (odom_invalid_since_.isZero())
-        odom_invalid_since_ = now_iv;
-      if ((now_iv - odom_invalid_since_).toSec() > 0.5)
-      {
-        if (have_odom_ && exec_state_ != EMERGENCY_STOP)
-        {
-          ROS_ERROR("[FSM] odom invalid for >0.5 s -> hold at last valid (%.2f,%.2f,%.2f) + EMERGENCY_STOP",
-                    last_valid_pos_.x(), last_valid_pos_.y(), last_valid_pos_.z());
-          callEmergencyStop(last_valid_pos_);
-          changeFSMExecState(EMERGENCY_STOP, "ODOM_INVALID");
-        }
-      }
-      else
-        ROS_WARN_THROTTLE(0.5, "[FSM] odom invalid (single frame?) -> hold off, waiting confirm");
-      exec_timer_.start();
-      return;
-    }
-
     static int fsm_num = 0;
     fsm_num++;
     if (fsm_num == 100)
@@ -840,25 +790,7 @@ namespace ego_planner
       }
     }
 
-    // 2026-11-15（P2）：进展停滞检测。到目标距离 1.5 s 内没有减少 >5 cm -> 判停滞，
-    // 第一次尝试就用"全新多项式"种子（flag_use_poly_init），不再沿用上一条尾巴；
-    // 这是 2 s 截断之外的第二道保险（例如地图变化导致旧种子一直可用但绕圈）。
-    const double d_goal = (end_pt_ - odom_pos_).norm();
-    const ros::Time now_t = ros::Time::now();
-    bool stalled = false;
-    if (d_goal < last_goal_dist_ - 0.05)
-    {
-      last_goal_dist_ = d_goal;
-      last_progress_t_ = now_t;
-    }
-    else if (!last_progress_t_.isZero() && (now_t - last_progress_t_).toSec() > 1.5)
-    {
-      stalled = true;
-      last_progress_t_ = now_t;
-      ROS_WARN("[replan] no progress toward goal for 1.5 s (d=%.2f) -> force fresh polynomial seed", d_goal);
-    }
-
-    bool success = callReboundReplan(stalled, false);
+    bool success = callReboundReplan(false, false);
 
     if (!success)
     {
@@ -909,8 +841,6 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     LocalTrajData *info = &planner_manager_->local_data_;
     auto map = planner_manager_->grid_map_;
 
-    if (odom_invalid_)
-      return;
     if (exec_state_ == WAIT_TARGET || info->start_time_.toSec() < 1e-5)
       return;
 
@@ -1086,62 +1016,6 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
       auto info = &planner_manager_->local_data_;
 
-      /* 2026-11-13 v2（用户令）：末端硬锚定只作用于**已经贴近目标**的情况（<=0.20 m）。
-         远距离末端交给优化器自然收敛；绝不把 0.2-0.74 m 硬拉过去（不可行/急刹）。
-         条件：local_target==全局目标、目标原始格自由、当前末端控制点距目标 <=0.20 m。
-         动作：最后 3 个控制点钉到目标（P2 已压末端速度 0，3 副本保持 0）。
-         校验：有限 / P5 可行 / 最后 0.5 s 原始格自由 / 末端速度 <=0.05；失败保留原轨迹。 */
-      if ((local_target_pt_ - end_pt_).norm() < 1e-3 &&
-          planner_manager_->grid_map_->getOccupancy(end_pt_) <= 0 &&
-          planner_manager_->grid_map_->getInflateOccupancy(end_pt_) == 0)
-      {
-        Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
-        const int n = cp.cols();
-        if (n >= 6 && (cp.col(n - 1) - end_pt_).norm() <= 0.20)
-        {
-          Eigen::MatrixXd cp2 = cp;
-          for (int k = 1; k <= 3; ++k)
-            cp2.col(n - k) = end_pt_;
-          UniformBspline cand(cp2, 3, info->position_traj_.getInterval());
-          bool ok = cp2.allFinite();
-          double r = 0.0;
-          if (ok)
-          {
-            cand.setPhysicalLimits(planner_manager_->pp_.max_vel_, planner_manager_->pp_.max_acc_,
-                                   planner_manager_->pp_.feasibility_tolerance_);
-            ok = cand.checkFeasibility(r, false);
-          }
-          if (ok)
-          {
-            const double dur_c = cand.getTimeSum();
-            for (double t = std::max(0.0, dur_c - 0.5); t <= dur_c + 1e-9; t += 0.02)
-            {
-              if (planner_manager_->grid_map_->getInflateOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))) > 0)
-              {
-                ok = false;
-                break;
-              }
-            }
-          }
-          if (ok)
-            ok = cand.getDerivative().evaluateDeBoorT(cand.getTimeSum()).norm() <= 0.05;
-          if (ok)
-          {
-            info->position_traj_ = cand;
-            info->velocity_traj_ = cand.getDerivative();
-            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
-            info->duration_ = cand.getTimeSum();
-            info->start_pos_ = cand.evaluateDeBoorT(0.0);
-            ROS_INFO("[end-anchor] end within 0.20 m -> snap last 3 CPs to goal (%.2f,%.2f,%.2f), ratio=%.2f",
-                     end_pt_.x(), end_pt_.y(), end_pt_.z(), r);
-          }
-          else
-          {
-            ROS_WARN_THROTTLE(2.0, "[end-anchor] skipped (finite/feas/raw/end-vel), keep original");
-          }
-        }
-      }
-
       /* 2026-11-15（P4 根因）：EGO 的轨迹起点 = 实测 z，下沉时轨迹跟着下沉，z 误差≈0，
          控制器不会纠（11-14 bag3: 0.69→0.45→0.1）。这里给整条轨迹一个**比例 z 偏置**
          zoff = clamp(gain*(goal_z - meas_z), ±max)，作为"高度参考"：实测低于目标时整条
@@ -1214,6 +1088,23 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
         bspline.knots.push_back(knots(i));
       }
 
+      // 2026-11-17（档 2 观测项）：每条轨迹的时长/长度/平均速度/剩余距离/CP数/段长。
+      // 判据：执行窗覆盖率 = (0.5s * vavg) / len。
+      {
+        auto arcLen = [](UniformBspline &b, double dur) {
+          double l = 0.0; Eigen::Vector3d prev = b.evaluateDeBoorT(0.0);
+          for (double tt = 0.05; tt <= dur + 1e-6; tt += 0.05)
+          { const Eigen::Vector3d cur = b.evaluateDeBoorT(tt); l += (cur - prev).norm(); prev = cur; }
+          return l;
+        };
+        const double len = arcLen(info->position_traj_, info->duration_);
+        ROS_INFO_THROTTLE(5.0, "[traj] dur=%.2fs len=%.2fm vavg=%.2f m/s d_goal=%.2f cp=%d ts=%.2f",
+                          info->duration_, len, len / std::max(0.1, info->duration_),
+                          (end_pt_ - start_pt_).norm(),
+                          (int)info->position_traj_.getControlPoint().cols(),
+                          info->position_traj_.getInterval());
+      }
+
       /* 1. publish traj to traj_server */
       bspline_pub_.publish(bspline);
 
@@ -1257,12 +1148,12 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
       const ros::Time now = ros::Time::now();
       if (unreach_since_.isZero())
         unreach_since_ = now;
-      else if ((now - unreach_since_).toSec() > 5.0)
+      else if ((now - unreach_since_).toSec() > 1.5)
       {
         std_msgs::String st;
         st.data = "UNREACHABLE";
         goal_status_pub_.publish(st);
-        ROS_WARN("[replan] goal UNREACHABLE for >5 s, reported to mission");
+        ROS_WARN("[replan] goal UNREACHABLE for >1.5 s, reported to mission");
         unreach_since_ = ros::Time(0);
       }
     }
@@ -1359,74 +1250,50 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
   void EGOReplanFSM::getLocalTarget()
   {
-    /* 2026-11-16（自适应视距）：默认 local_target_dist_（0.4 m）保证"计划时长≈执行窗"；
-       但若取到的局部目标落在**当前速度的反方向**（说明需要掉头），0.4 m 内没有空间让
-       min-jerk 把 180° 铺开 -> plan_success=0 暴涨。此时把视距放大到 3× 重取一次。 */
-    auto pick = [&](double horizon, Eigen::Vector3d &pt, double &t_out) -> bool
-    {
-      const double v = std::max(0.05, planner_manager_->pp_.max_vel_);
-      const double t_step = std::max(0.02, horizon / 20.0 / v);
-      double dist_min = 1e9, dist_min_t = 0.0;
-      for (double t = planner_manager_->global_data_.last_progress_time_;
-           t < planner_manager_->global_data_.global_duration_; t += t_step)
-      {
-        Eigen::Vector3d pos_t = planner_manager_->global_data_.getPosition(t);
-        double dist = (pos_t - start_pt_).norm();
+    double t;
 
-        if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > horizon)
+    double t_step = planning_horizen_ / 20 / planner_manager_->pp_.max_vel_;
+    double dist_min = 9999, dist_min_t = 0.0;
+    for (t = planner_manager_->global_data_.last_progress_time_; t < planner_manager_->global_data_.global_duration_; t += t_step)
+    {
+      Eigen::Vector3d pos_t = planner_manager_->global_data_.getPosition(t);
+      double dist = (pos_t - start_pt_).norm();
+
+      if (t < planner_manager_->global_data_.last_progress_time_ + 1e-5 && dist > planning_horizen_)
+      {
+        // Important conor case!
+        for (; t < planner_manager_->global_data_.global_duration_; t += t_step)
         {
-          // 锥形特例：起点已被推过视距圈，向前找第一个进入圈内的点
-          for (; t < planner_manager_->global_data_.global_duration_; t += t_step)
+          Eigen::Vector3d pos_t_temp = planner_manager_->global_data_.getPosition(t);
+          double dist_temp = (pos_t_temp - start_pt_).norm();
+          if (dist_temp < planning_horizen_)
           {
-            Eigen::Vector3d q = planner_manager_->global_data_.getPosition(t);
-            if ((q - start_pt_).norm() < horizon)
-            {
-              pos_t = q;
-              dist = (pos_t - start_pt_).norm();
-              break;
-            }
+            pos_t = pos_t_temp;
+            dist = (pos_t - start_pt_).norm();
+            cout << "Escape conor case \"getLocalTarget\"" << endl;
+            break;
           }
         }
-
-        if (dist < dist_min)
-        {
-          dist_min = dist;
-          dist_min_t = t;
-        }
-        if (dist >= horizon)
-        {
-          pt = pos_t;
-          t_out = t;
-          planner_manager_->global_data_.last_progress_time_ = dist_min_t;
-          return true;
-        }
       }
-      // 走到尽头：局部目标就是全局目标
-      pt = end_pt_;
-      t_out = planner_manager_->global_data_.global_duration_;
-      planner_manager_->global_data_.last_progress_time_ = planner_manager_->global_data_.global_duration_;
-      return false;
-    };
 
-    Eigen::Vector3d pt;
-    double t_pt = 0.0;
-    const double lpt0 = planner_manager_->global_data_.last_progress_time_;
-    const bool near = pick(local_target_dist_, pt, t_pt);
-    if (near)
-    {
-      const Eigen::Vector3d dir = pt - start_pt_;
-      if (odom_vel_.norm() > 0.10 && dir.norm() > 1e-3 && odom_vel_.dot(dir) < 0.0)
+      if (dist < dist_min)
       {
-        /* 2026-11-16（用户裁定"EGO 本来能处理掉头"）：掉头时**退回上游行为**——
-           局部目标直接取全局目标，把整段剩余距离交给 min-jerk 去铺掉头弧。
-           短视距只用于"沿路线跟踪"；掉头需要空间，此时不该再截断。 */
-        pt = end_pt_;
-        t_pt = planner_manager_->global_data_.global_duration_;
-        planner_manager_->global_data_.last_progress_time_ = t_pt;
-        ROS_WARN_THROTTLE(1.0, "[local] reverse detected (v·d=%.2f) -> fallback to goal", odom_vel_.dot(dir));
+        dist_min = dist;
+        dist_min_t = t;
+      }
+
+      if (dist >= planning_horizen_)
+      {
+        local_target_pt_ = pos_t;
+        planner_manager_->global_data_.last_progress_time_ = dist_min_t;
+        break;
       }
     }
-    local_target_pt_ = pt;
+    if (t > planner_manager_->global_data_.global_duration_) // Last global point
+    {
+      local_target_pt_ = end_pt_;
+      planner_manager_->global_data_.last_progress_time_ = planner_manager_->global_data_.global_duration_;
+    }
 
     if ((end_pt_ - local_target_pt_).norm() < (planner_manager_->pp_.max_vel_ * planner_manager_->pp_.max_vel_) / (2 * planner_manager_->pp_.max_acc_))
     {
@@ -1434,9 +1301,8 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     }
     else
     {
-      local_target_vel_ = planner_manager_->global_data_.getVelocity(t_pt);
-      /* 2026-11-16（同类隐患）：全局轨迹拐角处 min-snap 速度可能超 max_vel，
-         末端导数超限会让整条轨迹不可行。钳到 0.95*max_vel。 */
+      local_target_vel_ = planner_manager_->global_data_.getVelocity(t);
+      // 档 2（保留）：拐角处 min-snap 速度可能超 max_vel -> 钳到 0.95*max_vel
       const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
       const double vn = local_target_vel_.norm();
       if (vn > vlim && vn > 1e-6)

@@ -451,7 +451,7 @@ namespace ego_planner
     bool flag_got_start = false, flag_got_end = false, flag_got_end_maybe = false;
     // 2026-11-15（根因）：旧版只查前 2/3，目标常在最后 1/3（11-14 第二只箱子 1.73 m 正好在带外），
     // 最后一段根本不避障。改为查到末段；末 order_ 个 CP 留给末端锚定。
-    int i_end = (int)init_points.cols() - order_ - 1;   // 审查修正：末 order_ 个（N-3..N-1）排除
+    int i_end = (int)init_points.cols() - order_ - ((int)init_points.cols() - 2 * order_) / 3; // only check closed 2/3 points.
     for (int i = order_; i <= i_end; ++i)
     {
       //cout << " *" << i-1 << "*" ;
@@ -778,7 +778,7 @@ namespace ego_planner
   void BsplineOptimizer::calcSwarmCost(const Eigen::MatrixXd &q, double &cost, Eigen::MatrixXd &gradient)
   {
     cost = 0.0;
-    int end_idx = q.cols() - order_; // 2026-11-15：代价覆盖到末段（末 3 CP 仍排除）
+    int end_idx = q.cols() - order_ - (double)(q.cols() - 2 * order_) * 1.0 / 3.0; // Only check the first 2/3 points
     const double CLEARANCE = swarm_clearance_ * 2;
     double t_now = ros::Time::now().toSec();
     constexpr double a = 2.0, b = 1.0, inv_a2 = 1 / a / a, inv_b2 = 1 / b / b;
@@ -1206,7 +1206,7 @@ namespace ego_planner
     int in_id, out_id;
     vector<std::pair<int, int>> segment_ids;
     bool flag_new_obs_valid = false;
-    int i_end = end_idx - 1;   // 审查修正：end_idx=N-order_，i<=end_idx-1 只到 N-order_-1
+    int i_end = end_idx - (end_idx - order_) / 3;
     for (int i = order_ - 1; i <= i_end; ++i)
     {
 
@@ -1518,7 +1518,7 @@ namespace ego_planner
         double tm, tmp;
         traj.getTimeSpan(tm, tmp);
         double t_step = (tmp - tm) / ((traj.evaluateDeBoorT(tmp) - traj.evaluateDeBoorT(tm)).norm() / grid_map_->getResolution());
-        for (double t = tm; t <= tmp + 1e-9; t += t_step) // 2026-11-15：最终检查覆盖全轨迹（含目标段）
+        for (double t = tm; t < tmp * 2 / 3; t += t_step) // Only check the closest 2/3 partition of the whole trajectory.
         {
           flag_occ = grid_map_->getInflateOccupancy(traj.evaluateDeBoorT(t));
           if (flag_occ)
