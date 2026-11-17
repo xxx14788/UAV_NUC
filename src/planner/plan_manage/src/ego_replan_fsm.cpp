@@ -776,20 +776,6 @@ namespace ego_planner
     start_vel_ = odom_vel_;
     start_acc_.setZero();
 
-    /* 2026-11-16（短视距上线后暴露）：实测机身速度会超过 max_vel（假机身/真机都可能，
-       11-14 实飞 0.4 m/s vs 计划 0.267）。EGO 的可行性检查含起点段，|v0|>max_vel*(1+tol)
-       会让**每一拍** plan_success=0，FSM 只能继续执行旧轨迹（表现为“轨迹要转了飞机还往前”）。
-       这里把喂给规划器的起点速度钳到 0.95*max_vel（控制器自己会吸收这 5% 差）。 */
-    {
-      const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
-      const double vn = start_vel_.norm();
-      if (vn > vlim && vn > 1e-6)
-      {
-        start_vel_ *= (vlim / vn);
-        ROS_WARN_THROTTLE(1.0, "[replan] start_vel %.2f > %.2f -> clamped", vn, vlim);
-      }
-    }
-
     bool success = callReboundReplan(false, false);
 
     if (!success)
@@ -1302,11 +1288,6 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     else
     {
       local_target_vel_ = planner_manager_->global_data_.getVelocity(t);
-      // 档 2（保留）：拐角处 min-snap 速度可能超 max_vel -> 钳到 0.95*max_vel
-      const double vlim = 0.95 * planner_manager_->pp_.max_vel_;
-      const double vn = local_target_vel_.norm();
-      if (vn > vlim && vn > 1e-6)
-        local_target_vel_ *= (vlim / vn);
     }
   }
 
