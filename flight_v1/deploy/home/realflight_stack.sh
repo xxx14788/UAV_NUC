@@ -23,6 +23,10 @@
 #       占用地图  软告警（场地开阔时可能本来就空）
 #   4/5 打印健康门结果   5/5 打印预检结果   最后 RViz + 判定
 #
+# 硬门清单（任一 ✗ → STACK FAIL）: 清场未归零 / 2a 失败 / 深度·左目·odom 频率 /
+#   **规划器节点注册（2026-11-17 用户令：缺失即禁飞，悬停与手动轮同样拦）** /
+#   相机位姿转接 / 轨迹回传发布者 / px4ctrl 活性门 / 预检 PREFLIGHT GO
+#
 # 设计约定（改前先读 lib/common.sh 头部）:
 #   * 所有等待用 wait_until / sleep_until_elapsed（秒数显式，不再手写计数器）
 #   * 条件判定不用 `cmd | grep -q`（pipefail 下假失败），用 case/命令替换
@@ -156,7 +160,7 @@ start_planner() {
   # PLANNER_LAUNCH 允许是 "包 launch文件" 两段（历史约定），故显式拆分而不是靠分词
   read -r -a _plan_argv <<< "$PLANNER_LAUNCH"
   nohup roslaunch "${_plan_argv[@]}" > "$PLOG" 2>&1 &
-  echo "规划器 pid=$! 日志=$PLOG（悬停不依赖它）"
+  echo "规划器 pid=$! 日志=$PLOG（缺失=禁飞，见 4/5 硬门）"
 }
 
 start_relay() {
@@ -360,7 +364,14 @@ print_health() {
   if planner_registered; then
     ok "规划器节点在"
   else
-    warn "规划器节点未见（悬停可继续；任务飞行会在 flight.sh start 的任务门硬判）——查 $PLOG"
+    # 2026-11-17 用户令：起栈也硬拦——规划器缺失不再只告警。
+    # 理由：形状/任务轮必用规划器；纯悬停/手动轮若规划器都没起来，说明栈本身不健康，起飞没有意义。
+    bad "规划器节点缺失 —— 禁飞（悬停轮与手动轮同样拦）——查 $PLOG"
+    if [ -n "${PLOG:-}" ] && [ -f "$PLOG" ]; then
+      echo "    规划器日志尾（$PLOG）："
+      tail -5 "$PLOG" | sed 's/^/      /'
+    fi
+    PASS=0
   fi
   if relay_registered; then
     ok "相机位姿转接在（/planner/camera_pose）"

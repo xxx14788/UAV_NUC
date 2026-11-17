@@ -12,6 +12,7 @@
 #       （cost 随滑窗残差数增长，末段取会假报警；日志无行 = ⚠ 不判死）
 # 组件同步重启（VINS 原点重锚后坐标系失效）：vins_to_mavros → 相机位姿转接 → EGO → px4ctrl
 #   后三件在 8s 收敛采样期间**并行**完成；px4ctrl 只在未解锁时动。
+#   2026-11-17 用户令：**规划器 30s 内未上线 = 禁飞下一轮**（原来只告警）。
 #
 # 出口: 末行 `===== 重启成功…=====` + 退出码 0，或 `===== ✗ 收敛检查未过…=====` + 1
 # =============================================================================
@@ -34,7 +35,7 @@ TAIL_OUT=""
 FAIL=0
 
 cleanup() {
-  [ -n "$TAIL_OUT" ] && rm -f "$TAIL_OUT"
+  [ -n "$TAIL_OUT" ] && rm -f "$TAIL_OUT" "$TAIL_OUT.fail"
   return 0
 }
 trap cleanup EXIT
@@ -204,7 +205,10 @@ restart_components() {
   if [ "$pl" = 1 ]; then
     echo "--- ✓ 规划器已随 VINS 重启并在线（$plan_log，${el}s）---"
   else
-    echo "--- ⚠ 规划器 30s 内未上线（$plan_log）——悬停轮不依赖；发目标点前必须解决 ---"
+    # 2026-11-17 用户令：规划器缺失=禁飞下一轮（原来是 ⚠ 软告警）。
+    # 尾巴跑在子 shell 里，用标记文件把判定带回主流程。
+    printf '0\n' > "$TAIL_OUT.fail"
+    echo "--- ✗ 规划器 30s 内未上线（$plan_log）——禁飞下一轮，先看日志 ---"
   fi
   if [ "$armed" = 0 ]; then
     if [ "$px" = 1 ]; then
@@ -263,6 +267,8 @@ echo "--- [5/5] 日志病理带（|Bas| 末20 中位 / cost init前20 中位）-
 check_pathology
 wait "$TAIL_PID" 2>/dev/null || true
 cat "$TAIL_OUT"
+# 组件重启阶段的硬失败（规划器未上线）由标记文件带回
+[ -f "$TAIL_OUT.fail" ] && FAIL=1
 mark "病理带 + 组件重启"
 
 if [ "$FAIL" -ne 0 ]; then
