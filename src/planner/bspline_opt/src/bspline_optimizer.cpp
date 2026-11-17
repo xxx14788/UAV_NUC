@@ -1210,8 +1210,6 @@ namespace ego_planner
     for (int i = order_ - 1; i <= i_end; ++i)
     {
 
-      // 2026-11-15（最终方向）：refine 的硬判据保持 inflate（0.30 安全裕度）；
-      // 真正要改的是下面段尾 j 的选取——它原来按 raw，A* 按 inflate 拒绝，才成批失败。
       bool occ = grid_map_->getInflateOccupancy(cps_.points.col(i));
 
       /*** check if the new collision will be valid ***/
@@ -1250,7 +1248,7 @@ namespace ego_planner
           const Eigen::Vector3d pj = Eigen::Vector3d(cps_.points.col(j));
           occ = (pj - self_p).norm() <= self_bubble
                     ? 0
-                    : grid_map_->getInflateOccupancy(pj);   // 2026-11-15：与 A*/最终检查同层（修复错配）
+                    : grid_map_->getOccupancy(pj);   // 2026-11-08（b9e6580）：起终点只看真障碍（8060->0）
           if (!occ)
           {
             in_id = j;
@@ -1265,7 +1263,7 @@ namespace ego_planner
 
         for (j = i + 1; j < cps_.size; ++j)
         {
-          occ = grid_map_->getInflateOccupancy(cps_.points.col(j));  // 2026-11-15：与 A*/最终检查同层
+          occ = grid_map_->getOccupancy(Eigen::Vector3d(cps_.points.col(j)));  // 终点同理：只看真障碍
 
           if (!occ)
           {

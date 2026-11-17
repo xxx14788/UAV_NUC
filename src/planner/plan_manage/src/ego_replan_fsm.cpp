@@ -25,9 +25,6 @@ namespace ego_planner
   nh.param("fsm/near_goal_dist", near_goal_dist_, 0.6);
   nh.param("fsm/near_goal_vel", near_goal_vel_, 0.15);
   nh.param("fsm/near_goal_brake", near_goal_brake_, 0.5);   // 2026-11-13 v3：刹车剖面减速度
-  // 2026-11-15（P4）：z 参考比例偏置（治"EGO 起点=实测 z"导致的下沉自锁）
-  nh.param("fsm/goal_z_gain", goal_z_gain_, 0.5);
-  nh.param("fsm/goal_z_offset_max", goal_z_offset_max_, 0.10);
     nh.param("fsm/planning_horizon", planning_horizen_, -1.0);
     nh.param("fsm/planning_horizen_time", planning_horizen_time_, -1.0);
     nh.param("fsm/emergency_time", emergency_time_, 1.0);
@@ -196,10 +193,6 @@ namespace ego_planner
       end_vel_.setZero();
       have_target_ = true;
       have_new_target_ = true;
-      // 2026-11-15（P2/P3）：新目标 -> 重置进展/失败计时
-      last_goal_dist_ = 1e9;
-      last_progress_t_ = ros::Time::now();
-      plan_fail_since_ = ros::Time(0);
       unreach_since_ = ros::Time(0);   // 审查修正：新目标清残留，防首次失败即 UNREACHABLE
 
       /*** FSM ***/
@@ -224,9 +217,6 @@ namespace ego_planner
     }
   }
 
-  // 2026-11-15（壳内死锁根因修复）：闭环实测起点落在膨胀壳内时，refine 的 A* 段修补
-  // 恒失败（a star error 19.8 万次 / plan_success=0 / GEN_NEW_TRAJ 死循环），飞机永久停住。
-  // 这里给恢复分支：找最近的全自由体素（raw+inflate 都自由），直线飞过去，再交给正常规划。
   void EGOReplanFSM::triggerCallback(const geometry_msgs::PoseStampedPtr &msg)
   {
     have_trigger_ = true;
@@ -506,8 +496,6 @@ namespace ego_planner
   {
     exec_timer_.stop(); // To avoid blockage
 
-    // 2026-11-15（P3）：位姿无效时不再规划，保住最后一条有效指令；
-    // 保护由 px4ctrl 的 odom sanity gate 负责。定时器必须重启，否则 FSM 停摆。
     static int fsm_num = 0;
     fsm_num++;
     if (fsm_num == 100)
@@ -597,9 +585,6 @@ namespace ego_planner
       }
       else
       {
-        // 2026-11-16（用户裁定，删过度防御）：脱壳机动会把飞机向上抬 0.45 m/次，
-        // 闭环实测两次触发把 z 从 0.70 抬到 1.34、规划全失败。新架构（短视距+A*路线，
-        // A* 起点对膨胀层有 raw 豁免）不再需要它。
         changeFSMExecState(GEN_NEW_TRAJ, "FSM");
       }
       break;
@@ -610,31 +595,12 @@ namespace ego_planner
 
       if (planFromCurrentTraj(1))
       {
-        plan_fail_since_ = ros::Time(0);
         changeFSMExecState(EXEC_TRAJ, "FSM");
         publishSwarmTrajs(false);
       }
       else
       {
-        // 2026-11-15（P3 根因修复）：REPLAN_TRAJ 每 0.01 s 重试一次；连续失败超过
-        // 1.5 s 说明当前旧轨迹不可修（贴障回环），不能再让它继续执行。进 EMERGENCY_STOP
-        // 刹车保持，等 fail-safe 自愈（数据健康 + 速度<0.1）后用全新多项式重规划。
-        const ros::Time now_f = ros::Time::now();
-        if (plan_fail_since_.isZero())
-          plan_fail_since_ = now_f;
-        else if ((now_f - plan_fail_since_).toSec() > 1.5)
-        {
-          ROS_ERROR("[replan] planning failed for >1.5 s -> EMERGENCY_STOP (do not keep stale traj)");
-          plan_fail_since_ = ros::Time(0);
-          // 审查修正：低速分支也必须先刹车，否则 EMERGENCY 会直接转 GEN_NEW_TRAJ，
-          // 旧轨迹仍在 local_data_ 被 traj_server 继续执行。置 flag 让 EMERGENCY 首拍刹车。
-          flag_escape_emergency_ = true;
-          changeFSMExecState(EMERGENCY_STOP, "PLAN_FAIL");
-        }
-        else
-        {
-          changeFSMExecState(REPLAN_TRAJ, "FSM");
-        }
+        changeFSMExecState(REPLAN_TRAJ, "FSM");
       }
 
       break;
@@ -909,9 +875,11 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     const double t_check0 = t_cur + 0.30;
     const double CLEARANCE = 1.0 * planner_manager_->getSwarmClearance();
     double t_cur_global = ros::Time::now().toSec();
+    double t_2_3 = info->duration_ * 2 / 3;
     for (double t = t_check0; t < info->duration_; t += time_step)
     {
-      // 2026-11-15：不再在 2/3 处截断；最后 1/3（目标段）也要实时查碰撞。
+      if (t_cur < t_2_3 && t >= t_2_3) // If t_cur < t_2_3, only the first 2/3 partition of the trajectory is considered valid and will get checked.
+        break;
 
       bool occ = false;
       occ |= rawOccNear(map.get(), info->position_traj_.evaluateDeBoorT(t));
@@ -998,57 +966,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
 
     if (plan_and_refine_success)
     {
-      plan_fail_since_ = ros::Time(0);   // 2026-11-15（审查修正）：成功即清零，防旧时间戳残留
-
       auto info = &planner_manager_->local_data_;
-
-      /* 2026-11-15（P4 根因）：EGO 的轨迹起点 = 实测 z，下沉时轨迹跟着下沉，z 误差≈0，
-         控制器不会纠（11-14 bag3: 0.69→0.45→0.1）。这里给整条轨迹一个**比例 z 偏置**
-         zoff = clamp(gain*(goal_z - meas_z), ±max)，作为"高度参考"：实测低于目标时整条
-         轨迹抬高，控制器看到正误差才爬升；实测接近目标时 zoff→0（P 控制，稳态=目标）。
-         只改 z、不动 xy；上限默认 0.10 m（天花板膨胀 0.87，目标 0.70 仍有余量）；
-         抬升后做 raw 占据 + 可行性检查，失败则不加。 */
-      {
-        const double dz = end_pt_.z() - start_pt_.z();
-        double zoff = goal_z_gain_ * dz;
-        zoff = std::max(-goal_z_offset_max_, std::min(goal_z_offset_max_, zoff));
-        // 2026-11-15（审查阻断修正）：只允许**向上**抬（治下沉）；向下压会把原本 inflate-free
-        // 的轨迹压回箱顶/天花板膨胀层（开放环实测 -0.042 m 全部被 raw 检查放过）。
-        if (zoff < 0.0) zoff = 0.0;
-        if (zoff > 0.01)
-        {
-          Eigen::MatrixXd cp = info->position_traj_.getControlPoint();
-          cp.row(2).array() += zoff;
-          UniformBspline cand(cp, 3, info->position_traj_.getInterval());
-          cand.setPhysicalLimits(planner_manager_->pp_.max_vel_, planner_manager_->pp_.max_acc_,
-                                 planner_manager_->pp_.feasibility_tolerance_);
-          double r = 0.0;
-          bool ok = cp.allFinite() && cand.checkFeasibility(r, false);
-          if (ok)
-          {
-            const double dur_z = cand.getTimeSum();
-            for (double t = 0.0; t <= dur_z + 1e-9; t += 0.05)
-            {
-              // 抬升后必须重新过**硬判据（inflate）**，不能只查 raw；否则会踩进安全裕度。
-              if (planner_manager_->grid_map_->getInflateOccupancy(Eigen::Vector3d(cand.evaluateDeBoorT(t))))
-              { ok = false; break; }
-            }
-          }
-          if (ok)
-          {
-            info->position_traj_ = cand;
-            info->velocity_traj_ = cand.getDerivative();
-            info->acceleration_traj_ = info->velocity_traj_.getDerivative();
-            info->start_pos_ = cand.evaluateDeBoorT(0.0);
-            ROS_INFO_THROTTLE(1.0, "[z-ref] goal %.2f, measured %.2f -> offset %+.3f m",
-                              end_pt_.z(), start_pt_.z(), zoff);
-          }
-          else
-          {
-            ROS_WARN_THROTTLE(1.0, "[z-ref] offset %+.3f rejected (feasible/raw)", zoff);
-          }
-        }
-      }
 
       traj_utils::Bspline bspline;
       bspline.order = 3;
@@ -1126,11 +1044,7 @@ static bool rawOccNear(GridMap *map, const Eigen::Vector3d &p)
     }
     else
     {
-      /* 2026-11-09（P0-3）：连续失败才报 UNREACHABLE（单拍失败是正常的）。
-         2026-11-15（自审修正）：1.5 s -> 5.0 s。全轨迹碰撞检查上线后，目标贴障时
-         "最后一小段在膨胀壳里"会让单次规划失败持续 >1.5 s；此时报 UNREACHABLE 会让
-         任务层**悬停等新点**（11-14 地图闭环实测：报了一次，但飞机随后脱壳并到点）。
-         5 s 内规划器自己还能重试/脱壳，超过才认为是真不可达。 */
+      /* 2026-11-09（P0-3）：连续失败 1.5 s 才报 UNREACHABLE（单拍失败是正常的） */
       const ros::Time now = ros::Time::now();
       if (unreach_since_.isZero())
         unreach_since_ = now;
