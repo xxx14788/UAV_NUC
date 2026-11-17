@@ -260,6 +260,21 @@ namespace ego_planner
       start_end_derivatives[2] = start_acc;
     }
 
+    /* 2026-11-17（实测验证项）：ts 应随**实际控制点间距**走。
+       上游 ts = ctrl_pt_dist/max_vel*1.5 是常数；种子被压密（间距 << ctrl_pt_dist）时，
+       执行速度 = 间距/ts 会塌到 0.07-0.09 m/s，并被下一拍种子继承形成自锁。
+       这里按平均间距重算 ts；只压缩不放大（间距大时保持上游值）。 */
+    if (point_set.size() >= 7)
+    {
+      double plen = 0.0;
+      for (size_t i = 1; i < point_set.size(); ++i)
+        plen += (point_set[i] - point_set[i - 1]).norm();
+      const double ds = plen / double(point_set.size() - 1);
+      const double ts_new = ds / std::max(0.10, pp_.max_vel_) * 1.5;
+      if (ts_new > 1e-3 && ts_new < ts)
+        ts = ts_new;
+    }
+
     Eigen::MatrixXd ctrl_pts, ctrl_pts_temp;
     UniformBspline::parameterizeToBspline(ts, point_set, start_end_derivatives, ctrl_pts);
 
