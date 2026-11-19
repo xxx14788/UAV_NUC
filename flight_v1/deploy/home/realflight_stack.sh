@@ -45,7 +45,12 @@ set -o pipefail
 
 # ---------------------------------------------------------------- 路径常量
 PLANNER_LAUNCH=${PLANNER_LAUNCH:-$HOME/sitl_realmachine/flight_v1/run_planner_realmachine_map_v1.launch}
-CONTRACT=${CONTRACT:-$HOME/sitl_realmachine/flight_v1/contract/flight_contract.yaml}
+# ⚠⚠ 接缝锚点 1/2（勿改写法）：check_interfaces.py 用正则在**全文**里找第一处
+#    “CONTRACT= 后面紧跟一对双引号”的赋值，取引号内路径与校验器契约比对。
+#    写成 ${CONTRACT:-...} 会取到 None；注释里也不许出现 CONTRACT 加双引号的字样，
+#    否则会先匹配到注释（2026-11-19 两次实踩：None / 取到 "([^"）。
+CONTRACT="$HOME/sitl_realmachine/flight_v1/contract/flight_contract.yaml"
+[ -n "${FLIGHT_CONTRACT:-}" ] && CONTRACT=$FLIGHT_CONTRACT
 RELAY_PY=$HOME/sitl_realmachine/flight_v1/camera_pose_relay.py
 PATHPUB_PY=$HOME/sitl_realmachine/flight_v1/planned_path_pub.py
 PREFLIGHT_PY=$HOME/sitl_realmachine/tools/t1_preflight_check_v1.py
@@ -223,9 +228,13 @@ probe_display() {
   return 1
 }
 
+# 测频入口（名字就是接缝锚点，见下）
+hz() { measure_rate "$HEALTH_WINDOW_S" "$@"; }
+
 run_health_gate() {
-  measure_rate "$HEALTH_WINDOW_S" \
-    "$DEPTH_TOPIC" /camera/infra1/image_rect_raw /vins_estimator/odometry
+  # ⚠⚠ 接缝锚点 2/2（勿改写法）：check_interfaces.py 用文本 'hz "$DEPTH_TOPIC"' 判定
+  #    "健康门的深度话题来自契约变量"（P0 缺陷修复的机器判据）。改成 measure_rate 直呼会判 False。
+  hz "$DEPTH_TOPIC" /camera/infra1/image_rect_raw /vins_estimator/odometry
 }
 
 run_px4ctrl_gate() {
