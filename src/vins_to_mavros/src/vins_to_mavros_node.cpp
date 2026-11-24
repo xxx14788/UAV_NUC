@@ -427,6 +427,8 @@ int main(int argc, char** argv)
     g_imu = &imucheck;
 
     // 订阅 VINS-Fusion 的里程计输出（T1 E-4: pub_source 可切 imu_prop 高频源）
+    // queue=2：不把 VINS 优化器积压再放大（旧值 10 @~14Hz ≈ 0.7 s 上限，
+    // 2026-11-22 实测 EV 到位最多晚 0.9 s）。宁可丢旧帧，不积压。
     std::string pub_source;
     pnh.param<std::string>("pub_source", pub_source, "odometry");
     double pub_rate_hz = 0.0;
@@ -435,13 +437,13 @@ int main(int argc, char** argv)
     ros::Subscriber vins_sub;
     if (pub_source == "imu_prop")
     {
-        vins_sub = nh.subscribe("/vins_estimator/imu_propagate", 10, vins_callback);
+        vins_sub = nh.subscribe("/vins_estimator/imu_propagate", 2, vins_callback);
         ROS_WARN("vins_to_mavros: pub_source=imu_prop (T1 E-4 density face), rate_hz=%.1f",
                  pub_rate_hz);
     }
     else
     {
-        vins_sub = nh.subscribe("/vins_estimator/odometry", 10, vins_callback);
+        vins_sub = nh.subscribe("/vins_estimator/odometry", 2, vins_callback);
         if (pub_source != "odometry")
             ROS_WARN("vins_to_mavros: pub_source '%s' unrecognized, fell back to odometry",
                      pub_source.c_str());
