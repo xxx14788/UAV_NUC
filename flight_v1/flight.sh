@@ -14,7 +14,26 @@ set -u
 
 state_once() { timeout 4 rostopic echo -n 1 /mavros/state 2>/dev/null; }
 connected() { state_once | grep -q 'connected: True'; }
-running() { rosnode list 2>/dev/null | grep -qx "$1"; }
+# 2026-11-22：旧实现 `rosnode list 2>/dev/null | grep -qx` 有三个坑：
+#   ① stderr 被吞，查询失败与“节点不在”无法区分；
+#   ② set -o pipefail 下 grep -q 匹配即退，rosnode 收到 SIGPIPE → 整条管道判失败；
+#   ③ 开录瞬间 master 忙于节点注册，单次查询可能超时。
+# 现改为最多 5 次、间隔 1s；保留错误输出；先取全文再匹配，读尽输入不触发 SIGPIPE。
+running() {
+  local node="$1" out rc i
+  for i in 1 2 3 4 5; do
+    if out="$(rosnode list 2>&1)"; then
+      rc=0
+      grep -qx "$node" <<<"$out" && return 0
+    else
+      rc=$?
+    fi
+    printf '[running] %s 第%d次未确认 rc=%s 输出=%s\n' \
+      "$node" "$i" "$rc" "$(printf '%s' "$out" | head -c 160 | tr '\n' '|')" >&2
+    if [ "$i" -lt 5 ]; then sleep 1; fi
+  done
+  return 1
+}
 ros_processes() {
   ps -eo comm=,args= | awk '$1 !~ /^(bash|sh|ps|awk|grep|ssh)$/ && $0 ~ /rosmaster|roscore|roslaunch|vins_node|vins_to_mavros|px4ctrl_node|mavros_node|realsense2_camera|ego_planner_node|traj_server|rviz|rosbag record|planned_path_pub|camera_pose_relay|map_only_node/ {print}'
 }
