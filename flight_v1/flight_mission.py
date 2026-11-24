@@ -103,6 +103,71 @@ NEXT_GOAL_WAIT = 20.0
 # 每个目标的导航预算（2026-11-13 用户令：60 -> 120 s；超时且已停在目标附近 -> 自动降落）
 NAV_TIMEOUT = 120.0
 
+# 2026-11-22 选点可达性预检；2026-11-23 用户令放宽：
+# 判据改为"目标是否落在某个膨胀体素内（黄框内）"，不再要求到最近膨胀体素中心 ≥0.45 m。
+# 膨胀点云发布的是体素中心（indexToPos = 原点 + (idx+0.5)*res），故"落在同一体素"
+# ⇔ 三轴 |Δ| ≤ 半格。准入与航中复查共用同一判据（否则刚放行的点会被旧阈值立刻判失效）。
+INFLATE_CLOUD = "/drone_0_ego_planner_node/grid_map/occupancy_inflate"
+INFLATE_RES_M = _contract_value("mission.voxel_res_m", 0.15)
+GOAL_VOXEL_HALF = 0.5 * INFLATE_RES_M
+GOAL_RECHECK_S = _contract_value("mission.goal_recheck_s", 1.0)
+
+
+def cloud_points(msg):
+    from sensor_msgs import point_cloud2
+    return point_cloud2.read_points(msg, field_names=("x", "y", "z"), skip_nans=True)
+
+
+def min_clearance(points, goal):
+    """点到最近体素中心的三维距离；空点云返回 inf（没观测到 -> 不判不可达）。"""
+    gx, gy, gz = goal
+    best = float("inf")
+    for x, y, z in points:
+        d = math.sqrt((x - gx) ** 2 + (y - gy) ** 2 + (z - gz) ** 2)
+        if d < best:
+            best = d
+    return best
+
+
+def in_inflated_voxel(points, goal, half):
+    """目标是否落在某个膨胀体素内（三轴切比雪夫 |Δ| ≤ 半格）。
+    点云给的是体素中心，故等价于"目标所在体素被膨胀覆盖"= 在黄框内。"""
+    gx, gy, gz = goal
+    for x, y, z in points:
+        if abs(x - gx) <= half and abs(y - gy) <= half and abs(z - gz) <= half:
+            return True
+    return False
+
+
+def unreachable_markers(marker_cls, stamp, goal, dist):
+    """不可达目标的 RViz 标记：红球 + 红字。
+    RViz 默认字体不渲染中文，文本只用 ASCII；lifetime 默认 0 = 常驻。"""
+    ball = marker_cls()
+    ball.header.frame_id = "world"
+    ball.header.stamp = stamp
+    ball.ns = "flight_v1_unreachable"
+    ball.id = 0
+    ball.type = marker_cls.SPHERE
+    ball.action = marker_cls.ADD
+    ball.pose.position.x, ball.pose.position.y, ball.pose.position.z = goal
+    ball.pose.orientation.w = 1.0
+    ball.scale.x = ball.scale.y = ball.scale.z = 0.12
+    ball.color.r, ball.color.g, ball.color.b, ball.color.a = 1.0, 0.05, 0.05, 0.6
+    text = marker_cls()
+    text.header.frame_id = "world"
+    text.header.stamp = stamp
+    text.ns = "flight_v1_unreachable"
+    text.id = 1
+    text.type = marker_cls.TEXT_VIEW_FACING
+    text.action = marker_cls.ADD
+    text.pose.position.x, text.pose.position.y = goal[0], goal[1]
+    text.pose.position.z = goal[2] + 0.25
+    text.pose.orientation.w = 1.0
+    text.scale.z = 0.12
+    text.color.r, text.color.g, text.color.b, text.color.a = 1.0, 0.2, 0.2, 1.0
+    text.text = "IN INFLATED VOXEL  d=%.2fm" % dist
+    return ball, text
+
 
 def validate_rc_channels(channels):
     """RC 闸门（2026-11-08 用户令④）：判据全部读契约 runtime.rc，与 preflight 共用一份。"""
@@ -203,12 +268,14 @@ class RosFlight:
         from mavros_msgs.msg import ExtendedState, RCIn, State
         # 2026-11-07 审查修正：mavros_msgs 里没有 Imu 消息类型（IMU 是 sensor_msgs/Imu）。
         # 原来写在一起 -> import 直接抛 ImportError，flight.sh stop/takeoff 全崩。
-        from sensor_msgs.msg import Imu
+        from sensor_msgs.msg import Imu, PointCloud2
         from nav_msgs.msg import Odometry
         from quadrotor_msgs.msg import PositionCommand, TakeoffLand
         from std_msgs.msg import String  # 2026-11-12 P6：goal_ack 也用
         self.String = String
         from nav_msgs.msg import Path
+        from visualization_msgs.msg import Marker  # 2026-11-22：不可达目标标红
+        self.Marker = Marker
 
         self.rospy = rospy
         self.PoseStamped = PoseStamped
@@ -236,6 +303,9 @@ class RosFlight:
         self.nav_done = False
         self.nav_fail = None
         self.stable_since = None
+        # 2026-11-22：目标可达性复查（导航中目标被新障碍吞掉 -> 悬停）
+        self._last_clear_chk = 0.0
+        self._low_clear_count = 0
         rospy.init_node("flight_v1_mission", anonymous=False, disable_signals=True)
 
         def sub(topic, msg_type, callback=None):
@@ -271,10 +341,15 @@ class RosFlight:
         sub("/flight_v1/goal_status", String, self._goal_status_cb)
         # 2026-11-11：到位判定要对着"规划器实际终点"算（A* 端点外推会让终点比目标短 0.2-0.4 m）
         sub("/flight_v1/planned_path", Path)
+        # 2026-11-22：选点预检的判据来源（world 系，约 9 Hz）
+        sub(INFLATE_CLOUD, PointCloud2)
         self.takeoff_pub = rospy.Publisher("/px4ctrl/takeoff_land", TakeoffLand, queue_size=4)
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
         # 2026-11-12 P6：点击 ack 通道（每次点击必有反馈）
         self.ack_pub = rospy.Publisher("/flight_v1/goal_ack", String, queue_size=4)
+        # 2026-11-22：和 planned_path_pub 共用话题，ns 不同所以互不覆盖
+        self.marker_pub = rospy.Publisher("/flight_v1/goal_marker", Marker,
+                                          queue_size=2, latch=True)
 
     def _rc_cb(self, msg):
         self.rc = msg
@@ -332,6 +407,62 @@ class RosFlight:
         if channels[4] <= _ch5_min:
             raise RuntimeError("必须保持 CH5 悬停档（CH5=%.0f <= %d）" % (channels[4], _ch5_min))
 
+    def _goal_check(self, goal, max_age=1.5):
+        """目标是否落在膨胀体素内（黄框内）。
+        返回 (inside, dist_to_nearest_center, None)；点云缺失/过期 -> (None, None, 原因)，
+        不阻塞飞行，只提示。dist 仅用于提示文案。"""
+        if not self._fresh(INFLATE_CLOUD, max_age):
+            return None, None, "膨胀点云未就绪（%.1f s 无更新）" % max_age
+        try:
+            pts = cloud_points(self.cache[INFLATE_CLOUD])
+            return (in_inflated_voxel(pts, goal, GOAL_VOXEL_HALF),
+                    min_clearance(pts, goal), None)
+        except Exception as exc:
+            return None, None, "膨胀点云解析失败：%r" % (exc,)
+
+    def _mark_unreachable(self, goal, dist):
+        ball, text = unreachable_markers(self.Marker, self.rospy.Time.now(), goal, dist)
+        self.marker_pub.publish(ball)
+        self.marker_pub.publish(text)
+
+    def _clear_unreachable(self):
+        for mid in (0, 1):
+            m = self.Marker()
+            m.header.frame_id = "world"
+            m.header.stamp = self.rospy.Time.now()
+            m.ns = "flight_v1_unreachable"
+            m.id = mid
+            m.action = self.Marker.DELETE
+            self.marker_pub.publish(m)
+
+    def _hover_hold(self, reason, verbose=True):
+        """把当前位置作为新目标发出去（规划器生成零位移轨迹），进入等新点状态。"""
+        try:
+            p = self._odom().pose.pose.position
+            hold = self.PoseStamped()
+            hold.header.stamp = self.rospy.Time.now()
+            hold.header.frame_id = "world"
+            hold.pose.position.x = p.x
+            hold.pose.position.y = p.y
+            hold.pose.position.z = p.z
+            hold.pose.orientation.w = 1.0
+            self.goal_pub.publish(hold)
+            if verbose:
+                print("!! %s：已发当前位置悬停，等待新目标" % reason, flush=True)
+        except Exception as exc:
+            print("!! 悬停指令发送失败：%r" % (exc,), flush=True)
+        self.phase = "await_goal"
+        self.goal_used = False
+        # 2026-11-11 修 bug：原来这里不设倒计时，monitor 的"无目标"分支会无限等待
+        # -> 目标不可达时飞机一直悬停到没电。现在 NEXT_GOAL_WAIT 秒无新目标就自动降落。
+        self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+        self._last_countdown_s = None
+        self.endpoint_ref = None
+        self.goal_cmd_t0 = None
+        self.goal_target_xy = None
+        self._low_clear_count = 0
+        self._last_clear_chk = 0.0
+
     # ---------------------------------------------------------------- P0-1
     # ---------------------------------------------------------------- P0-3
     def _goal_status_cb(self, msg):
@@ -360,29 +491,7 @@ class RosFlight:
             return
         if self.phase != "navigation":
             return
-        # 悬停：把当前位置作为新目标发出去（规划器会生成一条零位移轨迹）
-        try:
-            p = self._odom().pose.pose.position
-            hold = self.PoseStamped()
-            hold.header.stamp = self.rospy.Time.now()
-            hold.header.frame_id = "world"
-            hold.pose.position.x = p.x
-            hold.pose.position.y = p.y
-            hold.pose.position.z = p.z
-            hold.pose.orientation.w = 1.0
-            self.goal_pub.publish(hold)
-            print("!! 目标不可用（%s）：已发当前位置悬停，等待新目标" % txt, flush=True)
-        except Exception as exc:
-            print("!! 悬停指令发送失败：%r" % (exc,), flush=True)
-        self.phase = "await_goal"
-        self.goal_used = False
-        # 2026-11-11 修 bug：原来这里不设倒计时，monitor 的"无目标"分支会无限等待
-        # -> 目标不可达时飞机一直悬停到没电。现在 NEXT_GOAL_WAIT 秒无新目标就自动降落。
-        self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
-        self._last_countdown_s = None
-        self.endpoint_ref = None
-        self.goal_cmd_t0 = None
-        self.goal_target_xy = None
+        self._hover_hold("目标不可用（%s）" % txt)
 
     def _goal_cb(self, msg):
         def _ack(status, detail=""):
@@ -411,6 +520,18 @@ class RosFlight:
             target, distance = validate_goal(
                 msg.header.frame_id, stamp, self.rospy.Time.now().to_sec(),
                 (gx, gy), (p.x, p.y), self.anchor)
+            # 2026-11-23 用户令放宽：只要目标不在膨胀体素内（黄框外）就放行，
+            # 不再要求离最近的膨胀体素中心有余量。落在黄框内才拒。
+            inside, clear, why = self._goal_check(target)
+            if inside is None:
+                print("!! 可达性预检跳过：%s；请确认膨胀点云在发" % why, flush=True)
+            elif inside:
+                self._mark_unreachable(target, clear)
+                _ack("REJECTED", "目标落在膨胀层内（最近体素中心 %.2f m）" % clear)
+                print("✗ 目标点落在膨胀层内（最近膨胀体素中心 %.2f m）。已在 RViz 标红，"
+                      "机头保持原地；请点选黄框外的空地。" % clear, flush=True)
+                return
+            self._clear_unreachable()   # 通过检查 -> 清掉上一轮红字
             gated = self.PoseStamped()
             gated.header.stamp = self.rospy.Time.now()
             gated.header.frame_id = "world"
@@ -818,6 +939,27 @@ class RosFlight:
                 continue
             odom = self._odom()
             p, v = odom.pose.pose.position, odom.twist.twist.linear
+            # 2026-11-22：导航中复查目标余量。目标被新补的点吞掉 -> 撤目标、原地悬停。
+            # 2026-11-23 放宽：判据同点选时一致（是否落在膨胀体素内）。
+            # 连续 2 次命中才撤（避免单帧抖动）；已快到位（<0.5 m）不撤，交给到位判定。
+            _tnow = time.monotonic()
+            if _tnow - self._last_clear_chk >= GOAL_RECHECK_S:
+                self._last_clear_chk = _tnow
+                _inside, _clear, _ = self._goal_check(self.target)
+                _d_goal = math.sqrt((p.x - self.target[0]) ** 2 +
+                                    (p.y - self.target[1]) ** 2 +
+                                    (p.z - self.target[2]) ** 2)
+                if _inside and _d_goal >= 0.5:
+                    self._low_clear_count += 1
+                    if self._low_clear_count >= 2:
+                        self._mark_unreachable(self.target, _clear)
+                        print("✗ 目标已被新障碍覆盖（落在膨胀体素内，最近中心 %.2f m）："
+                              "原地悬停，%.0f s 内可重新点选，否则自动降落。"
+                              % (_clear, NEXT_GOAL_WAIT), flush=True)
+                        self._hover_hold("目标已被新障碍覆盖", verbose=False)
+                        continue
+                else:
+                    self._low_clear_count = 0
             # 2026-11-11：参考点优先用"规划器实际终点"（planned_path 末点），
             # 因为它可能比目标短 0.2-0.4 m（A* 把未观测格子当障碍做端点外推）。
             # 2026-11-11：端点参考**锁存**——拿到一次就记住，直到下一个目标。

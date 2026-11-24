@@ -65,6 +65,10 @@ runtime:
   battery:
     min_fly_v: 14.0             # 人操作卡的"才许飞"门（mission preflight 用的是这个）
     low_voltage_v: 13.2         # px4ctrl 的掉电保护（低于它才保护，与上式不同层）
+mission:      # 2026-11-22：任务层选点策略。非跨组件接缝，sync_params 不重写本块。
+  # 2026-11-23 用户令放宽：只要目标不在膨胀体素（黄框）内就放行，不再要求离最近体素中心有余量。
+  voxel_res_m: 0.15            # 膨胀点云体素边长（= grid_map resolution），判"是否落在同一体素"
+  goal_recheck_s: 1.0          # 导航中复查目标是否被新障碍吞掉的周期
 health_gate:
   depth_topic: /camera/depth/image_rect_raw      # 必须 == seams.depth.topic
   min_hz: 15.0

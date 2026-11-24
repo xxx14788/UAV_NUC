@@ -59,6 +59,8 @@ def build(clock, world, fsm="CMD_CTRL", state=None):
     f.nav_deadline = None; f.goal_sent_t = 0.0; f.endpoint_ref = None
     f.goal_cmd_t0 = None; f.goal_target_xy = None; f.cache = {}; f.times = {}
     f._last_countdown_s = None
+    # 2026-11-22：导航中目标余量复查新增字段
+    f._last_clear_chk = 0.0; f._low_clear_count = 0
     f.stable_since = None; f.phase = "navigation"; f.anchor = 0.0
     f.rc = None          # 2026-11-07 测试修正：RosFlight 新增 RC 取证字段（__init__ 置 None）
     f._state = lambda: (state or mk_state())
@@ -189,6 +191,37 @@ expect_raise("T6d 时间戳过期 -> 拒", lambda: fm.validate_goal("world", now
 expect_raise("T6e 时间戳为 0 -> 拒", lambda: fm.validate_goal("world", 0.0, now, (1.0,0.0), (0.0,0.0), 0.0), ValueError)
 fm.TARGET_Z = None
 expect_raise("T6f TARGET_Z 未初始化 -> 明确报错", lambda: fm.validate_goal("world", now-0.1, now, (1.0,0.0), (0.0,0.0), 0.0), ValueError)
+
+print("=== T9 点云最近距离（纯函数） ===")
+check("T9a 空点云 -> inf", fm.min_clearance([], (1.0, 0.0, 0.0)) == float("inf"))
+check("T9b 三维距离", abs(fm.min_clearance([(0.0, 0.0, 0.0)], (0.0, 3.0, 4.0)) - 5.0) < 1e-9)
+check("T9c 多点取最小", abs(fm.min_clearance([(1.0, 1.0, 1.0), (2.0, 0.0, 0.0),
+                                              (0.3, 0.0, 0.0)], (0.0, 0.0, 0.0)) - 0.3) < 1e-9)
+
+print("=== T10 选点准入（2026-11-23 放宽：落在膨胀体素内才拒） ===")
+check("T10a 半格来自契约/回退 0.15/2", abs(fm.GOAL_VOXEL_HALF - 0.075) < 1e-9,
+      "half=%.3f" % fm.GOAL_VOXEL_HALF)
+_goal = (2.31, -0.94, 0.70)
+_pts = [(2.33, -0.52, 0.73)]
+check("T10b 11-22 那个点(0.42m)现在放行",
+      not fm.in_inflated_voxel(_pts, _goal, fm.GOAL_VOXEL_HALF),
+      "dist=%.2f" % fm.min_clearance(_pts, _goal))
+check("T10c 目标落在体素内 -> 拒",
+      fm.in_inflated_voxel([(2.35, -0.95, 0.71)], _goal, fm.GOAL_VOXEL_HALF))
+check("T10d 超出半格 -> 放行",
+      not fm.in_inflated_voxel([(2.31 + 0.076, -0.94, 0.70)], _goal, fm.GOAL_VOXEL_HALF))
+
+print("=== T11 不可达标记字段 ===")
+from visualization_msgs.msg import Marker as _MK
+_ball, _text = fm.unreachable_markers(_MK, _MK().header.stamp, _goal, 0.42)
+check("T11a 红球：ns/id/类型/坐标系",
+      _ball.ns == "flight_v1_unreachable" and _ball.id == 0
+      and _ball.type == _MK.SPHERE and _ball.action == _MK.ADD
+      and _ball.header.frame_id == "world")
+check("T11b 红字：类型/位置/文本",
+      _text.type == _MK.TEXT_VIEW_FACING and _text.id == 1
+      and abs(_text.pose.position.z - (_goal[2] + 0.25)) < 1e-9
+      and "IN INFLATED VOXEL" in _text.text and "0.42" in _text.text, _text.text)
 
 print()
 print("===== 结果: %d PASS / %d FAIL =====" % (OK, FAIL))
