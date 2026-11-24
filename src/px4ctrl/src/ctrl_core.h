@@ -57,8 +57,8 @@ constexpr double kV2Zv = 6.0;    // 速度环 P [1/s]  2026-11-06: 4.0->6.0
 // 稳态不受影响（30s 误差 0.0000）。**注意**：仿真没有推力滞后，提带宽遇到未建模滞后
 // 有振荡风险 -> 首飞必须盯"周期>5s 的摆动"这条中止条件。
 constexpr double kV2Zi = 3.0;    // 速度环 I [1/s^2]  2026-11-06: 2.0->3.0（Ti=2.0s, ζ=0.70）
-constexpr double kV2ZpXY = 0.55; // MPC_XY_P  2026-11-12 晚回退：0.65 未飞验证，回 11-11 实飞值 0.55
-constexpr double kV2ZvXY = 1.80; // MPC_XY_VEL_P
+constexpr double kV2ZpXY = 0.65; // MPC_XY_P  2026-11-22: 0.55->0.65（悬停 0.16Hz 慢摆，提位置环带宽；未飞验证）
+constexpr double kV2ZvXY = 2.40; // MPC_XY_VEL_P  2026-11-22: 1.80->2.40（ζ 0.90->1.04，加阻尼）
 constexpr double kV2ZiXY = 0.40; // MPC_XY_VEL_I  -> Ti=4.5s
 constexpr double kV2ZvelMax = 3.0;   // MPC_Z_VEL_MAX_UP/DN
 constexpr double kV2XYvelMax = 12.0;
