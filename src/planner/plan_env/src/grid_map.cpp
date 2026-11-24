@@ -51,6 +51,16 @@ void GridMap::initMap(ros::NodeHandle &nh)
   node_.param("grid_map/show_occ_time", mp_.show_occ_time_, false);
   node_.param("grid_map/pose_type", mp_.pose_type_, 1);
 
+  // 2026-11-24 用户令：中间结构光发射器必须遮挡 -> 右上角被动双目稀疏错误点
+  // 会形成小且悬空的 3D 簇。这里在 raw occupancy 层删除“体素数 < N 且不接地”的孤立簇，
+  // 再重建 inflate，避免少量错误点经 0.30 m 膨胀变成幽灵墙。
+  node_.param("grid_map/ghost_filter_enable", mp_.ghost_filter_enable_, true);
+  node_.param("grid_map/ghost_filter_min_voxels", mp_.ghost_filter_min_voxels_, 20);
+  node_.param("grid_map/ghost_filter_min_z", mp_.ghost_filter_min_z_, 0.20);
+  ROS_INFO("[grid_map] ghost filter %s (min_vox=%d, min_z=%.2f m)",
+           mp_.ghost_filter_enable_ ? "ON" : "OFF",
+           mp_.ghost_filter_min_voxels_, mp_.ghost_filter_min_z_);
+
   node_.param("grid_map/frame_id", mp_.frame_id_, string("world"));
   node_.param("grid_map/local_map_margin", mp_.local_map_margin_, 1);
   node_.param("grid_map/ground_height", mp_.ground_height_, 1.0);
@@ -86,6 +96,10 @@ void GridMap::initMap(ros::NodeHandle &nh)
 
   md_.occupancy_buffer_ = vector<double>(buffer_size, mp_.clamp_min_log_ - mp_.unknown_flag_);
   md_.occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
+  // 2026-11-24: 首个深度帧可能没有任何投影点，raycastProcess 会提前 return，
+  // 此时 local_bound 还未初始化。初始化成整个 map，避免 ghost filter 扫到未初始化边界。
+  md_.local_bound_min_ = Eigen::Vector3i::Zero();
+  md_.local_bound_max_ = mp_.map_voxel_num_ - Eigen::Vector3i::Ones();
 
   md_.count_hit_and_miss_ = vector<short>(buffer_size, 0);
   md_.count_hit_ = vector<short>(buffer_size, 0);
@@ -589,6 +603,105 @@ Eigen::Vector3d GridMap::closetPointInMap(const Eigen::Vector3d &pt, const Eigen
   return camera_pt + (min_t - 1e-3) * diff;
 }
 
+void GridMap::filterSmallFloatingClusters()
+{
+  if (!mp_.ghost_filter_enable_ || mp_.ghost_filter_min_voxels_ <= 0)
+    return;
+  if (!md_.local_updated_)
+    return;
+
+  const int nx = mp_.map_voxel_num_(0);
+  const int ny = mp_.map_voxel_num_(1);
+  const int nz = mp_.map_voxel_num_(2);
+  const int total = nx * ny * nz;
+  if (total <= 0)
+    return;
+
+  std::vector<char> visited(total, 0);
+  std::vector<int> stack;
+  std::vector<int> component;
+  stack.reserve(256);
+  component.reserve(256);
+
+  int removed_components = 0;
+  int removed_voxels = 0;
+  Eigen::Vector3i min_b = md_.local_bound_min_;
+  Eigen::Vector3i max_b = md_.local_bound_max_;
+  boundIndex(min_b);
+  boundIndex(max_b);
+  if (min_b(0) > max_b(0) || min_b(1) > max_b(1) || min_b(2) > max_b(2))
+    return;
+
+  for (int x = min_b(0); x <= max_b(0); ++x)
+    for (int y = min_b(1); y <= max_b(1); ++y)
+      for (int z = min_b(2); z <= max_b(2); ++z)
+      {
+        const int start = toAddress(x, y, z);
+        if (visited[start] || md_.occupancy_buffer_[start] <= mp_.min_occupancy_log_)
+          continue;
+
+        stack.clear();
+        component.clear();
+        stack.push_back(start);
+        visited[start] = 1;
+        double min_z = 1e9;
+
+        while (!stack.empty())
+        {
+          const int cur = stack.back();
+          stack.pop_back();
+          component.push_back(cur);
+
+          const int cz = cur % nz;
+          const int rem = cur / nz;
+          const int cy = rem % ny;
+          const int cx = rem / ny;
+          const double wz = mp_.map_origin_(2) + (cz + 0.5) * mp_.resolution_;
+          if (wz < min_z)
+            min_z = wz;
+
+          for (int dx = -1; dx <= 1; ++dx)
+            for (int dy = -1; dy <= 1; ++dy)
+              for (int dz = -1; dz <= 1; ++dz)
+              {
+                if (dx == 0 && dy == 0 && dz == 0)
+                  continue;
+                int qx = cx + dx;
+                int qy = cy + dy;
+                int qz = cz + dz;
+                if (qx < 0 || qx >= nx || qy < 0 || qy >= ny || qz < 0 || qz >= nz)
+                  continue;
+                const int nidx = toAddress(qx, qy, qz);
+                if (!visited[nidx] && md_.occupancy_buffer_[nidx] > mp_.min_occupancy_log_)
+                {
+                  visited[nidx] = 1;
+                  stack.push_back(nidx);
+                }
+              }
+        }
+
+        if ((int)component.size() < mp_.ghost_filter_min_voxels_ &&
+            min_z > mp_.ghost_filter_min_z_)
+        {
+          for (size_t k = 0; k < component.size(); ++k)
+          {
+            const int idx = component[k];
+            md_.occupancy_buffer_[idx] = mp_.clamp_min_log_;
+            md_.last_hit_frame_[idx] = 0;
+          }
+          ++removed_components;
+          removed_voxels += (int)component.size();
+        }
+      }
+
+  if (removed_components > 0)
+    ROS_WARN_THROTTLE(2.0,
+                      "[grid_map] ghost filter: removed %d small floating cluster(s), %d voxel(s) "
+                      "(min_vox=%d, min_z=%.2f m)",
+                      removed_components, removed_voxels,
+                      mp_.ghost_filter_min_voxels_, mp_.ghost_filter_min_z_);
+}
+
 void GridMap::clearAndInflateLocalMap()
 {
   /*clear outside local*/
@@ -750,6 +863,8 @@ void GridMap::updateOccupancyCallback(const ros::TimerEvent & /*event*/)
   // t2 = ros::Time::now();
   raycastProcess();
   // t3 = ros::Time::now();
+
+  filterSmallFloatingClusters();
 
   if (md_.local_updated_)
     clearAndInflateLocalMap();

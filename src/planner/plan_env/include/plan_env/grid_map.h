@@ -81,6 +81,11 @@ struct MappingParameters {
   double visualization_truncate_height_, virtual_ceil_height_, ground_height_, virtual_ceil_yp_, virtual_ceil_yn_;
   bool show_occ_time_;
 
+  /* 2026-11-24: remove isolated small floating depth clusters (ghost filter) */
+  bool ghost_filter_enable_;
+  int ghost_filter_min_voxels_;
+  double ghost_filter_min_z_;
+
   /* active mapping */
   double unknown_flag_;
 };
@@ -218,6 +223,7 @@ private:
   // main update process
   void projectDepthImage();
   void raycastProcess();
+  void filterSmallFloatingClusters();
   void clearAndInflateLocalMap();
 
   inline int inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);   // 2026-11-12: 球膨胀返回点数
