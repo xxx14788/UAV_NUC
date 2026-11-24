@@ -23,6 +23,14 @@
 set -uo pipefail
 
 FLOW="$HOME/sitl_realmachine/flight_v1"
+# 2026-11-22：任务完整输出原来写 /tmp，被 systemd-tmpfiles（/usr/lib/tmpfiles.d/tmp.conf
+# 里 `D /tmp`）在每次开机时清空，重启后无法复盘。改到 runtime/ 并只留最近 10 份。
+MISSION_LOG_DIR="$FLOW/runtime"
+MISSION_LOG_KEEP=10
+mission_log_trim() {
+  ls -1t "$MISSION_LOG_DIR"/mission_*.log 2>/dev/null \
+    | tail -n +$((MISSION_LOG_KEEP + 1)) | xargs -r rm -f --
+}
 
 # 任务模式默认的 RViz 命令（起栈时由 realflight_stack.sh 拉起）
 export RVIZ_CMD="${RVIZ_CMD:-bash $HOME/sitl_realmachine/rviz_mapping_v1/map_rviz.sh}"
@@ -53,7 +61,8 @@ case "${1:-help}" in
     bash "$FLOW/flight.sh" record start || { echo "✗ 开录失败，停止"; exit 1; }
     echo "--- 起飞；到位后请在 RViz 点目标（<=3.5 m）。之后全自动。 ---"
     RC=0
-    _LOG="/tmp/flight_mission_$(date +%Y%m%d_%H%M%S).log"
+    mkdir -p "$MISSION_LOG_DIR"
+    _LOG="$MISSION_LOG_DIR/mission_$(date +%Y%m%d_%H%M%S).log"
     # 2026-11-13 用户令：去掉通用"遥控器接管"横幅 —— 失败时打印 mission 给出的具体原因。
     # flight_mission.py 异常退出前打印 `FLIGHT FAIL: <原因>`（多行时后续行以 "- " 开头）；
     # PYTHONUNBUFFERED=1 保证经 tee 后仍逐行实时显示。
@@ -78,6 +87,7 @@ case "${1:-help}" in
       RC=1   # 2026-11-07 审查修正：原来异常也 exit 0，上层/人会以为成功
     fi
     bash "$FLOW/flight.sh" record stop || true
+    mission_log_trim
     exit $RC
     ;;
   vins)

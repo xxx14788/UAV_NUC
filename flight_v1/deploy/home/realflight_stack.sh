@@ -121,7 +121,7 @@ phase_cleanup() {
   local -a local_pats=(
     '[m]avros_node' '[r]ealsense2_camera' '[r]un_planner' '[r]oslaunch'
     '[c]amera_pose_relay.py' '[p]lanned_path_pub.py' '[v]ins_to_mavros_node'
-    '[e]go_planner' '[t]raj_server' '[p]x4ctrl'
+    '[e]go_planner' '[t]raj_server' '[p]x4ctrl' '[v]ins_watch_v1.py'
   )
   local stale
   stale=$(
@@ -441,6 +441,23 @@ start_rviz() {
   echo "  [rviz] 已启动（$RVIZ_CMD），日志 $log"
 }
 
+# 随栈盯盘：每次起栈都落一份逐秒证据（含 odom/prop/imu 三路速率），
+# 不必再靠"飞的时候忘了录包"——11-19 22:12 那次就是没录上，prop 掉到 59Hz 无据可查。
+start_vins_watch() {
+  local py=$HOME/sitl_realmachine/tools/vins_watch_v1.py
+  [ -s "$py" ] || { warn "vins_watch_v1.py 缺失，跳过随栈盯盘"; return 0; }
+  mkdir -p "$HOME/flight_data"
+  local log=$HOME/flight_data/last_vins_watch.log
+  local csv=$HOME/flight_data/last_vins_watch.csv
+  local vl
+  vl=$(ls -t "$HOME"/sitl_realmachine/vins_*.log "$HOME"/sitl_realmachine/*/vins_*.log 2>/dev/null | head -1) || vl=""
+  local -a wargs=(--csv "$csv")
+  [ -n "$vl" ] && wargs=(--vins-log "$vl" "${wargs[@]}")
+  : > "$log"
+  nohup python3 "$py" "${wargs[@]}" > "$log" 2>&1 &
+  echo "  [watch] 随栈盯盘已启动（--csv 逐行落盘），日志 $log"
+}
+
 # ---------------------------------------------------------------- 主流程
 timer_start
 acquire_lock
@@ -497,6 +514,7 @@ print_preflight
 
 if [ "$PASS" -eq 1 ]; then
   start_rviz
+  start_vins_watch
   echo "===== STACK READY $(date '+%T')（v7 总耗时 $(elapsed_s)s），可开录起飞 ====="
 else
   echo "===== STACK FAIL——禁飞 ====="
