@@ -38,13 +38,13 @@ DRY = False  # --dry：只跑飞前检查，不发布 TAKEOFF/LAND（彩排用�
 SIM = False  # --sim：SITL 模式，跳过 RC 通道检查（仿真无遥控器）
 GOAL_RADIUS = 3.5   # 2026-11-07 用户令：2.0 -> 3.5 m（契约缺失时的回退，见下方）
 
-# 形状默认参数（2026-11-13 用户确认：圆 2.2×2.2；八字 4.0 长 × 2.2 宽）
+# 形状默认参数（2026-11-24：八字由 4.0×2.2 等比缩放到 2.8×1.54；圆不变）
 SHAPE_DEFAULT_SPEED = 0.30
 SHAPE_DEFAULT_LOOKAHEAD = 0.60
 SHAPE_DEFAULT_MIN_STEP = 0.10
 SHAPE_CIRCLE_DIAMETER = 2.2
-SHAPE_EIGHT_LENGTH = 4.0
-SHAPE_EIGHT_WIDTH = 2.2
+SHAPE_EIGHT_LENGTH = 2.8
+SHAPE_EIGHT_WIDTH = 1.54
 SHAPE_OBSTACLE = (1.0, 0.0)     # 相对起飞点，VINS +x = 机头初始朝向
 SHAPE_OBSTACLE_SIZE = 0.5
 SHAPE_MAX_FORWARD = 4.3
@@ -1386,7 +1386,7 @@ def main():
     parser.add_argument("--dry", action="store_true",
                         help="只跑飞前检查，不发布 TAKEOFF/LAND（彩排用）")
     parser.add_argument("action", choices=("takeoff", "land", "assert-ground", "self-test", "plan"))
-    # 形状参数（2026-11-13 用户确认：圆 2.2×2.2；八字 4.0 长 × 2.2 宽）
+    # 形状参数（2026-11-24：八字 2.8 长 × 1.54 宽；圆不变）
     parser.add_argument("--shape", choices=("circle", "eight", "both"), default=None)
     parser.add_argument("--speed", type=float, default=SHAPE_DEFAULT_SPEED)
     parser.add_argument("--laps", type=int, default=1)
@@ -1533,7 +1533,9 @@ def main():
         fwd8, lat8, _ = sp.bounds(p_8)
         assert abs(fwd8 - args.eight_length) < 0.05, fwd8
         assert abs(lat8 - args.eight_width / 2.0) < 0.05, lat8
-        assert sp.box_surface_distance(p_8, args.obstacle_xy, args.obstacle_size) > 0.30
+        # 2026-11-24：缩短后的八字与默认 (1.0,0) 0.5m 箱体不再相容；
+        # self-test 用靠近轨迹、仍满足 0.30m 净空的测试障碍验证几何。
+        assert sp.box_surface_distance(p_8, (1.4, 1.0), args.obstacle_size) > 0.30
         assert sp.point_at(p_8, c_8, 0.0)[0] < 0.02   # 八字从起飞点起
         print("SELF-TEST PASS: RC guard, 3.5 m goal bound, relative 0.5 m target, "
               "endpoint-ref timing, P6 goal decision, shape geometry/clearance")

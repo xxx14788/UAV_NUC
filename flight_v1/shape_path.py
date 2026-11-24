@@ -14,7 +14,7 @@ import bisect
 import math
 
 
-def build_path(shape, circle_diameter=2.2, eight_length=4.0, eight_width=2.2,
+def build_path(shape, circle_diameter=2.2, eight_length=2.8, eight_width=1.54,
                n=2400, rotate_deg=0.0):
     """返回 (pts, cum, total)。pts 为闭合折线（不重复首点）；cum 长度 n+1。"""
     if n < 64:

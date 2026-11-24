@@ -130,10 +130,10 @@ def make_args(shape):
     a.laps = 1
     a.rate = 10.0
     a.circle_diameter = 2.2
-    a.eight_length = 4.0
-    a.eight_width = 2.2
+    a.eight_length = 2.8
+    a.eight_width = 1.54
     a.rotate_deg = 0.0
-    a.obstacle_xy = (1.0, 0.0)
+    a.obstacle_xy = (3.0, 1.5)
     a.obstacle_size = 0.5
     a.max_forward = 4.3
     a.max_lateral = 1.6

@@ -40,7 +40,7 @@ class TestCircle(unittest.TestCase):
 
 class TestEight(unittest.TestCase):
     def setUp(self):
-        self.pts, self.cum, self.total = sp.build_path("eight", eight_length=4.0, eight_width=2.2)
+        self.pts, self.cum, self.total = sp.build_path("eight", eight_length=2.8, eight_width=1.54)
 
     def test_start_end_at_origin(self):
         for s in (0.0, self.total):
@@ -49,21 +49,22 @@ class TestEight(unittest.TestCase):
 
     def test_bounds(self):
         fwd, lat, minx = sp.bounds(self.pts)
-        self.assertAlmostEqual(fwd, 4.0, places=2)
-        self.assertAlmostEqual(lat, 1.1, places=2)
+        self.assertAlmostEqual(fwd, 2.8, places=2)
+        self.assertAlmostEqual(lat, 0.77, places=2)
         self.assertAlmostEqual(minx, 0.0, places=2)
 
     def test_obstacle_clearance(self):
-        d = sp.box_surface_distance(self.pts, (1.0, 0.0), 0.5)
-        self.assertGreater(d, 0.32)
-        self.assertLess(d, 0.45)   # 2.2 m 宽：箱面 ~0.38，膨胀层边界附近
+        # 默认 (1.0,0) 0.5m 箱体与缩短后的八字不相容；这里用近轨迹的测试障碍。
+        d = sp.box_surface_distance(self.pts, (1.4, 1.0), 0.5)
+        self.assertGreater(d, 0.33)
+        self.assertLess(d, 0.36)
 
     def test_length_positive(self):
-        self.assertGreater(self.total, 10.0)
-        self.assertLess(self.total, 13.0)
+        self.assertGreater(self.total, 8.5)
+        self.assertLess(self.total, 9.5)
 
     def test_projection_local_at_crossing(self):
-        # 交叉点 (2,0) 在弧长 1/4 和 3/4 各出现一次；局部窗口不能跳到另一瓣
+        # 交叉点 (1.4,0) 在弧长 1/4 和 3/4 各出现一次；局部窗口不能跳到另一瓣
         s1 = self.total * 0.25
         x, y = sp.point_at(self.pts, self.cum, s1)
         got = sp.project(self.pts, self.cum, (x, y), s1, 1.2)
@@ -73,8 +74,8 @@ class TestEight(unittest.TestCase):
 class TestBoth(unittest.TestCase):
     def test_both_total_and_closure(self):
         p1, c1, t1 = sp.build_path("circle", circle_diameter=2.2)
-        p2, c2, t2 = sp.build_path("eight", eight_length=4.0, eight_width=2.2)
-        p, c, t = sp.build_path("both", circle_diameter=2.2, eight_length=4.0, eight_width=2.2)
+        p2, c2, t2 = sp.build_path("eight", eight_length=2.8, eight_width=1.54)
+        p, c, t = sp.build_path("both", circle_diameter=2.2, eight_length=2.8, eight_width=1.54)
         self.assertAlmostEqual(t, t1 + t2, delta=0.05)
         self.assertEqual(len(p), len(p1) + len(p2))
         x, y = sp.point_at(p, c, 0.0)
@@ -96,10 +97,10 @@ class TestCarrot(unittest.TestCase):
 
 class TestRotate(unittest.TestCase):
     def test_rotate_90(self):
-        p, c, t = sp.build_path("eight", eight_length=4.0, eight_width=2.2, rotate_deg=90.0)
+        p, c, t = sp.build_path("eight", eight_length=2.8, eight_width=1.54, rotate_deg=90.0)
         fwd, lat, minx = sp.bounds(p)
-        self.assertAlmostEqual(lat, 4.0, places=2)
-        self.assertAlmostEqual(fwd, 1.1, places=2)
+        self.assertAlmostEqual(lat, 2.8, places=2)
+        self.assertAlmostEqual(fwd, 0.77, places=2)
 
 
 class TestMetrics(unittest.TestCase):

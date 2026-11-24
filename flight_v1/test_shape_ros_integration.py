@@ -117,7 +117,7 @@ def main():
 
         args = type("A", (), dict(
             shape="circle", speed=0.30, lookahead=0.60, min_step=0.10, laps=1,
-            rate=10.0, circle_diameter=2.2, eight_length=4.0, eight_width=2.2,
+            rate=10.0, circle_diameter=2.2, eight_length=2.8, eight_width=1.54,
             rotate_deg=0.0, obstacle_xy=(1.0, 0.0), obstacle_size=0.5,
             max_forward=4.3, max_lateral=1.6, min_clearance=0.30, max_time=60.0))()
 
