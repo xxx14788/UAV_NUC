@@ -294,6 +294,7 @@ class RosFlight:
         self.next_goal_deadline = None
         self._last_countdown_s = None      # 到点等待窗口倒计时播报（终端+RViz）
         self.landing_hover_deadline = None # 10 s 收点窗口结束后的 5 s 悬停降落计时
+        self.land_requested = False        # 外部任务（如 R0）请求当前 mission 立即降落
         self.nav_deadline = None          # 当前目标的 NAV_TIMEOUT 导航超时（按目标重置）
         self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
         self.goal_sent_t = 0.0            # 本次目标发出的时刻（只接受其后的 planned_path）
@@ -341,6 +342,9 @@ class RosFlight:
         sub("/position_cmd", PositionCommand)
         sub("/move_base_simple/goal", PoseStamped, self._goal_cb)
         sub("/flight_v1/goal_status", String, self._goal_status_cb)
+        # 2026-11-26：外部任务请求现有 mission 降落。不能另起 flight.sh land：
+        # 那会以同名 flight_v1_mission 注册，把正在导航的节点踢掉，随后 FSM 缓存为空。
+        sub("/flight_v1/land_request", String, self._land_request_cb)
         # 2026-11-11：到位判定要对着"规划器实际终点"算（A* 端点外推会让终点比目标短 0.2-0.4 m）
         sub("/flight_v1/planned_path", Path)
         # 2026-11-22：选点预检的判据来源（world 系，约 9 Hz）
@@ -468,6 +472,18 @@ class RosFlight:
 
     # ---------------------------------------------------------------- P0-1
     # ---------------------------------------------------------------- P0-3
+    def _land_request_cb(self, msg):
+        """外部任务请求当前 mission 降落。
+
+        只置标志，由 navigation_monitor 在主循环里调用 self.land()；这样复用同一个
+        flight_v1_mission 节点，不会像 `flight.sh land` 那样新建同名节点把原节点踢掉。
+        """
+        if (msg.data or "").strip().lower() != "land":
+            return
+        if not self.land_requested:
+            print("[land_request] 收到外部降落请求；交给现有 mission 处理", flush=True)
+        self.land_requested = True
+
     def _goal_status_cb(self, msg):
         """规划器回传：OK / ADJUSTED dx dy / UNREACHABLE。
         2026-11-09 用户令：改点必须告知；偏差过大或不可达就悬停等新点。"""
@@ -871,6 +887,13 @@ class RosFlight:
         deadline = None
         while not self.rospy.is_shutdown():
             if LANDING_FILE.exists() or STOP_FILE.exists():
+                return
+            if getattr(self, "land_requested", False):
+                # 2026-11-26：外部任务（R0）请求降落。必须在主循环里调用 land()，
+                # 让同一个 flight_v1_mission 节点完成停轨迹/发 LAND/等待着地。
+                self.land_requested = False
+                print("收到外部降落请求；停止导航并执行降落。", flush=True)
+                self.land()
                 return
             if not self.goal_used:
                 # 没有待飞目标：首个目标无限等；后续目标只等 NEXT_GOAL_WAIT。

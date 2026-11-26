@@ -11,14 +11,17 @@ VINS 原点在起飞点；假设 VINS 初始化时机头指向场地 +x，因此
   目标相对 VINS 原点 = (2.475,2.475) m
 
 这个脚本负责：
-  1. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
-  2. 等待飞机起飞并稳定；
-  3. 通过 /move_base_simple/goal 交给 mission 校验/转发；
-  4. 到点后等待 5 s，调用 ~/realflight_mission.sh land 直接降落。
+  1. 起飞前读取膨胀点云，若终点已在膨胀层内则拒绝起飞；
+  2. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
+  3. 等待飞机起飞并稳定；
+  4. 通过 /move_base_simple/goal 交给 mission 校验/转发；
+  5. 到点后等待 5 s，通过 /flight_v1/land_request 请求现有 mission 降落。
 
 注意：6 格目标相对起飞点的直线距离是 3.50018 m，略大于 mission 的 3.5 m
-单目标半径。脚本会先发一个 3.20 m 的近点（距终点约 30 cm），再发精确终点；
+单目标半径。脚本会先发一个约 3.20 m 的近点（不在膨胀层内），再发精确终点；
 最终仍停在 (6格,6格)，只是避免 mission 的 3.5 m 输入门把任务卡死。
+降落必须通知现有 flight_v1_mission 节点；另起 `realflight_mission.sh land`
+会创建同名节点，把正在导航的 mission 踢掉。
 """
 import argparse
 import math
@@ -32,7 +35,11 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import ExtendedState, State
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import PointCloud2
+from sensor_msgs import point_cloud2
 from std_msgs.msg import String
+
+from flight_mission import GOAL_VOXEL_HALF, in_inflated_voxel
 
 CELL = 0.55
 START_CELL = 1.5
@@ -46,6 +53,9 @@ MISSION_WRAPPER = os.path.expanduser("~/realflight_mission.sh")
 STATE_DIR = os.path.expanduser("~/sitl_realmachine/flight_v1/runtime")
 STOP_FILE = os.path.join(STATE_DIR, "stopping")
 LANDING_FILE = os.path.join(STATE_DIR, "landing.requested")
+INFLATE_TOPIC = "/drone_0_ego_planner_node/grid_map/occupancy_inflate"
+LAND_REQUEST_TOPIC = "/flight_v1/land_request"
+LAND_REQUEST_TIMEOUT = 150.0
 
 
 def log(text):
@@ -62,6 +72,8 @@ class R0Task:
         self.ack_event = None
         self.mission = None
         self.land_started = False
+        self.inflate_msg = None
+        self.inflate_t = 0.0
 
         rospy.Subscriber("/mavros/state", State, self._state_cb, queue_size=20)
         rospy.Subscriber("/mavros/extended_state", ExtendedState,
@@ -70,8 +82,12 @@ class R0Task:
                          self._odom_cb, queue_size=50)
         rospy.Subscriber("/flight_v1/goal_ack", String,
                          self._ack_cb, queue_size=20)
+        rospy.Subscriber(INFLATE_TOPIC, PointCloud2,
+                         self._inflate_cb, queue_size=2)
         self.goal_pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,
                                         queue_size=5)
+        self.land_request_pub = rospy.Publisher(
+            LAND_REQUEST_TOPIC, String, queue_size=3)
 
     def _state_cb(self, msg):
         self.state = msg
@@ -87,6 +103,45 @@ class R0Task:
         if self.ack_event is not None and (
                 msg.data.startswith("ACCEPTED") or msg.data.startswith("REJECTED")):
             self.ack_event.set()
+
+    def _inflate_cb(self, msg):
+        self.inflate_msg = msg
+        self.inflate_t = time.monotonic()
+
+    def _inflate_points(self, max_age=2.0):
+        if (self.inflate_msg is None
+                or time.monotonic() - self.inflate_t > max_age):
+            return None
+        try:
+            return list(point_cloud2.read_points(
+                self.inflate_msg, field_names=("x", "y", "z"), skip_nans=True))
+        except Exception as exc:
+            log("膨胀点云解析失败：%r" % (exc,))
+            return None
+
+    def wait_inflate(self, timeout=8.0):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline and not rospy.is_shutdown():
+            if self._inflate_points() is not None:
+                return True
+            rospy.sleep(0.2)
+        return False
+
+    def precheck_target(self, x, y, z=TARGET_Z, label="终点"):
+        """地面预检：目标是否落在膨胀体素内。未知返回 None，明确被占返回 False。"""
+        if not self.wait_inflate():
+            log("警告：%s 膨胀点云未就绪，跳过地面预检；mission 起飞后仍会复查" % label)
+            return None
+        pts = self._inflate_points()
+        if pts is None:
+            log("警告：%s 膨胀点云过期，跳过地面预检" % label)
+            return None
+        if in_inflated_voxel(pts, (x, y, z), GOAL_VOXEL_HALF):
+            log("✗ %s (%.3f,%.3f,%.2f) 落在膨胀层内；不要起飞，先移开障碍或改目标"
+                % (label, x, y, z))
+            return False
+        log("✓ %s 不在膨胀层内 (%.3f,%.3f,%.2f)" % (label, x, y, z))
+        return True
 
     def _xy(self):
         p = self.odom.pose.pose.position
@@ -136,6 +191,21 @@ class R0Task:
                 return
             rospy.sleep(0.1)
         raise RuntimeError("等待起飞超时；检查 RC/CH5、预检和 mission 输出")
+
+    def choose_stage(self, px, py, tx, ty):
+        """选一个不落在膨胀体素内的近点；点云不可用时退回 3.20 m。"""
+        d = math.hypot(tx - px, ty - py)
+        pts = self._inflate_points()
+        for dist in (3.20, 3.00, 2.80, 2.60, 2.40, 2.20, 2.00):
+            if dist >= d - 0.15:
+                continue
+            scale = dist / d
+            sx = px + (tx - px) * scale
+            sy = py + (ty - py) * scale
+            if pts is None or not in_inflated_voxel(
+                    pts, (sx, sy, TARGET_Z), GOAL_VOXEL_HALF):
+                return dist, (sx, sy)
+        return None
 
     def _publish_goal(self, x, y):
         msg = PoseStamped()
@@ -208,28 +278,64 @@ class R0Task:
                 raise RuntimeError("悬停期间飞控连接/解锁状态异常")
             rospy.sleep(0.1)
 
-    def land(self):
-        if self.land_started:
-            return
-        self.land_started = True
-        log("启动降落：bash %s land" % MISSION_WRAPPER)
+    def _grounded(self):
+        return (self.state is not None and self.state.connected
+                and not self.state.armed and self.ext is not None
+                and self.ext.landed_state == 1)
+
+    def _wait_grounded(self, timeout):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline and not rospy.is_shutdown():
+            if self._grounded():
+                log("已确认地面/未解锁")
+                return True
+            if self.mission is not None and self.mission.poll() is not None:
+                return self._grounded()
+            rospy.sleep(0.2)
+        return False
+
+    def _standalone_land(self):
+        """现有 mission 已退出时，才允许用独立 land 入口。"""
+        log("现有 mission 已退出，使用独立 land 入口")
         rc = subprocess.run(
             ["bash", MISSION_WRAPPER, "land"],
             env=os.environ.copy(),
             timeout=180,
         ).returncode
         if rc != 0:
-            raise RuntimeError("land 入口退出码 %d" % rc)
-        # Wait for disarm/on-ground; land itself normally waits, this is final check.
-        deadline = time.monotonic() + 30.0
-        while time.monotonic() < deadline and not rospy.is_shutdown():
-            if (self.state is not None and self.state.connected
-                    and not self.state.armed and self.ext is not None
-                    and self.ext.landed_state == 1):
-                log("已确认地面/未解锁")
+            raise RuntimeError("独立 land 入口退出码 %d" % rc)
+        if not self._wait_grounded(30.0):
+            raise RuntimeError("独立 land 返回后未确认 disarmed/ON_GROUND")
+
+    def land(self):
+        if self.land_started:
+            return
+        self.land_started = True
+        if self._grounded():
+            log("飞控已是地面/未解锁，无需降落请求")
+            return
+
+        mission_alive = self.mission is not None and self.mission.poll() is None
+        if mission_alive:
+            # 关键：不能另起 realflight_mission.sh land。那会新建同名
+            # flight_v1_mission 节点，把正在导航的节点踢掉，随后 FSM 缓存为空。
+            # 改为通知现有 mission，由它自己的 navigation_monitor 调 land()。
+            log("向现有 mission 发送降落请求：%s" % LAND_REQUEST_TOPIC)
+            for _ in range(3):
+                self.land_request_pub.publish(String(data="land"))
+                rospy.sleep(0.2)
+            if self._wait_grounded(LAND_REQUEST_TIMEOUT):
                 return
-            rospy.sleep(0.2)
-        log("警告：land 返回后 30 s 内未确认 disarmed/ON_GROUND")
+            if self.mission is not None and self.mission.poll() is not None:
+                log("mission 已退出但未确认落地，切换独立 land")
+            else:
+                raise RuntimeError(
+                    "现有 mission 未在 %.0f s 内完成降落；保持 CH5 接管"
+                    % LAND_REQUEST_TIMEOUT)
+        else:
+            log("mission 进程不在，走独立 land 入口")
+
+        self._standalone_land()
 
     def run(self):
         wait_s = 120.0
@@ -243,23 +349,28 @@ class R0Task:
             (target[0], target[1], math.hypot(*target)))
 
         self.wait_stack()
+        ok = self.precheck_target(target[0], target[1], TARGET_Z, "终点")
+        if ok is False:
+            raise RuntimeError("终点落在膨胀层内：移开障碍或修改 GOAL_CELL 后再飞")
         self.start_mission()
-        self.wait_takeoff()
-        px, py, _ = self._xy()
-        d = math.hypot(target[0] - px, target[1] - py)
-        log("起飞后当前位置=(%.3f,%.3f) m；距终点 %.3f m" % (px, py, d))
-
-        stage = None
-        # mission 的单目标半径是 3.5 m。6 格对角线为 3.50018 m；先发一个
-        # 3.20 m 的近点，再发精确终点。这样终点前还有约 0.30 m 的实际运动，
-        # 最终到点判据不会被“近点已经在终点 0.25 m 内”直接满足。
-        if d > 3.45:
-            scale = 3.20 / d
-            stage = (px + (target[0] - px) * scale,
-                     py + (target[1] - py) * scale)
-            log("终点超出 mission 3.5 m 输入余量，先发 3.20 m 近点 (%.3f,%.3f)" % stage)
-
         try:
+            self.wait_takeoff()
+            px, py, _ = self._xy()
+            d = math.hypot(target[0] - px, target[1] - py)
+            log("起飞后当前位置=(%.3f,%.3f) m；距终点 %.3f m" % (px, py, d))
+
+            stage = None
+            # mission 的单目标半径是 3.5 m。6 格对角线为 3.50018 m；先发一个
+            # 3.20 m 的近点，再发精确终点。若该近点落在膨胀层内，则向前缩短，
+            # 直到找到一个不在膨胀体素内的近点。
+            if d > 3.45:
+                chosen = self.choose_stage(px, py, target[0], target[1])
+                if chosen is None:
+                    raise RuntimeError("找不到不落在膨胀层内的近点；终点虽可达但中间段被占")
+                stage_dist, stage = chosen
+                log("终点超出 mission 3.5 m 输入余量，先发 %.2f m 近点 (%.3f,%.3f)"
+                    % (stage_dist, stage[0], stage[1]))
+
             if stage is not None:
                 r = self.send_goal(stage[0], stage[1], "近点")
                 if r != "ACCEPTED":
@@ -274,26 +385,28 @@ class R0Task:
             self.hover(HOVER_AFTER_ARRIVAL)
             self.land()
         except Exception:
-            # 如果已经起飞，尽量走正式 land 路径，不把飞机留在空中。
+            # 如果已经起飞，走现有 mission 的降落请求，不把飞机留在空中。
             if self.state is not None and self.state.armed:
                 try:
                     self.land()
                 except Exception as exc:
                     log("异常收口 land 失败：%r" % (exc,))
             raise
-
-        if self.mission is not None:
-            try:
-                rc = self.mission.wait(timeout=30.0)
-                log("任务入口已退出 rc=%s" % rc)
-            except subprocess.TimeoutExpired:
-                log("警告：任务入口仍在运行，检查 record stop / mission 日志")
+        finally:
+            if self.mission is not None:
+                try:
+                    rc = self.mission.wait(timeout=30.0)
+                    log("任务入口已退出 rc=%s" % rc)
+                except subprocess.TimeoutExpired:
+                    log("警告：任务入口仍在运行，检查 record stop / mission 日志")
 
 
 def main():
     ap = argparse.ArgumentParser(description="R0 室内自动任务")
     ap.add_argument("--check", action="store_true",
                     help="只打印坐标和距离，不启动 mission")
+    ap.add_argument("--precheck", action="store_true",
+                    help="只读取膨胀点云检查终点，不起飞、不启动 mission")
     args = ap.parse_args()
     if args.check:
         target = ((GOAL_CELL - START_CELL) * CELL,
@@ -305,6 +418,20 @@ def main():
         print("goal_vins=(%.3f,%.3f) m distance=%.6f m" %
               (target[0], target[1], math.hypot(*target)))
         return 0
+    if args.precheck:
+        target = ((GOAL_CELL - START_CELL) * CELL,
+                  (GOAL_CELL - START_CELL) * CELL)
+        task = R0Task()
+        try:
+            task.wait_stack()
+            ok = task.precheck_target(target[0], target[1], TARGET_Z, "终点")
+        except Exception as exc:
+            print("[R0][FAIL] 预检失败：%s" % (exc,), file=sys.stderr, flush=True)
+            return 1
+        if ok is None:
+            print("[R0][UNKNOWN] 膨胀点云未就绪，无法确认目标", file=sys.stderr)
+            return 2
+        return 0 if ok else 1
     task = R0Task()
     try:
         task.run()

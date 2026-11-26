@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""R0 降落路径离线测试：现有 mission 存活时只能发 land_request，不能另起节点。"""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import task_r0 as r0
+
+OK = FAIL = 0
+
+
+def check(name, cond, extra=""):
+    global OK, FAIL
+    if cond:
+        OK += 1
+        print("  PASS %s %s" % (name, extra))
+    else:
+        FAIL += 1
+        print("  FAIL %s %s" % (name, extra))
+
+
+class FakePub(object):
+    def __init__(self):
+        self.msgs = []
+
+    def publish(self, msg):
+        self.msgs.append(msg.data)
+
+
+class FakeMission(object):
+    def __init__(self, rc=None):
+        self.rc = rc
+
+    def poll(self):
+        return self.rc
+
+
+class FakeState(object):
+    connected = True
+
+
+class FakeExt(object):
+    landed_state = 2
+
+
+def make_task(mission_rc=None, armed=True, landed=2):
+    t = object.__new__(r0.R0Task)
+    t.land_started = False
+    t.mission = FakeMission(mission_rc)
+    t.state = FakeState()
+    t.state.armed = armed
+    t.ext = FakeExt()
+    t.ext.landed_state = landed
+    t.land_request_pub = FakePub()
+    t.standalone_called = False
+
+    def standalone():
+        t.standalone_called = True
+
+    t._standalone_land = standalone
+    return t
+
+
+_old_sleep = r0.rospy.sleep
+r0.rospy.sleep = lambda _s: None
+try:
+    print("=== R0 降落：mission 存活 -> 只发 topic，不新建进程 ===")
+    t = make_task(mission_rc=None, armed=True)
+    t._wait_grounded = lambda _timeout: True
+    t.land()
+    check("发送 3 次 land_request", t.land_request_pub.msgs == ["land"] * 3,
+          "msgs=%s" % t.land_request_pub.msgs)
+    check("不调用独立 land", not t.standalone_called)
+
+    print("=== R0 降落：mission 已退出 -> 才允许独立 land ===")
+    t2 = make_task(mission_rc=1, armed=True)
+    t2._wait_grounded = lambda _timeout: True
+    t2.land()
+    check("mission 退出后走独立 land", t2.standalone_called)
+    check("不向不存在的 mission 发 topic", not t2.land_request_pub.msgs)
+
+    print("=== R0 降落：已在地面 -> 不发降落请求 ===")
+    t3 = make_task(mission_rc=None, armed=False, landed=1)
+    t3.land()
+    check("已地面直接返回", not t3.land_request_pub.msgs and not t3.standalone_called)
+finally:
+    r0.rospy.sleep = _old_sleep
+
+print()
+print("===== 结果: %d PASS / %d FAIL =====" % (OK, FAIL))
+sys.exit(0 if FAIL == 0 else 1)

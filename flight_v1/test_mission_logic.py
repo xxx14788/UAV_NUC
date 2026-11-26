@@ -55,6 +55,7 @@ def build(clock, world, fsm="CMD_CTRL", state=None):
     f.rospy = Obj(); f.rospy.sleep = clock.sleep; f.rospy.is_shutdown = lambda: False
     f.goal_used = True; f.next_goal_deadline = None; f.goal_count = 0
     f.landing_hover_deadline = None
+    f.land_requested = False
     f.target = world["target"]; f.nav_done = False; f.nav_fail = None
     # 2026-11-13：补齐 11-11 新增字段（此前缺 nav_deadline，测试一直崩）
     f.nav_deadline = None; f.goal_sent_t = 0.0; f.endpoint_ref = None
@@ -117,6 +118,16 @@ f.landing_hover_deadline = c.t + 1.0
 f._goal_cb(None)
 check("T1b 悬停降落阶段拒绝新目标",
       bool(f.ack_pub.msgs) and "REJECTED" in str(f.ack_pub.msgs[-1]), "last=%s" % (f.ack_pub.msgs[-1] if f.ack_pub.msgs else None))
+
+print("=== T1c 外部 land_request -> 现有 mission 立即降落，不新建节点 ===")
+c1c = Clock(); w1c = {"target": (1.0, 0.0, 0.7), "pos": (1.0, 0.0, 0.7)}
+f1c = build(c1c, w1c)
+f1c.land_requested = True
+f1c.navigation_monitor()
+check("T1c 外部请求立即降落", len(f1c.landed) == 1 and f1c.landed[0] < 0.5,
+      "land@t=%.1fs" % (f1c.landed[0] if f1c.landed else -1))
+check("T1c 不进入 20s 自动降落窗口", not f1c.landed or f1c.landed[0] < 1.0,
+      "land@t=%.1fs" % (f1c.landed[0] if f1c.landed else -1))
 
 print("=== T2 等待窗口内来第二个目标 -> 继续飞 -> 再超时降落（S 形基础） ===")
 c2 = Clock(); w2 = {"target": (1.0, 0.0, 0.7), "pos": (1.0, 0.0, 0.7)}
