@@ -71,6 +71,12 @@ try:
     check("目标距离 3.49 m", abs(math.hypot(*_tgt) - 3.49) < 1e-9,
           "target=(%.4f,%.4f) d=%.6f" % (_tgt[0], _tgt[1], math.hypot(*_tgt)))
     check("目标沿 45° 对角线", abs(_tgt[0] - _tgt[1]) < 1e-9)
+    _sx, _sy = 0.20, -0.20
+    _gx, _gy = r0.clamp_target(_sx, _sy, _tgt[0], _tgt[1])
+    _gd = math.hypot(_gx - _sx, _gy - _sy)
+    check("漂移后目标截断到 3.49 m", abs(_gd - 3.49) < 1e-9,
+          "current=(%.2f,%.2f) sent=(%.4f,%.4f) d=%.6f"
+          % (_sx, _sy, _gx, _gy, _gd))
 
     print("=== R0 降落：mission 存活 -> 只发 topic，不新建进程 ===")
     t = make_task(mission_rc=None, armed=True)

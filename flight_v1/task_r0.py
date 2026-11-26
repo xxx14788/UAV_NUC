@@ -64,6 +64,20 @@ def target_vins():
     return dx * scale, dy * scale
 
 
+def clamp_target(px, py, tx, ty, max_dist=GOAL_DISTANCE):
+    """按当前位置把目标截断到 max_dist，保证 mission 的当前位置距离门通过。
+
+    起飞漂移可能把标称 3.49 m 目标顶到 3.5 m 以上；发点前按当前
+    位置沿“当前→标称目标”方向截断，目标物理位置最多偏移几厘米。
+    """
+    dx, dy = tx - px, ty - py
+    d = math.hypot(dx, dy)
+    if d <= max_dist or d <= 0.0:
+        return tx, ty
+    scale = max_dist / d
+    return px + dx * scale, py + dy * scale
+
+
 def log(text):
     print("[R0] " + text, flush=True)
 
@@ -92,6 +106,7 @@ class R0Task:
         self.ack_event = None
         self.mission = None
         self.land_started = False
+        self.last_sent_target = None
 
         rospy.Subscriber("/mavros/state", State, self._state_cb, queue_size=20)
         rospy.Subscriber("/mavros/extended_state", ExtendedState,
@@ -181,12 +196,16 @@ class R0Task:
 
     def send_goal(self, x, y, label, max_try=8):
         """Publish until mission accepts/rejects. Returns accepted/reject text."""
-        log("%s：发目标 (%.3f, %.3f) m" % (label, x, y))
         for _ in range(max_try):
             self.check_mission_alive()
+            px, py, _ = self._xy()
+            gx, gy = clamp_target(px, py, x, y)
+            self.last_sent_target = (gx, gy)
+            log("%s：发目标 (%.3f,%.3f) m；标称 (%.3f,%.3f)，当前距标称 %.3f m"
+                % (label, gx, gy, x, y, math.hypot(x - px, y - py)))
             self.ack_text = None
             self.ack_event = threading.Event()
-            self._publish_goal(x, y)
+            self._publish_goal(gx, gy)
             if self.ack_event.wait(1.5):
                 txt = self.ack_text or ""
                 if txt.startswith("ACCEPTED"):
@@ -198,6 +217,10 @@ class R0Task:
                     if "当前阶段" in txt or "目标已锁定" in txt:
                         log("%s：mission 尚未进入收点阶段，重试" % label)
                         rospy.sleep(1.0)
+                        continue
+                    if "超出当前位置" in txt:
+                        log("%s：当前位置距离门拒绝，按当前位置重算重试" % label)
+                        rospy.sleep(0.3)
                         continue
                     log("%s：mission 拒绝：%s" % (label, txt))
                     return txt
@@ -317,16 +340,15 @@ class R0Task:
             self.wait_takeoff()
             px, py, _ = self._xy()
             d = math.hypot(target[0] - px, target[1] - py)
-            log("起飞后当前位置=(%.3f,%.3f) m；距终点 %.3f m" % (px, py, d))
-            if d > 3.50:
-                raise RuntimeError("起飞后距终点 %.3f m，已超过 mission 3.5 m 输入门"
-                                   % d)
+            log("起飞后当前位置=(%.3f,%.3f) m；距标称终点 %.3f m" % (px, py, d))
 
-            # 单目标：3.49 m 已经小于 mission 的 3.5 m 门限，不再发近点。
+            # 单目标：标称 3.49 m；若起飞漂移使当前位置距标称点超过 3.49 m，
+            # send_goal 会沿当前→标称方向截断，保证 mission 的当前位置门通过。
             r = self.send_goal(target[0], target[1], "终点")
             if r != "ACCEPTED":
                 raise RuntimeError("终点未被 mission 接受：%s" % r)
-            self.wait_arrival(target[0], target[1], "终点", timeout=wait_s)
+            gx, gy = self.last_sent_target
+            self.wait_arrival(gx, gy, "终点", timeout=wait_s)
             self.hover(HOVER_AFTER_ARRIVAL)
             self.land()
         except Exception:
