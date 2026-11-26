@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import math
 import task_r0 as r0
 
 OK = FAIL = 0
@@ -65,6 +66,12 @@ def make_task(mission_rc=None, armed=True, landed=2):
 _old_sleep = r0.rospy.sleep
 r0.rospy.sleep = lambda _s: None
 try:
+    print("=== R0 单目标：距离 3.49 m ===")
+    _tgt = r0.target_vins()
+    check("目标距离 3.49 m", abs(math.hypot(*_tgt) - 3.49) < 1e-9,
+          "target=(%.4f,%.4f) d=%.6f" % (_tgt[0], _tgt[1], math.hypot(*_tgt)))
+    check("目标沿 45° 对角线", abs(_tgt[0] - _tgt[1]) < 1e-9)
+
     print("=== R0 降落：mission 存活 -> 只发 topic，不新建进程 ===")
     t = make_task(mission_rc=None, armed=True)
     t._wait_grounded = lambda _timeout: True

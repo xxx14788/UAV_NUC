@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""R0 室内自动任务：起飞 -> 飞到 (6格,6格) -> 悬停 5 s -> 降落。
+"""R0 室内自动任务：起飞 -> 飞到距起点 3.49 m 的单目标 -> 悬停 5 s -> 降落。
 
 坐标约定（与场景设计一致）：
-  场地原点 = 右下角；+x 从右向左；+y 从下向上
+  场地原点 = 右下角；+x 从右向左；+y = 从下向上
   每格 0.55 m；起飞点 (1.5,1.5) 格 = (0.825,0.825) m
-  终点 (6,6) 格 = (3.300,3.300) m
+  方向仍取 S→(6,6) 的对角线，但终点只取到 3.49 m
 
 VINS 原点在起飞点；假设 VINS 初始化时机头指向场地 +x，因此
-  目标相对 VINS 原点 = (2.475,2.475) m
+  目标相对 VINS 原点 = (2.4678,2.4678) m
+  场地终点 = (3.2928,3.2928) m
 
 这个脚本负责：
   1. 起飞前读取膨胀点云，若终点已在膨胀层内则拒绝起飞；
   2. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
   3. 等待飞机起飞并稳定；
-  4. 通过 /move_base_simple/goal 交给 mission 校验/转发；
+  4. 只发一个目标（3.49 m < mission 3.5 m 门限），
+     通过 /move_base_simple/goal 交给 mission 校验/转发；
   5. 到点后等待 5 s，通过 /flight_v1/land_request 请求现有 mission 降落。
 
-注意：6 格目标相对起飞点的直线距离是 3.50018 m，略大于 mission 的 3.5 m
-单目标半径。脚本会先发一个约 3.20 m 的近点（不在膨胀层内），再发精确终点；
-最终仍停在 (6格,6格)，只是避免 mission 的 3.5 m 输入门把任务卡死。
 降落必须通知现有 flight_v1_mission 节点；另起 `realflight_mission.sh land`
 会创建同名节点，把正在导航的 mission 踢掉。
 """
@@ -43,7 +42,8 @@ from flight_mission import GOAL_VOXEL_HALF, in_inflated_voxel
 
 CELL = 0.55
 START_CELL = 1.5
-GOAL_CELL = 6.0
+GOAL_CELL = 6.0          # 只用于确定 S→G 方向；实际距离由 GOAL_DISTANCE 截断
+GOAL_DISTANCE = 3.49     # mission 单目标限制 3.5 m，留 1 cm 余量
 TARGET_Z = 0.70
 HOVER_AFTER_ARRIVAL = 5.0
 ARRIVE_RADIUS = 0.20
@@ -58,8 +58,33 @@ LAND_REQUEST_TOPIC = "/flight_v1/land_request"
 LAND_REQUEST_TIMEOUT = 150.0
 
 
+def target_vins():
+    """沿 S→(6,6) 方向，取距 VINS 原点 GOAL_DISTANCE 的单个目标。"""
+    dx = (GOAL_CELL - START_CELL) * CELL
+    dy = (GOAL_CELL - START_CELL) * CELL
+    norm = math.hypot(dx, dy)
+    if norm <= 0.0:
+        raise ValueError("S→G 方向长度为 0")
+    scale = GOAL_DISTANCE / norm
+    return dx * scale, dy * scale
+
+
 def log(text):
     print("[R0] " + text, flush=True)
+
+
+def ros_master_ready(timeout=3.0):
+    """快速判断 ROS master 是否在线，避免 rospy.init_node 长时间重试。"""
+    try:
+        result = subprocess.run(
+            ["rostopic", "list"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=timeout,
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
 
 
 class R0Task:
@@ -191,21 +216,6 @@ class R0Task:
                 return
             rospy.sleep(0.1)
         raise RuntimeError("等待起飞超时；检查 RC/CH5、预检和 mission 输出")
-
-    def choose_stage(self, px, py, tx, ty):
-        """选一个不落在膨胀体素内的近点；点云不可用时退回 3.20 m。"""
-        d = math.hypot(tx - px, ty - py)
-        pts = self._inflate_points()
-        for dist in (3.20, 3.00, 2.80, 2.60, 2.40, 2.20, 2.00):
-            if dist >= d - 0.15:
-                continue
-            scale = dist / d
-            sx = px + (tx - px) * scale
-            sy = py + (ty - py) * scale
-            if pts is None or not in_inflated_voxel(
-                    pts, (sx, sy, TARGET_Z), GOAL_VOXEL_HALF):
-                return dist, (sx, sy)
-        return None
 
     def _publish_goal(self, x, y):
         msg = PoseStamped()
@@ -339,45 +349,31 @@ class R0Task:
 
     def run(self):
         wait_s = 120.0
-        target = ((GOAL_CELL - START_CELL) * CELL,
-                  (GOAL_CELL - START_CELL) * CELL)
+        target = target_vins()
+        start_field = (START_CELL * CELL, START_CELL * CELL)
+        goal_field = (start_field[0] + target[0], start_field[1] + target[1])
         log("起飞点格坐标=(%.1f,%.1f) 场地=(%.3f,%.3f) m" %
-            (START_CELL, START_CELL, START_CELL * CELL, START_CELL * CELL))
-        log("终点格坐标=(%.1f,%.1f) 场地=(%.3f,%.3f) m" %
-            (GOAL_CELL, GOAL_CELL, GOAL_CELL * CELL, GOAL_CELL * CELL))
-        log("终点相对 VINS 原点=(%.3f,%.3f) m；直线距离=%.3f m" %
-            (target[0], target[1], math.hypot(*target)))
+            (START_CELL, START_CELL, start_field[0], start_field[1]))
+        log("方向参考格坐标=(%.1f,%.1f)；单目标距离=%.3f m" %
+            (GOAL_CELL, GOAL_CELL, GOAL_DISTANCE))
+        log("终点相对 VINS 原点=(%.4f,%.4f) m；场地=(%.4f,%.4f) m" %
+            (target[0], target[1], goal_field[0], goal_field[1]))
 
         self.wait_stack()
         ok = self.precheck_target(target[0], target[1], TARGET_Z, "终点")
         if ok is False:
-            raise RuntimeError("终点落在膨胀层内：移开障碍或修改 GOAL_CELL 后再飞")
+            raise RuntimeError("终点落在膨胀层内：移开障碍或修改 GOAL_DISTANCE/方向后再飞")
         self.start_mission()
         try:
             self.wait_takeoff()
             px, py, _ = self._xy()
             d = math.hypot(target[0] - px, target[1] - py)
             log("起飞后当前位置=(%.3f,%.3f) m；距终点 %.3f m" % (px, py, d))
+            if d > 3.50:
+                raise RuntimeError("起飞后距终点 %.3f m，已超过 mission 3.5 m 输入门"
+                                   % d)
 
-            stage = None
-            # mission 的单目标半径是 3.5 m。6 格对角线为 3.50018 m；先发一个
-            # 3.20 m 的近点，再发精确终点。若该近点落在膨胀层内，则向前缩短，
-            # 直到找到一个不在膨胀体素内的近点。
-            if d > 3.45:
-                chosen = self.choose_stage(px, py, target[0], target[1])
-                if chosen is None:
-                    raise RuntimeError("找不到不落在膨胀层内的近点；终点虽可达但中间段被占")
-                stage_dist, stage = chosen
-                log("终点超出 mission 3.5 m 输入余量，先发 %.2f m 近点 (%.3f,%.3f)"
-                    % (stage_dist, stage[0], stage[1]))
-
-            if stage is not None:
-                r = self.send_goal(stage[0], stage[1], "近点")
-                if r != "ACCEPTED":
-                    raise RuntimeError("近点未被 mission 接受：%s" % r)
-                self.wait_arrival(stage[0], stage[1], "近点", timeout=wait_s,
-                                  radius=0.30, speed=0.20)
-
+            # 单目标：3.49 m 已经小于 mission 的 3.5 m 门限，不再发近点。
             r = self.send_goal(target[0], target[1], "终点")
             if r != "ACCEPTED":
                 raise RuntimeError("终点未被 mission 接受：%s" % r)
@@ -409,18 +405,25 @@ def main():
                     help="只读取膨胀点云检查终点，不起飞、不启动 mission")
     args = ap.parse_args()
     if args.check:
-        target = ((GOAL_CELL - START_CELL) * CELL,
-                  (GOAL_CELL - START_CELL) * CELL)
+        target = target_vins()
+        start_field = (START_CELL * CELL, START_CELL * CELL)
+        goal_field = (start_field[0] + target[0], start_field[1] + target[1])
         print("start_cell=(%.2f,%.2f) -> field=(%.3f,%.3f) m" %
-              (START_CELL, START_CELL, START_CELL * CELL, START_CELL * CELL))
-        print("goal_cell=(%.2f,%.2f) -> field=(%.3f,%.3f) m" %
-              (GOAL_CELL, GOAL_CELL, GOAL_CELL * CELL, GOAL_CELL * CELL))
-        print("goal_vins=(%.3f,%.3f) m distance=%.6f m" %
+              (START_CELL, START_CELL, start_field[0], start_field[1]))
+        print("direction_cell=(%.2f,%.2f) distance=%.6f m" %
+              (GOAL_CELL, GOAL_CELL, GOAL_DISTANCE))
+        print("goal_vins=(%.4f,%.4f) m distance=%.6f m" %
               (target[0], target[1], math.hypot(*target)))
+        print("goal_field=(%.4f,%.4f) m cell_equiv=(%.4f,%.4f)" %
+              (goal_field[0], goal_field[1],
+               goal_field[0] / CELL, goal_field[1] / CELL))
         return 0
     if args.precheck:
-        target = ((GOAL_CELL - START_CELL) * CELL,
-                  (GOAL_CELL - START_CELL) * CELL)
+        target = target_vins()
+        if not ros_master_ready():
+            print("[R0][FAIL] ROS master 未运行；先起栈：bash ~/realflight_stack.sh",
+                  file=sys.stderr, flush=True)
+            return 1
         task = R0Task()
         try:
             task.wait_stack()
@@ -432,6 +435,10 @@ def main():
             print("[R0][UNKNOWN] 膨胀点云未就绪，无法确认目标", file=sys.stderr)
             return 2
         return 0 if ok else 1
+    if not ros_master_ready():
+        print("[R0][FAIL] ROS master 未运行；先起栈：bash ~/realflight_stack.sh",
+              file=sys.stderr, flush=True)
+        return 1
     task = R0Task()
     try:
         task.run()
