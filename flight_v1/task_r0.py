@@ -17,7 +17,7 @@ VINS 原点在起飞点；假设 VINS 初始化时机头指向场地 +x，因此
   4. 到点后等待 5 s，调用 ~/realflight_mission.sh land 直接降落。
 
 注意：6 格目标相对起飞点的直线距离是 3.50018 m，略大于 mission 的 3.5 m
-单目标半径。脚本会先发一个 3.45 m 的近点（距终点约 5 cm），再发精确终点；
+单目标半径。脚本会先发一个 3.20 m 的近点（距终点约 30 cm），再发精确终点；
 最终仍停在 (6格,6格)，只是避免 mission 的 3.5 m 输入门把任务卡死。
 """
 import argparse
@@ -39,7 +39,7 @@ START_CELL = 1.5
 GOAL_CELL = 6.0
 TARGET_Z = 0.70
 HOVER_AFTER_ARRIVAL = 5.0
-ARRIVE_RADIUS = 0.25
+ARRIVE_RADIUS = 0.20
 ARRIVE_SPEED = 0.15
 ARRIVE_HOLD = 1.0
 MISSION_WRAPPER = os.path.expanduser("~/realflight_mission.sh")
@@ -250,13 +250,14 @@ class R0Task:
         log("起飞后当前位置=(%.3f,%.3f) m；距终点 %.3f m" % (px, py, d))
 
         stage = None
-        # mission 的单目标半径是 3.5 m。6 格对角线为 3.50018 m；留 5 cm
-        # 输入余量，先发一个近点，再发精确终点。
+        # mission 的单目标半径是 3.5 m。6 格对角线为 3.50018 m；先发一个
+        # 3.20 m 的近点，再发精确终点。这样终点前还有约 0.30 m 的实际运动，
+        # 最终到点判据不会被“近点已经在终点 0.25 m 内”直接满足。
         if d > 3.45:
-            scale = 3.45 / d
+            scale = 3.20 / d
             stage = (px + (target[0] - px) * scale,
                      py + (target[1] - py) * scale)
-            log("终点超出 mission 3.5 m 输入余量，先发近点 (%.3f,%.3f)" % stage)
+            log("终点超出 mission 3.5 m 输入余量，先发 3.20 m 近点 (%.3f,%.3f)" % stage)
 
         try:
             if stage is not None:
