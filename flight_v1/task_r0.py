@@ -12,11 +12,11 @@ VINS 原点在起飞点；假设 VINS 初始化时机头指向场地 +x，因此
   场地终点 = (3.2928,3.2928) m
 
 这个脚本负责：
-  1. 起飞前读取膨胀点云，若终点已在膨胀层内则拒绝起飞；
-  2. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
-  3. 等待飞机起飞并稳定；
-  4. 只发一个目标（3.49 m < mission 3.5 m 门限），
+  1. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
+  2. 等待飞机起飞并稳定；
+  3. 只发一个目标（3.49 m < mission 3.5 m 门限），
      通过 /move_base_simple/goal 交给 mission 校验/转发；
+  4. 目标是否在膨胀层内、导航中是否被障碍覆盖，由 mission 自己判断和处理；
   5. 到点后等待 5 s，通过 /flight_v1/land_request 请求现有 mission 降落。
 
 降落必须通知现有 flight_v1_mission 节点；另起 `realflight_mission.sh land`
@@ -34,11 +34,7 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import ExtendedState, State
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import PointCloud2
-from sensor_msgs import point_cloud2
 from std_msgs.msg import String
-
-from flight_mission import GOAL_VOXEL_HALF, in_inflated_voxel
 
 CELL = 0.55
 START_CELL = 1.5
@@ -53,7 +49,6 @@ MISSION_WRAPPER = os.path.expanduser("~/realflight_mission.sh")
 STATE_DIR = os.path.expanduser("~/sitl_realmachine/flight_v1/runtime")
 STOP_FILE = os.path.join(STATE_DIR, "stopping")
 LANDING_FILE = os.path.join(STATE_DIR, "landing.requested")
-INFLATE_TOPIC = "/drone_0_ego_planner_node/grid_map/occupancy_inflate"
 LAND_REQUEST_TOPIC = "/flight_v1/land_request"
 LAND_REQUEST_TIMEOUT = 150.0
 
@@ -97,8 +92,6 @@ class R0Task:
         self.ack_event = None
         self.mission = None
         self.land_started = False
-        self.inflate_msg = None
-        self.inflate_t = 0.0
 
         rospy.Subscriber("/mavros/state", State, self._state_cb, queue_size=20)
         rospy.Subscriber("/mavros/extended_state", ExtendedState,
@@ -107,8 +100,6 @@ class R0Task:
                          self._odom_cb, queue_size=50)
         rospy.Subscriber("/flight_v1/goal_ack", String,
                          self._ack_cb, queue_size=20)
-        rospy.Subscriber(INFLATE_TOPIC, PointCloud2,
-                         self._inflate_cb, queue_size=2)
         self.goal_pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,
                                         queue_size=5)
         self.land_request_pub = rospy.Publisher(
@@ -128,45 +119,6 @@ class R0Task:
         if self.ack_event is not None and (
                 msg.data.startswith("ACCEPTED") or msg.data.startswith("REJECTED")):
             self.ack_event.set()
-
-    def _inflate_cb(self, msg):
-        self.inflate_msg = msg
-        self.inflate_t = time.monotonic()
-
-    def _inflate_points(self, max_age=2.0):
-        if (self.inflate_msg is None
-                or time.monotonic() - self.inflate_t > max_age):
-            return None
-        try:
-            return list(point_cloud2.read_points(
-                self.inflate_msg, field_names=("x", "y", "z"), skip_nans=True))
-        except Exception as exc:
-            log("膨胀点云解析失败：%r" % (exc,))
-            return None
-
-    def wait_inflate(self, timeout=8.0):
-        deadline = time.monotonic() + timeout
-        while time.monotonic() < deadline and not rospy.is_shutdown():
-            if self._inflate_points() is not None:
-                return True
-            rospy.sleep(0.2)
-        return False
-
-    def precheck_target(self, x, y, z=TARGET_Z, label="终点"):
-        """地面预检：目标是否落在膨胀体素内。未知返回 None，明确被占返回 False。"""
-        if not self.wait_inflate():
-            log("警告：%s 膨胀点云未就绪，跳过地面预检；mission 起飞后仍会复查" % label)
-            return None
-        pts = self._inflate_points()
-        if pts is None:
-            log("警告：%s 膨胀点云过期，跳过地面预检" % label)
-            return None
-        if in_inflated_voxel(pts, (x, y, z), GOAL_VOXEL_HALF):
-            log("✗ %s (%.3f,%.3f,%.2f) 落在膨胀层内；不要起飞，先移开障碍或改目标"
-                % (label, x, y, z))
-            return False
-        log("✓ %s 不在膨胀层内 (%.3f,%.3f,%.2f)" % (label, x, y, z))
-        return True
 
     def _xy(self):
         p = self.odom.pose.pose.position
@@ -360,9 +312,6 @@ class R0Task:
             (target[0], target[1], goal_field[0], goal_field[1]))
 
         self.wait_stack()
-        ok = self.precheck_target(target[0], target[1], TARGET_Z, "终点")
-        if ok is False:
-            raise RuntimeError("终点落在膨胀层内：移开障碍或修改 GOAL_DISTANCE/方向后再飞")
         self.start_mission()
         try:
             self.wait_takeoff()
@@ -401,8 +350,6 @@ def main():
     ap = argparse.ArgumentParser(description="R0 室内自动任务")
     ap.add_argument("--check", action="store_true",
                     help="只打印坐标和距离，不启动 mission")
-    ap.add_argument("--precheck", action="store_true",
-                    help="只读取膨胀点云检查终点，不起飞、不启动 mission")
     args = ap.parse_args()
     if args.check:
         target = target_vins()
@@ -418,23 +365,6 @@ def main():
               (goal_field[0], goal_field[1],
                goal_field[0] / CELL, goal_field[1] / CELL))
         return 0
-    if args.precheck:
-        target = target_vins()
-        if not ros_master_ready():
-            print("[R0][FAIL] ROS master 未运行；先起栈：bash ~/realflight_stack.sh",
-                  file=sys.stderr, flush=True)
-            return 1
-        task = R0Task()
-        try:
-            task.wait_stack()
-            ok = task.precheck_target(target[0], target[1], TARGET_Z, "终点")
-        except Exception as exc:
-            print("[R0][FAIL] 预检失败：%s" % (exc,), file=sys.stderr, flush=True)
-            return 1
-        if ok is None:
-            print("[R0][UNKNOWN] 膨胀点云未就绪，无法确认目标", file=sys.stderr)
-            return 2
-        return 0 if ok else 1
     if not ros_master_ready():
         print("[R0][FAIL] ROS master 未运行；先起栈：bash ~/realflight_stack.sh",
               file=sys.stderr, flush=True)
