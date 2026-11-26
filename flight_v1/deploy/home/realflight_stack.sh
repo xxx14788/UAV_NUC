@@ -147,7 +147,11 @@ phase_cleanup() {
   kill_mine KILL f "${local_pats[@]}"
   wait_until 3 0.1 "rosmaster 强制退出" rosmaster_gone >/dev/null \
     || die "rosmaster 杀不掉——手动 ps 检查后重跑"
-  ok "清场毕（rosmaster 0 残留）"
+  # 2026-11-26: 清场后清掉上一轮停栈/降落未收尾的状态锁，否则新栈的 takeoff 会
+  # 被陈旧 stopping 直接拒绝。此处已确认 rosmaster 归零且全部本 master 进程已杀。
+  rm -f "$HOME/sitl_realmachine/flight_v1/runtime/stopping" \
+        "$HOME/sitl_realmachine/flight_v1/runtime/landing.requested"
+  ok "清场毕（rosmaster 0 残留；stopping/landing 已清理）"
 }
 
 # ---------------------------------------------------------------- 2/5

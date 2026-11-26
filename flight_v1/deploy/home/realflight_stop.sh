@@ -41,6 +41,29 @@ if pgrep -x rosmaster >/dev/null 2>&1 || pgrep -x roscore >/dev/null 2>&1; then
   esac
 fi
 
+# 2026-11-26: 上一轮停栈被中断时会留下 stopping；此时 flight.sh stop 会直接拒绝，
+# 导致停栈入口永远无法恢复。仅在确认没有进行中的 flight.sh stop 且飞控未解锁时，
+# 清除这个陈旧锁。飞机在空中/已解锁时绝不清。
+STATE="$HOME/sitl_realmachine/flight_v1/runtime"
+if [ -e "$STATE/stopping" ]; then
+  if pgrep -af '[f]light\.sh stop' >/dev/null 2>&1; then
+    echo "✗ 停栈已经在进行。" >&2
+    exit 1
+  fi
+  state=""
+  if pgrep -x rosmaster >/dev/null 2>&1 || pgrep -x roscore >/dev/null 2>&1; then
+    state=$(timeout 5 rostopic echo -n1 /mavros/state 2>/dev/null) || state=""
+  fi
+  case "$state" in
+    *"armed: True"*)
+      echo "✗ 检测到遗留 stopping，但飞控已解锁/状态不明；拒绝停栈（先落地、上锁）" >&2
+      exit 1
+      ;;
+  esac
+  echo "清除上一轮未收尾的 stopping 标志（无进行中的停栈进程）"
+  rm -f "$STATE/stopping"
+fi
+
 # 正式停栈：落地断言、录包收尾、节点/roslaunch/rosmaster 清理都在这里
 bash "$STOP" stop
 rc=$?
