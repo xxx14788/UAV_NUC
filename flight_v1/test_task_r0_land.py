@@ -32,6 +32,7 @@ class FakePub(object):
 class FakeMission(object):
     def __init__(self, rc=None):
         self.rc = rc
+        self.returncode = rc
 
     def poll(self):
         return self.rc
@@ -66,17 +67,35 @@ def make_task(mission_rc=None, armed=True, landed=2):
 _old_sleep = r0.rospy.sleep
 r0.rospy.sleep = lambda _s: None
 try:
-    print("=== R0 单目标：距离 3.0 m ===")
+    print("=== R0 单目标：距离 2.0 m ===")
     _tgt = r0.target_vins()
-    check("目标距离 3.0 m", abs(math.hypot(*_tgt) - 3.0) < 1e-9,
+    check("目标距离 2.0 m", abs(math.hypot(*_tgt) - 2.0) < 1e-9,
           "target=(%.4f,%.4f) d=%.6f" % (_tgt[0], _tgt[1], math.hypot(*_tgt)))
     check("目标沿 45° 对角线", abs(_tgt[0] - _tgt[1]) < 1e-9)
     _sx, _sy = 0.20, -0.20
     _gx, _gy = r0.clamp_target(_sx, _sy, _tgt[0], _tgt[1])
     _gd = math.hypot(_gx - _sx, _gy - _sy)
-    check("漂移后目标截断到 3.0 m", abs(_gd - 3.0) < 1e-9,
+    check("漂移后目标截断到 2.0 m", abs(_gd - 2.0) < 1e-9,
           "current=(%.2f,%.2f) sent=(%.4f,%.4f) d=%.6f"
           % (_sx, _sy, _gx, _gy, _gd))
+
+    print("=== R0 起飞后等待 mission READY ===")
+    ready = object.__new__(r0.R0Task)
+    ready.mission = None
+    ready.mission_ready = True
+    ready.wait_mission_ready()
+    check("READY 后允许发点", ready.mission_ready)
+
+    exited = object.__new__(r0.R0Task)
+    exited.mission = FakeMission(1)
+    exited.mission_ready = False
+    try:
+        exited.wait_mission_ready()
+    except RuntimeError:
+        exited_ok = True
+    else:
+        exited_ok = False
+    check("mission 提前退出 -> 等待 READY 中止", exited_ok)
 
     print("=== R0 降落：mission 存活 -> 只发 topic，不新建进程 ===")
     t = make_task(mission_rc=None, armed=True)

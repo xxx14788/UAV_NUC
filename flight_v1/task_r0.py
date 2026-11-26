@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""R0 室内自动任务：起飞 -> 飞到距起点 3.0 m 的单目标 -> 悬停 5 s -> 降落。
+"""R0 室内自动任务：起飞 -> 飞到距起点 2.0 m 的单目标 -> 悬停 5 s -> 降落。
 
 坐标约定（与场景设计一致）：
   场地原点 = 右下角；+x 从右向左；+y = 从下向上
   每格 0.55 m；起飞点 (1.5,1.5) 格 = (0.825,0.825) m
-  方向仍取 S→(6,6) 的对角线，但终点只取到 3.0 m
+  方向仍取 S→(6,6) 的对角线，但终点只取到 2.0 m
 
 VINS 原点在起飞点；假设 VINS 初始化时机头指向场地 +x，因此
-  目标相对 VINS 原点 = (2.1213,2.1213) m
-  场地终点 = (2.9463,2.9463) m
+  目标相对 VINS 原点 = (1.4142,1.4142) m
+  场地终点 = (2.2392,2.2392) m
 
 这个脚本负责：
   1. 启动 ~/realflight_mission.sh auto（复用已起好的栈，自动开录）；
   2. 等待飞机起飞并稳定；
-  3. 只发一个目标（3.0 m < mission 3.5 m 门限），
+  3. 只发一个目标（2.0 m < mission 3.5 m 门限），
      通过 /move_base_simple/goal 交给 mission 校验/转发；
   4. 目标是否在膨胀层内、导航中是否被障碍覆盖，由 mission 自己判断和处理；
   5. 到点后等待 5 s，通过 /flight_v1/land_request 请求现有 mission 降落。
@@ -39,7 +39,7 @@ from std_msgs.msg import String
 CELL = 0.55
 START_CELL = 1.5
 GOAL_CELL = 6.0          # 只用于确定 S→G 方向；实际距离由 GOAL_DISTANCE 截断
-GOAL_DISTANCE = 3.0      # mission 单目标限制 3.5 m，留 50 cm 余量
+GOAL_DISTANCE = 2.0      # mission 单目标限制 3.5 m，留 1.5 m 余量
 TARGET_Z = 0.70
 HOVER_AFTER_ARRIVAL = 5.0
 ARRIVE_RADIUS = 0.20
@@ -67,8 +67,8 @@ def target_vins():
 def clamp_target(px, py, tx, ty, max_dist=GOAL_DISTANCE):
     """按当前位置把目标截断到 max_dist，保证 mission 的当前位置距离门通过。
 
-    起飞漂移可能把标称 3.0 m 目标顶到 3.5 m 以上；发点前按当前
-    位置沿“当前→标称目标”方向截断，目标物理位置最多偏移几厘米。
+    起飞漂移会改变当前位置到目标点的距离；发点前按当前
+    位置沿“当前→标称目标”方向截断，保证 mission 的当前位置距离门通过。
     """
     dx, dy = tx - px, ty - py
     d = math.hypot(dx, dy)
@@ -107,6 +107,7 @@ class R0Task:
         self.mission = None
         self.land_started = False
         self.last_sent_target = None
+        self.mission_ready = False
 
         rospy.Subscriber("/mavros/state", State, self._state_cb, queue_size=20)
         rospy.Subscriber("/mavros/extended_state", ExtendedState,
@@ -115,10 +116,16 @@ class R0Task:
                          self._odom_cb, queue_size=50)
         rospy.Subscriber("/flight_v1/goal_ack", String,
                          self._ack_cb, queue_size=20)
+        rospy.Subscriber("/flight_v1/mission_ready", String,
+                         self._ready_cb, queue_size=2)
         self.goal_pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,
                                         queue_size=5)
         self.land_request_pub = rospy.Publisher(
             LAND_REQUEST_TOPIC, String, queue_size=3)
+
+    def _ready_cb(self, msg):
+        if (msg.data or "").strip() == "READY":
+            self.mission_ready = True
 
     def _state_cb(self, msg):
         self.state = msg
@@ -183,6 +190,17 @@ class R0Task:
                 return
             rospy.sleep(0.1)
         raise RuntimeError("等待起飞超时；检查 RC/CH5、预检和 mission 输出")
+
+    def wait_mission_ready(self, timeout=150.0):
+        """等待 mission 自己完成 5 s 稳定悬停，发布 READY 后才允许发目标。"""
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline and not rospy.is_shutdown():
+            if self.mission_ready:
+                log("mission 已稳定悬停 5 s，进入收点阶段")
+                return
+            self.check_mission_alive()
+            rospy.sleep(0.2)
+        raise RuntimeError("等待 mission READY 超时；检查起飞/悬停状态")
 
     def _publish_goal(self, x, y):
         msg = PoseStamped()
@@ -338,11 +356,12 @@ class R0Task:
         self.start_mission()
         try:
             self.wait_takeoff()
+            self.wait_mission_ready()
             px, py, _ = self._xy()
             d = math.hypot(target[0] - px, target[1] - py)
             log("起飞后当前位置=(%.3f,%.3f) m；距标称终点 %.3f m" % (px, py, d))
 
-            # 单目标：标称 3.0 m；若起飞漂移使当前位置距标称点超过 3.0 m，
+            # 单目标：标称 2.0 m；若起飞漂移使当前位置距标称点超过 2.0 m，
             # send_goal 会沿当前→标称方向截断，保证 mission 的当前位置门通过。
             r = self.send_goal(target[0], target[1], "终点")
             if r != "ACCEPTED":

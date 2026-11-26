@@ -353,6 +353,9 @@ class RosFlight:
         self.goal_pub = rospy.Publisher(GOAL_TOPIC, PoseStamped, queue_size=2)
         # 2026-11-12 P6：点击 ack 通道（每次点击必有反馈）
         self.ack_pub = rospy.Publisher("/flight_v1/goal_ack", String, queue_size=4)
+        # 2026-11-26：起飞稳定 5 s 后才允许外部任务发目标；latched 让晚订阅也能收到。
+        self.ready_pub = rospy.Publisher("/flight_v1/mission_ready", String,
+                                         queue_size=2, latch=True)
         # 2026-11-22：和 planned_path_pub 共用话题，ns 不同所以互不覆盖
         self.marker_pub = rospy.Publisher("/flight_v1/goal_marker", Marker,
                                           queue_size=2, latch=True)
@@ -838,6 +841,7 @@ class RosFlight:
                     self.stable_since = self.stable_since or now
                     if now - self.stable_since >= TAKEOFF_HOVER_SECONDS:
                         self.phase = "await_goal"
+                        self.ready_pub.publish(self.String(data="READY"))
                         print("已在相对起飞高度 %.2f m 稳定悬停 %.0f 秒。现在可在 RViz 点一个 3.5 m 内目标。" % (TARGET_Z, TAKEOFF_HOVER_SECONDS), flush=True)
                         return
                 else:

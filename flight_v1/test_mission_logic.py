@@ -95,6 +95,10 @@ for n in _imp:
     except Exception as e:
         _errs.append("%s <- %s" % (names, type(e).__name__ + ": " + str(e)))
 check("T0 %d 条 import 全部可执行" % len(_imp), not _errs, "; ".join(_errs))
+_fm_src = Path(fm.__file__).read_text(encoding="utf-8")
+check("T0b mission READY 在稳定悬停 5 s 后发布",
+      '"/flight_v1/mission_ready"' in _fm_src
+      and 'self.ready_pub.publish(self.String(data="READY"))' in _fm_src)
 
 print("=== T1 到点后进入等待窗口，无新目标 -> 超时自动降落 ===")
 fm.LANDING_FILE = Path("/tmp/__t_nonexist_landing")
