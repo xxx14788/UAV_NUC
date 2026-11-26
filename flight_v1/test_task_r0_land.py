@@ -97,6 +97,37 @@ try:
         exited_ok = False
     check("mission 提前退出 -> 等待 READY 中止", exited_ok)
 
+    print("=== R0 完整顺序：READY 之前不发目标 ===")
+    calls = []
+    flow = object.__new__(r0.R0Task)
+    flow.mission = None
+    flow.last_sent_target = None
+    flow.wait_stack = lambda: calls.append("stack")
+    flow.start_mission = lambda: calls.append("start_mission")
+    flow.wait_takeoff = lambda: calls.append("takeoff")
+    def _ready():
+        calls.append("wait_ready")
+        flow.mission_ready = True
+    flow.wait_mission_ready = _ready
+    flow._xy = lambda: (0.134, -0.111, 0.70)
+    def _send(x, y, label):
+        calls.append("send")
+        flow.last_sent_target = r0.clamp_target(0.134, -0.111, x, y)
+        return "ACCEPTED"
+    flow.send_goal = _send
+    flow.wait_arrival = lambda x, y, label, timeout=120.0: calls.append("arrival")
+    flow.hover = lambda seconds: calls.append("hover")
+    flow.land = lambda: calls.append("land")
+    flow.run()
+    check("发点发生在 READY 之后",
+          "wait_ready" in calls and "send" in calls
+          and calls.index("wait_ready") < calls.index("send"), "calls=%s" % calls)
+    check("整个任务只发一次目标", calls.count("send") == 1, "calls=%s" % calls)
+    check("到达后悬停 5 s", "hover" in calls and "land" in calls, "calls=%s" % calls)
+    _flow_d = math.hypot(flow.last_sent_target[0] - 0.134,
+                         flow.last_sent_target[1] + 0.111)
+    check("实际发点距当前 ≤2.0 m", _flow_d <= 2.0 + 1e-9, "d=%.6f" % _flow_d)
+
     print("=== R0 降落：mission 存活 -> 只发 topic，不新建进程 ===")
     t = make_task(mission_rc=None, armed=True)
     t._wait_grounded = lambda _timeout: True
