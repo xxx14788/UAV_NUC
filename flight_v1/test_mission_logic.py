@@ -50,10 +50,11 @@ def mk_state(connected=True, armed=True):
     s = Obj(); s.connected = connected; s.armed = armed; return s
 
 def build(clock, world, fsm="CMD_CTRL", state=None):
-    fm.time = clock          # 关键：模块级 time 也换成假时钟，否则 20s/180s 要真等
+    fm.time = clock          # 关键：模块级 time 也换成假时钟，否则 15s/120s 要真等
     f = object.__new__(fm.RosFlight)
     f.rospy = Obj(); f.rospy.sleep = clock.sleep; f.rospy.is_shutdown = lambda: False
     f.goal_used = True; f.next_goal_deadline = None; f.goal_count = 0
+    f.landing_hover_deadline = None
     f.target = world["target"]; f.nav_done = False; f.nav_fail = None
     # 2026-11-13：补齐 11-11 新增字段（此前缺 nav_deadline，测试一直崩）
     f.nav_deadline = None; f.goal_sent_t = 0.0; f.endpoint_ref = None
@@ -108,16 +109,21 @@ f.navigation_monitor()
 check("T1 到达计数", f.goal_count == 1, "goal_count=%d" % f.goal_count)
 check("T1 进入等待窗口", f.phase == "await_goal", "phase=%s" % f.phase)
 check("T1 自动降落一次", len(f.landed) == 1, "land@t=%.1fs" % (f.landed[0] if f.landed else -1))
-check("T1 等满 20s 才降", f.landed and f.landed[0] >= 5.0 + 20.0 - 0.2, "t=%.1f (>=25)" % (f.landed[0] if f.landed else -1))
-check("T1 倒计时发到 RViz(goal_ack)", sum(1 for m in f.ack_pub.msgs if "内点下一个目标" in m) >= 3,
+check("T1 等满 10s+5s 才降", f.landed and f.landed[0] >= 5.0 + 15.0 - 0.2, "t=%.1f (>=20)" % (f.landed[0] if f.landed else -1))
+check("T1 倒计时发到 RViz(goal_ack)", sum(1 for m in f.ack_pub.msgs if "内点下一个目标" in m) >= 2,
       "msgs=%d" % len(f.ack_pub.msgs))
+# 10 s 收点窗口结束后，进入 5 s 悬停降落阶段，此时新目标必须被拒绝。
+f.landing_hover_deadline = c.t + 1.0
+f._goal_cb(None)
+check("T1b 悬停降落阶段拒绝新目标",
+      bool(f.ack_pub.msgs) and "REJECTED" in str(f.ack_pub.msgs[-1]), "last=%s" % (f.ack_pub.msgs[-1] if f.ack_pub.msgs else None))
 
 print("=== T2 等待窗口内来第二个目标 -> 继续飞 -> 再超时降落（S 形基础） ===")
 c2 = Clock(); w2 = {"target": (1.0, 0.0, 0.7), "pos": (1.0, 0.0, 0.7)}
 f2 = build(c2, w2)
 def inject(t):
     if f2.phase == "await_goal" and f2.goal_count == 1 and f2.next_goal_deadline is not None:
-        f2.goal_used = True; f2.next_goal_deadline = None
+        f2.goal_used = True; f2.next_goal_deadline = None; f2.landing_hover_deadline = None
         f2.nav_deadline = None
         # 真 _goal_cb 会重置 endpoint_ref/stable_since；注入必须同口径，否则
         # 端点仍锁在旧目标上，d 永远 >0.2（2026-11-13 测试抓出）。
@@ -128,9 +134,9 @@ c2.cb = inject
 f2.navigation_monitor()
 check("T2 两个目标都到", f2.goal_count == 2, "goal_count=%d" % f2.goal_count)
 check("T2 最终自动降落", len(f2.landed) == 1, "land@t=%.1fs" % (f2.landed[0] if f2.landed else -1))
-# 时间线：t≈5.2 到目标1 -> 注入目标2 -> t≈10.4 到目标2 -> 等 20s -> t≈30.4 降落
-check("T2 第二个目标后才降", f2.landed and 30.0 <= f2.landed[0] <= 31.5,
-      "t=%.1f (期望 30.0~31.5 = 到点2@10.4 + 20s 窗口)" % (f2.landed[0] if f2.landed else -1))
+# 时间线：t≈5.2 到目标1 -> 注入目标2 -> t≈10.4 到目标2 -> 10s 窗口 + 5s 悬停 -> t≈25.4 降落
+check("T2 第二个目标后才降", f2.landed and 25.0 <= f2.landed[0] <= 26.5,
+      "t=%.1f (期望 25.0~26.5 = 到点2@10.4 + 10s 窗口 + 5s 悬停)" % (f2.landed[0] if f2.landed else -1))
 
 print("=== T3 遥控器接管(MANUAL_CTRL) -> 抛错，不静默继续 ===")
 c3 = Clock(); w3 = {"target": (5.0, 0.0, 0.7), "pos": (0.0, 0.0, 0.7)}

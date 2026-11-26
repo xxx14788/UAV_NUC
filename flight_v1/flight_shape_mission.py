@@ -124,9 +124,10 @@ GOAL_HOVER_SECONDS = 5.0
 TAKEOFF_HOVER_SECONDS = _contract_value("params.takeoff_hover_s", TAKEOFF_HOVER_SECONDS)
 GOAL_HOVER_SECONDS = _contract_value("params.goal_hover_s", GOAL_HOVER_SECONDS)
 
-# 2026-11-13 用户令：到点稳定后 NEXT_GOAL_WAIT 秒内没有新目标 -> 自动降落。
-# 单一来源：候选点窗口与 UNREACHABLE 悬停等待共用，禁止再写字面量。
-NEXT_GOAL_WAIT = 20.0
+# 2026-11-26 用户令：到点后 10 s 内可接收新目标；没有新目标则原地悬停 5 s，
+# 再启动降落程序。
+NEXT_GOAL_WAIT = 10.0
+LANDING_HOVER_SECONDS = 5.0
 # 每个目标的导航预算（2026-11-13 用户令：60 -> 120 s；超时且已停在目标附近 -> 自动降落）
 NAV_TIMEOUT = 120.0
 
@@ -266,6 +267,7 @@ class RosFlight:
         # 2026-11-07 多航点（S 形）：next_goal_deadline=None 表示无限等（首个目标）
         self.next_goal_deadline = None
         self._last_countdown_s = None      # 到点等待窗口倒计时播报（终端）
+        self.landing_hover_deadline = None # 10 s 收点窗口结束后的 5 s 悬停降落计时
         self.nav_deadline = None          # 当前目标的 NAV_TIMEOUT 导航超时（按目标重置）
         self.endpoint_ref = None          # 锁存的"规划器实际终点"（到位判定用）
         self.goal_sent_t = 0.0            # 本次目标发出的时刻（只接受其后的 planned_path）
@@ -429,6 +431,7 @@ class RosFlight:
         self.goal_used = False
         # 2026-11-11：目标不可达时 N 秒无新目标自动降落（原逻辑保留）
         self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+        self.landing_hover_deadline = None
         self._last_countdown_s = None
         self.endpoint_ref = None
         self.goal_cmd_t0 = None
@@ -449,6 +452,13 @@ class RosFlight:
             # 2026-11-13 形状变体：不再发 goal_ack（原用途是 RViz 文本），只写终端日志。
             if not quiet:
                 self._log("GOAL", "%s %s" % (status, detail))
+        if getattr(self, "landing_hover_deadline", None) is not None:
+            _ack("REJECTED", "10 秒接收窗口已结束，正在悬停准备降落")
+            return False, "10 秒接收窗口已结束，正在悬停准备降落"
+        if (not self.goal_used and self.next_goal_deadline is not None
+                and time.monotonic() > self.next_goal_deadline):
+            _ack("REJECTED", "10 秒接收窗口已结束，等待悬停降落")
+            return False, "10 秒接收窗口已结束，等待悬停降落"
         ev = classify_goal_event(self.phase, self.goal_used,
                                  LANDING_FILE.exists(), STOP_FILE.exists())
         if ev.startswith("REJECT"):
@@ -478,6 +488,7 @@ class RosFlight:
             gated.pose.position.z = target[2]
             self.goal_used = True
             self.next_goal_deadline = None   # 收到新目标，取消降落倒计时
+            self.landing_hover_deadline = None
             self.nav_deadline = time.monotonic() + NAV_TIMEOUT
             self.endpoint_ref = None
             # 2026-11-12（P6 复检）：REPLACE 时必须重置到位悬停计时，否则假到位。
@@ -566,7 +577,7 @@ class RosFlight:
     def safe_handover(self, reason):
         """异常收口：停发点 -> 尝试发当前位置悬停 -> 提示 CH5 -> 停录制 -> 退出。
 
-        注意：monitor 已退出，悬停后**不会**再有 5 s/20 s 自动降落逻辑；
+        注意：monitor 已退出，悬停后**不会**再有 5 s + 10 s + 5 s 自动降落逻辑；
         控制权必须由 CH5 接管（脚本不做自动降落，符合"交还遥控器"的用户令）。
         """
         self._log("ABORT", reason)
@@ -890,7 +901,7 @@ class RosFlight:
             self.rospy.sleep(0.1)
         raise RuntimeError("120 秒内未确认稳定悬停；遥控器接管，不自动执行其他动作")
 
-    def _announce_countdown(self, remain):
+    def _announce_countdown(self, remain, landing_pending=False):
         """到点等待窗口的倒计时：终端每 5 s 一次（形状模式无需 RViz 文本）。"""
         sec = int(math.ceil(remain))
         if sec <= 0 or sec % 5 != 0:
@@ -898,7 +909,11 @@ class RosFlight:
         if getattr(self, "_last_countdown_s", None) == sec:
             return
         self._last_countdown_s = sec
-        self._log("ARRIVAL", "已到点：%d s 后自动降落（无新目标）" % sec)
+        if landing_pending:
+            self._log("ARRIVAL", "已到点：无新目标，悬停 %d s 后自动降落" % sec)
+        else:
+            self._log("ARRIVAL", "已到点：%d s 内可点下一个目标；否则再悬停 %.0f s 后自动降落"
+                      % (sec, LANDING_HOVER_SECONDS))
 
     def _on_arrival(self, d_goal):
         """到位状态迁移（调用方持 _state_lock）。"""
@@ -907,25 +922,29 @@ class RosFlight:
         self.goal_used = False
         self.stable_since = None
         self.next_goal_deadline = time.monotonic() + NEXT_GOAL_WAIT
+        self.landing_hover_deadline = None
         self._last_countdown_s = None
         self.goal_cmd_t0 = None
         self.goal_target_xy = None
         self.phase = "await_goal"
-        self._log("ARRIVAL", "第 %d 个目标到位并稳定 %.0f s（距目标 %.2f m）；%.0f s 后自动降落"
-                  % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT))
+        self._log("ARRIVAL", "第 %d 个目标到位并稳定 %.0f s（距目标 %.2f m）；"
+                  "%.0f s 内可接新点，否则悬停 %.0f s 后自动降落"
+                  % (self.goal_count, GOAL_HOVER_SECONDS, d_goal, NEXT_GOAL_WAIT,
+                     LANDING_HOVER_SECONDS))
         self._announce_countdown(NEXT_GOAL_WAIT)
 
     def navigation_monitor(self):
-        """到点后给 NEXT_GOAL_WAIT 秒；形状模式结束后 20 s 自动降落。
+        """到点后给 NEXT_GOAL_WAIT 秒；形状模式结束后悬停 5 s 再自动降落。
 
         形状模式下目标是 ShapePilot 自动推进的；这里保留原 mission 的到位判定、
-        20 s 自动降落、CH5/状态异常中止。所有输出走终端。
+        NEXT_GOAL_WAIT + LANDING_HOVER_SECONDS 后自动降落、CH5/状态异常中止。所有输出走终端。
         """
         if self.shape_mode:
-            self._log("SHAPE", "形状任务监测中；完成后 5 s 到位、20 s 自动降落")
+            self._log("SHAPE", "形状任务监测中；完成后 5 s 到位、10 s 收点窗口、5 s 悬停后自动降落")
         else:
-            self._log("NAV", "目标已发送；到点稳定 %.0fs 后 %.0f 秒内无新目标则自动降落"
-                      % (GOAL_HOVER_SECONDS, NEXT_GOAL_WAIT))
+            self._log("NAV", "目标已发送；到点稳定 %.0fs 后 %.0f 秒内无新目标，"
+                      "再悬停 %.0f s 后自动降落"
+                      % (GOAL_HOVER_SECONDS, NEXT_GOAL_WAIT, LANDING_HOVER_SECONDS))
         deadline = None
         while not self.rospy.is_shutdown():
             if self.shape_abort_reason:
@@ -933,19 +952,35 @@ class RosFlight:
             if LANDING_FILE.exists() or STOP_FILE.exists():
                 return
             if not self.goal_used:
-                # 没有待飞目标：首个目标无限等；后续目标只等 NEXT_GOAL_WAIT
+                # 没有待飞目标：首个目标无限等；后续目标只等 NEXT_GOAL_WAIT。
+                # 窗口结束后不立刻下降：先原地悬停 LANDING_HOVER_SECONDS，再启动降落。
                 if self.next_goal_deadline is None:
                     self.rospy.sleep(0.1)
                     continue
-                remain = self.next_goal_deadline - time.monotonic()
-                if remain <= 0.0:
-                    with self._state_lock:
-                        if self.goal_used or self.next_goal_deadline is None                                 or time.monotonic() < self.next_goal_deadline:
-                            continue
-                    print("已到点 %.0f 秒仍无新目标；自动降落。" % NEXT_GOAL_WAIT, flush=True)
+                now = time.monotonic()
+                if getattr(self, "landing_hover_deadline", None) is None:
+                    remain = self.next_goal_deadline - now
+                    if remain <= 0.0:
+                        with self._state_lock:
+                            if (self.goal_used or self.next_goal_deadline is None
+                                    or time.monotonic() < self.next_goal_deadline):
+                                continue
+                        self.landing_hover_deadline = now + LANDING_HOVER_SECONDS
+                        self._last_countdown_s = None
+                        print("已到点 %.0f 秒仍无新目标；悬停 %.0f 秒后自动降落。"
+                              % (NEXT_GOAL_WAIT, LANDING_HOVER_SECONDS), flush=True)
+                        self._announce_countdown(LANDING_HOVER_SECONDS, landing_pending=True)
+                        self.rospy.sleep(0.1)
+                        continue
+                    self._announce_countdown(remain)
+                    self.rospy.sleep(0.1)
+                    continue
+                remain_land = self.landing_hover_deadline - now
+                if remain_land <= 0.0:
+                    print("悬停 %.0f 秒结束；自动降落。" % LANDING_HOVER_SECONDS, flush=True)
                     self.land()
                     return
-                self._announce_countdown(remain)
+                self._announce_countdown(remain_land, landing_pending=True)
                 self.rospy.sleep(0.1)
                 continue
             # 2026-11-11 修 bug：原 deadline 只在首次赋值，第二个目标起沿用同一个
